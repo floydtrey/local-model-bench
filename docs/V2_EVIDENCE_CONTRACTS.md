@@ -51,18 +51,20 @@ Examples:
 A qualification-grade result uses this evidence chain:
 
 ```text
-HostProfile -----------+
-RuntimeProfile --------+------> EffectiveRuntimeConfig --+
-ModelIdentity ---------+                                |
-                                                        v
-BenchmarkInput -----> TrialIdentity ----------------> RunManifest
-EvaluatorIdentity ------------------------------------+
-                                                        |
-                                                        v
-                                                   CaseResult
-                                                        |
-                                                        v
-                                                EvaluationResult
+HostProfile -------------------------------+
+RuntimeProfile ----+                        |
+ModelIdentity -----+-> EffectiveConfig(s) --+--> RunManifest
+                                             ^       ^
+BenchmarkInput ------------------------------+       |
+       |                                             |
+       +--> TrialIdentity(case + config) ------------+
+EvaluatorIdentity -----------------------------------+
+                                                     |
+                                                     v
+                                                CaseResult
+                                                     |
+                                                     v
+                                             EvaluationResult
 ```
 
 References carry all three identifying facts:
@@ -94,7 +96,7 @@ Required payload categories:
 - `compute_runtimes`;
 - `power_thermal` (object or null).
 
-The outer evidence SHA-256 identifies the exact observation and therefore includes `captured_at`. `facts_sha256` is calculated only from the measured host facts and deliberately excludes collection time. Two observations of unchanged facts may therefore have different evidence-record digests but the same `facts_sha256`. This gives Benchmark Lab both an auditable observation identity and a stable configuration fingerprint for cross-run comparison.
+The outer evidence SHA-256 identifies the exact observation and therefore includes collection time and volatile observations. `facts_sha256` is a stable behavior-relevant projection. It deliberately excludes currently available RAM, currently free disk space, and instantaneous thermal state, while retaining OS/build, CPU topology, installed RAM capacity, GPU/VRAM/driver, storage capacity, Python/runtime versions, and active power scheme. Two observations of the same configured machine can therefore have different evidence-record digests but the same host facts fingerprint.
 
 BL-3 defines the actual host probes and which fields become mandatory for qualification. Unsupported measurements remain null.
 
@@ -146,6 +148,8 @@ Required payload categories:
 
 This record is intentionally separate from ModelIdentity: temperature, context target, sampling, tool mode, timeout, concurrency, retry policy, and other behavior-changing settings must not redefine the model itself.
 
+A run may contain more than one EffectiveRuntimeConfig because different benchmark cases can legitimately require different response formats, output limits, context targets, or tool surfaces. Those differences must be sealed before execution rather than merged invisibly into a request later.
+
 ## BenchmarkInput
 
 `benchmark_input` identifies exact benchmark input bytes and their capability level.
@@ -184,9 +188,11 @@ Required payload categories:
 - `layer` — `intrinsic`, `lab_tool`, `acl_system`, or `role`;
 - `ordinal` starting at 1;
 - optional `repeat_group`;
-- BenchmarkInput reference.
+- BenchmarkInput reference;
+- exact `case_id` within that benchmark input;
+- exact EffectiveRuntimeConfig reference.
 
-The trial identity lets repeated runs be compared without overwriting one another.
+This prevents a runner from changing case-specific behavior-bearing settings after the experiment has been sealed. Repeated observations of one case/config get distinct trial identities rather than overwriting each other.
 
 ## RunManifest V2
 
@@ -197,10 +203,10 @@ It binds:
 - HostProfile;
 - RuntimeProfile;
 - ModelIdentity;
-- EffectiveRuntimeConfig;
+- one or more allowed EffectiveRuntimeConfigs;
 - one or more BenchmarkInputs;
 - one or more EvaluatorIdentities;
-- one or more TrialIdentities;
+- one or more TrialIdentities, each already bound to one case/config;
 - exact Benchmark Lab harness/source evidence.
 
 Mutable fields such as `running`, `completed`, progress counters, current case, and failure state do not belong in this sealed manifest. They belong in checkpoint/run-state records. This prevents resume/recovery state from changing the identity of the experiment that was actually defined.
