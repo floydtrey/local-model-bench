@@ -22,18 +22,27 @@ DIGEST_C = "c" * 64
 
 
 class V2RecordContractTests(unittest.TestCase):
-    def _host(self, captured_at: str = "2026-09-11T00:00:00Z"):
+    def _host(
+        self,
+        captured_at: str = "2026-09-11T00:00:00Z",
+        *,
+        available_bytes: int | None = None,
+        free_bytes: int | None = None,
+    ):
         return host_profile(
             "host-a",
             captured_at=captured_at,
             os_info={"name": "Windows 11", "build": None},
             cpu={"model": "test-cpu", "physical_cores": None, "logical_cores": 16},
-            memory={"installed_bytes": None, "available_bytes": None},
+            memory={"installed_bytes": 64 * 1024**3, "available_bytes": available_bytes},
             gpus=[{"name": "test-gpu", "vram_bytes": None, "driver": None}],
-            storage=[{"volume": "C:", "available_bytes": None}],
+            storage=[{"volume": "C:", "total_bytes": 1024**4, "free_bytes": free_bytes}],
             python={"version": "3.12", "implementation": "CPython"},
             compute_runtimes=[{"kind": "cuda", "version": None}],
-            power_thermal=None,
+            power_thermal={
+                "active_power_scheme_name": "Balanced",
+                "thermal_state": None,
+            },
         )
 
     def _chain(self):
@@ -122,17 +131,45 @@ class V2RecordContractTests(unittest.TestCase):
     def test_unknown_measurements_remain_explicit_null(self):
         host, runtime, model, *_ = self._chain()
 
-        self.assertIsNone(host.payload["memory"]["installed_bytes"])
+        self.assertIsNone(host.payload["memory"]["available_bytes"])
         self.assertIsNone(runtime.payload["version"])
         self.assertIsNone(model.payload["artifact_digest"])
         self.assertIsNone(model.payload["declared_context_tokens"])
 
-    def test_host_facts_fingerprint_ignores_collection_time(self):
-        first = self._host("2026-09-11T00:00:00Z")
-        second = self._host("2026-09-11T01:00:00Z")
+    def test_host_facts_fingerprint_ignores_collection_time_and_volatile_capacity(self):
+        first = self._host(
+            "2026-09-11T00:00:00Z",
+            available_bytes=48 * 1024**3,
+            free_bytes=700 * 1024**3,
+        )
+        second = self._host(
+            "2026-09-11T01:00:00Z",
+            available_bytes=20 * 1024**3,
+            free_bytes=650 * 1024**3,
+        )
 
         self.assertEqual(first.payload["facts_sha256"], second.payload["facts_sha256"])
         self.assertNotEqual(first.sha256, second.sha256)
+
+    def test_host_facts_fingerprint_changes_for_behavior_relevant_configuration(self):
+        first = self._host()
+        changed = host_profile(
+            "host-a",
+            captured_at="2026-09-11T01:00:00Z",
+            os_info={"name": "Windows 11", "build": None},
+            cpu={"model": "test-cpu", "physical_cores": None, "logical_cores": 16},
+            memory={"installed_bytes": 64 * 1024**3, "available_bytes": None},
+            gpus=[{"name": "test-gpu", "vram_bytes": None, "driver": "new-driver"}],
+            storage=[{"volume": "C:", "total_bytes": 1024**4, "free_bytes": None}],
+            python={"version": "3.12", "implementation": "CPython"},
+            compute_runtimes=[{"kind": "cuda", "version": None}],
+            power_thermal={
+                "active_power_scheme_name": "Balanced",
+                "thermal_state": None,
+            },
+        )
+
+        self.assertNotEqual(first.payload["facts_sha256"], changed.payload["facts_sha256"])
 
     def test_reference_types_fail_closed(self):
         host, runtime, model, _, benchmark, evaluator, trial, _ = self._chain()
