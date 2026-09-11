@@ -65,7 +65,12 @@ EvaluatorIdentity -----------------------------------+
                                                      |
                                                      v
                                              EvaluationResult
+                                                     |
+                                                     v
+                                      AggregateReport (derived)
 ```
+
+`AggregateReport` is optional derived evidence. It never replaces the raw TrialIdentity, execution trace, CaseResult, or EvaluationResult records from which it was calculated.
 
 References carry all three identifying facts:
 
@@ -194,6 +199,8 @@ Required payload categories:
 
 This prevents a runner from changing case-specific behavior-bearing settings after the experiment has been sealed. Repeated observations of one case/config get distinct trial identities rather than overwriting each other.
 
+BL-8B uses a non-null `repeat_group` for governed repeated campaigns and requires ordinals to exactly cover the predeclared Benchmark Pack repetition count for the selected phase.
+
 ## RunManifest V2
 
 `run_manifest` is an **immutable pre-run experiment definition**.
@@ -210,6 +217,8 @@ It binds:
 - exact Benchmark Lab harness/source evidence.
 
 Mutable fields such as `running`, `completed`, progress counters, current case, and failure state do not belong in this sealed manifest. They belong in checkpoint/run-state records. This prevents resume/recovery state from changing the identity of the experiment that was actually defined.
+
+BL-8B repetition manifests additionally identify the repetition-runner contract and selected named repetition phase before execution.
 
 ## CaseResult V2
 
@@ -235,7 +244,9 @@ Current terminal status vocabulary:
 - `resource_limit`;
 - `protocol_failure`.
 
-Tool-capable execution will add detailed replayable events in BL-6 without changing this high-level binding rule.
+Tool-capable execution adds detailed replayable events without changing this high-level binding rule.
+
+Measurements used by BL-8B reporting remain explicit CaseResult evidence. Attempts, retries, resource use, and telemetry are not inferred when they were not measured.
 
 ## EvaluationResult V2
 
@@ -252,8 +263,35 @@ Required payload categories:
 
 A high weighted score cannot erase a hard failure. Role-specific weighting will be layered on later without rewriting raw case/evaluation evidence.
 
+## AggregateReport V2
+
+`aggregate_report` is **derived evidence** introduced by BL-8B.
+
+Its current report contract is `benchmark-lab-aggregate-report:v1`.
+
+It binds back to the exact RunManifest and BenchmarkInput and carries exact references to the trials, execution evidence, CaseResults, and EvaluationResults supporting its calculations.
+
+Before aggregation, BL-8B validates evidence closure: the planned repetition counts and ordinals must match, every trial must have exactly one CaseResult, CaseResults must bind to the same run/benchmark, primary execution evidence must belong to the run, and EvaluationResults must reference CaseResults within the run.
+
+Derived statistics may include:
+
+- pass rate and verdict/status counts;
+- mean, median, minimum, maximum, and population variance;
+- consistency rates;
+- hard-failure counts;
+- attempts/retries when explicitly measured;
+- tool-call metrics when explicitly measured;
+- duration when valid timestamps are available;
+- resource/telemetry fields when explicitly measured.
+
+Unknown/unmeasured fields remain unmeasured. They are never filled with assumptions such as `retries=0`, `attempts=1`, or estimated resource consumption.
+
+Markdown and CSV report views are renderings of AggregateReport evidence. They are not independent evidence authorities.
+
+See `docs/REPETITION_AND_REPORTING.md` for the BL-8B repetition and calculation semantics.
+
 ## Qualification versus observation
 
-These records establish evidence identity. They do **not** themselves declare that a host, runtime, model, or configuration is qualified.
+These records establish evidence identity. They do **not** themselves declare that a host, runtime, model, configuration, repeated campaign, or aggregate report is qualified.
 
-Qualification is a decision based on evidence and a versioned acceptance policy. Keeping evidence separate from the qualification decision prevents a model/runtime from becoming "approved" merely because its metadata was successfully collected.
+Qualification is a decision based on evidence and a versioned acceptance policy. Keeping evidence separate from the qualification decision prevents a model/runtime from becoming "approved" merely because its metadata was successfully collected or because a derived aggregate appears favorable.
