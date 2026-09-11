@@ -7,6 +7,8 @@ from dataclasses import replace
 from pathlib import Path
 
 from localbench.v2 import (
+    BOUNDED_FILE_SURFACE_ID,
+    BOUNDED_FILE_TOOL_SCHEMA_SHA256,
     CONFIG_SPEC_VERSION,
     REPETITION_PHASES,
     ConfigurationBinding,
@@ -95,14 +97,10 @@ def configuration(*, tools: bool) -> ConfigurationBinding:
                 "network_policy": "provider_only",
             },
             "tool_surface": {
-                "id": "lab-bounded-files:v1" if tools else "none",
+                "id": BOUNDED_FILE_SURFACE_ID if tools else "none",
                 "tools": ["read_file", "write_file"] if tools else [],
                 "max_tool_calls": 4 if tools else 0,
-                "schema_sha256": (
-                    "bddcbaf1883118ac065048dc52cd7e320833713c6242f50b6fdb32f21bc82e87"
-                    if tools
-                    else None
-                ),
+                "schema_sha256": BOUNDED_FILE_TOOL_SCHEMA_SHA256 if tools else None,
             },
         },
         adapter_resolution={
