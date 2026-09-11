@@ -52,6 +52,11 @@ from .evaluators import (
     canonical_definition_bytes,
     definition_sha256,
 )
+from .process_custody import (
+    STRICT_PROCESS_BACKEND_VERSION,
+    StrictAssessorBackend,
+    StrictProcessBackend,
+)
 from .records import (
     CASE_STATUSES,
     EVALUATION_VERDICTS,
@@ -113,6 +118,9 @@ __all__ = [
     "NativeSubprocessBackend",
     "preflight",
     "validate_assessor_staging",
+    "STRICT_PROCESS_BACKEND_VERSION",
+    "StrictAssessorBackend",
+    "StrictProcessBackend",
     "EVIDENCE_SCHEMA_VERSION",
     "RECORD_TYPES",
     "EvidenceRef",
