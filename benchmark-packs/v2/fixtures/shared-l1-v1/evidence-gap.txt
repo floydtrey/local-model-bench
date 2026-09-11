@@ -1,0 +1,6 @@
+Synthetic Runtime Notes
+connection_timeout_ms=2500
+max_attempts=3
+jitter_enabled=true
+log_level=info
+No retry backoff value is specified in this document.
