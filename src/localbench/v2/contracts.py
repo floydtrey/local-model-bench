@@ -23,6 +23,7 @@ RECORD_TYPES = frozenset(
         "run_manifest",
         "case_result",
         "evaluation_result",
+        "tool_execution_trace",
     }
 )
 
