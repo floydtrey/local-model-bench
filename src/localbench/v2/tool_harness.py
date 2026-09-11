@@ -196,10 +196,20 @@ class ToolCall:
 class ModelTurnResponse:
     content: str | None = None
     tool_calls: tuple[ToolCall, ...] = ()
+    reasoning: str | None = None
+    provider_metadata: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         if self.content is not None and not isinstance(self.content, str):
             raise HarnessProtocolError("model response content must be a string or null")
+        if self.reasoning is not None and not isinstance(self.reasoning, str):
+            raise HarnessProtocolError("model response reasoning must be a string or null")
+        if self.provider_metadata is not None:
+            if not isinstance(self.provider_metadata, Mapping):
+                raise HarnessProtocolError("provider_metadata must be an object or null")
+            object.__setattr__(
+                self, "provider_metadata", _freeze_json(dict(self.provider_metadata))
+            )
         calls = tuple(self.tool_calls)
         if any(not isinstance(call, ToolCall) for call in calls):
             raise HarnessProtocolError("tool_calls must contain ToolCall values")
@@ -211,10 +221,15 @@ class ModelTurnResponse:
         object.__setattr__(self, "tool_calls", calls)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "content": self.content,
             "tool_calls": [call.to_dict() for call in self.tool_calls],
         }
+        if self.reasoning is not None:
+            result["reasoning"] = self.reasoning
+        if self.provider_metadata is not None:
+            result["provider_metadata"] = _thaw_json(self.provider_metadata)
+        return result
 
 
 @dataclass(frozen=True)
@@ -700,13 +715,14 @@ def run_bounded_tool_harness(
             append_event("terminal_output", terminal)
             return finish("success", "terminal_output", terminal)
 
-        messages.append(
-            {
-                "role": "assistant",
-                "content": response.content,
-                "tool_calls": [call.to_dict() for call in response.tool_calls],
-            }
-        )
+        assistant_message = {
+            "role": "assistant",
+            "content": response.content,
+            "tool_calls": [call.to_dict() for call in response.tool_calls],
+        }
+        if response.reasoning is not None:
+            assistant_message["reasoning"] = response.reasoning
+        messages.append(assistant_message)
 
         for call in response.tool_calls:
             if tool_calls >= maximum_tool_calls:

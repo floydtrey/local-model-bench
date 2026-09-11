@@ -19,7 +19,7 @@ No scored V2 trial may inherit an unknown behavior-bearing provider default afte
 
 The canonical request uses schema:
 
-`benchmark-lab-runtime-config:v2`
+`benchmark-lab-runtime-config:v3`
 
 It records provider-neutral intent in three areas.
 
@@ -30,6 +30,12 @@ Required explicit values:
 - context target;
 - maximum output tokens;
 - response-format mode/schema.
+- reasoning mode and optional effort.
+
+Reasoning is never inherited from the provider. `enabled` records deliberate use,
+with an explicit effort when the runtime exposes one; `disabled` records deliberate
+suppression; and `unsupported` records that the selected artifact has no mapped
+reasoning control. An effort is valid only with `enabled`.
 
 Lab-owned defaults, when omitted, are materialized into the sealed configuration rather than left to the provider:
 

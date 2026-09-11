@@ -7,12 +7,14 @@ from .contracts import SealedEvidence
 from .records import effective_runtime_config
 
 
-CONFIG_SPEC_VERSION = "benchmark-lab-runtime-config:v2"
+CONFIG_SPEC_VERSION = "benchmark-lab-runtime-config:v3"
 COMPARISON_MODES = frozenset({"strict", "exploratory"})
 ADAPTER_STATUSES = frozenset({"exact", "degraded", "unresolved"})
 NETWORK_POLICIES = frozenset({"provider_only", "disabled", "task_allowed"})
 RESIDENCY_MODES = frozenset({"unload_after_model", "keep_loaded"})
 RESPONSE_FORMAT_MODES = frozenset({"text", "json_object", "json_schema"})
+REASONING_MODES = frozenset({"enabled", "disabled", "unsupported"})
+REASONING_EFFORTS = frozenset({"low", "medium", "high", "max"})
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 GENERATION_DEFAULTS: dict[str, Any] = {
@@ -117,6 +119,26 @@ def _normalize_response_format(value: Any) -> dict[str, Any]:
     return {"mode": mode, "schema": schema}
 
 
+def _normalize_reasoning(value: Any) -> dict[str, Any]:
+    reasoning = _mapping(value, "generation.reasoning")
+    _reject_unknown_keys(reasoning, {"mode", "effort"}, "generation.reasoning")
+    if "mode" not in reasoning or "effort" not in reasoning:
+        raise ValueError("generation.reasoning.mode and effort must be explicit")
+    mode = reasoning["mode"]
+    effort = reasoning["effort"]
+    if mode not in REASONING_MODES:
+        raise ValueError(
+            f"generation.reasoning.mode must be one of {sorted(REASONING_MODES)}"
+        )
+    if effort is not None and effort not in REASONING_EFFORTS:
+        raise ValueError(
+            f"generation.reasoning.effort must be null or one of {sorted(REASONING_EFFORTS)}"
+        )
+    if mode != "enabled" and effort is not None:
+        raise ValueError("reasoning effort is only valid when reasoning is enabled")
+    return {"mode": mode, "effort": effort}
+
+
 def _normalize_generation(
     value: Any,
 ) -> tuple[dict[str, Any], list[str]]:
@@ -133,10 +155,16 @@ def _normalize_generation(
             "repeat_penalty",
             "stop",
             "response_format",
+            "reasoning",
         },
         "generation",
     )
-    for required in ("context_tokens", "max_output_tokens", "response_format"):
+    for required in (
+        "context_tokens",
+        "max_output_tokens",
+        "response_format",
+        "reasoning",
+    ):
         if required not in generation:
             raise ValueError(f"generation.{required} must be explicit")
     generation, applied = _apply_defaults(generation, GENERATION_DEFAULTS, "generation")
@@ -154,6 +182,7 @@ def _normalize_generation(
         ),
         "stop": _string_list(generation["stop"], "generation.stop"),
         "response_format": _normalize_response_format(generation["response_format"]),
+        "reasoning": _normalize_reasoning(generation["reasoning"]),
     }
     if result["top_p"] > 1:
         raise ValueError("generation.top_p must be <= 1")

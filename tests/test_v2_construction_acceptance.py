@@ -94,6 +94,7 @@ def configuration(profile_id: str, *, max_tool_calls: int) -> ConfigurationBindi
                 "context_tokens": 4096,
                 "max_output_tokens": 512,
                 "response_format": {"mode": "text", "schema": None},
+                "reasoning": {"mode": "disabled", "effort": None},
             },
             "execution": {
                 "timeout_seconds": 30,

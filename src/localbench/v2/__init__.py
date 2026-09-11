@@ -65,6 +65,13 @@ from .orchestrator import (
     run_v2_pack,
     validate_intrinsic_execution_trace,
 )
+from .ollama_driver import (
+    OLLAMA_ADAPTER_ID,
+    OLLAMA_CONTEXT_DELIVERY,
+    OllamaChatDriver,
+    OllamaDriverError,
+    ollama_adapter_resolution,
+)
 from .process_custody import (
     STRICT_PROCESS_BACKEND_VERSION,
     StrictAssessorBackend,
@@ -158,6 +165,11 @@ __all__ = [
     "seal_evidence",
     "sha256_json",
     "resolve_effective_configuration",
+    "OLLAMA_ADAPTER_ID",
+    "OLLAMA_CONTEXT_DELIVERY",
+    "OllamaChatDriver",
+    "OllamaDriverError",
+    "ollama_adapter_resolution",
     "EVALUATOR_SPEC_VERSION",
     "SCORING_MODES",
     "EvidenceConsumption",

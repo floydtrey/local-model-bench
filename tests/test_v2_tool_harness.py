@@ -143,6 +143,41 @@ class V2BoundedToolHarnessTests(unittest.TestCase):
             serialized = json.dumps(result.trace.to_dict(), sort_keys=True)
             self.assertNotIn(str(root), serialized)
 
+    def test_reasoning_is_preserved_for_the_next_tool_turn(self):
+        class ReasoningDriver:
+            def __init__(self):
+                self.turn = 0
+
+            def __call__(self, request):
+                self.turn += 1
+                if self.turn == 1:
+                    return ModelTurnResponse(
+                        reasoning="I should read the authorized input.",
+                        tool_calls=(ToolCall("read-1", "read_file", {"path": "input.txt"}),),
+                    )
+                self.assistant_message = request.messages[-2]
+                return ModelTurnResponse(content="done")
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "input.txt").write_text("alpha\n", encoding="utf-8")
+            driver = ReasoningDriver()
+            result = run_bounded_tool_harness(
+                trace_logical_id="reasoning-trace",
+                case_definition=_case(),
+                effective_config=_config(),
+                workspace_root=root,
+                readable_paths=["input.txt"],
+                writable_paths=["output.txt"],
+                driver=driver,
+            )
+
+        self.assertEqual(result.status, "success")
+        self.assertEqual(
+            driver.assistant_message["reasoning"],
+            "I should read the authorized input.",
+        )
+
     def test_trace_identity_is_independent_of_disposable_root_location(self):
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
             left = self._run_success(Path(first))

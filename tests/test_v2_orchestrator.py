@@ -155,6 +155,7 @@ class BL8AOrchestratorTests(unittest.TestCase):
                     "context_tokens": 4096,
                     "max_output_tokens": 512,
                     "response_format": {"mode": "text", "schema": None},
+                    "reasoning": {"mode": "disabled", "effort": None},
                 },
                 "execution": {
                     "timeout_seconds": 30,
