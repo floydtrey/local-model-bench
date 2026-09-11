@@ -100,13 +100,15 @@ class V2RecordContractTests(unittest.TestCase):
             ordinal=1,
             repeat_group="case-1",
             benchmark=benchmark.reference,
+            case_id="case-1",
+            effective_config=config.reference,
         )
         manifest = run_manifest(
             "run-a",
             host=host.reference,
             runtime=runtime.reference,
             model=model.reference,
-            effective_config=config.reference,
+            effective_configs=[config.reference],
             benchmarks=[benchmark.reference],
             evaluators=[evaluator.reference],
             trials=[trial.reference],
@@ -122,7 +124,10 @@ class V2RecordContractTests(unittest.TestCase):
         self.assertEqual(model.record_type, "model_identity")
         self.assertEqual(config.payload["runtime"]["sha256"], runtime.sha256)
         self.assertEqual(config.payload["model"]["sha256"], model.sha256)
+        self.assertEqual(trial.payload["case_id"], "case-1")
+        self.assertEqual(trial.payload["effective_config"]["sha256"], config.sha256)
         self.assertEqual(manifest.payload["host"]["sha256"], host.sha256)
+        self.assertEqual(manifest.payload["effective_configs"][0]["sha256"], config.sha256)
         self.assertEqual(manifest.payload["benchmarks"][0]["sha256"], benchmark.sha256)
         self.assertEqual(manifest.payload["evaluators"][0]["sha256"], evaluator.sha256)
         self.assertEqual(manifest.payload["trials"][0]["sha256"], trial.sha256)
@@ -172,7 +177,7 @@ class V2RecordContractTests(unittest.TestCase):
         self.assertNotEqual(first.payload["facts_sha256"], changed.payload["facts_sha256"])
 
     def test_reference_types_fail_closed(self):
-        host, runtime, model, _, benchmark, evaluator, trial, _ = self._chain()
+        host, runtime, model, config, benchmark, evaluator, trial, _ = self._chain()
 
         with self.assertRaisesRegex(ValueError, "runtime_profile"):
             effective_runtime_config(
@@ -190,14 +195,7 @@ class V2RecordContractTests(unittest.TestCase):
                 host=runtime.reference,
                 runtime=runtime.reference,
                 model=model.reference,
-                effective_config=effective_runtime_config(
-                    "good-config",
-                    runtime=runtime.reference,
-                    model=model.reference,
-                    settings={},
-                    tool_surface={},
-                    limits={},
-                ).reference,
+                effective_configs=[config.reference],
                 benchmarks=[benchmark.reference],
                 evaluators=[evaluator.reference],
                 trials=[trial.reference],
@@ -275,6 +273,7 @@ class V2RecordContractTests(unittest.TestCase):
             )
 
     def test_benchmark_level_and_trial_layer_are_versioned_categories(self):
+        _, runtime, model, config, benchmark, *_ = self._chain()
         with self.assertRaisesRegex(ValueError, "L0"):
             benchmark_input(
                 "bad-level",
@@ -286,15 +285,6 @@ class V2RecordContractTests(unittest.TestCase):
                 source_locator=None,
             )
 
-        benchmark = benchmark_input(
-            "suite",
-            suite_id="suite",
-            source_sha256=DIGEST_A,
-            level="L0",
-            case_ids=["case"],
-            source_format="json",
-            source_locator=None,
-        )
         with self.assertRaisesRegex(ValueError, "layer"):
             trial_identity(
                 "bad-layer",
@@ -302,6 +292,19 @@ class V2RecordContractTests(unittest.TestCase):
                 ordinal=1,
                 repeat_group=None,
                 benchmark=benchmark.reference,
+                case_id="case-1",
+                effective_config=config.reference,
+            )
+
+        with self.assertRaisesRegex(ValueError, "effective_runtime_config"):
+            trial_identity(
+                "bad-config-ref",
+                layer="intrinsic",
+                ordinal=1,
+                repeat_group=None,
+                benchmark=benchmark.reference,
+                case_id="case-1",
+                effective_config=model.reference,
             )
 
 
