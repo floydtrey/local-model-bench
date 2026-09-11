@@ -21,6 +21,8 @@ RECORD_TYPES = frozenset(
         "evaluator_identity",
         "trial_identity",
         "run_manifest",
+        "case_result",
+        "evaluation_result",
     }
 )
 
