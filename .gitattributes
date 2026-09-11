@@ -1,0 +1,5 @@
+# V2 benchmark packs and fixtures are content-addressed evidence.
+# Force LF checkout on every platform so declared SHA-256 values identify the
+# same exact bytes on Windows and POSIX hosts.
+benchmark-packs/v2/*.json text eol=lf
+benchmark-packs/v2/fixtures/** text eol=lf
