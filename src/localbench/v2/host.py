@@ -86,7 +86,7 @@ def _parse_nvidia_gpu_csv(text: str) -> list[dict[str, Any]]:
 
 
 def _parse_cuda_version(text: str) -> str | None:
-    match = re.search(r"CUDA Version:\s*([0-9.]+)", text, re.IGNORECASE)
+    match = re.search(r"CUDA(?:\s+UMD)?\s+Version:\s*([0-9.]+)", text, re.IGNORECASE)
     return match.group(1) if match else None
 
 

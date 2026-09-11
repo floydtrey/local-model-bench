@@ -127,6 +127,7 @@ class HostCollectorTests(unittest.TestCase):
 
     def test_compute_runtime_parsers_do_not_guess(self):
         self.assertEqual(_parse_cuda_version("CUDA Version: 12.8"), "12.8")
+        self.assertEqual(_parse_cuda_version("CUDA UMD Version: 13.4"), "13.4")
         self.assertEqual(_parse_nvcc_version("Cuda compilation tools, release 12.6, V12.6.85"), "12.6")
         self.assertIsNone(_parse_cuda_version("driver present but version omitted"))
         self.assertIsNone(_parse_nvcc_version("nvcc information unavailable"))
