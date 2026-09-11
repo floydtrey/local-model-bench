@@ -1,0 +1,6 @@
+Synthetic Operations Notes
+[E1] Delta station opens at 06:30.
+[E2] The sealed spare-battery count is 7.
+[E3] North relay firmware is 4.2.1.
+[E4] The cafeteria closes at 19:00.
+[E5] Delta station inspection code is DS-18.
