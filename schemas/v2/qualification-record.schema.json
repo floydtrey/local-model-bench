@@ -107,11 +107,12 @@
     "hostProfile": {
       "type": "object",
       "required": [
-        "captured_at", "os", "cpu", "memory", "gpus", "storage",
+        "captured_at", "facts_sha256", "os", "cpu", "memory", "gpus", "storage",
         "python", "compute_runtimes", "power_thermal"
       ],
       "properties": {
         "captured_at": {"type": "string", "minLength": 1},
+        "facts_sha256": {"$ref": "#/$defs/sha256"},
         "os": {"type": "object"},
         "cpu": {"type": "object"},
         "memory": {"type": "object"},
