@@ -84,6 +84,7 @@ A reference to the wrong record type fails closed.
 Required payload categories:
 
 - `captured_at`;
+- `facts_sha256`;
 - `os`;
 - `cpu`;
 - `memory`;
@@ -92,6 +93,8 @@ Required payload categories:
 - `python`;
 - `compute_runtimes`;
 - `power_thermal` (object or null).
+
+The outer evidence SHA-256 identifies the exact observation and therefore includes `captured_at`. `facts_sha256` is calculated only from the measured host facts and deliberately excludes collection time. Two observations of unchanged facts may therefore have different evidence-record digests but the same `facts_sha256`. This gives Benchmark Lab both an auditable observation identity and a stable configuration fingerprint for cross-run comparison.
 
 BL-3 defines the actual host probes and which fields become mandatory for qualification. Unsupported measurements remain null.
 
