@@ -25,6 +25,8 @@ Benchmark Lab does not grant ACL authority and must not depend on ACL being oper
 
 `docs/BENCHMARK_LAB_V2_PLAN.md` defines the approved architecture, evidence requirements, capability levels, cross-layer comparison model, role qualification policy, and ordered construction sequence.
 
+`docs/BL5_FOUNDATION_PLAN.md` refines the original BL-5 construction task into BL-5A Benchmark Pack/Case Definition contracts followed by BL-5B evaluator infrastructure. Real scored benchmark content remains after those measuring-instrument gates.
+
 ### BL-1 — V1 historical baseline
 
 Local Model Bench V1 is frozen at:
@@ -91,17 +93,42 @@ Accepted design properties:
 
 No provider call is made by the configuration resolver.
 
+### BL-5A — Benchmark Pack / Case Definition contract
+
+The portable benchmark-definition contract is implemented in:
+
+- `src/localbench/v2/benchmark_pack.py`;
+- `schemas/v2/benchmark-pack.schema.json`;
+- `docs/BENCHMARK_PACK_CONTRACT.md`;
+- `tests/test_v2_benchmark_pack.py`.
+
+Accepted design properties:
+
+- Benchmark Packs have explicit schema, pack ID, pack version, and one capability level;
+- exact source bytes receive `source_sha256` for reproduction identity;
+- normalized behavior-bearing content receives `semantic_sha256` so reporting labels and file locators do not masquerade as behavioral identity;
+- external context fixtures are content-addressed by SHA-256 while locators remain operational metadata;
+- L0 forbids external context and tools; L1 may use controlled context but remains tool-free; L2-L4 may declare provider-neutral tool-surface requirements;
+- case requirements reference provider-neutral configuration profiles, response contracts, minimum context requirements, and tool surfaces rather than provider-specific request options;
+- evaluator contracts and hard-failure rules are references only; evaluator implementation remains BL-5B work;
+- screening and qualification repetition counts are declarative case semantics;
+- unknown contract fields fail closed;
+- loaded packs can become existing V2 `benchmark_input` evidence without automatically persisting a private local source path;
+- synthetic contract fixtures are engineering tests only and are not scored benchmark content.
+
+BL-5A does not implement evaluator logic, execute a model, or create the real shared capability battery.
+
 ## Deterministic regression gate
 
-`.github/workflows/deterministic-tests.yml` now runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
+`.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
 
 The first cross-platform run exposed an existing V1 portability defect: the Markdown suite heading parser did not accept CRLF line endings produced by Windows checkout. The parser was changed narrowly to accept the optional carriage return and `tests/test_markdown_crlf.py` now preserves that behavior as a regression case.
 
-At branch commit:
+At BL-5A code/schema commit:
 
-`0ce8db8e146a0e51847b86a050e874c5de39b787`
+`8722e413e2ee14645d898187be52e6c7ead5a887`
 
-GitHub Actions run `34572813177` passed the full deterministic suite on both Windows and Ubuntu.
+GitHub Actions run `34573915749` passed the complete deterministic suite on both Windows and Ubuntu, including the Benchmark Pack V2 contract tests.
 
 This regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
@@ -128,12 +155,16 @@ BL-3 — implement host qualification: **IMPLEMENTED; NEW-TOWER CAPTURE/REPEATAB
 
 BL-4 — materialize and seal effective runtime configuration: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
-No V2 model run or tool-harness execution has occurred.
+BL-5A — Benchmark Pack / Case Definition contract: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
+
+BL-5B — versioned evaluator framework: **NEXT CONSTRUCTION TASK**.
+
+No V2 model run, scored benchmark case, or tool-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-4 acceptance.
+This checkpoint stops after BL-5A acceptance.
 
-Do not create the scored shared capability cases, download/run candidate models, or begin ACL cross-harness testing as part of this checkpoint.
+Do not create the real shared capability battery, implement the bounded tool harness, download/run candidate models, or begin ACL cross-harness testing as part of this checkpoint.
 
-The next construction session must start from this document and `docs/BENCHMARK_LAB_V2_PLAN.md`, verify branch/HEAD, and select the next bounded **lab-construction** task without silently starting the actual model benchmark campaign.
+The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, and `docs/BL5_FOUNDATION_PLAN.md`, verify branch/HEAD, and perform **BL-5B evaluator framework only** unless the plan is explicitly revised again.
