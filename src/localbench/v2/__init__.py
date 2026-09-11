@@ -4,6 +4,7 @@ V2 is intentionally additive. The existing ``localbench`` V1 runner and result
 contracts remain available for historical reproduction.
 """
 
+from .configuration import CONFIG_SPEC_VERSION, resolve_effective_configuration
 from .contracts import (
     EVIDENCE_SCHEMA_VERSION,
     RECORD_TYPES,
@@ -30,6 +31,7 @@ from .records import (
 )
 
 __all__ = [
+    "CONFIG_SPEC_VERSION",
     "EVIDENCE_SCHEMA_VERSION",
     "RECORD_TYPES",
     "EvidenceRef",
@@ -37,6 +39,7 @@ __all__ = [
     "canonical_json_bytes",
     "seal_evidence",
     "sha256_json",
+    "resolve_effective_configuration",
     "CASE_STATUSES",
     "EVALUATION_VERDICTS",
     "RUN_LAYERS",
