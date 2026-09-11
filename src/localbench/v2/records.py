@@ -311,6 +311,33 @@ def trial_identity(
     return seal_evidence("trial_identity", logical_id, payload)
 
 
+def execution_binding(
+    logical_id: str,
+    *,
+    trial: EvidenceRef | Mapping[str, Any],
+    execution_mode: str,
+    driver: Mapping[str, Any],
+    workspace_scope: Mapping[str, Any] | None,
+    context_assets: Sequence[Mapping[str, Any]],
+    containment: Mapping[str, Any] | None,
+) -> SealedEvidence:
+    if execution_mode not in {"intrinsic", "lab_tool"}:
+        raise ValueError("execution_mode must be intrinsic or lab_tool")
+    payload = {
+        "trial": _ref(trial, "trial_identity", "trial"),
+        "execution_mode": execution_mode,
+        "driver": _object(driver, "driver"),
+        "workspace_scope": None
+        if workspace_scope is None
+        else _object(workspace_scope, "workspace_scope"),
+        "context_assets": _object_list(context_assets, "context_assets"),
+        "containment": None
+        if containment is None
+        else _object(containment, "containment"),
+    }
+    return seal_evidence("execution_binding", logical_id, payload)
+
+
 def run_manifest(
     logical_id: str,
     *,
@@ -322,11 +349,13 @@ def run_manifest(
     evaluators: Iterable[EvidenceRef | Mapping[str, Any]],
     trials: Iterable[EvidenceRef | Mapping[str, Any]],
     harness_source: Mapping[str, Any],
+    execution_bindings: Iterable[EvidenceRef | Mapping[str, Any]] = (),
 ) -> SealedEvidence:
     """Seal the immutable pre-run definition.
 
     Mutable run status/checkpoint fields are deliberately excluded. Each planned
-    trial binds one case and one effective configuration before execution.
+    trial binds one case and one effective configuration before execution. BL-8A
+    additionally binds behavior-bearing orchestration choices when supplied.
     """
 
     payload = {
@@ -341,6 +370,11 @@ def run_manifest(
         "trials": _refs(trials, "trial_identity", "trials"),
         "harness_source": _object(harness_source, "harness_source"),
     }
+    bindings = list(execution_bindings)
+    if bindings:
+        payload["execution_bindings"] = _refs(
+            bindings, "execution_binding", "execution_bindings"
+        )
     return seal_evidence("run_manifest", logical_id, payload)
 
 
