@@ -1,0 +1,5 @@
+Aster,2
+Birch,1
+Aster,3
+Cedar,4
+Birch,2
