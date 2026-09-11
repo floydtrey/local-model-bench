@@ -15,7 +15,8 @@
     {"properties": {"record_type": {"const": "trial_identity"}, "payload": {"$ref": "#/$defs/trialIdentity"}}},
     {"properties": {"record_type": {"const": "run_manifest"}, "payload": {"$ref": "#/$defs/runManifest"}}},
     {"properties": {"record_type": {"const": "case_result"}, "payload": {"$ref": "#/$defs/caseResult"}}},
-    {"properties": {"record_type": {"const": "evaluation_result"}, "payload": {"$ref": "#/$defs/evaluationResult"}}}
+    {"properties": {"record_type": {"const": "evaluation_result"}, "payload": {"$ref": "#/$defs/evaluationResult"}}},
+    {"properties": {"record_type": {"const": "tool_execution_trace"}, "payload": {"$ref": "tool-execution-trace.schema.json"}}}
   ],
   "$defs": {
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -33,7 +34,8 @@
           "enum": [
             "host_profile", "runtime_profile", "model_identity",
             "effective_runtime_config", "benchmark_input", "evaluator_identity",
-            "trial_identity", "run_manifest", "case_result", "evaluation_result"
+            "trial_identity", "run_manifest", "case_result", "evaluation_result",
+            "tool_execution_trace"
           ]
         },
         "logical_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
