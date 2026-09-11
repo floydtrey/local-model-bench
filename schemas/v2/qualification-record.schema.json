@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/qualification-record.schema.json",
+  "title": "Benchmark Lab V2 qualification evidence record",
+  "allOf": [
+    {"$ref": "evidence-record.schema.json"}
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "record_type": {"const": "host_profile"},
+        "payload": {"$ref": "#/$defs/hostProfile"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "runtime_profile"},
+        "payload": {"$ref": "#/$defs/runtimeProfile"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "model_identity"},
+        "payload": {"$ref": "#/$defs/modelIdentity"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "effective_runtime_config"},
+        "payload": {"$ref": "#/$defs/effectiveRuntimeConfig"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "benchmark_input"},
+        "payload": {"$ref": "#/$defs/benchmarkInput"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "evaluator_identity"},
+        "payload": {"$ref": "#/$defs/evaluatorIdentity"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "trial_identity"},
+        "payload": {"$ref": "#/$defs/trialIdentity"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "run_manifest"},
+        "payload": {"$ref": "#/$defs/runManifest"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "case_result"},
+        "payload": {"$ref": "#/$defs/caseResult"}
+      }
+    },
+    {
+      "properties": {
+        "record_type": {"const": "evaluation_result"},
+        "payload": {"$ref": "#/$defs/evaluationResult"}
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "oneOf": [
+        {"$ref": "#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "evidenceRef": {
+      "type": "object",
+      "required": ["record_type", "logical_id", "sha256"],
+      "properties": {
+        "record_type": {
+          "enum": [
+            "host_profile",
+            "runtime_profile",
+            "model_identity",
+            "effective_runtime_config",
+            "benchmark_input",
+            "evaluator_identity",
+            "trial_identity",
+            "run_manifest",
+            "case_result",
+            "evaluation_result"
+          ]
+        },
+        "logical_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "hostProfile": {
+      "type": "object",
+      "required": [
+        "captured_at", "os", "cpu", "memory", "gpus", "storage",
+        "python", "compute_runtimes", "power_thermal"
+      ],
+      "properties": {
+        "captured_at": {"type": "string", "minLength": 1},
+        "os": {"type": "object"},
+        "cpu": {"type": "object"},
+        "memory": {"type": "object"},
+        "gpus": {"type": "array", "items": {"type": "object"}},
+        "storage": {"type": "array", "items": {"type": "object"}},
+        "python": {"type": "object"},
+        "compute_runtimes": {"type": "array", "items": {"type": "object"}},
+        "power_thermal": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "runtimeProfile": {
+      "type": "object",
+      "required": [
+        "runtime_kind", "version", "build", "transport", "executable",
+        "installation_digest", "capabilities"
+      ],
+      "properties": {
+        "runtime_kind": {"type": "string", "minLength": 1},
+        "version": {"type": ["string", "null"]},
+        "build": {"type": ["string", "null"]},
+        "transport": {"type": "object"},
+        "executable": {"type": ["object", "null"]},
+        "installation_digest": {"$ref": "#/$defs/nullableSha256"},
+        "capabilities": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "modelIdentity": {
+      "type": "object",
+      "required": [
+        "family", "name", "source", "artifact_digest", "provider_digest",
+        "parameter_count", "quantization", "precision", "declared_context_tokens"
+      ],
+      "properties": {
+        "family": {"type": ["string", "null"]},
+        "name": {"type": "string", "minLength": 1},
+        "source": {"type": "object"},
+        "artifact_digest": {"$ref": "#/$defs/nullableSha256"},
+        "provider_digest": {"$ref": "#/$defs/nullableSha256"},
+        "parameter_count": {"type": ["integer", "null"], "minimum": 0},
+        "quantization": {"type": ["string", "null"]},
+        "precision": {"type": ["string", "null"]},
+        "declared_context_tokens": {"type": ["integer", "null"], "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "effectiveRuntimeConfig": {
+      "type": "object",
+      "required": ["runtime", "model", "settings", "tool_surface", "limits"],
+      "properties": {
+        "runtime": {"$ref": "#/$defs/evidenceRef"},
+        "model": {"$ref": "#/$defs/evidenceRef"},
+        "settings": {"type": "object"},
+        "tool_surface": {"type": "object"},
+        "limits": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "benchmarkInput": {
+      "type": "object",
+      "required": [
+        "suite_id", "source_sha256", "level", "case_ids", "source_format", "source_locator"
+      ],
+      "properties": {
+        "suite_id": {"type": "string", "minLength": 1},
+        "source_sha256": {"$ref": "#/$defs/sha256"},
+        "level": {"enum": ["L0", "L1", "L2", "L3", "L4"]},
+        "case_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "source_format": {"type": "string", "minLength": 1},
+        "source_locator": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "evaluatorIdentity": {
+      "type": "object",
+      "required": [
+        "evaluator_id", "version", "implementation_sha256", "result_contract", "requires_human_review"
+      ],
+      "properties": {
+        "evaluator_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "implementation_sha256": {"$ref": "#/$defs/sha256"},
+        "result_contract": {"type": "string", "minLength": 1},
+        "requires_human_review": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "trialIdentity": {
+      "type": "object",
+      "required": ["layer", "ordinal", "repeat_group", "benchmark"],
+      "properties": {
+        "layer": {"enum": ["intrinsic", "lab_tool", "acl_system", "role"]},
+        "ordinal": {"type": "integer", "minimum": 1},
+        "repeat_group": {"type": ["string", "null"]},
+        "benchmark": {"$ref": "#/$defs/evidenceRef"}
+      },
+      "additionalProperties": false
+    },
+    "runManifest": {
+      "type": "object",
+      "required": [
+        "host", "runtime", "model", "effective_config", "benchmarks",
+        "evaluators", "trials", "harness_source"
+      ],
+      "properties": {
+        "host": {"$ref": "#/$defs/evidenceRef"},
+        "runtime": {"$ref": "#/$defs/evidenceRef"},
+        "model": {"$ref": "#/$defs/evidenceRef"},
+        "effective_config": {"$ref": "#/$defs/evidenceRef"},
+        "benchmarks": {
+          "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "evaluators": {
+          "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "trials": {
+          "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "harness_source": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "caseResult": {
+      "type": "object",
+      "required": [
+        "manifest", "benchmark", "trial", "case_id", "status", "started_at",
+        "finished_at", "metrics", "execution_evidence", "terminal_output"
+      ],
+      "properties": {
+        "manifest": {"$ref": "#/$defs/evidenceRef"},
+        "benchmark": {"$ref": "#/$defs/evidenceRef"},
+        "trial": {"$ref": "#/$defs/evidenceRef"},
+        "case_id": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["success", "error", "blocked", "resource_limit", "protocol_failure"]
+        },
+        "started_at": {"type": "string", "minLength": 1},
+        "finished_at": {"type": "string", "minLength": 1},
+        "metrics": {"type": "object"},
+        "execution_evidence": {"type": "object"},
+        "terminal_output": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "evaluationResult": {
+      "type": "object",
+      "required": [
+        "case", "evaluator", "verdict", "score", "maximum_score", "hard_failures", "checks"
+      ],
+      "properties": {
+        "case": {"$ref": "#/$defs/evidenceRef"},
+        "evaluator": {"$ref": "#/$defs/evidenceRef"},
+        "verdict": {"enum": ["pass", "fail", "review", "not_scored"]},
+        "score": {"type": ["number", "null"], "minimum": 0},
+        "maximum_score": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "hard_failures": {
+          "type": "array", "items": {"type": "string", "minLength": 1}
+        },
+        "checks": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}
