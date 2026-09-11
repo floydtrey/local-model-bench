@@ -19,7 +19,8 @@
         "trial_identity",
         "run_manifest",
         "case_result",
-        "evaluation_result"
+        "evaluation_result",
+        "tool_execution_trace"
       ]
     },
     "logical_id": {
