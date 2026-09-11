@@ -3,3 +3,4 @@
 # same exact bytes on Windows and POSIX hosts.
 benchmark-packs/v2/*.json text eol=lf
 benchmark-packs/v2/fixtures/** text eol=lf
+benchmark-packs/v2/workspaces/** text eol=lf
