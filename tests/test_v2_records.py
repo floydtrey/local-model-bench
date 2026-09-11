@@ -22,10 +22,10 @@ DIGEST_C = "c" * 64
 
 
 class V2RecordContractTests(unittest.TestCase):
-    def _chain(self):
-        host = host_profile(
+    def _host(self, captured_at: str = "2026-09-11T00:00:00Z"):
+        return host_profile(
             "host-a",
-            captured_at="2026-09-11T00:00:00Z",
+            captured_at=captured_at,
             os_info={"name": "Windows 11", "build": None},
             cpu={"model": "test-cpu", "physical_cores": None, "logical_cores": 16},
             memory={"installed_bytes": None, "available_bytes": None},
@@ -35,6 +35,9 @@ class V2RecordContractTests(unittest.TestCase):
             compute_runtimes=[{"kind": "cuda", "version": None}],
             power_thermal=None,
         )
+
+    def _chain(self):
+        host = self._host()
         runtime = runtime_profile(
             "ollama-local",
             runtime_kind="ollama",
@@ -123,6 +126,13 @@ class V2RecordContractTests(unittest.TestCase):
         self.assertIsNone(runtime.payload["version"])
         self.assertIsNone(model.payload["artifact_digest"])
         self.assertIsNone(model.payload["declared_context_tokens"])
+
+    def test_host_facts_fingerprint_ignores_collection_time(self):
+        first = self._host("2026-09-11T00:00:00Z")
+        second = self._host("2026-09-11T01:00:00Z")
+
+        self.assertEqual(first.payload["facts_sha256"], second.payload["facts_sha256"])
+        self.assertNotEqual(first.sha256, second.sha256)
 
     def test_reference_types_fail_closed(self):
         host, runtime, model, _, benchmark, evaluator, trial, _ = self._chain()
