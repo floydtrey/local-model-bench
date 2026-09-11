@@ -86,6 +86,21 @@ from .records import (
     runtime_profile,
     trial_identity,
 )
+from .repetition import (
+    REPETITION_PHASES,
+    REPETITION_RUNNER_VERSION,
+    RepeatedRun,
+    WorkspaceFactory,
+    run_v2_repetitions,
+)
+from .reporting import (
+    AGGREGATE_REPORT_VERSION,
+    AggregationError,
+    aggregate_repeated_run,
+    persist_aggregate_report,
+    render_aggregate_csv,
+    render_aggregate_markdown,
+)
 from .tool_harness import (
     BOUNDED_FILE_SURFACE_ID,
     BOUNDED_FILE_TOOL_DEFINITIONS,
@@ -178,6 +193,17 @@ __all__ = [
     "run_manifest",
     "case_result",
     "evaluation_result",
+    "REPETITION_RUNNER_VERSION",
+    "REPETITION_PHASES",
+    "RepeatedRun",
+    "WorkspaceFactory",
+    "run_v2_repetitions",
+    "AGGREGATE_REPORT_VERSION",
+    "AggregationError",
+    "aggregate_repeated_run",
+    "persist_aggregate_report",
+    "render_aggregate_markdown",
+    "render_aggregate_csv",
     "BOUNDED_FILE_SURFACE_ID",
     "BOUNDED_FILE_TOOL_DEFINITIONS",
     "BOUNDED_FILE_TOOL_SCHEMA_SHA256",
