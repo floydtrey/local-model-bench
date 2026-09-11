@@ -275,11 +275,13 @@ class _WindowsJob:
 
 
 class StrictProcessBackend:
-    """Strict process-tree/wall/output backend with disposable workspace promotion.
+    """Bounded process runner with strict Windows custody and staged promotion.
 
-    Network access is intentionally supported only when the policy explicitly
-    permits task network. Memory limits and assessor isolation are not claimed by
-    this backend and therefore still fail containment preflight when requested.
+    This backend deliberately does not claim host filesystem isolation. Running in
+    a disposable copy protects the original candidate workspace and promotion is
+    restricted to the declared writable paths, but the subprocess still has the
+    host account's ordinary access to paths outside that copy. Network isolation,
+    memory limits, and assessor isolation are also not provided here.
     """
 
     @property
@@ -288,9 +290,9 @@ class StrictProcessBackend:
             backend_id="strict-process",
             backend_version="1",
             wall_clock_timeout=True,
-            process_custody="strict",
+            process_custody="strict" if os.name == "nt" else "best_effort",
             network_policies=("task_allowed",),
-            workspace_isolation=True,
+            workspace_isolation=False,
             workspace_write_scope=True,
             assessor_isolation=False,
             output_limit=True,
@@ -462,11 +464,12 @@ class StrictProcessBackend:
 
 
 class StrictAssessorBackend(StrictProcessBackend):
-    """StrictProcessBackend with assessor staging proof enabled.
+    """StrictProcessBackend with assessor staging-order validation.
 
-    The caller must provide the V1/V2 workspace record and confirm the candidate
-    has reached a terminal state. Assessment material remains outside the
-    candidate stage and execution still occurs in a disposable copy.
+    The caller must prove the candidate did not receive assessment material and is
+    terminal before assessor staging. That is a sequencing guarantee only; because
+    the subprocess still has ordinary host filesystem access, this backend does not
+    advertise OS-level assessor isolation.
     """
 
     def __init__(self, *, workspace_record: Mapping[str, Any], candidate_terminal: bool) -> None:
@@ -483,7 +486,7 @@ class StrictAssessorBackend(StrictProcessBackend):
             network_policies=base.network_policies,
             workspace_isolation=base.workspace_isolation,
             workspace_write_scope=base.workspace_write_scope,
-            assessor_isolation=True,
+            assessor_isolation=False,
             output_limit=base.output_limit,
             memory_limit=base.memory_limit,
         )
