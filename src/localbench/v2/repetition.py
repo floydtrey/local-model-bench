@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Callable, Mapping, Sequence
 
 from ..util import validate_id
@@ -36,10 +37,12 @@ from .tool_harness import BoundedWorkspace, run_bounded_tool_harness
 
 
 REPETITION_RUNNER_VERSION = "benchmark-lab-repetition-runner:v1"
-REPETITION_PHASES = {
-    "screen": "screen_trials",
-    "qualification": "qualification_trials",
-}
+REPETITION_PHASES = MappingProxyType(
+    {
+        "screen": "screen_trials",
+        "qualification": "qualification_trials",
+    }
+)
 
 
 WorkspaceFactory = Callable[[str, int], WorkspaceBinding]
@@ -69,6 +72,39 @@ class RepeatedRun:
     execution_evidence: tuple[SealedEvidence, ...]
     case_results: tuple[SealedEvidence, ...]
     evaluation_results: tuple[SealedEvidence, ...]
+
+    def __post_init__(self) -> None:
+        if self.repetition_phase not in REPETITION_PHASES:
+            raise ValueError(
+                f"repetition_phase must be one of {sorted(REPETITION_PHASES)}"
+            )
+        if not isinstance(self.planned_counts, Mapping) or not self.planned_counts:
+            raise ValueError("planned_counts must be a non-empty mapping")
+        counts: dict[str, int] = {}
+        for case_id, value in self.planned_counts.items():
+            normalized = validate_id(case_id, "planned_counts case_id")
+            if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                raise ValueError("planned repetition counts must be integers >= 1")
+            counts[normalized] = value
+        object.__setattr__(self, "planned_counts", MappingProxyType(counts))
+
+        if not isinstance(self.benchmark, SealedEvidence) or self.benchmark.record_type != "benchmark_input":
+            raise ValueError("benchmark must be sealed benchmark_input evidence")
+        if not isinstance(self.manifest, SealedEvidence) or self.manifest.record_type != "run_manifest":
+            raise ValueError("manifest must be sealed run_manifest evidence")
+        for name in (
+            "effective_configs",
+            "trials",
+            "execution_bindings",
+            "execution_evidence",
+            "case_results",
+            "evaluation_results",
+        ):
+            value = getattr(self, name)
+            if not isinstance(value, tuple) or any(
+                not isinstance(item, SealedEvidence) for item in value
+            ):
+                raise ValueError(f"{name} must be a tuple of SealedEvidence values")
 
 
 def _trial_count(case: Mapping[str, Any], phase: str) -> int:
@@ -441,7 +477,7 @@ def run_v2_repetitions(
 
     return RepeatedRun(
         repetition_phase=repetition_phase,
-        planned_counts=dict(planned_counts),
+        planned_counts=planned_counts,
         benchmark=benchmark,
         effective_configs=tuple(config_order),
         trials=tuple(item.trial for item in planned),
