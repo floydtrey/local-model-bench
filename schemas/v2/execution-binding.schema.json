@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local-model-bench.invalid/schemas/v2/execution-binding.schema.json",
-  "title": "Benchmark Lab BL-8A pre-run execution binding payload",
+  "title": "Benchmark Lab pre-run execution binding payload",
   "type": "object",
   "required": [
     "trial", "execution_mode", "driver", "workspace_scope",
@@ -57,7 +57,11 @@
           "required": ["readable_paths", "writable_paths"],
           "properties": {
             "readable_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-            "writable_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            "writable_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "initial_state_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         }
