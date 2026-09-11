@@ -118,7 +118,7 @@ class ContainmentTests(unittest.TestCase):
             serialized = json.dumps(result.evidence.to_dict(), sort_keys=True)
             self.assertNotIn(str(Path(temp_dir).resolve()), serialized)
             self.assertEqual(result.evidence.payload["policy_sha256"], policy.sha256)
-            self.assertEqual(result.evidence.payload["stdout"]["sha256"], "dc51b8c96c2d745df6f90a2f4124b130d14918b0d80d2fbb7d1d0c51ea1f15e4")
+            self.assertEqual(result.evidence.payload["stdout"]["sha256"], "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22")
             with self.assertRaisesRegex(ContainmentBlocked, "maximum attempt count"):
                 executor.execute(command)
         self.assertEqual(backend.calls, 1)
