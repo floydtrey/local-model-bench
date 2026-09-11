@@ -31,11 +31,7 @@ Benchmark Lab does not grant ACL authority.
 
 ### BL-1 — V1 historical baseline
 
-V1 is frozen at:
-
-`4a023c8230365c3098a6dff71fa9623cac059cdd`
-
-Historical configs, suites, results, validation packets, and runtime assumptions remain historical evidence and are not silently reinterpreted as V2 qualification artifacts.
+V1 is frozen at `4a023c8230365c3098a6dff71fa9623cac059cdd`. Historical configs, suites, results, validation packets, and runtime assumptions remain historical evidence and are not silently reinterpreted as V2 qualification artifacts.
 
 ### BL-2 — V2 identity/evidence contracts
 
@@ -63,30 +59,35 @@ Complete. `lab-bounded-files:v1` exposes only exact-scope `read_file` and `write
 
 ### BL-7 — containment and execution-limit enforcement
 
-Construction contract complete in:
+Construction contract is complete in:
 
 - `src/localbench/v2/containment.py`;
+- `src/localbench/v2/process_custody.py`;
 - `src/localbench/v2/validation_adapter.py`;
+- `schemas/v2/containment-policy.schema.json`;
 - `schemas/v2/containment-execution.schema.json`;
 - `tests/test_v2_containment.py`;
+- `tests/test_v2_process_custody.py`;
 - `docs/CONTAINMENT_ENFORCEMENT.md`.
 
 Accepted properties:
 
-- containment policy has a deterministic SHA-256 and includes wall time, max attempts, network policy, process-custody strength, workspace/assessor isolation, exact write-scope overlay, and optional output/memory limits;
-- backends separately advertise the containment capabilities they can prove;
-- preflight blocks execution when any required capability is absent or weaker than the policy;
-- there is no warning-only or silent downgrade from strict qualification semantics;
-- max attempts are enforced before a backend receives another execution;
-- containment executions are first-class V2 evidence and omit the disposable absolute workspace path from command identity;
-- assessor staging fails closed if assessment material was included in the candidate workspace or the candidate has not reached a terminal state;
-- the historical `real-tasks-v1` packet is adapted by exact source SHA-256 rather than rewritten;
-- because the old packet lacks an exact machine-readable write allowlist, its V2 projection remains unresolved until an explicit V2 write-scope overlay is supplied;
-- the built-in native subprocess backend intentionally advertises only wall timeout, best-effort process-tree cleanup, and task-allowed network behavior;
-- native execution does **not** claim disabled-network isolation, strict process custody, filesystem/write confinement, assessor isolation, output limiting, or memory limiting;
-- therefore historical tasks requiring `network=disabled` correctly fail containment preflight on the native backend rather than being mislabeled as qualification-grade.
+- containment policy has a deterministic SHA-256 and includes wall time, max attempts, network policy, process-custody strength, workspace/assessor isolation requirements, exact write-scope overlay, and optional output/memory limits;
+- backends separately advertise only the containment capabilities they can prove;
+- preflight blocks execution when any required capability is absent or weaker than policy, with no warning-only downgrade path;
+- max attempts are enforced before another backend execution;
+- containment executions are first-class V2 evidence and omit disposable absolute workspace paths from command identity;
+- historical `real-tasks-v1` packets are adapted by exact source SHA-256 rather than rewritten, and remain unresolved until an explicit V2 writable-path overlay is supplied;
+- `NativeSubprocessBackend` remains deliberately weak and does not claim security-boundary properties it lacks;
+- `StrictProcessBackend` provides a disposable workspace, authorized-change promotion, output limiting, wall-time enforcement, and process cleanup/custody mechanics;
+- `workspace_write_scope=true` for that backend means only declared changed paths are promoted into the governed original workspace;
+- `workspace_isolation=false` because the subprocess can still access host paths outside its disposable workspace; a deterministic regression test proves this limitation using a temporary external path;
+- `network=disabled` / `provider_only` are not enforced by this backend and therefore fail preflight;
+- memory limiting is not enforced and therefore fails preflight when required;
+- Windows Job Objects support the backend's `strict` process-custody claim on Windows; POSIX process groups are advertised only as `best_effort` rather than an inescapable security boundary;
+- `StrictAssessorBackend` validates assessor staging order but advertises `assessor_isolation=false`, because staging order alone is not OS-level isolation.
 
-BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the current laptop/new tower already has a strict network/filesystem sandbox backend. Before real-task qualification, the intended host must provide and qualify a backend whose measured capabilities satisfy the selected containment policy.
+BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the current laptop or new tower already has the network/filesystem/assessor isolation backend required by strict real-task policies. Those policies remain blocked until the intended host has a backend whose measured capabilities satisfy them.
 
 No real model/provider call occurred during BL-7 construction.
 
@@ -94,11 +95,7 @@ No real model/provider call occurred during BL-7 construction.
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest`.
 
-At post-BL-7 construction-sequence commit:
-
-`1247f1495b218ee338b37514496e06eadd10542f`
-
-GitHub Actions run `34577763460` passed the complete deterministic suite on both Windows and Ubuntu, including BL-7 containment, legacy-packet adaptation, BL-6 harness, evaluator, configuration, host, and historical V1 regression tests.
+At capability-boundary test commit `89f7b136d539619a26cd3398b0a5023c8c432142`, GitHub Actions run `34578249312` passed the complete deterministic suite on both Windows and Ubuntu. This includes the explicit regression proving the staged process backend can reach an external temporary host path and therefore must not advertise workspace isolation.
 
 The regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
@@ -111,7 +108,7 @@ The regression gate does not start Ollama, load a model, execute ACL, or make sc
 - BL-5A: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-5B: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-6: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
-- BL-7: **CONSTRUCTION COMPLETE; STRICT INTENDED-HOST CONTAINMENT BACKEND QUALIFICATION PENDING**
+- BL-7: **CONSTRUCTION COMPLETE; STRICT HOST ISOLATION BACKEND QUALIFICATION/IMPLEMENTATION STILL PENDING FOR POLICIES THAT REQUIRE IT**
 - BL-8A: **NEXT — V2 RUNNER/ORCHESTRATOR**
 
 No V2 real-model run, real scored benchmark case, broad candidate campaign, or ACL cross-harness execution has occurred.
