@@ -17,7 +17,9 @@
         "benchmark_input",
         "evaluator_identity",
         "trial_identity",
-        "run_manifest"
+        "run_manifest",
+        "case_result",
+        "evaluation_result"
       ]
     },
     "logical_id": {
