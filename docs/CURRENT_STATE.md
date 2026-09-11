@@ -19,7 +19,7 @@ Benchmark Lab V2 is an independent qualification system intended to distinguish:
 
 Benchmark Lab does not grant ACL authority.
 
-## Authoritative construction documents
+## Authoritative construction and content documents
 
 - `docs/BENCHMARK_LAB_V2_PLAN.md` — original V2 architecture and evidence goals.
 - `docs/BL5_FOUNDATION_PLAN.md` — BL-5A/BL-5B measuring-instrument split.
@@ -29,6 +29,8 @@ Benchmark Lab does not grant ACL authority.
 - `docs/V2_ORCHESTRATOR.md` — BL-8A pre-run closure, execution-binding, dispatch, and evidence-persistence contract.
 - `docs/REPETITION_AND_REPORTING.md` — BL-8B repeated-observation, aggregation, telemetry, and derived-report contract.
 - `docs/CONSTRUCTION_ACCEPTANCE.md` — accepted synthetic end-to-end V2 construction gate.
+- `docs/SHARED_L0_L1_BATTERY_V1.md` and `docs/SHARED_L0_L1_ACCEPTANCE.md` — accepted 14-case intrinsic/context shared battery.
+- `docs/SHARED_L2_BATTERY_V1.md` and `docs/SHARED_L2_ACCEPTANCE.md` — accepted 8-case neutral bounded-tool shared battery.
 
 ## Accepted construction checkpoints
 
@@ -181,6 +183,30 @@ V2 does not yet define a separate mutable resume/checkpoint record, so this gate
 
 No real model/provider/ACL execution occurred during construction acceptance.
 
+## Accepted benchmark-content checkpoints
+
+### Shared L0/L1 core V1
+
+**COMPLETE; CROSS-PLATFORM REGRESSION PASSING.**
+
+The accepted battery contains 9 L0 prompt-only cases and 5 L1 controlled-context cases. Every case declares one screen trial and three qualification trials. Assessment is deterministic and does not use a model judge. L1 evidence bytes are content-addressed and pinned to LF across platforms.
+
+Acceptance details are in `docs/SHARED_L0_L1_ACCEPTANCE.md`.
+
+### Shared L2 neutral bounded-tool core V1
+
+**COMPLETE; CROSS-PLATFORM REGRESSION PASSING.**
+
+The accepted battery contains 8 L2 cases using portable `bounded-files-v1` capability, mapped at orchestration time to the accepted BL-6 bounded read/write surface. Cases cover read/transform/create, read-only evidence use, safe stale-protected update, minimal code repair, multi-file synthesis, missing-file blocking, scope restraint, and idempotent no-op behavior.
+
+Workspace starting state is deterministic and content-addressed. Canonical fake drivers pass every case through the real BL-6 harness; negative calibration covers boundary and mutation failures. The deterministic evaluator grades actual tool traces and final workspace evidence rather than trusting model claims.
+
+Tool efficiency is a small scored dimension but is not part of the correctness verdict gate: correct authorized work may pass with an efficiency penalty.
+
+Acceptance details are in `docs/SHARED_L2_ACCEPTANCE.md`.
+
+The accepted shared screen now contains **22 observations per candidate**: 9 L0 + 5 L1 + 8 L2. Shared qualification is **66 observations per candidate** at three trials per case.
+
 ## Deterministic regression gate
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest`.
@@ -191,7 +217,11 @@ BL-8A acceptance checkpoint `5373f1049e19274f315c9743dd0a6c15dc0d2489` passed in
 
 BL-8B construction checkpoint `6acd17b280ea621bbee74cfa0cb66b8363044a7f` passed in GitHub Actions run `34582406611` on both Windows and Ubuntu.
 
-Synthetic construction acceptance checkpoint `a557bd061d3f58bdc6d0d279cb92d7e07feac781` passed the complete deterministic suite in GitHub Actions run `34583105820` on both Windows and Ubuntu. The acceptance fixture covers the successful and malicious/incorrect synthetic behaviors required by `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md` and deterministic replay identity.
+Synthetic construction acceptance checkpoint `a557bd061d3f58bdc6d0d279cb92d7e07feac781` passed the complete deterministic suite in GitHub Actions run `34583105820` on both Windows and Ubuntu.
+
+Shared L0/L1 content checkpoint `b8803b358708c629ce6e06a6260147acf718b156` passed in GitHub Actions run `34584605083` on both Windows and Ubuntu.
+
+Shared L2 hardened content checkpoint `bf9c8c132d205f3cba7f461815e84712fa247f00` passed in GitHub Actions run `34586660017` on both Windows and Ubuntu.
 
 The regression gate does not start Ollama, load a real model, execute ACL, or make scored real-model requests.
 
@@ -208,19 +238,22 @@ The regression gate does not start Ollama, load a real model, execute ACL, or ma
 - BL-8A: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-8B: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - Synthetic end-to-end construction acceptance: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- Shared L0/L1 battery V1: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- Shared L2 battery V1: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 
-No V2 real-model run, real scored benchmark case, broad candidate campaign, or ACL cross-harness execution has occurred.
+No V2 real-model run, broad candidate campaign, ACL cross-harness execution, or role assignment has occurred.
 
 ## Stop boundary for this checkpoint
 
-The V2 measuring-instrument **construction acceptance gate is complete**.
+The V2 measuring instrument and the first complete shared L0/L1/L2 screen content are accepted.
 
-Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded phase may begin **benchmark-content design** in this order:
+**Do not expand into role-specific suites or begin a real model campaign from the laptop checkpoint.** The next bounded phase is intended-host execution qualification on the new tower:
 
-1. shared L0/L1 capability cases;
-2. L2 neutral bounded-tool cases;
-3. broad candidate campaign only after applicable intended-host/runtime/model qualification gates are satisfied;
-4. ACL cross-harness campaign only when ACL separately permits execution;
-5. role-specific qualification suites and repeated trials.
+1. complete two BL-3 host captures and confirm the same stable `facts_sha256`;
+2. capture and seal exact inference runtime/backend identity and behavior-bearing settings;
+3. identify exact candidate model artifacts/digests;
+4. resolve/seal the shared L0/L1/L2 EffectiveRuntimeConfig profiles;
+5. verify the real provider/model driver integration with the V2 orchestrator without weakening BL-7 policies;
+6. then explicitly start the controlled shared candidate screen.
 
-Do not treat construction acceptance as authorization for an immediate ungoverned model campaign. Before real candidate execution, complete the applicable BL-3 intended-host evidence and seal exact runtime/model/configuration identity; any benchmark requiring strict containment must also pass the corresponding host/backend preflight rather than weakening policy.
+Any benchmark requiring strict network/filesystem/assessor containment remains blocked until the intended host has an enforcement backend whose measured capabilities satisfy that policy.
