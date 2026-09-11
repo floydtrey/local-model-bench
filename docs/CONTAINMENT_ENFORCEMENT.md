@@ -13,9 +13,12 @@ rather than rewriting them.
 ## Core implementation
 
 - `src/localbench/v2/containment.py`
+- `src/localbench/v2/process_custody.py`
 - `src/localbench/v2/validation_adapter.py`
+- `schemas/v2/containment-policy.schema.json`
 - `schemas/v2/containment-execution.schema.json`
 - `tests/test_v2_containment.py`
+- `tests/test_v2_process_custody.py`
 
 Containment execution is a first-class V2 evidence record with record type
 `containment_execution`.
@@ -68,30 +71,51 @@ attempts and containment.
 
 ## Native subprocess backend
 
-`NativeSubprocessBackend` is intentionally conservative.
+`NativeSubprocessBackend` is intentionally conservative. It advertises wall-clock
+timeout, best-effort process-tree cleanup, and task-allowed network behavior only.
+It does not advertise strict process custody, network isolation, workspace isolation,
+write confinement, assessor isolation, output limiting, or memory limiting.
 
-It currently advertises only:
+## Staged process-custody backend
 
-- wall-clock timeout;
-- best-effort process-tree cleanup;
-- unrestricted/task-allowed network behavior.
+`StrictProcessBackend` adds useful enforcement without calling it a full sandbox:
 
-It does **not** advertise:
+- disposable workspace copy;
+- exact changed-path comparison after successful execution;
+- only declared writable paths are promoted back to the original workspace;
+- unauthorized changes inside the disposable workspace are rejected and not promoted;
+- bounded combined stdout/stderr capture;
+- wall-clock termination;
+- Windows Job Object custody with kill-on-close;
+- POSIX process-group cleanup.
 
-- strict process custody;
-- disabled/provider-only network isolation;
-- filesystem/workspace isolation;
-- exact subprocess write confinement;
-- assessor isolation;
-- output-byte enforcement;
-- memory enforcement.
+Its capability declaration is intentionally narrower than its class name may suggest:
 
-Therefore the historical real-task policies, which require `network=disabled`, fail
-preflight on the native backend. This is correct behavior. A local process with a
-changed working directory is not a network or filesystem sandbox.
+- `workspace_write_scope=true` means promotion back into the governed candidate
+  workspace is restricted to the declared paths;
+- `workspace_isolation=false` because the subprocess still runs under the host account
+  and can access host paths outside the disposable workspace;
+- `assessor_isolation=false` because sequencing/staging alone does not provide OS-level
+  isolation from assessor material stored elsewhere on the host;
+- `network_policies=[task_allowed]`; disabled/provider-only networking is not enforced;
+- `memory_limit=false`;
+- `process_custody=strict` on Windows, where Job Objects provide the accepted custody
+  mechanism for this backend;
+- `process_custody=best_effort` on POSIX, because a process group alone is not treated
+  as an inescapable security boundary.
 
-A stronger backend can implement the same interface later without changing benchmark
-case semantics or historical packet evidence.
+A deterministic test intentionally writes to a temporary path outside the disposable
+workspace and confirms that the path is reachable. This preserves the fact that the
+backend is **staged workspace protection**, not host filesystem isolation.
+
+`StrictAssessorBackend` additionally validates that assessment material was not
+included in candidate staging and that the candidate is terminal before assessor
+execution. It still advertises `assessor_isolation=false`; the staging proof is useful
+but is not mislabeled as an OS security boundary.
+
+Therefore the historical real-task policies, which require `network=disabled` and
+qualification-grade isolation, remain blocked until a stronger backend can actually
+satisfy those requirements.
 
 ## Containment execution evidence
 
@@ -119,22 +143,17 @@ records to be committed.
 1. the candidate workspace record states `assessment_included=false`; and
 2. candidate execution is terminal before assessor staging begins.
 
-The containment backend still must advertise assessor isolation when the policy
-requires it. Staging order alone is not treated as an OS sandbox.
+The selected backend must still advertise assessor isolation when a policy requires
+it. Staging order alone is not treated as a sandbox.
 
 ## Historical validation packet adapter
 
 `adapt_legacy_validation_task()` projects one V1 task into V2 containment semantics
 while preserving the exact source packet bytes by SHA-256.
 
-For `real-tasks-v1` it preserves:
-
-- task ID/title/category;
-- baseline commit and `git archive` materialization;
-- wall-clock limit;
-- maximum attempts;
-- disabled-network requirement;
-- assessor paths as staging metadata.
+For `real-tasks-v1` it preserves task ID/title/category, baseline commit and
+`git archive` materialization, wall-clock limit, maximum attempts, disabled-network
+requirement, and assessor paths as staging metadata.
 
 The historical packet does not contain a machine-readable exact write allowlist.
 Therefore the V2 adapter marks `explicit_workspace_write_scope_required` until a new
@@ -153,10 +172,6 @@ then, affected tasks remain blocked rather than being run with weaker isolation.
 
 ## Out of scope
 
-BL-7 does not:
-
-- run a real model;
-- enable ACL execution;
-- create the real benchmark battery;
-- choose the final intended-host strict sandbox technology;
-- turn the native subprocess backend into a falsely labeled security boundary.
+BL-7 does not run a real model, enable ACL execution, create the real benchmark
+battery, or select/qualify the final intended-host network/filesystem isolation
+technology.
