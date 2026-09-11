@@ -87,6 +87,40 @@ def _refs(
     return result
 
 
+def _stable_host_facts(facts: Mapping[str, Any]) -> dict[str, Any]:
+    """Project host observations onto behavior-relevant, non-volatile facts.
+
+    Available RAM, free disk, and instantaneous thermal state remain in the exact
+    observation but do not make an otherwise unchanged host configuration acquire a
+    different stable fingerprint.
+    """
+
+    memory = dict(facts["memory"])
+    memory.pop("available_bytes", None)
+
+    storage = []
+    for item in facts["storage"]:
+        stable = dict(item)
+        stable.pop("free_bytes", None)
+        storage.append(stable)
+
+    power_thermal = facts["power_thermal"]
+    if isinstance(power_thermal, Mapping):
+        power_thermal = dict(power_thermal)
+        power_thermal.pop("thermal_state", None)
+
+    return {
+        "os": facts["os"],
+        "cpu": facts["cpu"],
+        "memory": memory,
+        "gpus": facts["gpus"],
+        "storage": storage,
+        "python": facts["python"],
+        "compute_runtimes": facts["compute_runtimes"],
+        "power_thermal": power_thermal,
+    }
+
+
 def host_profile(
     logical_id: str,
     *,
@@ -116,7 +150,7 @@ def host_profile(
     }
     payload = {
         "captured_at": captured_at,
-        "facts_sha256": sha256_json(facts),
+        "facts_sha256": sha256_json(_stable_host_facts(facts)),
         **facts,
     }
     return seal_evidence("host_profile", logical_id, payload)
