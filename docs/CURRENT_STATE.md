@@ -53,10 +53,9 @@ Accepted design properties:
 - references fail closed on record-type mismatch;
 - HostProfile, RuntimeProfile, ModelIdentity, EffectiveRuntimeConfig, BenchmarkInput, EvaluatorIdentity, TrialIdentity, RunManifest, CaseResult, and EvaluationResult are separate versioned records;
 - RunManifest is an immutable pre-run experiment definition rather than mutable progress state;
+- each TrialIdentity binds an exact benchmark case and exact EffectiveRuntimeConfig before execution;
 - hard failures remain separate from weighted evaluation score;
 - host observations include an exact observation digest and a stable `facts_sha256` projection.
-
-Direct canonicalization/immutability and record-chain smoke checks were exercised in an isolated Python runtime during construction. The full repository regression suite has **not** been claimed from this environment because its sandbox could not resolve GitHub to clone the branch; run that deterministic suite from a local checkout before treating the construction branch as fully regression-qualified.
 
 ### BL-3 — host qualification implementation
 
@@ -70,6 +69,42 @@ Raw host qualification defaults to ignored `local-state/` storage. The public re
 
 **BL-3 intended-host acceptance remains pending** until the new tower is set up, the collector is run twice there, and the stable host facts fingerprint is confirmed.
 
+### BL-4 — effective runtime configuration sealing
+
+The provider-neutral effective configuration resolver is implemented in:
+
+- `src/localbench/v2/configuration.py`;
+- `schemas/v2/effective-config-spec.schema.json`;
+- `docs/EFFECTIVE_CONFIGURATION.md`;
+- `tests/test_v2_configuration.py`.
+
+Accepted design properties:
+
+- behavior-bearing configuration is materialized before scored execution;
+- context target, output limit, response format, sampling controls, timeout, retries, concurrency, model residency, network policy, and tool surface are explicit or resolved to recorded lab defaults;
+- defaults applied by the lab are recorded in the sealed evidence rather than remaining hidden;
+- RuntimeProfile and ModelIdentity are bound by typed evidence references;
+- provider/backend adapters must supply the effective provider request that was resolved from the canonical configuration;
+- strict comparison rejects degraded adapter mappings, unresolved tool schemas, and requested context beyond a known declared model limit;
+- exploratory configuration may retain explicit deviations without being misrepresented as strict apples-to-apples evidence;
+- case-specific configuration cannot be merged silently at request time because TrialIdentity binds the exact EffectiveRuntimeConfig before execution.
+
+No provider call is made by the configuration resolver.
+
+## Deterministic regression gate
+
+`.github/workflows/deterministic-tests.yml` now runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
+
+The first cross-platform run exposed an existing V1 portability defect: the Markdown suite heading parser did not accept CRLF line endings produced by Windows checkout. The parser was changed narrowly to accept the optional carriage return and `tests/test_markdown_crlf.py` now preserves that behavior as a regression case.
+
+At branch commit:
+
+`0ce8db8e146a0e51847b86a050e874c5de39b787`
+
+GitHub Actions run `34572813177` passed the full deterministic suite on both Windows and Ubuntu.
+
+This regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
+
 ## Construction rules
 
 - No local-model/provider calls are required to design or implement V2 contracts.
@@ -81,28 +116,24 @@ Raw host qualification defaults to ignored `local-state/` storage. The public re
 - Tool-capable V2 execution will use a new versioned execution/event contract rather than stretching V1 `ProviderResponse` semantics.
 - Real-task policy declarations become qualification-grade only when the execution environment actually enforces the declared limits.
 - Observation evidence is not itself a qualification/approval decision.
+- Engineering tests for Benchmark Lab itself may be added during construction; scored model benchmark content remains outside the current bounded step.
 
 ## Current implementation position
 
 BL-1 — freeze and govern V1 baseline: **COMPLETE**.
 
-BL-2 — define V2 identity and evidence contracts: **IMPLEMENTED; LOCAL FULL-SUITE REGRESSION PENDING**.
+BL-2 — define V2 identity and evidence contracts: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
 BL-3 — implement host qualification: **IMPLEMENTED; NEW-TOWER CAPTURE/REPEATABILITY GATE PENDING**.
 
-BL-4 — materialize and seal effective runtime configuration: **NEXT CONSTRUCTION TASK**.
+BL-4 — materialize and seal effective runtime configuration: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
 No V2 model run or tool-harness execution has occurred.
 
-## Immediate next construction gate
+## Stop boundary for this checkpoint
 
-BL-4 may be designed and tested on the laptop because it resolves configuration without contacting a model. It must:
+This checkpoint stops after BL-4 acceptance.
 
-- resolve behavior-bearing runtime/model settings before execution;
-- make provider defaults explicit where they materially affect behavior;
-- bind the exact RuntimeProfile and ModelIdentity references;
-- bind the intended tool surface and execution limits;
-- reject ambiguous/incomplete scored configurations rather than silently inheriting unknown provider behavior;
-- preserve V1 configuration semantics only for historical V1 reproduction.
+Do not create the scored shared capability cases, download/run candidate models, or begin ACL cross-harness testing as part of this checkpoint.
 
-No scored V2 execution may begin until the host/runtime/model/config evidence required by the selected benchmark level is actually qualified.
+The next construction session must start from this document and `docs/BENCHMARK_LAB_V2_PLAN.md`, verify branch/HEAD, and select the next bounded **lab-construction** task without silently starting the actual model benchmark campaign.
