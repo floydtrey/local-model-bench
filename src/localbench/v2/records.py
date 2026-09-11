@@ -88,12 +88,7 @@ def _refs(
 
 
 def _stable_host_facts(facts: Mapping[str, Any]) -> dict[str, Any]:
-    """Project host observations onto behavior-relevant, non-volatile facts.
-
-    Available RAM, free disk, and instantaneous thermal state remain in the exact
-    observation but do not make an otherwise unchanged host configuration acquire a
-    different stable fingerprint.
-    """
+    """Project host observations onto behavior-relevant, non-volatile facts."""
 
     memory = dict(facts["memory"])
     memory.pop("available_bytes", None)
@@ -294,16 +289,24 @@ def trial_identity(
     ordinal: int,
     repeat_group: str | None,
     benchmark: EvidenceRef | Mapping[str, Any],
+    case_id: str,
+    effective_config: EvidenceRef | Mapping[str, Any],
 ) -> SealedEvidence:
     if layer not in RUN_LAYERS:
         raise ValueError(f"layer must be one of {sorted(RUN_LAYERS)}")
     if not isinstance(ordinal, int) or isinstance(ordinal, bool) or ordinal < 1:
         raise ValueError("ordinal must be an integer >= 1")
+    if not isinstance(case_id, str) or not case_id:
+        raise ValueError("case_id must be a non-empty string")
     payload = {
         "layer": layer,
         "ordinal": ordinal,
         "repeat_group": _nullable_string(repeat_group, "repeat_group"),
         "benchmark": _ref(benchmark, "benchmark_input", "benchmark"),
+        "case_id": case_id,
+        "effective_config": _ref(
+            effective_config, "effective_runtime_config", "effective_config"
+        ),
     }
     return seal_evidence("trial_identity", logical_id, payload)
 
@@ -314,7 +317,7 @@ def run_manifest(
     host: EvidenceRef | Mapping[str, Any],
     runtime: EvidenceRef | Mapping[str, Any],
     model: EvidenceRef | Mapping[str, Any],
-    effective_config: EvidenceRef | Mapping[str, Any],
+    effective_configs: Iterable[EvidenceRef | Mapping[str, Any]],
     benchmarks: Iterable[EvidenceRef | Mapping[str, Any]],
     evaluators: Iterable[EvidenceRef | Mapping[str, Any]],
     trials: Iterable[EvidenceRef | Mapping[str, Any]],
@@ -322,16 +325,16 @@ def run_manifest(
 ) -> SealedEvidence:
     """Seal the immutable pre-run definition.
 
-    Mutable run status/checkpoint fields are deliberately excluded. A running or
-    completed state may change over time; the exact experiment definition must not.
+    Mutable run status/checkpoint fields are deliberately excluded. Each planned
+    trial binds one case and one effective configuration before execution.
     """
 
     payload = {
         "host": _ref(host, "host_profile", "host"),
         "runtime": _ref(runtime, "runtime_profile", "runtime"),
         "model": _ref(model, "model_identity", "model"),
-        "effective_config": _ref(
-            effective_config, "effective_runtime_config", "effective_config"
+        "effective_configs": _refs(
+            effective_configs, "effective_runtime_config", "effective_configs"
         ),
         "benchmarks": _refs(benchmarks, "benchmark_input", "benchmarks"),
         "evaluators": _refs(evaluators, "evaluator_identity", "evaluators"),
