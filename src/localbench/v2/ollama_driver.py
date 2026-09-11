@@ -89,9 +89,16 @@ def ollama_adapter_resolution(
     if not isinstance(model_name, str) or not model_name:
         raise ValueError("model identity name must be a non-empty string")
     runtime_transport = _mapping(runtime.payload.get("transport"), "runtime transport")
-    base_url = runtime_transport.get("endpoint")
+    base_uri = runtime_transport.get("base_uri")
+    endpoint = runtime_transport.get("endpoint")
+    if base_uri is not None and endpoint is not None:
+        if not isinstance(base_uri, str) or not isinstance(endpoint, str):
+            raise ValueError("Ollama runtime transport URI fields must be strings")
+        if base_uri.rstrip("/") != endpoint.rstrip("/"):
+            raise ValueError("Ollama runtime transport base_uri and endpoint disagree")
+    base_url = base_uri if base_uri is not None else endpoint
     if not isinstance(base_url, str) or not base_url:
-        raise ValueError("Ollama runtime transport must declare an endpoint")
+        raise ValueError("Ollama runtime transport must declare base_uri or endpoint")
     request = _mapping(spec, "spec")
     generation = _mapping(request.get("generation"), "spec.generation")
     execution = _mapping(request.get("execution"), "spec.execution")

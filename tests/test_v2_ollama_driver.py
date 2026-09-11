@@ -101,7 +101,7 @@ def _foundation(endpoint="http://127.0.0.1:11434"):
         runtime_kind="ollama",
         version="0.34.0",
         build=None,
-        transport={"kind": "loopback_http", "endpoint": endpoint},
+        transport={"kind": "loopback_http", "base_uri": endpoint},
         executable=None,
         installation_digest=None,
         capabilities={"chat": True, "tools": True},
@@ -186,6 +186,52 @@ class OllamaAdapterTests(unittest.TestCase):
             ollama_adapter_resolution(
                 spec,
                 runtime=runtime,
+                model=model,
+                reasoning_transport="boolean",
+            )
+
+    def test_legacy_endpoint_alias_is_accepted_but_conflict_fails_closed(self):
+        runtime, model = _foundation()
+        legacy = runtime_profile(
+            "ollama-legacy-transport-test",
+            runtime_kind="ollama",
+            version="test",
+            build=None,
+            transport={"kind": "loopback_http", "endpoint": "http://127.0.0.1:11434"},
+            executable=None,
+            installation_digest=None,
+            capabilities={"chat": True},
+        )
+        spec = _spec(reasoning={"mode": "enabled", "effort": None})
+        resolution = ollama_adapter_resolution(
+            spec,
+            runtime=legacy,
+            model=model,
+            reasoning_transport="boolean",
+        )
+        self.assertEqual(
+            resolution["effective_request"]["base_url"],
+            "http://127.0.0.1:11434",
+        )
+
+        conflicting = runtime_profile(
+            "ollama-conflicting-transport-test",
+            runtime_kind="ollama",
+            version="test",
+            build=None,
+            transport={
+                "kind": "loopback_http",
+                "base_uri": "http://127.0.0.1:11434",
+                "endpoint": "http://127.0.0.1:9999",
+            },
+            executable=None,
+            installation_digest=None,
+            capabilities={"chat": True},
+        )
+        with self.assertRaisesRegex(ValueError, "disagree"):
+            ollama_adapter_resolution(
+                spec,
+                runtime=conflicting,
                 model=model,
                 reasoning_transport="boolean",
             )
