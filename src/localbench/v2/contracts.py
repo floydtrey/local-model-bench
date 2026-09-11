@@ -24,6 +24,7 @@ RECORD_TYPES = frozenset(
         "run_manifest",
         "case_result",
         "evaluation_result",
+        "aggregate_report",
         "intrinsic_execution_trace",
         "tool_execution_trace",
         "containment_execution",
