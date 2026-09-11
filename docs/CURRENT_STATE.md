@@ -10,233 +10,114 @@
 
 ## Current purpose
 
-Benchmark Lab V2 is being constructed as an independent qualification system that can distinguish:
+Benchmark Lab V2 is an independent qualification system intended to distinguish:
 
 1. intrinsic model/runtime capability;
 2. capability retained through a lab-owned bounded tool harness;
-3. fitness through the actual ACL harness once ACL permits supervised execution; and
-4. role-specific fitness for work such as planning, coding, verification, observation, and content/video generation.
+3. fitness through the actual ACL harness after ACL separately permits supervised execution; and
+4. role-specific fitness for planning, coding, verification, observation, content/video generation, and future specialized work.
 
-Benchmark Lab does not grant ACL authority and must not depend on ACL being operational to run its own model or harness tests.
+Benchmark Lab does not grant ACL authority.
+
+## Authoritative construction documents
+
+- `docs/BENCHMARK_LAB_V2_PLAN.md` — original V2 architecture and evidence goals.
+- `docs/BL5_FOUNDATION_PLAN.md` — BL-5A/BL-5B measuring-instrument split.
+- `docs/BOUNDED_TOOL_HARNESS.md` — BL-6 neutral tool boundary.
+- `docs/CONTAINMENT_ENFORCEMENT.md` — BL-7 containment and fail-closed enforcement semantics.
+- `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md` — accepted refinement that completes the measuring instrument before real benchmark design/model runs.
 
 ## Accepted construction checkpoints
 
-### Construction plan
-
-`docs/BENCHMARK_LAB_V2_PLAN.md` defines the approved architecture, evidence requirements, capability levels, cross-layer comparison model, role qualification policy, and ordered construction sequence.
-
-`docs/BL5_FOUNDATION_PLAN.md` refines the original BL-5 construction task into BL-5A Benchmark Pack/Case Definition contracts followed by BL-5B evaluator infrastructure. Real scored benchmark content remains after those measuring-instrument gates.
-
 ### BL-1 — V1 historical baseline
 
-Local Model Bench V1 is frozen at:
+V1 is frozen at:
 
 `4a023c8230365c3098a6dff71fa9623cac059cdd`
 
-`docs/V1_BASELINE.md` governs preservation of historical V1 configs, suites, results, experiments, validation packets, and runtime assumptions.
+Historical configs, suites, results, validation packets, and runtime assumptions remain historical evidence and are not silently reinterpreted as V2 qualification artifacts.
 
-Historical V1 artifacts are not current V2 contracts and must not be silently rewritten into V2 semantics.
+### BL-2 — V2 identity/evidence contracts
 
-### BL-2 — V2 identity and evidence contracts
+Complete. V2 uses content-addressed immutable evidence with separate logical IDs and exact SHA-256 identities. Host, runtime, model, effective config, benchmark input, evaluator, trial, manifest, case result, evaluation result, BL-6 tool traces, and BL-7 containment executions are distinct record types.
 
-The V2 evidence foundation is defined in:
+### BL-3 — host qualification
 
-- `src/localbench/v2/contracts.py`;
-- `src/localbench/v2/records.py`;
-- `schemas/v2/evidence-record.schema.json`;
-- `schemas/v2/qualification-record.schema.json`;
-- `docs/V2_EVIDENCE_CONTRACTS.md`.
+Implementation complete. Intended-host acceptance remains pending until the new tower is configured and two captures confirm the same stable host-facts fingerprint.
 
-Accepted design properties:
+### BL-4 — effective runtime configuration
 
-- logical/operator IDs are separate from cryptographic evidence identity;
-- canonical JSON preserves explicit nulls and rejects NaN/Infinity;
-- sealed evidence payloads are recursively immutable in memory;
-- references fail closed on record-type mismatch;
-- HostProfile, RuntimeProfile, ModelIdentity, EffectiveRuntimeConfig, BenchmarkInput, EvaluatorIdentity, TrialIdentity, RunManifest, CaseResult, EvaluationResult, and BL-6 ToolExecutionTrace are separate versioned records;
-- RunManifest is an immutable pre-run experiment definition rather than mutable progress state;
-- each TrialIdentity binds an exact benchmark case and exact EffectiveRuntimeConfig before execution;
-- hard failures remain separate from weighted evaluation score;
-- host observations include an exact observation digest and a stable `facts_sha256` projection.
-
-### BL-3 — host qualification implementation
-
-The host collector is implemented at `src/localbench/v2/host.py` with deterministic fake-probe coverage in `tests/test_v2_host.py`.
-
-It does not contact a model or model provider. It captures OS, CPU, RAM, GPU/VRAM/driver, storage, Python, available NVIDIA/CUDA runtime evidence, and Windows power-scheme information while leaving unsupported measurements unknown/null.
-
-Raw host qualification defaults to ignored `local-state/` storage. The public repository does not require host profiles to be committed.
-
-`docs/HOST_QUALIFICATION.md` defines the capture and repeatability gate.
-
-**BL-3 intended-host acceptance remains pending** until the new tower is set up, the collector is run twice there, and the stable host facts fingerprint is confirmed.
-
-### BL-4 — effective runtime configuration sealing
-
-The provider-neutral effective configuration resolver is implemented in:
-
-- `src/localbench/v2/configuration.py`;
-- `schemas/v2/effective-config-spec.schema.json`;
-- `docs/EFFECTIVE_CONFIGURATION.md`;
-- `tests/test_v2_configuration.py`.
-
-Accepted design properties:
-
-- behavior-bearing configuration is materialized before scored execution;
-- context target, output limit, response format, sampling controls, timeout, retries, concurrency, model residency, network policy, and tool surface are explicit or resolved to recorded lab defaults;
-- defaults applied by the lab are recorded in the sealed evidence rather than remaining hidden;
-- RuntimeProfile and ModelIdentity are bound by typed evidence references;
-- provider/backend adapters must supply the effective provider request that was resolved from the canonical configuration;
-- strict comparison rejects degraded adapter mappings, unresolved tool schemas, and requested context beyond a known declared model limit;
-- exploratory configuration may retain explicit deviations without being misrepresented as strict apples-to-apples evidence;
-- case-specific configuration cannot be merged silently at request time because TrialIdentity binds the exact EffectiveRuntimeConfig before execution.
-
-No provider call is made by the configuration resolver.
+Complete. Behavior-bearing settings are resolved and sealed before execution; strict comparisons fail closed on unresolved/degraded mappings or incompatible context/tool requirements.
 
 ### BL-5A — Benchmark Pack / Case Definition contract
 
-The portable benchmark-definition contract is implemented in:
+Complete. Benchmark Packs are versioned/content-addressed, provider-neutral, support private external fixtures by digest, bind required tool/evaluator contracts, and declare repetition policy before execution.
 
-- `src/localbench/v2/benchmark_pack.py`;
-- `schemas/v2/benchmark-pack.schema.json`;
-- `docs/BENCHMARK_PACK_CONTRACT.md`;
-- `tests/test_v2_benchmark_pack.py`.
+### BL-5B — evaluator framework
 
-Accepted design properties:
-
-- Benchmark Packs have explicit schema, pack ID, pack version, and one capability level;
-- exact source bytes receive `source_sha256` for reproduction identity;
-- normalized behavior-bearing content receives `semantic_sha256` so reporting labels and file locators do not masquerade as behavioral identity;
-- external context fixtures are content-addressed by SHA-256 while locators remain operational metadata;
-- L0 forbids external context and tools; L1 may use controlled context but remains tool-free; L2-L4 may declare provider-neutral tool-surface requirements;
-- case requirements reference provider-neutral configuration profiles, response contracts, minimum context requirements, and tool surfaces rather than provider-specific request options;
-- evaluator contracts and hard-failure rules are references only; evaluator implementation remains BL-5B work;
-- screening and qualification repetition counts are declarative case semantics;
-- unknown contract fields fail closed;
-- loaded packs can become existing V2 `benchmark_input` evidence without automatically persisting a private local source path;
-- synthetic contract fixtures are engineering tests only and are not scored benchmark content.
-
-BL-5A does not implement evaluator logic, execute a model, or create the real shared capability battery.
-
-### BL-5B — versioned evaluator framework
-
-The deterministic evaluator framework is implemented in:
-
-- `src/localbench/v2/evaluators.py`;
-- `schemas/v2/evaluator-definition.schema.json`;
-- `docs/EVALUATOR_FRAMEWORK.md`;
-- `tests/test_v2_evaluators.py`.
-
-Accepted design properties:
-
-- exact evaluator resolution is by `(evaluator_id, contract_version)`;
-- evaluator definitions declare implementation SHA-256, input/result contracts, consumed evidence, human-review policy, and weighted/unscored mode;
-- the complete evaluator definition receives `definition_sha256` and the existing BL-2 `evaluator_identity` logical ID is content-addressed as `eval-<definition_sha256>`;
-- every evaluator consumes exactly one required sealed `case_result` plus only explicitly declared supplemental evidence types;
-- required/optional and single/multiple evidence consumption is enforced by the registry;
-- `CaseResult.case_id` must match the normalized benchmark case definition;
-- the benchmark case must bind the exact evaluator ID/version being executed;
-- allowed hard-failure rules are derived directly from the case definition rather than supplied by an expandable runner argument;
-- evaluator implementations cannot emit undeclared hard-failure rule IDs;
-- any triggered hard failure requires a `fail` verdict and remains structurally separate from weighted score;
-- deterministic checks use normalized IDs, pass/fail state, weight, earned points, detail, and optional evidence references;
-- weighted totals are calculated by the framework; unscored evaluators produce null score fields and cannot hide nonzero weights;
-- evaluators requiring human review cannot silently emit a final automated pass;
-- duplicate registration, missing versions, mismatched case identity, undeclared evidence, missing required evidence, and incoherent evaluator output fail closed;
-- the V1 planning/task-set evaluator remains historical and is not treated as a V2 evaluator implementation.
-
-BL-5B uses synthetic sealed evidence and deterministic Python fixtures only. It does not execute a model or create real scored benchmark content.
+Complete. Evaluators are versioned/content-addressed, declare consumed evidence, return normalized deterministic checks, keep hard failures separate from weighted score, and fail closed on undeclared or incoherent output.
 
 ### BL-6 — neutral bounded-tool harness V1
 
-The standardized neutral file-tool harness is implemented in:
+Complete. `lab-bounded-files:v1` exposes only exact-scope `read_file` and `write_file`, enforces traversal/link/hardlink/stale-write/tool-call protections, and produces deterministic content-addressed tool execution traces. BL-6 does not claim OS sandbox containment.
 
-- `src/localbench/v2/tool_harness.py`;
-- `schemas/v2/tool-execution-trace.schema.json`;
-- `schemas/v2/evidence-record.schema.json` and `schemas/v2/qualification-record.schema.json` for the new trace evidence type;
-- `docs/BOUNDED_TOOL_HARNESS.md`;
-- `tests/test_v2_tool_harness.py`.
+### BL-7 — containment and execution-limit enforcement
 
-Accepted design properties:
+Construction contract complete in:
 
-- harness version is `benchmark-lab-bounded-tool-harness:v1`;
-- trace payload version is `benchmark-lab-tool-trace:v1`;
-- tool surface is `lab-bounded-files:v1` with exactly `read_file` and `write_file`;
-- the complete provider-neutral tool schema receives a stable SHA-256 that must match the sealed EffectiveRuntimeConfig before execution;
-- case-required tool surface and canonical tool ordering must match the harness surface;
-- read/write authority is expressed only as exact forward-slash relative file allowlists;
-- absolute paths, traversal, dot segments, backslash syntax, colon/alternate-stream syntax, `.git`, control characters, symlink/junction redirection, and writes through hard-linked targets fail closed;
-- reads are UTF-8 only and return exact content, SHA-256, and byte count;
-- writes are atomic and use SHA-256 stale-write/create preconditions;
-- unknown tools and unauthorized paths are denied without action and remain explicit trace evidence;
-- authorization denial is kept separate from ordinary authorized-tool execution failure;
-- max tool calls from the sealed EffectiveRuntimeConfig are enforced before an extra tool executes;
-- normalized model turns are provider-neutral; construction uses deterministic fake drivers only;
-- every model request/response, tool request, authorization decision, tool result, limit event, protocol error, and terminal output is normalized into an ordered event stream with per-event SHA-256;
-- initial/final authorized-workspace snapshots have deterministic digests;
-- the complete event stream is sealed as V2 `tool_execution_trace` evidence;
-- disposable absolute workspace roots are omitted from trace evidence, allowing equivalent runs in different temporary directories to produce the same trace identity;
-- BL-6 deliberately produces execution evidence, not a benchmark score; BL-5B evaluators remain responsible for scoring and hard-failure judgments.
+- `src/localbench/v2/containment.py`;
+- `src/localbench/v2/validation_adapter.py`;
+- `schemas/v2/containment-execution.schema.json`;
+- `tests/test_v2_containment.py`;
+- `docs/CONTAINMENT_ENFORCEMENT.md`.
 
-The synthetic BL-6 stop-gate fixture proves a deterministic fake model can read one authorized file, write one authorized file, and terminate through the neutral tool loop with replayable evidence. The suite also covers traversal denial, unknown-tool denial, stale writes, tool-call exhaustion, schema mismatch, and malformed normalized driver output.
+Accepted properties:
 
-**BL-6 does not claim full sandbox containment.** Wall-clock timeout, process custody/cleanup, network enforcement, broader resource limits, attempt limits, and assessor-process isolation remain BL-7 work. A declared network policy is not qualification-grade proof until BL-7 supplies enforcement.
+- containment policy has a deterministic SHA-256 and includes wall time, max attempts, network policy, process-custody strength, workspace/assessor isolation, exact write-scope overlay, and optional output/memory limits;
+- backends separately advertise the containment capabilities they can prove;
+- preflight blocks execution when any required capability is absent or weaker than the policy;
+- there is no warning-only or silent downgrade from strict qualification semantics;
+- max attempts are enforced before a backend receives another execution;
+- containment executions are first-class V2 evidence and omit the disposable absolute workspace path from command identity;
+- assessor staging fails closed if assessment material was included in the candidate workspace or the candidate has not reached a terminal state;
+- the historical `real-tasks-v1` packet is adapted by exact source SHA-256 rather than rewritten;
+- because the old packet lacks an exact machine-readable write allowlist, its V2 projection remains unresolved until an explicit V2 write-scope overlay is supplied;
+- the built-in native subprocess backend intentionally advertises only wall timeout, best-effort process-tree cleanup, and task-allowed network behavior;
+- native execution does **not** claim disabled-network isolation, strict process custody, filesystem/write confinement, assessor isolation, output limiting, or memory limiting;
+- therefore historical tasks requiring `network=disabled` correctly fail containment preflight on the native backend rather than being mislabeled as qualification-grade.
 
-Context-asset materialization is also not finalized by BL-6. L2 context-bearing cases are not qualification-ready merely because the file-tool loop exists; future orchestration must materialize BL-5A content-addressed assets without exposing operational source locators as behavioral input.
+BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the current laptop/new tower already has a strict network/filesystem sandbox backend. Before real-task qualification, the intended host must provide and qualify a backend whose measured capabilities satisfy the selected containment policy.
 
-No real model/provider call occurred during BL-6 construction.
+No real model/provider call occurred during BL-7 construction.
 
 ## Deterministic regression gate
 
-`.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
+`.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest`.
 
-The first cross-platform run exposed an existing V1 portability defect: the Markdown suite heading parser did not accept CRLF line endings produced by Windows checkout. The parser was changed narrowly to accept the optional carriage return and `tests/test_markdown_crlf.py` now preserves that behavior as a regression case.
+At post-BL-7 construction-sequence commit:
 
-At BL-6 code/schema/documentation commit:
+`1247f1495b218ee338b37514496e06eadd10542f`
 
-`526ed40af9133059b963cd8db71c5ec5853c2dca`
+GitHub Actions run `34577763460` passed the complete deterministic suite on both Windows and Ubuntu, including BL-7 containment, legacy-packet adaptation, BL-6 harness, evaluator, configuration, host, and historical V1 regression tests.
 
-GitHub Actions run `34575989595` passed the complete deterministic suite on both Windows and Ubuntu, including the BL-6 synthetic bounded-tool harness tests.
-
-This regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
-
-## Construction rules
-
-- No local-model/provider calls are required to design or implement V2 contracts.
-- No Ollama chat/completion requests are part of construction-only tasks.
-- No ACL execution or authority state is changed by Benchmark Lab work.
-- New semantics use versioned V2 artifacts rather than changing V1 evidence in place.
-- Unknown hardware/provider facts remain unknown until measured on the intended host.
-- Qualification-grade results must bind exact host, runtime, model, effective settings, benchmark inputs, evaluator, and trial identity.
-- Tool-capable V2 execution uses the BL-6 versioned model-turn/tool-event/trace contract rather than stretching V1 `ProviderResponse` semantics.
-- Real-task policy declarations become qualification-grade only when the execution environment actually enforces the declared limits.
-- Observation/execution evidence is not itself a qualification/approval decision.
-- Engineering tests for Benchmark Lab itself may be added during construction; scored model benchmark content remains deferred until the measuring instrument is complete.
+The regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
 ## Current implementation position
 
-BL-1 — freeze and govern V1 baseline: **COMPLETE**.
+- BL-1: **COMPLETE**
+- BL-2: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-3: **IMPLEMENTED; NEW-TOWER CAPTURE/REPEATABILITY PENDING**
+- BL-4: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-5A: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-5B: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-6: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-7: **CONSTRUCTION COMPLETE; STRICT INTENDED-HOST CONTAINMENT BACKEND QUALIFICATION PENDING**
+- BL-8A: **NEXT — V2 RUNNER/ORCHESTRATOR**
 
-BL-2 — define V2 identity and evidence contracts: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
-
-BL-3 — implement host qualification: **IMPLEMENTED; NEW-TOWER CAPTURE/REPEATABILITY GATE PENDING**.
-
-BL-4 — materialize and seal effective runtime configuration: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
-
-BL-5A — Benchmark Pack / Case Definition contract: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
-
-BL-5B — versioned evaluator framework: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
-
-BL-6 — neutral bounded-tool harness V1: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
-
-BL-7 — sandbox/containment and execution-limit enforcement: **NEXT CONSTRUCTION TASK**.
-
-No V2 real-model run, real scored benchmark case, or ACL cross-harness execution has occurred.
+No V2 real-model run, real scored benchmark case, broad candidate campaign, or ACL cross-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-6 acceptance.
+This checkpoint stops after BL-7 construction acceptance.
 
-Do not create the real shared capability battery, implement BL-7 in this checkpoint, download/run candidate models, or begin ACL cross-harness testing.
-
-The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, and `docs/BOUNDED_TOOL_HARNESS.md`, verify branch/HEAD, and perform **BL-7 containment/enforcement only** unless the plan is explicitly revised again.
+Do not create the real benchmark battery or run candidate models yet. Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded task is **BL-8A V2 runner/orchestrator using deterministic fake drivers only**, followed by BL-8B aggregation/reporting and a synthetic end-to-end construction acceptance gate.
