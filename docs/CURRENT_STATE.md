@@ -26,6 +26,7 @@ Benchmark Lab does not grant ACL authority.
 - `docs/BOUNDED_TOOL_HARNESS.md` — BL-6 neutral tool boundary.
 - `docs/CONTAINMENT_ENFORCEMENT.md` — BL-7 containment and fail-closed enforcement semantics.
 - `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md` — accepted refinement that completes the measuring instrument before real benchmark design/model runs.
+- `docs/V2_ORCHESTRATOR.md` — BL-8A pre-run closure, execution-binding, dispatch, and evidence-persistence contract.
 
 ## Accepted construction checkpoints
 
@@ -35,7 +36,7 @@ V1 is frozen at `4a023c8230365c3098a6dff71fa9623cac059cdd`. Historical configs, 
 
 ### BL-2 — V2 identity/evidence contracts
 
-Complete. V2 uses content-addressed immutable evidence with separate logical IDs and exact SHA-256 identities. Host, runtime, model, effective config, benchmark input, evaluator, trial, manifest, case result, evaluation result, BL-6 tool traces, and BL-7 containment executions are distinct record types.
+Complete. V2 uses content-addressed immutable evidence with separate logical IDs and exact SHA-256 identities. Host, runtime, model, effective config, benchmark input, evaluator, trial, manifest, case result, evaluation result, tool/intrinsic traces, execution bindings, and containment executions are distinct record types.
 
 ### BL-3 — host qualification
 
@@ -89,13 +90,43 @@ Accepted properties:
 
 BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the current laptop or new tower already has the network/filesystem/assessor isolation backend required by strict real-task policies. Those policies remain blocked until the intended host has a backend whose measured capabilities satisfy them.
 
-No real model/provider call occurred during BL-7 construction.
+### BL-8A — V2 runner / orchestrator
+
+Construction complete in:
+
+- `src/localbench/v2/orchestrator.py`;
+- BL-8A additions to `src/localbench/v2/contracts.py`, `records.py`, and `__init__.py`;
+- `schemas/v2/execution-binding.schema.json`;
+- `schemas/v2/intrinsic-execution-trace.schema.json`;
+- BL-8A additions to V2 evidence/qualification schemas;
+- `tests/test_v2_orchestrator.py`;
+- `docs/V2_ORCHESTRATOR.md`.
+
+Accepted properties:
+
+- one engineering trial per case is planned for BL-8A; repetition/aggregation remains BL-8B work;
+- Benchmark Pack, exact EffectiveRuntimeConfig, evaluator identities, TrialIdentity, ExecutionBinding, and RunManifest are all sealed and persisted before any driver call;
+- ExecutionBinding records the driver implementation identity, execution mode, exact L2 workspace scope, digest-verified context delivery, concrete tool mapping, and containment preflight identity when applicable;
+- context asset bytes are verified against declared SHA-256 before execution and private source locators are not exposed to the candidate;
+- L0/L1 use a normalized tool-free intrinsic execution trace;
+- L2 preserves portable Benchmark Pack capability `bounded-files-v1` while explicitly sealing its mapping to concrete BL-6 surface `lab-bounded-files:v1` and exact tool-schema SHA-256;
+- the original Benchmark Pack is not rewritten to contain the concrete harness ID; the concrete case projection exists only at the BL-6 call boundary;
+- L2 exact readable/writable paths are sealed before bounded-tool execution and absolute disposable workspace location is not durable behavioral identity;
+- CaseResult references immutable execution evidence and the pre-run ExecutionBinding;
+- evaluators are resolved through the independent EvaluatorRegistry and receive only declared supplemental evidence types;
+- `EvidenceStore` is content-addressed and append-only: identical re-persistence is idempotent while conflicting bytes are rejected;
+- failed subprocess containment preflight blocks before manifest/driver execution;
+- successful subprocess preflight may be sealed as a plan, but the runner still refuses a direct in-process driver fallback because BL-8A does not yet have a model-driver adapter that routes actual model turns through BL-7.
+
+No real model/provider call occurred during BL-8A construction.
 
 ## Deterministic regression gate
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest`.
 
-At capability-boundary test commit `89f7b136d539619a26cd3398b0a5023c8c432142`, GitHub Actions run `34578249312` passed the complete deterministic suite on both Windows and Ubuntu. This includes the explicit regression proving the staged process backend can reach an external temporary host path and therefore must not advertise workspace isolation.
+BL-7 capability-boundary checkpoint `89f7b136d539619a26cd3398b0a5023c8c432142` passed in GitHub Actions run `34578249312` on both platforms.
+
+BL-8A hardened implementation/test checkpoint `f6798b833ccc3cd0bcfeaa3025583737d6de2848` passed in GitHub Actions run `34580157055` on both Windows and Ubuntu. This includes pre-run manifest closure, context-asset privacy/digest checks, portable-to-concrete L2 tool mapping, bounded read/write execution, append-only evidence storage, containment-preflight refusal, and the regression proving successful subprocess preflight cannot fall back to a direct in-process driver call.
 
 The regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
@@ -109,12 +140,13 @@ The regression gate does not start Ollama, load a model, execute ACL, or make sc
 - BL-5B: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-6: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-7: **CONSTRUCTION COMPLETE; STRICT HOST ISOLATION BACKEND QUALIFICATION/IMPLEMENTATION STILL PENDING FOR POLICIES THAT REQUIRE IT**
-- BL-8A: **NEXT — V2 RUNNER/ORCHESTRATOR**
+- BL-8A: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
+- BL-8B: **NEXT — REPETITION, AGGREGATION, AND REPORTING**
 
 No V2 real-model run, real scored benchmark case, broad candidate campaign, or ACL cross-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-7 construction acceptance.
+This checkpoint stops after BL-8A construction acceptance.
 
-Do not create the real benchmark battery or run candidate models yet. Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded task is **BL-8A V2 runner/orchestrator using deterministic fake drivers only**, followed by BL-8B aggregation/reporting and a synthetic end-to-end construction acceptance gate.
+Do not create the real benchmark battery or run candidate models yet. Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded task is **BL-8B repetition, aggregation, and reporting using synthetic deterministic evidence only**, followed by the synthetic end-to-end construction acceptance gate.
