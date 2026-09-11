@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
-from .contracts import EvidenceRef, SealedEvidence, seal_evidence
+from .contracts import EvidenceRef, SealedEvidence, seal_evidence, sha256_json
 
 
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -102,8 +102,7 @@ def host_profile(
 ) -> SealedEvidence:
     if not isinstance(captured_at, str) or not captured_at:
         raise ValueError("captured_at must be a non-empty string")
-    payload = {
-        "captured_at": captured_at,
+    facts = {
         "os": _object(os_info, "os_info"),
         "cpu": _object(cpu, "cpu"),
         "memory": _object(memory, "memory"),
@@ -114,6 +113,11 @@ def host_profile(
         "power_thermal": None
         if power_thermal is None
         else _object(power_thermal, "power_thermal"),
+    }
+    payload = {
+        "captured_at": captured_at,
+        "facts_sha256": sha256_json(facts),
+        **facts,
     }
     return seal_evidence("host_profile", logical_id, payload)
 
