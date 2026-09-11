@@ -9,7 +9,7 @@ from .models import BenchmarkCase, Suite
 from .util import sha256_bytes, validate_id
 
 
-CASE_HEADING = re.compile(r"^##[ \t]+Case:[ \t]*(?P<id>[^\r\n]+?)[ \t]*$", re.MULTILINE)
+CASE_HEADING = re.compile(r"^##[ \t]+Case:[ \t]*(?P<id>[^\r\n]+?)[ \t]*\r?$", re.MULTILINE)
 META_COMMENT = re.compile(
     r"\A[ \t\r\n]*<!--[ \t]*localbench[ \t\r\n]+(?P<json>.*?)[ \t\r\n]*-->[ \t\r\n]*",
     re.DOTALL,
