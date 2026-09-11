@@ -26,7 +26,6 @@ from localbench.v2 import (
     EvaluatorRegistry,
     ModelTurnResponse,
     NativeSubprocessBackend,
-    OrchestrationBlocked,
     ToolCall,
     WorkspaceBinding,
     aggregate_repeated_run,
@@ -43,16 +42,6 @@ DRIVER_DIGEST = "d" * 64
 EVALUATOR_DIGEST = "e" * 64
 HARNESS_COMMIT = "b" * 64
 WRONG_DIGEST = hashlib.sha256(b"different").hexdigest()
-
-
-CASE_IDS = (
-    "authorized-rw",
-    "unauthorized-path",
-    "stale-write",
-    "malformed-tool",
-    "tool-limit",
-    "hard-failure",
-)
 
 
 def foundation():
@@ -386,6 +375,7 @@ def fixed_clock(trials: int):
 
 
 def build_workspace_factory(base: Path):
+    base.mkdir(parents=True, exist_ok=True)
     roots = {}
 
     def factory(case_id: str, ordinal: int) -> WorkspaceBinding:
@@ -513,7 +503,12 @@ class V2ConstructionAcceptanceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             store = EvidenceStore(root / "evidence")
-            first, first_report, first_roots = run_synthetic_campaign(root / "first", store)
+
+            first_base = root / "first"
+            first_base.mkdir()
+            first_secret = first_base / "secret.txt"
+            first_secret.write_text("must remain private", encoding="utf-8")
+            first, first_report, first_roots = run_synthetic_campaign(first_base, store)
 
             self.assertEqual(first.planned_counts["authorized-rw"], 2)
             self.assertEqual(sum(first.planned_counts.values()), 7)
@@ -546,14 +541,16 @@ class V2ConstructionAcceptanceTests(unittest.TestCase):
                 "old\n",
             )
             self.assertFalse((first_roots[("malformed-tool", 1)] / "output.txt").exists())
-
-            external_secret = root / "secret.txt"
-            external_secret.write_text("must remain private", encoding="utf-8")
-            self.assertEqual(external_secret.read_text(encoding="utf-8"), "must remain private")
+            self.assertEqual(first_secret.read_text(encoding="utf-8"), "must remain private")
 
             first_identity = evidence_identity(first, first_report)
-            second, second_report, _ = run_synthetic_campaign(root / "second", store)
+            second_base = root / "second"
+            second_base.mkdir()
+            second_secret = second_base / "secret.txt"
+            second_secret.write_text("different private bytes", encoding="utf-8")
+            second, second_report, _ = run_synthetic_campaign(second_base, store)
             self.assertEqual(evidence_identity(second, second_report), first_identity)
+            self.assertEqual(second_secret.read_text(encoding="utf-8"), "different private bytes")
             self.assertTrue(store.contains(second_report))
 
             case_refs = {
