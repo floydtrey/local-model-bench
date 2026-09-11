@@ -334,7 +334,6 @@ class EvaluatorRegistry:
         case_definition: Mapping[str, Any],
         case_result_record: SealedEvidence,
         supplemental_evidence: Iterable[SealedEvidence] = (),
-        hard_failure_rules: Sequence[str] = (),
     ) -> SealedEvidence:
         validate_id(logical_id, "logical_id")
         key = (evaluator_id, contract_version)
@@ -359,18 +358,39 @@ class EvaluatorRegistry:
         ):
             raise ValueError("case_definition.evaluators must be an array")
         exact_binding = False
-        for binding in evaluator_bindings:
+        for index, binding in enumerate(evaluator_bindings):
             if not isinstance(binding, Mapping):
-                continue
+                raise ValueError(f"case_definition.evaluators[{index}] must be an object")
             if (
                 binding.get("evaluator_id") == evaluator_id
                 and binding.get("contract_version") == contract_version
             ):
                 exact_binding = True
-                break
         if not exact_binding:
             raise ValueError(
                 f"case does not bind evaluator {evaluator_id}@{contract_version}"
+            )
+
+        hard_failure_bindings = case_definition.get("hard_failure_rules")
+        if not isinstance(hard_failure_bindings, Sequence) or isinstance(
+            hard_failure_bindings, (str, bytes, bytearray)
+        ):
+            raise ValueError("case_definition.hard_failure_rules must be an array")
+        allowed_rules: list[str] = []
+        for index, binding in enumerate(hard_failure_bindings):
+            if not isinstance(binding, Mapping):
+                raise ValueError(
+                    f"case_definition.hard_failure_rules[{index}] must be an object"
+                )
+            if binding.get("evaluator_id") == evaluator_id:
+                rule_id = validate_id(
+                    binding.get("rule_id"),
+                    f"case_definition.hard_failure_rules[{index}].rule_id",
+                )
+                allowed_rules.append(rule_id)
+        if len(allowed_rules) != len(set(allowed_rules)):
+            raise ValueError(
+                f"case repeats hard-failure rules for evaluator {evaluator_id!r}"
             )
 
         declared = {item.record_type: item for item in definition.consumed_evidence}
@@ -394,15 +414,11 @@ class EvaluatorRegistry:
                     f"evaluator allows at most one {record_type} record, got {len(records)}"
                 )
 
-        allowed_rules = tuple(validate_id(item, "hard_failure_rule") for item in hard_failure_rules)
-        if len(allowed_rules) != len(set(allowed_rules)):
-            raise ValueError("hard_failure_rules must not contain duplicates")
-
         context = EvaluationContext(
             case_definition=case_definition,
             case_result=case_result_record,
             evidence_by_type={key: tuple(value) for key, value in grouped.items()},
-            hard_failure_rules=allowed_rules,
+            hard_failure_rules=tuple(allowed_rules),
         )
         draft = entry.implementation(context)
         if not isinstance(draft, EvaluationDraft):
