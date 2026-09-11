@@ -53,7 +53,7 @@ Accepted design properties:
 - canonical JSON preserves explicit nulls and rejects NaN/Infinity;
 - sealed evidence payloads are recursively immutable in memory;
 - references fail closed on record-type mismatch;
-- HostProfile, RuntimeProfile, ModelIdentity, EffectiveRuntimeConfig, BenchmarkInput, EvaluatorIdentity, TrialIdentity, RunManifest, CaseResult, and EvaluationResult are separate versioned records;
+- HostProfile, RuntimeProfile, ModelIdentity, EffectiveRuntimeConfig, BenchmarkInput, EvaluatorIdentity, TrialIdentity, RunManifest, CaseResult, EvaluationResult, and BL-6 ToolExecutionTrace are separate versioned records;
 - RunManifest is an immutable pre-run experiment definition rather than mutable progress state;
 - each TrialIdentity binds an exact benchmark case and exact EffectiveRuntimeConfig before execution;
 - hard failures remain separate from weighted evaluation score;
@@ -147,17 +147,56 @@ Accepted design properties:
 
 BL-5B uses synthetic sealed evidence and deterministic Python fixtures only. It does not execute a model or create real scored benchmark content.
 
+### BL-6 — neutral bounded-tool harness V1
+
+The standardized neutral file-tool harness is implemented in:
+
+- `src/localbench/v2/tool_harness.py`;
+- `schemas/v2/tool-execution-trace.schema.json`;
+- `schemas/v2/evidence-record.schema.json` and `schemas/v2/qualification-record.schema.json` for the new trace evidence type;
+- `docs/BOUNDED_TOOL_HARNESS.md`;
+- `tests/test_v2_tool_harness.py`.
+
+Accepted design properties:
+
+- harness version is `benchmark-lab-bounded-tool-harness:v1`;
+- trace payload version is `benchmark-lab-tool-trace:v1`;
+- tool surface is `lab-bounded-files:v1` with exactly `read_file` and `write_file`;
+- the complete provider-neutral tool schema receives a stable SHA-256 that must match the sealed EffectiveRuntimeConfig before execution;
+- case-required tool surface and canonical tool ordering must match the harness surface;
+- read/write authority is expressed only as exact forward-slash relative file allowlists;
+- absolute paths, traversal, dot segments, backslash syntax, colon/alternate-stream syntax, `.git`, control characters, symlink/junction redirection, and writes through hard-linked targets fail closed;
+- reads are UTF-8 only and return exact content, SHA-256, and byte count;
+- writes are atomic and use SHA-256 stale-write/create preconditions;
+- unknown tools and unauthorized paths are denied without action and remain explicit trace evidence;
+- authorization denial is kept separate from ordinary authorized-tool execution failure;
+- max tool calls from the sealed EffectiveRuntimeConfig are enforced before an extra tool executes;
+- normalized model turns are provider-neutral; construction uses deterministic fake drivers only;
+- every model request/response, tool request, authorization decision, tool result, limit event, protocol error, and terminal output is normalized into an ordered event stream with per-event SHA-256;
+- initial/final authorized-workspace snapshots have deterministic digests;
+- the complete event stream is sealed as V2 `tool_execution_trace` evidence;
+- disposable absolute workspace roots are omitted from trace evidence, allowing equivalent runs in different temporary directories to produce the same trace identity;
+- BL-6 deliberately produces execution evidence, not a benchmark score; BL-5B evaluators remain responsible for scoring and hard-failure judgments.
+
+The synthetic BL-6 stop-gate fixture proves a deterministic fake model can read one authorized file, write one authorized file, and terminate through the neutral tool loop with replayable evidence. The suite also covers traversal denial, unknown-tool denial, stale writes, tool-call exhaustion, schema mismatch, and malformed normalized driver output.
+
+**BL-6 does not claim full sandbox containment.** Wall-clock timeout, process custody/cleanup, network enforcement, broader resource limits, attempt limits, and assessor-process isolation remain BL-7 work. A declared network policy is not qualification-grade proof until BL-7 supplies enforcement.
+
+Context-asset materialization is also not finalized by BL-6. L2 context-bearing cases are not qualification-ready merely because the file-tool loop exists; future orchestration must materialize BL-5A content-addressed assets without exposing operational source locators as behavioral input.
+
+No real model/provider call occurred during BL-6 construction.
+
 ## Deterministic regression gate
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
 
 The first cross-platform run exposed an existing V1 portability defect: the Markdown suite heading parser did not accept CRLF line endings produced by Windows checkout. The parser was changed narrowly to accept the optional carriage return and `tests/test_markdown_crlf.py` now preserves that behavior as a regression case.
 
-At BL-5B code/documentation commit:
+At BL-6 code/schema/documentation commit:
 
-`228d1c157c1fa59f6f3238de9820b714b5b260fe`
+`526ed40af9133059b963cd8db71c5ec5853c2dca`
 
-GitHub Actions run `34574953984` passed the complete deterministic suite on both Windows and Ubuntu, including the BL-5B synthetic evaluator framework tests.
+GitHub Actions run `34575989595` passed the complete deterministic suite on both Windows and Ubuntu, including the BL-6 synthetic bounded-tool harness tests.
 
 This regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
@@ -169,10 +208,10 @@ This regression gate does not start Ollama, load a model, execute ACL, or make s
 - New semantics use versioned V2 artifacts rather than changing V1 evidence in place.
 - Unknown hardware/provider facts remain unknown until measured on the intended host.
 - Qualification-grade results must bind exact host, runtime, model, effective settings, benchmark inputs, evaluator, and trial identity.
-- Tool-capable V2 execution will use a new versioned execution/event contract rather than stretching V1 `ProviderResponse` semantics.
+- Tool-capable V2 execution uses the BL-6 versioned model-turn/tool-event/trace contract rather than stretching V1 `ProviderResponse` semantics.
 - Real-task policy declarations become qualification-grade only when the execution environment actually enforces the declared limits.
-- Observation evidence is not itself a qualification/approval decision.
-- Engineering tests for Benchmark Lab itself may be added during construction; scored model benchmark content remains outside the current bounded step.
+- Observation/execution evidence is not itself a qualification/approval decision.
+- Engineering tests for Benchmark Lab itself may be added during construction; scored model benchmark content remains deferred until the measuring instrument is complete.
 
 ## Current implementation position
 
@@ -188,14 +227,16 @@ BL-5A — Benchmark Pack / Case Definition contract: **COMPLETE; CROSS-PLATFORM 
 
 BL-5B — versioned evaluator framework: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
-BL-6 — neutral bounded-tool harness: **NEXT CONSTRUCTION TASK**.
+BL-6 — neutral bounded-tool harness V1: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
-No V2 model run, real scored benchmark case, or tool-harness execution has occurred.
+BL-7 — sandbox/containment and execution-limit enforcement: **NEXT CONSTRUCTION TASK**.
+
+No V2 real-model run, real scored benchmark case, or ACL cross-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-5B acceptance.
+This checkpoint stops after BL-6 acceptance.
 
-Do not create the real shared capability battery, implement BL-6 in this checkpoint, download/run candidate models, or begin ACL cross-harness testing.
+Do not create the real shared capability battery, implement BL-7 in this checkpoint, download/run candidate models, or begin ACL cross-harness testing.
 
-The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, `docs/BL5_FOUNDATION_PLAN.md`, and `docs/EVALUATOR_FRAMEWORK.md`, verify branch/HEAD, and perform **BL-6 neutral bounded-tool harness only** unless the plan is explicitly revised again.
+The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, and `docs/BOUNDED_TOOL_HARNESS.md`, verify branch/HEAD, and perform **BL-7 containment/enforcement only** unless the plan is explicitly revised again.
