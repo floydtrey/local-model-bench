@@ -1,0 +1,37 @@
+name: Deterministic Tests
+
+on:
+  push:
+    branches:
+      - architecture/benchmark-lab-v2
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    name: Python 3.12 / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: python -m pip install --disable-pip-version-check -e .
+
+      - name: Run full deterministic test suite
+        run: python -m unittest discover -s tests -v
