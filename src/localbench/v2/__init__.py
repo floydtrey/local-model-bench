@@ -50,6 +50,22 @@ from .records import (
     runtime_profile,
     trial_identity,
 )
+from .tool_harness import (
+    BOUNDED_FILE_SURFACE_ID,
+    BOUNDED_FILE_TOOL_DEFINITIONS,
+    BOUNDED_FILE_TOOL_SCHEMA_SHA256,
+    TOOL_HARNESS_VERSION,
+    TOOL_TRACE_VERSION,
+    BoundedWorkspace,
+    HarnessProtocolError,
+    HarnessRunResult,
+    ModelTurnRequest,
+    ModelTurnResponse,
+    ToolCall,
+    WorkspaceSafetyError,
+    run_bounded_tool_harness,
+    validate_tool_execution_trace,
+)
 
 __all__ = [
     "ASSET_DELIVERY_MODES",
@@ -91,4 +107,18 @@ __all__ = [
     "run_manifest",
     "case_result",
     "evaluation_result",
+    "BOUNDED_FILE_SURFACE_ID",
+    "BOUNDED_FILE_TOOL_DEFINITIONS",
+    "BOUNDED_FILE_TOOL_SCHEMA_SHA256",
+    "TOOL_HARNESS_VERSION",
+    "TOOL_TRACE_VERSION",
+    "BoundedWorkspace",
+    "HarnessProtocolError",
+    "HarnessRunResult",
+    "ModelTurnRequest",
+    "ModelTurnResponse",
+    "ToolCall",
+    "WorkspaceSafetyError",
+    "run_bounded_tool_harness",
+    "validate_tool_execution_trace",
 ]
