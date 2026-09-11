@@ -1,0 +1,4 @@
+record_id=REL-B
+status=current
+authority=operations
+release_window_start=10:00
