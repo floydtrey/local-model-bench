@@ -6,7 +6,7 @@
 
 **Active construction branch:** `architecture/benchmark-lab-v2`
 
-**Model execution:** `DISABLED FOR V2 CONSTRUCTION`
+**Model execution:** `DISABLED PENDING HOST/RUNTIME QUALIFICATION AND EXPLICIT CAMPAIGN START`
 
 ## Current purpose
 
@@ -28,6 +28,7 @@ Benchmark Lab does not grant ACL authority.
 - `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md` — accepted refinement that completes the measuring instrument before real benchmark design/model runs.
 - `docs/V2_ORCHESTRATOR.md` — BL-8A pre-run closure, execution-binding, dispatch, and evidence-persistence contract.
 - `docs/REPETITION_AND_REPORTING.md` — BL-8B repeated-observation, aggregation, telemetry, and derived-report contract.
+- `docs/CONSTRUCTION_ACCEPTANCE.md` — accepted synthetic end-to-end V2 construction gate.
 
 ## Accepted construction checkpoints
 
@@ -89,7 +90,7 @@ Accepted properties:
 - Windows Job Objects support the backend's `strict` process-custody claim on Windows; POSIX process groups are advertised only as `best_effort` rather than an inescapable security boundary;
 - `StrictAssessorBackend` validates assessor staging order but advertises `assessor_isolation=false`, because staging order alone is not OS-level isolation.
 
-BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the current laptop or new tower already has the network/filesystem/assessor isolation backend required by strict real-task policies. Those policies remain blocked until the intended host has a backend whose measured capabilities satisfy them.
+BL-7 construction acceptance means **unenforced policy declarations cannot become qualification claims**. It does not mean the new tower already has the network/filesystem/assessor-isolation backend required by every strict real-task policy. Those policies remain blocked until the intended host has a backend whose measured capabilities satisfy them.
 
 ### BL-8A — V2 runner / orchestrator
 
@@ -107,11 +108,11 @@ Construction complete in:
 Accepted properties:
 
 - one engineering trial per case is planned for BL-8A; governed repetition is supplied by BL-8B rather than mutating this API;
-- Benchmark Pack, exact EffectiveRuntimeConfig, evaluator identities, TrialIdentity, ExecutionBinding, and RunManifest are all sealed and persisted before any driver call;
-- ExecutionBinding records the driver implementation identity, execution mode, exact L2 workspace scope, digest-verified context delivery, concrete tool mapping, and containment preflight identity when applicable;
+- Benchmark Pack, exact EffectiveRuntimeConfig, evaluator identities, TrialIdentity, ExecutionBinding, and RunManifest are sealed and persisted before any driver call;
+- ExecutionBinding records driver implementation identity, execution mode, exact L2 workspace scope, digest-verified context delivery, concrete tool mapping, and containment-preflight identity when applicable;
 - context asset bytes are verified against declared SHA-256 before execution and private source locators are not exposed to the candidate;
 - L0/L1 use a normalized tool-free intrinsic execution trace;
-- L2 preserves portable Benchmark Pack capability `bounded-files-v1` while explicitly sealing its mapping to concrete BL-6 surface `lab-bounded-files:v1` and exact tool-schema SHA-256;
+- L2 preserves portable Benchmark Pack capability `bounded-files-v1` while sealing its mapping to concrete BL-6 surface `lab-bounded-files:v1` and exact tool-schema SHA-256;
 - the original Benchmark Pack is not rewritten to contain the concrete harness ID; the concrete case projection exists only at the BL-6 call boundary;
 - L2 exact readable/writable paths are sealed before bounded-tool execution and absolute disposable workspace location is not durable behavioral identity;
 - CaseResult references immutable execution evidence and the pre-run ExecutionBinding;
@@ -119,8 +120,8 @@ Accepted properties:
 - evaluators are resolved through the independent EvaluatorRegistry and receive only declared supplemental evidence types;
 - `EvidenceStore` is content-addressed and append-only: identical re-persistence is idempotent while conflicting bytes are rejected;
 - failed subprocess containment preflight blocks before manifest/driver execution;
-- successful subprocess preflight may be sealed as a plan, but the runner still refuses a direct in-process driver fallback because BL-8A does not yet have a model-driver adapter that routes actual model turns through BL-7;
-- L3/L4 execution fails closed before any driver invocation; orchestrator v1 supports only L0/L1/L2.
+- successful subprocess preflight may be sealed as a plan, but the runner refuses direct in-process fallback because BL-8A does not yet route actual subprocess model turns through BL-7;
+- L3/L4 execution fails closed before driver invocation; orchestrator v1 supports only L0/L1/L2.
 
 No real model/provider call occurred during BL-8A construction.
 
@@ -140,15 +141,15 @@ Construction complete in:
 
 Accepted properties:
 
-- repetition counts come only from the Benchmark Pack's predeclared `screen_trials` or `qualification_trials`; BL-8B exposes named `screen` and `qualification` phases rather than accepting an ad-hoc repeat count;
+- repetition counts come only from the Benchmark Pack's predeclared `screen_trials` or `qualification_trials`; BL-8B exposes named `screen` and `qualification` phases rather than an ad-hoc repeat count;
 - the phase mapping and resulting in-memory planned-count map are immutable after construction;
 - every repeated observation gets a distinct TrialIdentity/ExecutionBinding, sequential ordinal, and deterministic repeat-group identity;
 - all repeated trials/bindings are sealed into the RunManifest before the first driver call;
 - repeated L2 cases require distinct workspace roots supplied per ordinal; workspace-root reuse fails closed;
 - the root-independent BL-6 initial workspace snapshot is calculated before manifest sealing and must match across repeated workspaces for one case;
 - the initial snapshot SHA-256 is sealed into each L2 ExecutionBinding and is rechecked immediately before driver execution so post-manifest workspace changes fail closed;
-- aggregate reporting validates that raw trial/case/evaluation evidence forms one closed run and rejects missing, duplicate, foreign, or incoherent evidence rather than calculating across it;
-- `aggregate_report` is a content-addressed V2 **derived evidence** record and never replaces raw TrialIdentity, execution trace, CaseResult, or EvaluationResult evidence;
+- aggregate reporting validates that raw trial/case/evaluation evidence forms one closed run and rejects missing, duplicate, foreign, or incoherent evidence;
+- `aggregate_report` is content-addressed V2 **derived evidence** and never replaces raw TrialIdentity, execution trace, CaseResult, or EvaluationResult evidence;
 - reports expose verdict/status counts, pass rate, score mean/median/min/max/population variance, consistency rates, hard-failure counts, durations, and measured execution metrics;
 - attempts and retries are aggregated only when explicitly recorded; BL-8B does not infer `attempts=1` or `retries=0`;
 - resource/telemetry values are aggregated only when explicitly measured as numeric CaseResult telemetry; null remains unmeasured and nonnumeric non-null telemetry fails closed;
@@ -158,6 +159,28 @@ Accepted properties:
 
 No real model/provider call, benchmark campaign, or ACL execution occurred during BL-8B construction.
 
+### Synthetic end-to-end construction acceptance
+
+**COMPLETE.** The accepted gate is documented in `docs/CONSTRUCTION_ACCEPTANCE.md` and implemented in `tests/test_v2_construction_acceptance.py`.
+
+The synthetic fixture proves the assembled V2 path with deterministic fake behavior only:
+
+- authorized bounded read/write completion;
+- unauthorized traversal/path denial while external synthetic secret bytes exist outside the workspace;
+- stale-write refusal without target mutation;
+- malformed tool-call argument denial;
+- tool-call resource-limit propagation into CaseResult/AggregateReport;
+- evaluator hard-failure preservation separate from weighted score;
+- BL-7 attempt-limit enforcement before another backend execution;
+- subprocess containment-preflight refusal before manifest/driver execution when the backend is weaker than policy;
+- timeout preservation as `containment_execution` evidence;
+- complete replay from different disposable roots with identical governed BenchmarkInput, config, trial, binding, manifest, trace, CaseResult, EvaluationResult, and AggregateReport identities;
+- idempotent re-persistence into the same append-only EvidenceStore.
+
+V2 does not yet define a separate mutable resume/checkpoint record, so this gate does not invent one. Applicable recovery identity is currently deterministic replay plus append-only/idempotent evidence persistence.
+
+No real model/provider/ACL execution occurred during construction acceptance.
+
 ## Deterministic regression gate
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest`.
@@ -166,9 +189,11 @@ BL-7 capability-boundary checkpoint `89f7b136d539619a26cd3398b0a5023c8c432142` p
 
 BL-8A acceptance checkpoint `5373f1049e19274f315c9743dd0a6c15dc0d2489` passed in GitHub Actions run `34580345998` on both Windows and Ubuntu.
 
-BL-8B construction checkpoint `6acd17b280ea621bbee74cfa0cb66b8363044a7f` passed in GitHub Actions run `34582406611` on both Windows and Ubuntu. The suite includes declared screen/qualification counts, immutable repetition planning, L2 fresh-workspace/root-reuse/baseline checks, positive and null telemetry behavior, statistics/hard-failure aggregation, evidence closure, append-only report persistence, and deterministic report rendering.
+BL-8B construction checkpoint `6acd17b280ea621bbee74cfa0cb66b8363044a7f` passed in GitHub Actions run `34582406611` on both Windows and Ubuntu.
 
-The regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
+Synthetic construction acceptance checkpoint `a557bd061d3f58bdc6d0d279cb92d7e07feac781` passed the complete deterministic suite in GitHub Actions run `34583105820` on both Windows and Ubuntu. The acceptance fixture covers the successful and malicious/incorrect synthetic behaviors required by `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md` and deterministic replay identity.
+
+The regression gate does not start Ollama, load a real model, execute ACL, or make scored real-model requests.
 
 ## Current implementation position
 
@@ -182,12 +207,20 @@ The regression gate does not start Ollama, load a model, execute ACL, or make sc
 - BL-7: **CONSTRUCTION COMPLETE; STRICT HOST ISOLATION BACKEND QUALIFICATION/IMPLEMENTATION STILL PENDING FOR POLICIES THAT REQUIRE IT**
 - BL-8A: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 - BL-8B: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
-- Synthetic end-to-end construction acceptance: **NEXT**
+- Synthetic end-to-end construction acceptance: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**
 
 No V2 real-model run, real scored benchmark case, broad candidate campaign, or ACL cross-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-8B construction acceptance.
+The V2 measuring-instrument **construction acceptance gate is complete**.
 
-Do not create the real benchmark battery or run candidate models yet. Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded task is the **synthetic deterministic end-to-end construction acceptance gate** proving the complete measuring instrument before real benchmark design/model runs begin.
+Per `docs/POST_BL7_CONSTRUCTION_SEQUENCE.md`, the next bounded phase may begin **benchmark-content design** in this order:
+
+1. shared L0/L1 capability cases;
+2. L2 neutral bounded-tool cases;
+3. broad candidate campaign only after applicable intended-host/runtime/model qualification gates are satisfied;
+4. ACL cross-harness campaign only when ACL separately permits execution;
+5. role-specific qualification suites and repeated trials.
+
+Do not treat construction acceptance as authorization for an immediate ungoverned model campaign. Before real candidate execution, complete the applicable BL-3 intended-host evidence and seal exact runtime/model/configuration identity; any benchmark requiring strict containment must also pass the corresponding host/backend preflight rather than weakening policy.
