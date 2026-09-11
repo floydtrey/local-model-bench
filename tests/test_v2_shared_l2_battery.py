@@ -71,7 +71,7 @@ def _tool_result(request, path: str):
         if message.get("role") != "tool":
             continue
         result = message.get("result")
-        if isinstance(result, dict) and result.get("path") == path:
+        if hasattr(result, "get") and result.get("path") == path:
             return result
     raise AssertionError(f"missing tool result for {path}")
 
