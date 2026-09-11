@@ -145,7 +145,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
             contract_version="1",
             case_definition=self._case_definition(),
             case_result_record=self._case_result(),
-            hard_failure_rules=["execution-failure"],
         )
 
         self.assertEqual(result.record_type, "evaluation_result")
@@ -169,7 +168,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
             contract_version="1",
             case_definition=self._case_definition(),
             case_result_record=self._case_result(status="error"),
-            hard_failure_rules=["execution-failure"],
         )
 
         self.assertEqual(result.payload["verdict"], "fail")
@@ -198,7 +196,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=mismatched_case,
                 case_result_record=self._case_result(),
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_case_identity_and_evidence_surface_fail_closed(self):
@@ -212,7 +209,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=self._case_definition(case_id="case-2"),
                 case_result_record=self._case_result(case_id="case-1"),
-                hard_failure_rules=["execution-failure"],
             )
 
         extra = seal_evidence("benchmark_input", "extra", {"synthetic": True})
@@ -224,7 +220,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 case_definition=self._case_definition(),
                 case_result_record=self._case_result(),
                 supplemental_evidence=[extra],
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_declared_supplemental_evidence_can_be_consumed(self):
@@ -260,7 +255,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
             case_definition=self._case_definition(),
             case_result_record=self._case_result(),
             supplemental_evidence=[extra],
-            hard_failure_rules=["execution-failure"],
         )
 
         self.assertEqual(result.payload["verdict"], "pass")
@@ -282,7 +276,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=self._case_definition(),
                 case_result_record=self._case_result(),
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_undeclared_hard_failure_from_implementation_is_rejected(self):
@@ -302,7 +295,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=self._case_definition(),
                 case_result_record=self._case_result(),
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_hard_failure_cannot_be_hidden_behind_pass_verdict(self):
@@ -322,7 +314,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=self._case_definition(),
                 case_result_record=self._case_result(),
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_human_review_evaluator_cannot_emit_final_pass(self):
@@ -338,7 +329,6 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
                 contract_version="1",
                 case_definition=self._case_definition(),
                 case_result_record=self._case_result(),
-                hard_failure_rules=["execution-failure"],
             )
 
     def test_unscored_evaluator_produces_null_score(self):
@@ -366,12 +356,26 @@ class V2EvaluatorFrameworkTests(unittest.TestCase):
             contract_version="1",
             case_definition=self._case_definition(),
             case_result_record=self._case_result(),
-            hard_failure_rules=["execution-failure"],
         )
 
         self.assertEqual(result.payload["verdict"], "not_scored")
         self.assertIsNone(result.payload["score"])
         self.assertIsNone(result.payload["maximum_score"])
+
+    def test_caller_cannot_expand_case_hard_failure_policy(self):
+        case = self._case_definition()
+        case["hard_failure_rules"] = []
+        registry = EvaluatorRegistry()
+        registry.register(self._definition(), self._status_evaluator)
+
+        with self.assertRaisesRegex(ValueError, "undeclared hard-failure"):
+            registry.evaluate(
+                "case-policy",
+                evaluator_id="synthetic-status",
+                contract_version="1",
+                case_definition=case,
+                case_result_record=self._case_result(status="error"),
+            )
 
 
 if __name__ == "__main__":
