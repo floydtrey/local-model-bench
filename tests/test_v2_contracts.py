@@ -77,8 +77,27 @@ class EvidenceContractTests(unittest.TestCase):
 
         source["nested"]["values"].append(3)
 
-        self.assertEqual(sealed.payload, original)
+        self.assertEqual(sealed.to_dict()["payload"], original)
         self.assertEqual(SealedEvidence.from_dict(sealed.to_dict()), sealed)
+
+    def test_sealed_payload_is_recursively_immutable(self):
+        sealed = seal_evidence(
+            "benchmark_input",
+            "suite-a",
+            {"nested": {"values": [1, 2]}},
+        )
+
+        with self.assertRaises(TypeError):
+            sealed.payload["new"] = True
+        with self.assertRaises(TypeError):
+            sealed.payload["nested"]["new"] = True
+        with self.assertRaises(AttributeError):
+            sealed.payload["nested"]["values"].append(3)
+
+        self.assertEqual(
+            sealed.to_dict()["payload"],
+            {"nested": {"values": [1, 2]}},
+        )
 
     def test_invalid_record_type_and_id_fail_closed(self):
         with self.assertRaisesRegex(ValueError, "record type"):
