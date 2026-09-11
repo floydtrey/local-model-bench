@@ -118,17 +118,46 @@ Accepted design properties:
 
 BL-5A does not implement evaluator logic, execute a model, or create the real shared capability battery.
 
+### BL-5B — versioned evaluator framework
+
+The deterministic evaluator framework is implemented in:
+
+- `src/localbench/v2/evaluators.py`;
+- `schemas/v2/evaluator-definition.schema.json`;
+- `docs/EVALUATOR_FRAMEWORK.md`;
+- `tests/test_v2_evaluators.py`.
+
+Accepted design properties:
+
+- exact evaluator resolution is by `(evaluator_id, contract_version)`;
+- evaluator definitions declare implementation SHA-256, input/result contracts, consumed evidence, human-review policy, and weighted/unscored mode;
+- the complete evaluator definition receives `definition_sha256` and the existing BL-2 `evaluator_identity` logical ID is content-addressed as `eval-<definition_sha256>`;
+- every evaluator consumes exactly one required sealed `case_result` plus only explicitly declared supplemental evidence types;
+- required/optional and single/multiple evidence consumption is enforced by the registry;
+- `CaseResult.case_id` must match the normalized benchmark case definition;
+- the benchmark case must bind the exact evaluator ID/version being executed;
+- allowed hard-failure rules are derived directly from the case definition rather than supplied by an expandable runner argument;
+- evaluator implementations cannot emit undeclared hard-failure rule IDs;
+- any triggered hard failure requires a `fail` verdict and remains structurally separate from weighted score;
+- deterministic checks use normalized IDs, pass/fail state, weight, earned points, detail, and optional evidence references;
+- weighted totals are calculated by the framework; unscored evaluators produce null score fields and cannot hide nonzero weights;
+- evaluators requiring human review cannot silently emit a final automated pass;
+- duplicate registration, missing versions, mismatched case identity, undeclared evidence, missing required evidence, and incoherent evaluator output fail closed;
+- the V1 planning/task-set evaluator remains historical and is not treated as a V2 evaluator implementation.
+
+BL-5B uses synthetic sealed evidence and deterministic Python fixtures only. It does not execute a model or create real scored benchmark content.
+
 ## Deterministic regression gate
 
 `.github/workflows/deterministic-tests.yml` runs the complete repository unittest suite on Python 3.12 for both `windows-latest` and `ubuntu-latest` and retains the unittest transcript as a short-lived workflow artifact.
 
 The first cross-platform run exposed an existing V1 portability defect: the Markdown suite heading parser did not accept CRLF line endings produced by Windows checkout. The parser was changed narrowly to accept the optional carriage return and `tests/test_markdown_crlf.py` now preserves that behavior as a regression case.
 
-At BL-5A code/schema commit:
+At BL-5B code/documentation commit:
 
-`8722e413e2ee14645d898187be52e6c7ead5a887`
+`228d1c157c1fa59f6f3238de9820b714b5b260fe`
 
-GitHub Actions run `34573915749` passed the complete deterministic suite on both Windows and Ubuntu, including the Benchmark Pack V2 contract tests.
+GitHub Actions run `34574953984` passed the complete deterministic suite on both Windows and Ubuntu, including the BL-5B synthetic evaluator framework tests.
 
 This regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
@@ -157,14 +186,16 @@ BL-4 — materialize and seal effective runtime configuration: **COMPLETE; CROSS
 
 BL-5A — Benchmark Pack / Case Definition contract: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
-BL-5B — versioned evaluator framework: **NEXT CONSTRUCTION TASK**.
+BL-5B — versioned evaluator framework: **COMPLETE; CROSS-PLATFORM REGRESSION PASSING**.
 
-No V2 model run, scored benchmark case, or tool-harness execution has occurred.
+BL-6 — neutral bounded-tool harness: **NEXT CONSTRUCTION TASK**.
+
+No V2 model run, real scored benchmark case, or tool-harness execution has occurred.
 
 ## Stop boundary for this checkpoint
 
-This checkpoint stops after BL-5A acceptance.
+This checkpoint stops after BL-5B acceptance.
 
-Do not create the real shared capability battery, implement the bounded tool harness, download/run candidate models, or begin ACL cross-harness testing as part of this checkpoint.
+Do not create the real shared capability battery, implement BL-6 in this checkpoint, download/run candidate models, or begin ACL cross-harness testing.
 
-The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, and `docs/BL5_FOUNDATION_PLAN.md`, verify branch/HEAD, and perform **BL-5B evaluator framework only** unless the plan is explicitly revised again.
+The next construction session must start from this document, `docs/BENCHMARK_LAB_V2_PLAN.md`, `docs/BL5_FOUNDATION_PLAN.md`, and `docs/EVALUATOR_FRAMEWORK.md`, verify branch/HEAD, and perform **BL-6 neutral bounded-tool harness only** unless the plan is explicitly revised again.
