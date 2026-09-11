@@ -1,0 +1,4 @@
+record_id=LC-OLD
+status=superseded
+batch_limit=40
+note=This rule was replaced.
