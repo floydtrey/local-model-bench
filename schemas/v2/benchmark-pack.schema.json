@@ -9,7 +9,6 @@
     "pack_id",
     "pack_version",
     "name",
-    "description",
     "level",
     "cases"
   ],
@@ -94,7 +93,7 @@
     "responseContract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mode", "schema"],
+      "required": ["mode"],
       "properties": {
         "mode": {"enum": ["text", "json_object", "json_schema"]},
         "schema": {"type": ["object", "null"]}
@@ -102,7 +101,7 @@
       "allOf": [
         {
           "if": {"properties": {"mode": {"const": "json_schema"}}, "required": ["mode"]},
-          "then": {"properties": {"schema": {"type": "object"}}},
+          "then": {"required": ["schema"], "properties": {"schema": {"type": "object"}}},
           "else": {"properties": {"schema": {"type": "null"}}}
         }
       ]
@@ -133,8 +132,7 @@
       "required": [
         "configuration_profile",
         "response_contract",
-        "tool_surface",
-        "minimum_context_tokens"
+        "tool_surface"
       ],
       "properties": {
         "configuration_profile": {"$ref": "#/$defs/safeId"},
@@ -184,9 +182,7 @@
         "input",
         "requirements",
         "evaluators",
-        "hard_failure_rules",
-        "repetitions",
-        "tags"
+        "repetitions"
       ],
       "properties": {
         "case_id": {"$ref": "#/$defs/safeId"},
@@ -194,7 +190,7 @@
         "input": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["messages", "context_assets"],
+          "required": ["messages"],
           "properties": {
             "messages": {
               "type": "array",
