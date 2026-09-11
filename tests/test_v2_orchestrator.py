@@ -31,6 +31,7 @@ from localbench.v2 import (
     run_v2_pack,
     runtime_profile,
 )
+from localbench.v2.orchestrator import PORTABLE_BOUNDED_FILES_CAPABILITY
 
 
 DIGEST_A = "a" * 64
@@ -47,7 +48,7 @@ def pack_bytes(*, level: str, asset: dict | None = None, response_mode: str = "t
     tool_surface = {"id": "none", "required_tools": []}
     if level == "L2":
         tool_surface = {
-            "id": BOUNDED_FILE_SURFACE_ID,
+            "id": PORTABLE_BOUNDED_FILES_CAPABILITY,
             "required_tools": ["read_file", "write_file"],
         }
     value = {
@@ -389,6 +390,10 @@ class BL8AOrchestratorTests(unittest.TestCase):
             binding = result.execution_bindings[0]
             self.assertEqual(binding.payload["workspace_scope"]["readable_paths"], ("input.txt",))
             self.assertEqual(binding.payload["workspace_scope"]["writable_paths"], ("out.txt",))
+            tool_binding = binding.payload["driver"]["tool_surface_binding"]
+            self.assertEqual(tool_binding["required_capability"], PORTABLE_BOUNDED_FILES_CAPABILITY)
+            self.assertEqual(tool_binding["concrete_surface"], BOUNDED_FILE_SURFACE_ID)
+            self.assertEqual(tool_binding["concrete_schema_sha256"], BOUNDED_FILE_TOOL_SCHEMA_SHA256)
             trace = result.execution_evidence[0]
             self.assertEqual(trace.payload["initial_workspace"]["files"][0]["sha256"], input_sha)
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
