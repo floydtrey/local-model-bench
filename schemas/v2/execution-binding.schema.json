@@ -25,7 +25,27 @@
       "properties": {
         "driver_id": {"type": "string", "minLength": 1},
         "implementation_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "execution_kind": {"enum": ["in_process", "subprocess"]}
+        "execution_kind": {"enum": ["in_process", "subprocess"]},
+        "tool_surface_binding": {
+          "type": "object",
+          "required": [
+            "required_capability", "required_tools", "concrete_surface",
+            "concrete_schema_sha256"
+          ],
+          "properties": {
+            "required_capability": {"const": "bounded-files-v1"},
+            "required_tools": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1}
+            },
+            "concrete_surface": {"const": "lab-bounded-files:v1"},
+            "concrete_schema_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     },
