@@ -7,6 +7,10 @@ logs/
 .pytest_cache/
 validation-workspaces/
 
+# V2 host/runtime qualification state may contain machine-specific evidence and is
+# local by default. Publish only deliberately sanitized/selected artifacts.
+local-state/
+
 # Benchmark results are intentionally NOT ignored. Commit selected run folders.
 # Only the review tables from the completed smoke run are published.
 results/background-20260829T182425-cf7a65c7/checkpoint.json
