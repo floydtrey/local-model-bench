@@ -1,0 +1,5 @@
+E1 launch=06:30
+E2 team_size=7
+E3 color=amber
+E4 owner=Rhea
+E5 sensor=DS-18
