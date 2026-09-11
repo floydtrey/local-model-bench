@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any, Mapping
 
 
@@ -33,6 +34,26 @@ def _require_safe_id(value: str, label: str) -> str:
     return value
 
 
+def _freeze_json(value: Any) -> Any:
+    """Recursively freeze already-normalized JSON data for in-memory safety."""
+
+    if isinstance(value, Mapping):
+        return MappingProxyType({key: _freeze_json(item) for key, item in value.items()})
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze_json(item) for item in value)
+    return value
+
+
+def _thaw_json(value: Any) -> Any:
+    """Return ordinary JSON-compatible containers from frozen evidence data."""
+
+    if isinstance(value, Mapping):
+        return {key: _thaw_json(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_thaw_json(item) for item in value]
+    return value
+
+
 def canonical_json_bytes(value: Any) -> bytes:
     """Return deterministic UTF-8 JSON bytes suitable for evidence hashing.
 
@@ -44,7 +65,7 @@ def canonical_json_bytes(value: Any) -> bytes:
 
     try:
         text = json.dumps(
-            value,
+            _thaw_json(value),
             ensure_ascii=False,
             sort_keys=True,
             separators=(",", ":"),
@@ -98,6 +119,9 @@ class SealedEvidence:
     proof of the exact record type + logical ID + payload bytes. They are kept
     separate so a friendly name, path, model tag, repository URL, or other locator
     can never substitute for cryptographic evidence identity.
+
+    The payload is recursively frozen after validation. Call ``to_dict()`` when a
+    mutable JSON-compatible representation is needed for persistence or transport.
     """
 
     record_type: str
@@ -118,11 +142,14 @@ class SealedEvidence:
             raise ValueError("payload must be an object")
         if not re.fullmatch(r"[0-9a-f]{64}", self.sha256):
             raise ValueError("sha256 must be a lowercase 64-character hexadecimal digest")
-        expected = _evidence_digest(self.record_type, self.logical_id, self.payload)
+
+        normalized = json.loads(canonical_json_bytes(self.payload).decode("utf-8"))
+        expected = _evidence_digest(self.record_type, self.logical_id, normalized)
         if self.sha256 != expected:
             raise ValueError(
                 f"evidence digest mismatch: expected {expected}, got {self.sha256}"
             )
+        object.__setattr__(self, "payload", _freeze_json(normalized))
 
     @property
     def reference(self) -> EvidenceRef:
@@ -134,7 +161,7 @@ class SealedEvidence:
             "record_type": self.record_type,
             "logical_id": self.logical_id,
             "sha256": self.sha256,
-            "payload": dict(self.payload),
+            "payload": _thaw_json(self.payload),
         }
 
     @classmethod
@@ -160,7 +187,7 @@ def _evidence_digest(
         "schema_version": EVIDENCE_SCHEMA_VERSION,
         "record_type": record_type,
         "logical_id": logical_id,
-        "payload": dict(payload),
+        "payload": _thaw_json(payload),
     }
     return sha256_json(envelope)
 
