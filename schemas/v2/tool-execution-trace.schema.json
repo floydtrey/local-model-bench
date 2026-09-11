@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/tool-execution-trace.schema.json",
+  "title": "Benchmark Lab V2 neutral bounded-tool execution trace payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "trace_version",
+    "harness_version",
+    "case_id",
+    "tool_surface",
+    "scope",
+    "initial_workspace",
+    "events",
+    "final_workspace",
+    "summary"
+  ],
+  "properties": {
+    "trace_version": {"const": "benchmark-lab-tool-trace:v1"},
+    "harness_version": {"const": "benchmark-lab-bounded-tool-harness:v1"},
+    "case_id": {"$ref": "#/$defs/safeId"},
+    "tool_surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tools", "schema_sha256"],
+      "properties": {
+        "id": {"const": "lab-bounded-files:v1"},
+        "tools": {
+          "const": ["read_file", "write_file"]
+        },
+        "schema_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["readable_paths", "writable_paths"],
+      "properties": {
+        "readable_paths": {"$ref": "#/$defs/pathArray"},
+        "writable_paths": {"$ref": "#/$defs/pathArray"}
+      }
+    },
+    "initial_workspace": {"$ref": "#/$defs/workspaceSnapshot"},
+    "events": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/event"}
+    },
+    "final_workspace": {"$ref": "#/$defs/workspaceSnapshot"},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "stop_reason",
+        "model_turns",
+        "tool_calls",
+        "authorized_tool_calls",
+        "denied_tool_calls",
+        "successful_tool_calls",
+        "failed_tool_calls",
+        "terminal_output_sha256"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["success", "error", "blocked", "resource_limit", "protocol_failure"]
+        },
+        "stop_reason": {"type": "string", "minLength": 1},
+        "model_turns": {"type": "integer", "minimum": 1},
+        "tool_calls": {"type": "integer", "minimum": 0},
+        "authorized_tool_calls": {"type": "integer", "minimum": 0},
+        "denied_tool_calls": {"type": "integer", "minimum": 0},
+        "successful_tool_calls": {"type": "integer", "minimum": 0},
+        "failed_tool_calls": {"type": "integer", "minimum": 0},
+        "terminal_output_sha256": {
+          "anyOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "safeId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pathArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "workspaceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "state", "sha256", "size_bytes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "state": {"enum": ["missing", "file"]},
+        "sha256": {
+          "anyOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "size_bytes": {
+          "anyOf": [
+            {"type": "integer", "minimum": 0},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "workspaceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files", "snapshot_sha256"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/workspaceFile"}
+        },
+        "snapshot_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "event_type", "payload", "event_sha256"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1},
+        "event_type": {"$ref": "#/$defs/safeId"},
+        "payload": {"type": "object"},
+        "event_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
