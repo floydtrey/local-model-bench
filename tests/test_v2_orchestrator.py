@@ -12,6 +12,7 @@ from localbench.v2 import (
     CONFIG_SPEC_VERSION,
     ConfigurationBinding,
     ContainmentBlocked,
+    ContainmentCapabilities,
     ContainmentPolicy,
     DriverBinding,
     EvidenceConsumption,
@@ -89,8 +90,6 @@ def pack_bytes(*, level: str, asset: dict | None = None, response_mode: str = "t
 class FakeStrictBackend:
     @property
     def capabilities(self):
-        from localbench.v2 import ContainmentCapabilities
-
         return ContainmentCapabilities(
             backend_id="fake-strict",
             backend_version="1",
@@ -104,8 +103,8 @@ class FakeStrictBackend:
             memory_limit=True,
         )
 
-    def execute(self, command, policy):  # pragma: no cover - orchestrator only preflights here
-        raise AssertionError("BL-8A fake driver must not execute this backend")
+    def execute(self, command, policy):  # pragma: no cover - BL-8A must never call it
+        raise AssertionError("BL-8A has no subprocess model-driver adapter")
 
 
 class BL8AOrchestratorTests(unittest.TestCase):
@@ -200,7 +199,7 @@ class BL8AOrchestratorTests(unittest.TestCase):
         def implementation(context):
             trace = context.evidence_by_type[trace_type][0]
             binding = context.evidence_by_type["execution_binding"][0]
-            passed = trace.payload["status"] == "success"
+            passed = context.case_result.payload["status"] == "success"
             return EvaluationDraft(
                 verdict="pass" if passed else "fail",
                 checks=(
@@ -232,8 +231,9 @@ class BL8AOrchestratorTests(unittest.TestCase):
             def driver(request):
                 calls.append(request)
                 manifest_dir = store.root / "records" / "run_manifest"
-                self.assertTrue(manifest_dir.is_dir())
+                binding_dir = store.root / "records" / "execution_binding"
                 self.assertEqual(len(list(manifest_dir.glob("*.json"))), 1)
+                self.assertEqual(len(list(binding_dir.glob("*.json"))), 1)
                 self.assertEqual(tuple(request.tools), ())
                 return ModelTurnResponse(content="synthetic answer")
 
@@ -258,8 +258,7 @@ class BL8AOrchestratorTests(unittest.TestCase):
             self.assertEqual(result.execution_bindings[0].payload["execution_mode"], "intrinsic")
             self.assertEqual(result.case_results[0].payload["status"], "success")
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
-            loaded = store.load(result.manifest.reference)
-            self.assertEqual(loaded.sha256, result.manifest.sha256)
+            self.assertEqual(store.load(result.manifest.reference), result.manifest)
 
     def test_l1_asset_bytes_are_verified_and_locator_is_not_candidate_visible(self):
         host, runtime, model = self.foundation()
@@ -335,7 +334,7 @@ class BL8AOrchestratorTests(unittest.TestCase):
             self.assertFalse(called)
             self.assertFalse((store.root / "records" / "run_manifest").exists())
 
-    def test_l2_scope_is_sealed_before_bounded_read_write_execution(self):
+    def test_l2_scope_and_portable_mapping_are_sealed_before_bounded_execution(self):
         host, runtime, model = self.foundation()
         input_bytes = b"hello"
         input_sha = sha(input_bytes)
@@ -391,11 +390,16 @@ class BL8AOrchestratorTests(unittest.TestCase):
             self.assertEqual(binding.payload["workspace_scope"]["readable_paths"], ("input.txt",))
             self.assertEqual(binding.payload["workspace_scope"]["writable_paths"], ("out.txt",))
             tool_binding = binding.payload["driver"]["tool_surface_binding"]
-            self.assertEqual(tool_binding["required_capability"], PORTABLE_BOUNDED_FILES_CAPABILITY)
+            self.assertEqual(
+                tool_binding["required_capability"], PORTABLE_BOUNDED_FILES_CAPABILITY
+            )
             self.assertEqual(tool_binding["concrete_surface"], BOUNDED_FILE_SURFACE_ID)
-            self.assertEqual(tool_binding["concrete_schema_sha256"], BOUNDED_FILE_TOOL_SCHEMA_SHA256)
+            self.assertEqual(
+                tool_binding["concrete_schema_sha256"], BOUNDED_FILE_TOOL_SCHEMA_SHA256
+            )
             trace = result.execution_evidence[0]
             self.assertEqual(trace.payload["initial_workspace"]["files"][0]["sha256"], input_sha)
+            self.assertEqual(result.case_results[0].payload["status"], "success")
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
 
     def test_subprocess_driver_preflight_blocks_before_manifest_and_driver(self):
@@ -444,6 +448,58 @@ class BL8AOrchestratorTests(unittest.TestCase):
                 )
             self.assertFalse(called)
             self.assertFalse((store.root / "records" / "run_manifest").exists())
+
+    def test_successful_subprocess_preflight_seals_plan_but_direct_call_is_forbidden(self):
+        host, runtime, model = self.foundation()
+        called = False
+
+        def driver(request):
+            nonlocal called
+            called = True
+            return ModelTurnResponse(content="must not run")
+
+        policy = ContainmentPolicy(
+            wall_seconds=10,
+            max_attempts=1,
+            network_policy="provider_only",
+            process_custody="strict",
+            require_workspace_isolation=True,
+            require_assessor_isolation=True,
+            writable_paths=(),
+            max_output_bytes=1024,
+            max_memory_bytes=1024,
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = EvidenceStore(Path(temp_dir) / "evidence")
+            binding = DriverBinding(
+                "subprocess-driver",
+                DRIVER_DIGEST,
+                driver,
+                execution_kind="subprocess",
+                containment_policy=policy,
+                containment_backend=FakeStrictBackend(),
+            )
+            with self.assertRaisesRegex(OrchestrationBlocked, "direct-call fallback is forbidden"):
+                run_v2_pack(
+                    run_id="run-contained-plan",
+                    pack_source=pack_bytes(level="L0"),
+                    pack_source_locator=None,
+                    host=host,
+                    runtime=runtime,
+                    model=model,
+                    configuration_bindings={"profile-a": self.config(tools=False)},
+                    evaluator_registry=self.registry("intrinsic_execution_trace"),
+                    driver_binding=binding,
+                    evidence_store=store,
+                    harness_source={"kind": "git", "commit": DIGEST_B},
+                )
+            self.assertFalse(called)
+            manifests = list((store.root / "records" / "run_manifest").glob("*.json"))
+            bindings = list((store.root / "records" / "execution_binding").glob("*.json"))
+            self.assertEqual(len(manifests), 1)
+            self.assertEqual(len(bindings), 1)
+            binding_payload = json.loads(bindings[0].read_text(encoding="utf-8"))["payload"]
+            self.assertEqual(binding_payload["containment"]["policy_sha256"], policy.sha256)
 
     def test_configuration_contract_mismatch_fails_before_execution(self):
         host, runtime, model = self.foundation()
