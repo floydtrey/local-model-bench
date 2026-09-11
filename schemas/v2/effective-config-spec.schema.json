@@ -5,11 +5,11 @@
   "type": "object",
   "required": ["schema_version", "comparison_mode", "generation", "execution", "tool_surface"],
   "properties": {
-    "schema_version": {"const": "benchmark-lab-runtime-config:v2"},
+    "schema_version": {"const": "benchmark-lab-runtime-config:v3"},
     "comparison_mode": {"enum": ["strict", "exploratory"]},
     "generation": {
       "type": "object",
-      "required": ["context_tokens", "max_output_tokens", "response_format"],
+      "required": ["context_tokens", "max_output_tokens", "response_format", "reasoning"],
       "properties": {
         "context_tokens": {"type": "integer", "minimum": 1},
         "max_output_tokens": {"type": "integer", "minimum": 1},
@@ -26,6 +26,21 @@
             "mode": {"enum": ["text", "json_object", "json_schema"]},
             "schema": {"type": ["object", "null"]}
           },
+          "additionalProperties": false
+        },
+        "reasoning": {
+          "type": "object",
+          "required": ["mode", "effort"],
+          "properties": {
+            "mode": {"enum": ["enabled", "disabled", "unsupported"]},
+            "effort": {"enum": ["low", "medium", "high", "max", null]}
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"mode": {"enum": ["disabled", "unsupported"]}}},
+              "then": {"properties": {"effort": {"type": "null"}}}
+            }
+          ],
           "additionalProperties": false
         }
       },

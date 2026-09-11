@@ -48,6 +48,7 @@ class ConfigurationTests(unittest.TestCase):
                 "context_tokens": context,
                 "max_output_tokens": 2048,
                 "response_format": {"mode": "text", "schema": None},
+                "reasoning": {"mode": "disabled", "effort": None},
             },
             "execution": {
                 "timeout_seconds": 600,
@@ -168,6 +169,17 @@ class ConfigurationTests(unittest.TestCase):
             )
 
         spec = self._spec()
+        del spec["generation"]["reasoning"]
+        with self.assertRaisesRegex(ValueError, "reasoning must be explicit"):
+            resolve_effective_configuration(
+                "config",
+                runtime=self._runtime(),
+                model=self._model(),
+                spec=spec,
+                adapter_resolution=self._adapter(),
+            )
+
+        spec = self._spec()
         del spec["execution"]["timeout_seconds"]
         with self.assertRaisesRegex(ValueError, "timeout_seconds must be explicit"):
             resolve_effective_configuration(
@@ -194,6 +206,18 @@ class ConfigurationTests(unittest.TestCase):
         spec = self._spec()
         spec["generation"]["mystery_knob"] = 99
         with self.assertRaisesRegex(ValueError, "unknown fields"):
+            resolve_effective_configuration(
+                "config",
+                runtime=self._runtime(),
+                model=self._model(),
+                spec=spec,
+                adapter_resolution=self._adapter(),
+            )
+
+    def test_reasoning_effort_requires_enabled_mode(self):
+        spec = self._spec()
+        spec["generation"]["reasoning"] = {"mode": "unsupported", "effort": "medium"}
+        with self.assertRaisesRegex(ValueError, "only valid when reasoning is enabled"):
             resolve_effective_configuration(
                 "config",
                 runtime=self._runtime(),
