@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/intrinsic-execution-trace.schema.json",
+  "title": "Benchmark Lab BL-8A intrinsic execution trace payload",
+  "type": "object",
+  "required": [
+    "trace_version", "orchestrator_version", "case_id", "request", "response",
+    "error", "status", "stop_reason", "terminal_output"
+  ],
+  "properties": {
+    "trace_version": {"const": "benchmark-lab-intrinsic-trace:v1"},
+    "orchestrator_version": {"const": "benchmark-lab-orchestrator:v1"},
+    "case_id": {"type": "string", "minLength": 1},
+    "request": {
+      "type": "object",
+      "required": ["case_id", "turn", "messages", "context_assets", "tools"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1},
+        "turn": {"const": 1},
+        "messages": {"type": "array"},
+        "context_assets": {"type": "array"},
+        "tools": {"type": "array", "maxItems": 0}
+      },
+      "additionalProperties": false
+    },
+    "response": {"type": ["object", "null"]},
+    "error": {"type": ["object", "null"]},
+    "status": {"enum": ["success", "error", "blocked", "resource_limit", "protocol_failure"]},
+    "stop_reason": {"type": "string", "minLength": 1},
+    "terminal_output": {"type": ["object", "null"]}
+  },
+  "additionalProperties": false
+}
