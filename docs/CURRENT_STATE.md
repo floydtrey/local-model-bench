@@ -100,6 +100,7 @@ Construction complete in:
 - `schemas/v2/intrinsic-execution-trace.schema.json`;
 - BL-8A additions to V2 evidence/qualification schemas;
 - `tests/test_v2_orchestrator.py`;
+- `tests/test_v2_orchestrator_acceptance.py`;
 - `docs/V2_ORCHESTRATOR.md`.
 
 Accepted properties:
@@ -113,10 +114,12 @@ Accepted properties:
 - the original Benchmark Pack is not rewritten to contain the concrete harness ID; the concrete case projection exists only at the BL-6 call boundary;
 - L2 exact readable/writable paths are sealed before bounded-tool execution and absolute disposable workspace location is not durable behavioral identity;
 - CaseResult references immutable execution evidence and the pre-run ExecutionBinding;
+- raw execution trace and CaseResult are persisted before evaluator invocation, so an evaluator exception cannot erase or replace the underlying execution evidence;
 - evaluators are resolved through the independent EvaluatorRegistry and receive only declared supplemental evidence types;
 - `EvidenceStore` is content-addressed and append-only: identical re-persistence is idempotent while conflicting bytes are rejected;
 - failed subprocess containment preflight blocks before manifest/driver execution;
-- successful subprocess preflight may be sealed as a plan, but the runner still refuses a direct in-process driver fallback because BL-8A does not yet have a model-driver adapter that routes actual model turns through BL-7.
+- successful subprocess preflight may be sealed as a plan, but the runner still refuses a direct in-process driver fallback because BL-8A does not yet have a model-driver adapter that routes actual model turns through BL-7;
+- L3/L4 execution fails closed before any driver invocation; orchestrator v1 supports only L0/L1/L2.
 
 No real model/provider call occurred during BL-8A construction.
 
@@ -126,7 +129,7 @@ No real model/provider call occurred during BL-8A construction.
 
 BL-7 capability-boundary checkpoint `89f7b136d539619a26cd3398b0a5023c8c432142` passed in GitHub Actions run `34578249312` on both platforms.
 
-BL-8A hardened implementation/test checkpoint `f6798b833ccc3cd0bcfeaa3025583737d6de2848` passed in GitHub Actions run `34580157055` on both Windows and Ubuntu. This includes pre-run manifest closure, context-asset privacy/digest checks, portable-to-concrete L2 tool mapping, bounded read/write execution, append-only evidence storage, containment-preflight refusal, and the regression proving successful subprocess preflight cannot fall back to a direct in-process driver call.
+BL-8A acceptance checkpoint `5373f1049e19274f315c9743dd0a6c15dc0d2489` passed in GitHub Actions run `34580345998` on both Windows and Ubuntu. This includes pre-run manifest closure, context-asset privacy/digest checks, portable-to-concrete L2 tool mapping, bounded read/write execution, append-only evidence storage, containment-preflight refusal, successful-preflight/direct-call refusal, evaluator-failure raw-evidence preservation, and L3/L4 fail-closed execution boundaries.
 
 The regression gate does not start Ollama, load a model, execute ACL, or make scored model requests.
 
