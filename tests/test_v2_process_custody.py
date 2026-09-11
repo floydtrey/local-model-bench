@@ -146,7 +146,7 @@ class StrictProcessCustodyTests(unittest.TestCase):
                 CommandSpec("assessor-smoke", (sys.executable, "-c", "print('assessment')"), Path(temp_dir))
             )
         self.assertEqual(result.status, "completed")
-        self.assertEqual(result.stdout, b"assessment\n")
+        self.assertEqual(result.stdout.decode("utf-8").splitlines(), ["assessment"])
 
 
 if __name__ == "__main__":
