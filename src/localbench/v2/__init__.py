@@ -14,6 +14,23 @@ from .benchmark_pack import (
     parse_benchmark_pack,
 )
 from .configuration import CONFIG_SPEC_VERSION, resolve_effective_configuration
+from .containment import (
+    CONTAINMENT_EXECUTION_VERSION,
+    CONTAINMENT_POLICY_VERSION,
+    NETWORK_POLICIES,
+    PROCESS_CUSTODY_LEVELS,
+    BackendExecution,
+    CommandSpec,
+    ContainedAttemptResult,
+    ContainmentBlocked,
+    ContainmentCapabilities,
+    ContainmentExecutor,
+    ContainmentPolicy,
+    ContainmentPreflight,
+    NativeSubprocessBackend,
+    preflight,
+    validate_assessor_staging,
+)
 from .contracts import (
     EVIDENCE_SCHEMA_VERSION,
     RECORD_TYPES,
@@ -66,6 +83,11 @@ from .tool_harness import (
     run_bounded_tool_harness,
     validate_tool_execution_trace,
 )
+from .validation_adapter import (
+    LEGACY_PACKET_ADAPTER_VERSION,
+    AdaptedValidationTask,
+    adapt_legacy_validation_task,
+)
 
 __all__ = [
     "ASSET_DELIVERY_MODES",
@@ -76,6 +98,21 @@ __all__ = [
     "load_benchmark_pack",
     "parse_benchmark_pack",
     "CONFIG_SPEC_VERSION",
+    "CONTAINMENT_EXECUTION_VERSION",
+    "CONTAINMENT_POLICY_VERSION",
+    "NETWORK_POLICIES",
+    "PROCESS_CUSTODY_LEVELS",
+    "BackendExecution",
+    "CommandSpec",
+    "ContainedAttemptResult",
+    "ContainmentBlocked",
+    "ContainmentCapabilities",
+    "ContainmentExecutor",
+    "ContainmentPolicy",
+    "ContainmentPreflight",
+    "NativeSubprocessBackend",
+    "preflight",
+    "validate_assessor_staging",
     "EVIDENCE_SCHEMA_VERSION",
     "RECORD_TYPES",
     "EvidenceRef",
@@ -121,4 +158,7 @@ __all__ = [
     "WorkspaceSafetyError",
     "run_bounded_tool_harness",
     "validate_tool_execution_trace",
+    "LEGACY_PACKET_ADAPTER_VERSION",
+    "AdaptedValidationTask",
+    "adapt_legacy_validation_task",
 ]
