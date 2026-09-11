@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/evidence-record.schema.json",
+  "title": "Benchmark Lab V2 sealed evidence record",
+  "type": "object",
+  "required": ["schema_version", "record_type", "logical_id", "sha256", "payload"],
+  "properties": {
+    "schema_version": {
+      "const": "benchmark-lab-evidence:v2"
+    },
+    "record_type": {
+      "enum": [
+        "host_profile",
+        "runtime_profile",
+        "model_identity",
+        "effective_runtime_config",
+        "benchmark_input",
+        "evaluator_identity",
+        "trial_identity",
+        "run_manifest"
+      ]
+    },
+    "logical_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
