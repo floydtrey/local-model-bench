@@ -4,6 +4,15 @@ V2 is intentionally additive. The existing ``localbench`` V1 runner and result
 contracts remain available for historical reproduction.
 """
 
+from .benchmark_pack import (
+    ASSET_DELIVERY_MODES,
+    CAPABILITY_LEVELS,
+    PACK_SCHEMA_VERSION,
+    RESPONSE_MODES,
+    BenchmarkPack,
+    load_benchmark_pack,
+    parse_benchmark_pack,
+)
 from .configuration import CONFIG_SPEC_VERSION, resolve_effective_configuration
 from .contracts import (
     EVIDENCE_SCHEMA_VERSION,
@@ -31,6 +40,13 @@ from .records import (
 )
 
 __all__ = [
+    "ASSET_DELIVERY_MODES",
+    "CAPABILITY_LEVELS",
+    "PACK_SCHEMA_VERSION",
+    "RESPONSE_MODES",
+    "BenchmarkPack",
+    "load_benchmark_pack",
+    "parse_benchmark_pack",
     "CONFIG_SPEC_VERSION",
     "EVIDENCE_SCHEMA_VERSION",
     "RECORD_TYPES",
