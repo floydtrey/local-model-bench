@@ -24,6 +24,7 @@ RECORD_TYPES = frozenset(
         "case_result",
         "evaluation_result",
         "tool_execution_trace",
+        "containment_execution",
     }
 )
 
