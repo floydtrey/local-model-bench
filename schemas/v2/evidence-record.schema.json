@@ -20,7 +20,8 @@
         "run_manifest",
         "case_result",
         "evaluation_result",
-        "tool_execution_trace"
+        "tool_execution_trace",
+        "containment_execution"
       ]
     },
     "logical_id": {
