@@ -357,6 +357,33 @@ def _execution_case(
     return case
 
 
+def _bl6_execution_case(case_definition: Mapping[str, Any]) -> dict[str, Any]:
+    """Adapt a portable L2 case to BL-6's concrete harness contract.
+
+    The portable Benchmark Pack remains unchanged and is what the benchmark/trial
+    identities bind. The execution binding separately seals this exact mapping.
+    This derived view exists only at the BL-6 call boundary.
+    """
+
+    case = _thaw_json(case_definition)
+    requirements = case.get("requirements")
+    if not isinstance(requirements, dict):
+        raise ValueError("execution case requirements must be an object")
+    portable = requirements.get("tool_surface")
+    expected_tools = [item["name"] for item in BOUNDED_FILE_TOOL_DEFINITIONS]
+    if not isinstance(portable, dict):
+        raise ValueError("execution case tool_surface must be an object")
+    if portable.get("id") != PORTABLE_BOUNDED_FILES_CAPABILITY:
+        raise OrchestrationBlocked("portable L2 capability changed after planning")
+    if list(portable.get("required_tools", ())) != expected_tools:
+        raise OrchestrationBlocked("portable L2 tool list changed after planning")
+    requirements["tool_surface"] = {
+        "id": BOUNDED_FILE_SURFACE_ID,
+        "required_tools": expected_tools,
+    }
+    return case
+
+
 def _validate_case_configuration(
     case_definition: Mapping[str, Any],
     *,
@@ -763,7 +790,7 @@ def run_v2_pack(
             _materialize_reference_assets(workspace, assets_by_case[case_id])
             result = run_bounded_tool_harness(
                 trace_logical_id=_derived_id("tooltrace", trial.sha256),
-                case_definition=execution_cases[case_id],
+                case_definition=_bl6_execution_case(execution_cases[case_id]),
                 effective_config=effective,
                 workspace_root=workspace.root,
                 readable_paths=workspace.readable_paths,
