@@ -29,6 +29,7 @@ from localbench.v2 import (
     ToolCall,
     WorkspaceBinding,
     aggregate_repeated_run,
+    execution_interface_identity,
     host_profile,
     model_identity,
     persist_aggregate_report,
@@ -82,6 +83,21 @@ def foundation():
         declared_context_tokens=8192,
     )
     return host, runtime, model
+
+
+def interface_identity(runtime, model):
+    return execution_interface_identity(
+        "synthetic-construction-interface",
+        runtime=runtime.reference,
+        model=model.reference,
+        backend_kind="fake",
+        adapter_id="fake-adapter:v1",
+        tool_transport_mode="native_structured",
+        parser_mode="provider_native",
+        parser_id="fake-native-parser:v1",
+        raw_interaction_contract="synthetic-raw-interaction:v1",
+        capabilities={"chat": True, "tools": True},
+    )
 
 
 def configuration(profile_id: str, *, max_tool_calls: int) -> ConfigurationBinding:
@@ -399,6 +415,7 @@ def build_workspace_factory(base: Path):
 
 def run_synthetic_campaign(base: Path, store: EvidenceStore):
     host, runtime, model = foundation()
+    interface = interface_identity(runtime, model)
     factory, roots = build_workspace_factory(base)
     run = run_v2_repetitions(
         run_id="construction-gate-run",
@@ -417,6 +434,7 @@ def run_synthetic_campaign(base: Path, store: EvidenceStore):
             "synthetic-construction-driver",
             DRIVER_DIGEST,
             SyntheticDriver(),
+            execution_interface=interface,
         ),
         evidence_store=store,
         harness_source={"kind": "git", "commit": HARNESS_COMMIT},
@@ -562,6 +580,7 @@ class V2ConstructionAcceptanceTests(unittest.TestCase):
 
     def test_subprocess_containment_preflight_refuses_before_driver_or_manifest(self):
         host, runtime, model = foundation()
+        interface = interface_identity(runtime, model)
         called = False
 
         def driver(request):
@@ -575,6 +594,7 @@ class V2ConstructionAcceptanceTests(unittest.TestCase):
                 "synthetic-subprocess-driver",
                 DRIVER_DIGEST,
                 driver,
+                execution_interface=interface,
                 execution_kind="subprocess",
                 containment_policy=strict_policy(),
                 containment_backend=NativeSubprocessBackend(),

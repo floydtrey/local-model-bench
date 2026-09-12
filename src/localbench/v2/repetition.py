@@ -8,8 +8,9 @@ from typing import Any, Callable, Mapping, Sequence
 from ..util import validate_id
 from .benchmark_pack import parse_benchmark_pack
 from .configuration import resolve_effective_configuration
-from .contracts import SealedEvidence
+from .contracts import SealedEvidence, seal_evidence
 from .evaluators import EvaluatorRegistry
+from .execution_interface import validate_execution_interface_identity
 from .orchestrator import (
     AssetLoader,
     Clock,
@@ -35,7 +36,11 @@ from .orchestrator import (
 from .records import case_result, execution_binding, run_manifest, trial_identity
 from .resource_telemetry import ResourceTelemetryBinding
 from .resource_telemetry_integration import SafeResourceTelemetryCapture
-from .tool_harness import BoundedWorkspace, run_bounded_tool_harness
+from .tool_harness import (
+    BoundedWorkspace,
+    run_bounded_tool_harness,
+    validate_tool_execution_trace,
+)
 
 
 REPETITION_RUNNER_VERSION = "benchmark-lab-repetition-runner:v1"
@@ -206,6 +211,21 @@ def run_v2_repetitions(
         raise OrchestrationBlocked(
             f"repetition runner supports only L0/L1/L2, got {pack.level}"
         )
+    execution_interface = driver_binding.execution_interface
+    if pack.level == "L2":
+        if execution_interface is None:
+            raise OrchestrationBlocked(
+                "L2 execution requires an explicit execution_interface_identity"
+            )
+        validate_execution_interface_identity(execution_interface)
+        if _thaw_json(execution_interface.payload.get("runtime")) != runtime.reference.to_dict():
+            raise OrchestrationBlocked(
+                "execution interface runtime does not match the run runtime"
+            )
+        if _thaw_json(execution_interface.payload.get("model")) != model.reference.to_dict():
+            raise OrchestrationBlocked(
+                "execution interface model does not match the run model"
+            )
     if resource_telemetry is not None and pack.level != "L2":
         raise OrchestrationBlocked("resource telemetry is enabled only for L2 repetitions")
     benchmark = pack.to_benchmark_input(source_locator=pack_source_locator)
@@ -326,6 +346,9 @@ def run_v2_repetitions(
                 workspace_scope=workspace_scope,
                 context_assets=[asset.binding_descriptor for asset in assets],
                 containment=containment,
+                execution_interface=None
+                if execution_interface is None
+                else execution_interface.reference,
             )
             planned.append(
                 _PlannedTrial(
@@ -362,6 +385,8 @@ def run_v2_repetitions(
         harness_source=manifest_source,
     )
 
+    if execution_interface is not None:
+        evidence_store.persist(execution_interface)
     evidence_store.persist_many(
         (
             host,
@@ -395,6 +420,7 @@ def run_v2_repetitions(
 
         if pack.level == "L2":
             assert item.workspace is not None
+            assert execution_interface is not None
             current_sha256 = _initial_workspace_sha256(item.workspace)
             if current_sha256 != item.initial_workspace_sha256:
                 raise OrchestrationBlocked(
@@ -426,7 +452,15 @@ def run_v2_repetitions(
             status = result.status
             stop_reason = result.stop_reason
             terminal_output = None if result.terminal_output is None else _thaw_json(result.terminal_output)
-            trace = result.trace
+            trace = seal_evidence(
+                "tool_execution_trace",
+                result.trace.logical_id,
+                {
+                    **_thaw_json(result.trace.payload),
+                    "execution_interface": execution_interface.reference.to_dict(),
+                },
+            )
+            validate_tool_execution_trace(trace)
             metrics = {
                 "execution_mode": "lab_tool",
                 "stop_reason": stop_reason,
@@ -494,6 +528,7 @@ def run_v2_repetitions(
             if not isinstance(extra, SealedEvidence):
                 raise ValueError("supplemental_evidence must contain SealedEvidence values")
         observed_telemetry = () if telemetry_record is None else (telemetry_record,)
+        interface_evidence = () if execution_interface is None else (execution_interface,)
         available = (
             host,
             runtime,
@@ -501,6 +536,7 @@ def run_v2_repetitions(
             benchmark,
             item.effective,
             item.trial,
+            *interface_evidence,
             item.binding,
             manifest,
             trace,

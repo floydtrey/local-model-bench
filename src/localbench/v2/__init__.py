@@ -13,6 +13,16 @@ from .benchmark_pack import (
     load_benchmark_pack,
     parse_benchmark_pack,
 )
+from .compatibility import (
+    COMPATIBILITY_DIMENSIONS,
+    COMPATIBILITY_OBSERVATION_VERSION,
+    COMPATIBILITY_STATUSES,
+    CompatibilityDimension,
+    ToolCompatibilityObservation,
+    compatibility_observation,
+    seal_compatibility_observation,
+    validate_compatibility_observation_evidence,
+)
 from .configuration import CONFIG_SPEC_VERSION, resolve_effective_configuration
 from .containment import (
     CONTAINMENT_EXECUTION_VERSION,
@@ -51,6 +61,16 @@ from .evaluators import (
     EvaluatorRegistry,
     canonical_definition_bytes,
     definition_sha256,
+)
+from .execution_interface import (
+    BACKEND_TOOL_EXECUTION_POLICIES,
+    EXECUTION_INTERFACE_VERSION,
+    MALFORMED_CALL_POLICIES,
+    NORMALIZED_TOOL_CALL_CONTRACT,
+    PARSER_MODES,
+    TOOL_TRANSPORT_MODES,
+    execution_interface_identity,
+    validate_execution_interface_identity,
 )
 from .orchestrator import (
     INTRINSIC_TRACE_VERSION,
@@ -149,6 +169,14 @@ __all__ = [
     "BenchmarkPack",
     "load_benchmark_pack",
     "parse_benchmark_pack",
+    "COMPATIBILITY_OBSERVATION_VERSION",
+    "COMPATIBILITY_DIMENSIONS",
+    "COMPATIBILITY_STATUSES",
+    "CompatibilityDimension",
+    "ToolCompatibilityObservation",
+    "compatibility_observation",
+    "seal_compatibility_observation",
+    "validate_compatibility_observation_evidence",
     "CONFIG_SPEC_VERSION",
     "CONTAINMENT_EXECUTION_VERSION",
     "CONTAINMENT_POLICY_VERSION",
@@ -176,6 +204,14 @@ __all__ = [
     "seal_evidence",
     "sha256_json",
     "resolve_effective_configuration",
+    "EXECUTION_INTERFACE_VERSION",
+    "NORMALIZED_TOOL_CALL_CONTRACT",
+    "TOOL_TRANSPORT_MODES",
+    "PARSER_MODES",
+    "MALFORMED_CALL_POLICIES",
+    "BACKEND_TOOL_EXECUTION_POLICIES",
+    "execution_interface_identity",
+    "validate_execution_interface_identity",
     "OLLAMA_ADAPTER_ID",
     "OLLAMA_CONTEXT_DELIVERY",
     "OllamaChatDriver",

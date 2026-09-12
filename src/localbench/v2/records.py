@@ -320,6 +320,7 @@ def execution_binding(
     workspace_scope: Mapping[str, Any] | None,
     context_assets: Sequence[Mapping[str, Any]],
     containment: Mapping[str, Any] | None,
+    execution_interface: EvidenceRef | Mapping[str, Any] | None = None,
 ) -> SealedEvidence:
     if execution_mode not in {"intrinsic", "lab_tool"}:
         raise ValueError("execution_mode must be intrinsic or lab_tool")
@@ -335,6 +336,12 @@ def execution_binding(
         if containment is None
         else _object(containment, "containment"),
     }
+    if execution_interface is not None:
+        payload["execution_interface"] = _ref(
+            execution_interface,
+            "execution_interface_identity",
+            "execution_interface",
+        )
     return seal_evidence("execution_binding", logical_id, payload)
 
 

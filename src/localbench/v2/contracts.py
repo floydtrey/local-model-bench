@@ -20,6 +20,8 @@ RECORD_TYPES = frozenset(
         "benchmark_input",
         "evaluator_identity",
         "trial_identity",
+        "execution_interface_identity",
+        "tool_compatibility_observation",
         "execution_binding",
         "run_manifest",
         "case_result",
