@@ -15,13 +15,21 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $Here)
+$ResolvedOutputRoot = if ([System.IO.Path]::IsPathRooted($OutputRoot)) {
+    [System.IO.Path]::GetFullPath($OutputRoot)
+}
+else {
+    [System.IO.Path]::GetFullPath((Join-Path $RepoRoot $OutputRoot))
+}
+
 $SmokeScript = Join-Path $Here "ollama-tool-transport-smoke.ps1"
 if (-not (Test-Path -LiteralPath $SmokeScript -PathType Leaf)) {
     throw "Smoke script not found: $SmokeScript"
 }
 
 $BatchTimestamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssZ")
-$BatchDir = Join-Path $OutputRoot "batch-$BatchTimestamp"
+$BatchDir = Join-Path $ResolvedOutputRoot "batch-$BatchTimestamp"
 New-Item -ItemType Directory -Path $BatchDir -Force | Out-Null
 
 $Results = @()
@@ -31,7 +39,7 @@ foreach ($Model in $Models) {
     Write-Host "=== $Model ===" -ForegroundColor Cyan
 
     $Before = @(
-        Get-ChildItem -Path $OutputRoot -Directory -ErrorAction SilentlyContinue |
+        Get-ChildItem -Path $ResolvedOutputRoot -Directory -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -ne (Split-Path -Leaf $BatchDir) } |
             Select-Object -ExpandProperty FullName
     )
@@ -41,7 +49,7 @@ foreach ($Model in $Models) {
         & $SmokeScript `
             -Model $Model `
             -BaseUrl $BaseUrl `
-            -OutputRoot $OutputRoot `
+            -OutputRoot $ResolvedOutputRoot `
             -NumCtx $NumCtx `
             -NumPredict $NumPredict
         $ExitCode = 0
@@ -52,7 +60,7 @@ foreach ($Model in $Models) {
     }
 
     $After = @(
-        Get-ChildItem -Path $OutputRoot -Directory -ErrorAction SilentlyContinue |
+        Get-ChildItem -Path $ResolvedOutputRoot -Directory -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -ne (Split-Path -Leaf $BatchDir) } |
             Sort-Object LastWriteTimeUtc -Descending
     )
