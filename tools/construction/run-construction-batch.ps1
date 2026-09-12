@@ -47,6 +47,7 @@ $Python = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path -LiteralPath $Python -PathType Leaf)) {
     $Python = (Get-Command python -ErrorAction Stop).Source
 }
+$OllamaPath = (Get-Command ollama -ErrorAction Stop).Source
 
 $Rows = @()
 foreach ($Model in $Models) {
@@ -114,8 +115,23 @@ foreach ($Model in $Models) {
     }
 
     # Preserve warm residency across this model's task battery, then unload before
-    # moving to the next candidate so candidates do not compete for VRAM.
-    & ollama stop $Model *> $null
+    # moving to the next candidate so candidates do not compete for VRAM. Model
+    # unload is cleanup only: stderr/noisy output or a non-zero stop exit must never
+    # abort the remaining benchmark candidates.
+    try {
+        $StopProcess = Start-Process `
+            -FilePath $OllamaPath `
+            -ArgumentList @("stop", $Model) `
+            -NoNewWindow `
+            -Wait `
+            -PassThru
+        if ($StopProcess.ExitCode -ne 0) {
+            Write-Warning "ollama stop returned exit code $($StopProcess.ExitCode) for $Model; continuing batch."
+        }
+    }
+    catch {
+        Write-Warning "Unable to unload $Model after its task battery: $($_.Exception.Message). Continuing batch."
+    }
 }
 
 $BatchStamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssZ")
