@@ -41,7 +41,7 @@ try {
     Write-Host "ollama API: PASS ($($Tags.models.Count) model(s) visible)"
 }
 catch {
-    throw "Ollama API qualification failed at $BaseUrl: $($_.Exception.Message)"
+    throw "Ollama API qualification failed at ${BaseUrl}: $($_.Exception.Message)"
 }
 
 Write-Host "Construction Lab host qualification: PASS" -ForegroundColor Green
