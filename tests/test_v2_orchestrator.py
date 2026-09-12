@@ -29,6 +29,7 @@ from localbench.v2 import (
     WorkspaceBinding,
     host_profile,
     model_identity,
+    resolve_effective_configuration,
     run_v2_pack,
     runtime_profile,
 )
@@ -260,6 +261,52 @@ class BL8AOrchestratorTests(unittest.TestCase):
             self.assertEqual(result.case_results[0].payload["status"], "success")
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
             self.assertEqual(store.load(result.manifest.reference), result.manifest)
+
+    def test_pack_run_reuses_presealed_effective_configuration_identity(self):
+        host, runtime, model = self.foundation()
+        base = self.config(tools=False)
+        expected = resolve_effective_configuration(
+            "config-candidate-profile-a",
+            runtime=runtime,
+            model=model,
+            spec=base.spec,
+            adapter_resolution=base.adapter_resolution,
+        )
+        binding = ConfigurationBinding(
+            profile_id="profile-a",
+            spec=base.spec,
+            adapter_resolution=base.adapter_resolution,
+            effective_logical_id=expected.logical_id,
+            expected_effective_config=expected.reference,
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result = run_v2_pack(
+                run_id="run-presealed-config",
+                pack_source=pack_bytes(level="L0"),
+                pack_source_locator=None,
+                host=host,
+                runtime=runtime,
+                model=model,
+                configuration_bindings={"profile-a": binding},
+                evaluator_registry=self.registry(
+                    "intrinsic_execution_trace"
+                ),
+                driver_binding=DriverBinding(
+                    "fake-driver",
+                    DRIVER_DIGEST,
+                    lambda request: ModelTurnResponse(content="answer"),
+                ),
+                evidence_store=EvidenceStore(Path(temp_dir) / "evidence"),
+                harness_source={"kind": "git", "commit": DIGEST_B},
+                clock=self.fixed_clock(),
+            )
+
+        self.assertEqual(result.effective_configs, (expected,))
+        self.assertEqual(
+            result.trials[0].payload["effective_config"],
+            expected.reference.to_dict(),
+        )
 
     def test_l1_asset_bytes_are_verified_and_locator_is_not_candidate_visible(self):
         host, runtime, model = self.foundation()

@@ -123,13 +123,51 @@ class ConfigurationBinding:
     profile_id: str
     spec: Mapping[str, Any]
     adapter_resolution: Mapping[str, Any]
+    effective_logical_id: str | None = None
+    expected_effective_config: EvidenceRef | None = None
 
     def __post_init__(self) -> None:
         validate_id(self.profile_id, "profile_id")
         if not isinstance(self.spec, Mapping) or not isinstance(self.adapter_resolution, Mapping):
             raise ValueError("spec and adapter_resolution must be objects")
+        if self.effective_logical_id is not None:
+            validate_id(self.effective_logical_id, "effective_logical_id")
+        if self.expected_effective_config is not None:
+            if (
+                not isinstance(self.expected_effective_config, EvidenceRef)
+                or self.expected_effective_config.record_type
+                != "effective_runtime_config"
+            ):
+                raise ValueError(
+                    "expected_effective_config must reference effective_runtime_config"
+                )
+        if (self.effective_logical_id is None) != (
+            self.expected_effective_config is None
+        ):
+            raise ValueError(
+                "effective_logical_id and expected_effective_config must be supplied together"
+            )
+        if (
+            self.expected_effective_config is not None
+            and self.expected_effective_config.logical_id
+            != self.effective_logical_id
+        ):
+            raise ValueError(
+                "expected effective configuration logical ID does not match binding"
+            )
         object.__setattr__(self, "spec", _freeze_json(self.spec))
         object.__setattr__(self, "adapter_resolution", _freeze_json(self.adapter_resolution))
+
+    @property
+    def resolution_logical_id(self) -> str:
+        return self.effective_logical_id or self.profile_id
+
+    def require_expected(self, effective: SealedEvidence) -> None:
+        expected = self.expected_effective_config
+        if expected is not None and effective.reference != expected:
+            raise OrchestrationBlocked(
+                "resolved effective configuration does not match its presealed identity"
+            )
 
 
 @dataclass(frozen=True)
@@ -670,12 +708,13 @@ def run_v2_pack(
         effective = effective_by_profile.get(profile_id)
         if effective is None:
             effective = resolve_effective_configuration(
-                profile_id,
+                configured.resolution_logical_id,
                 runtime=runtime,
                 model=model,
                 spec=_thaw_json(configured.spec),
                 adapter_resolution=_thaw_json(configured.adapter_resolution),
             )
+            configured.require_expected(effective)
             effective_by_profile[profile_id] = effective
             config_order.append(effective)
 
