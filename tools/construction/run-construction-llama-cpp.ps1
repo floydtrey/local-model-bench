@@ -127,7 +127,19 @@ $StdoutLog = Join-Path $ServerRun "llama-server.stdout.log"
 $StderrLog = Join-Path $ServerRun "llama-server.stderr.log"
 $ProvenanceFile = Join-Path $ServerRun "provider-provenance.json"
 
-$VersionText = ((& $ResolvedServer --version 2>&1) -join "`n").Trim()
+$PriorErrorActionPreferenceForVersion = $ErrorActionPreference
+try {
+    $ErrorActionPreference = "Continue"
+    $VersionOutput = @(& $ResolvedServer --version 2>&1)
+    $VersionExitCode = $LASTEXITCODE
+}
+finally {
+    $ErrorActionPreference = $PriorErrorActionPreferenceForVersion
+}
+if ($VersionExitCode -ne 0) {
+    throw "llama-server --version failed with exit code $VersionExitCode."
+}
+$VersionText = (($VersionOutput | ForEach-Object { $_.ToString() }) -join "`n").Trim()
 $ModelEvidence = @(
     foreach ($Part in $ModelParts) {
         $Item = Get-Item -LiteralPath $Part
