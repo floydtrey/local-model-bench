@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/resource-telemetry-trace.schema.json",
+  "title": "Benchmark Lab V2 resource telemetry trace payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "telemetry_version",
+    "probe_id",
+    "sampling_interval_ms",
+    "case_id",
+    "trial",
+    "started_at",
+    "finished_at",
+    "samples",
+    "summary"
+  ],
+  "properties": {
+    "telemetry_version": {"const": "benchmark-lab-resource-telemetry:v1"},
+    "probe_id": {"type": "string", "minLength": 1},
+    "sampling_interval_ms": {"type": "integer", "minimum": 100},
+    "case_id": {"$ref": "#/$defs/safeId"},
+    "trial": {"$ref": "#/$defs/evidenceRef"},
+    "started_at": {"type": "string", "minLength": 1},
+    "finished_at": {"type": "string", "minLength": 1},
+    "samples": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/sample"}
+    },
+    "summary": {"$ref": "#/$defs/summary"}
+  },
+  "$defs": {
+    "safeId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableNumber": {
+      "anyOf": [{"type": "number"}, {"type": "null"}]
+    },
+    "nullableInteger": {
+      "anyOf": [{"type": "integer"}, {"type": "null"}]
+    },
+    "nullableString": {
+      "anyOf": [{"type": "string"}, {"type": "null"}]
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_type", "logical_id", "sha256"],
+      "properties": {
+        "record_type": {"const": "trial_identity"},
+        "logical_id": {"$ref": "#/$defs/safeId"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "cpu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["utilization_percent"],
+      "properties": {
+        "utilization_percent": {"$ref": "#/$defs/nullableNumber"}
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_bytes", "available_bytes", "used_bytes"],
+      "properties": {
+        "total_bytes": {"$ref": "#/$defs/nullableInteger"},
+        "available_bytes": {"$ref": "#/$defs/nullableInteger"},
+        "used_bytes": {"$ref": "#/$defs/nullableInteger"}
+      }
+    },
+    "gpu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "uuid",
+        "name",
+        "utilization_percent",
+        "memory_used_bytes",
+        "memory_total_bytes",
+        "temperature_c",
+        "power_watts",
+        "power_limit_watts"
+      ],
+      "properties": {
+        "index": {"$ref": "#/$defs/nullableInteger"},
+        "uuid": {"$ref": "#/$defs/nullableString"},
+        "name": {"$ref": "#/$defs/nullableString"},
+        "utilization_percent": {"$ref": "#/$defs/nullableNumber"},
+        "memory_used_bytes": {"$ref": "#/$defs/nullableInteger"},
+        "memory_total_bytes": {"$ref": "#/$defs/nullableInteger"},
+        "temperature_c": {"$ref": "#/$defs/nullableNumber"},
+        "power_watts": {"$ref": "#/$defs/nullableNumber"},
+        "power_limit_watts": {"$ref": "#/$defs/nullableNumber"}
+      }
+    },
+    "sample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "captured_at",
+        "offset_ms",
+        "probe_duration_ms",
+        "probe_status",
+        "probe_errors",
+        "cpu",
+        "memory",
+        "gpus"
+      ],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1},
+        "captured_at": {"type": "string", "minLength": 1},
+        "offset_ms": {"type": "number", "minimum": 0},
+        "probe_duration_ms": {"type": "number", "minimum": 0},
+        "probe_status": {"enum": ["ok", "partial", "unavailable"]},
+        "probe_errors": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "cpu": {"$ref": "#/$defs/cpu"},
+        "memory": {"$ref": "#/$defs/memory"},
+        "gpus": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/gpu"}
+        }
+      }
+    },
+    "gpuSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "index",
+        "uuid",
+        "name",
+        "average_utilization_percent",
+        "peak_utilization_percent",
+        "peak_memory_used_bytes",
+        "peak_temperature_c",
+        "average_power_watts",
+        "peak_power_watts",
+        "estimated_energy_joules",
+        "observed_energy_duration_ms"
+      ],
+      "properties": {
+        "identity": {"type": "string", "minLength": 1},
+        "index": {"$ref": "#/$defs/nullableInteger"},
+        "uuid": {"$ref": "#/$defs/nullableString"},
+        "name": {"$ref": "#/$defs/nullableString"},
+        "average_utilization_percent": {"$ref": "#/$defs/nullableNumber"},
+        "peak_utilization_percent": {"$ref": "#/$defs/nullableNumber"},
+        "peak_memory_used_bytes": {"$ref": "#/$defs/nullableInteger"},
+        "peak_temperature_c": {"$ref": "#/$defs/nullableNumber"},
+        "average_power_watts": {"$ref": "#/$defs/nullableNumber"},
+        "peak_power_watts": {"$ref": "#/$defs/nullableNumber"},
+        "estimated_energy_joules": {"$ref": "#/$defs/nullableNumber"},
+        "observed_energy_duration_ms": {"type": "number", "minimum": 0}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_count",
+        "sampling_interval_ms",
+        "observed_span_ms",
+        "probe_non_ok_samples",
+        "average_probe_duration_ms",
+        "peak_probe_duration_ms",
+        "cpu",
+        "memory",
+        "gpus"
+      ],
+      "properties": {
+        "sample_count": {"type": "integer", "minimum": 0},
+        "sampling_interval_ms": {"type": "integer", "minimum": 100},
+        "observed_span_ms": {"type": "number", "minimum": 0},
+        "probe_non_ok_samples": {"type": "integer", "minimum": 0},
+        "average_probe_duration_ms": {"$ref": "#/$defs/nullableNumber"},
+        "peak_probe_duration_ms": {"$ref": "#/$defs/nullableNumber"},
+        "cpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["average_utilization_percent", "peak_utilization_percent"],
+          "properties": {
+            "average_utilization_percent": {"$ref": "#/$defs/nullableNumber"},
+            "peak_utilization_percent": {"$ref": "#/$defs/nullableNumber"}
+          }
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["peak_used_bytes", "minimum_available_bytes"],
+          "properties": {
+            "peak_used_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "minimum_available_bytes": {"$ref": "#/$defs/nullableInteger"}
+          }
+        },
+        "gpus": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/gpuSummary"}
+        }
+      }
+    }
+  }
+}

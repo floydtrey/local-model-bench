@@ -33,6 +33,8 @@ from .orchestrator import (
     _validate_foundation,
 )
 from .records import case_result, execution_binding, run_manifest, trial_identity
+from .resource_telemetry import ResourceTelemetryBinding
+from .resource_telemetry_integration import SafeResourceTelemetryCapture
 from .tool_harness import BoundedWorkspace, run_bounded_tool_harness
 
 
@@ -70,6 +72,7 @@ class RepeatedRun:
     execution_bindings: tuple[SealedEvidence, ...]
     manifest: SealedEvidence
     execution_evidence: tuple[SealedEvidence, ...]
+    resource_telemetry: tuple[SealedEvidence, ...]
     case_results: tuple[SealedEvidence, ...]
     evaluation_results: tuple[SealedEvidence, ...]
 
@@ -97,6 +100,7 @@ class RepeatedRun:
             "trials",
             "execution_bindings",
             "execution_evidence",
+            "resource_telemetry",
             "case_results",
             "evaluation_results",
         ):
@@ -105,6 +109,8 @@ class RepeatedRun:
                 not isinstance(item, SealedEvidence) for item in value
             ):
                 raise ValueError(f"{name} must be a tuple of SealedEvidence values")
+        if any(item.record_type != "resource_telemetry_trace" for item in self.resource_telemetry):
+            raise ValueError("resource_telemetry must contain resource_telemetry_trace evidence")
 
 
 def _trial_count(case: Mapping[str, Any], phase: str) -> int:
@@ -164,6 +170,7 @@ def run_v2_repetitions(
     workspace_factory: WorkspaceFactory | None = None,
     asset_loader: AssetLoader | None = None,
     supplemental_evidence: Mapping[str, Sequence[SealedEvidence]] | None = None,
+    resource_telemetry: ResourceTelemetryBinding | None = None,
     clock: Clock = _utc_now,
 ) -> RepeatedRun:
     """Execute the Benchmark Pack's predeclared repetition policy.
@@ -171,7 +178,8 @@ def run_v2_repetitions(
     BL-8B never invents repetition counts. ``screen`` selects each case's
     ``screen_trials`` value and ``qualification`` selects ``qualification_trials``.
     Repeated L2 trials require distinct disposable workspaces with identical sealed
-    initial snapshots so one trial cannot influence another.
+    initial snapshots so one trial cannot influence another. Optional resource
+    telemetry is observational, sealed separately, and cannot change scoring.
     """
 
     validate_id(run_id, "run_id")
@@ -188,12 +196,18 @@ def run_v2_repetitions(
         raise ValueError("evidence_store must be EvidenceStore")
     if not isinstance(harness_source, Mapping):
         raise ValueError("harness_source must be an object")
+    if resource_telemetry is not None and not isinstance(
+        resource_telemetry, ResourceTelemetryBinding
+    ):
+        raise ValueError("resource_telemetry must be ResourceTelemetryBinding or null")
 
     pack = parse_benchmark_pack(pack_source)
     if pack.level not in {"L0", "L1", "L2"}:
         raise OrchestrationBlocked(
             f"repetition runner supports only L0/L1/L2, got {pack.level}"
         )
+    if resource_telemetry is not None and pack.level != "L2":
+        raise OrchestrationBlocked("resource telemetry is enabled only for L2 repetitions")
     benchmark = pack.to_benchmark_input(source_locator=pack_source_locator)
     workspaces = {} if workspaces is None else dict(workspaces)
     supplemental_evidence = {} if supplemental_evidence is None else dict(supplemental_evidence)
@@ -326,6 +340,15 @@ def run_v2_repetitions(
                 )
             )
 
+    manifest_source = {
+        "orchestrator_version": ORCHESTRATOR_VERSION,
+        "repetition_runner_version": REPETITION_RUNNER_VERSION,
+        "repetition_phase": repetition_phase,
+        "source": _thaw_json(harness_source),
+    }
+    if resource_telemetry is not None:
+        manifest_source["resource_telemetry"] = resource_telemetry.descriptor()
+
     manifest = run_manifest(
         run_id,
         host=host.reference,
@@ -336,12 +359,7 @@ def run_v2_repetitions(
         evaluators=[record.reference for record in evaluator_identities],
         trials=[item.trial.reference for item in planned],
         execution_bindings=[item.binding.reference for item in planned],
-        harness_source={
-            "orchestrator_version": ORCHESTRATOR_VERSION,
-            "repetition_runner_version": REPETITION_RUNNER_VERSION,
-            "repetition_phase": repetition_phase,
-            "source": _thaw_json(harness_source),
-        },
+        harness_source=manifest_source,
     )
 
     evidence_store.persist_many(
@@ -364,6 +382,7 @@ def run_v2_repetitions(
         )
 
     execution_records: list[SealedEvidence] = []
+    telemetry_records: list[SealedEvidence] = []
     case_records: list[SealedEvidence] = []
     evaluation_records: list[SealedEvidence] = []
 
@@ -372,6 +391,7 @@ def run_v2_repetitions(
         started_at = clock()
         if not isinstance(started_at, str) or not started_at:
             raise ValueError("clock must return non-empty timestamp strings")
+        telemetry_record: SealedEvidence | None = None
 
         if pack.level == "L2":
             assert item.workspace is not None
@@ -380,15 +400,29 @@ def run_v2_repetitions(
                 raise OrchestrationBlocked(
                     f"workspace for {case_id!r} ordinal {item.trial.payload['ordinal']} changed after manifest sealing"
                 )
-            result = run_bounded_tool_harness(
-                trace_logical_id=_derived_id("tooltrace", item.trial.sha256),
-                case_definition=_bl6_execution_case(item.execution_case),
-                effective_config=item.effective,
-                workspace_root=item.workspace.root,
-                readable_paths=item.workspace.readable_paths,
-                writable_paths=item.workspace.writable_paths,
-                driver=driver_binding.driver,
-            )
+            capture: SafeResourceTelemetryCapture | None = None
+            if resource_telemetry is not None:
+                capture = SafeResourceTelemetryCapture(
+                    resource_telemetry,
+                    _derived_id("telemetry", item.trial.sha256),
+                    case_id,
+                    item.trial.reference,
+                )
+                capture.start()
+            try:
+                result = run_bounded_tool_harness(
+                    trace_logical_id=_derived_id("tooltrace", item.trial.sha256),
+                    case_definition=_bl6_execution_case(item.execution_case),
+                    effective_config=item.effective,
+                    workspace_root=item.workspace.root,
+                    readable_paths=item.workspace.readable_paths,
+                    writable_paths=item.workspace.writable_paths,
+                    driver=driver_binding.driver,
+                )
+            finally:
+                finished_at = clock()
+                if capture is not None:
+                    telemetry_record = capture.stop()
             status = result.status
             stop_reason = result.stop_reason
             terminal_output = None if result.terminal_output is None else _thaw_json(result.terminal_output)
@@ -400,6 +434,10 @@ def run_v2_repetitions(
                 "trial_ordinal": item.trial.payload["ordinal"],
                 "tool_summary": _thaw_json(trace.payload["summary"]),
             }
+            if telemetry_record is not None:
+                metrics["resource_telemetry_summary"] = _thaw_json(
+                    telemetry_record.payload["summary"]
+                )
         else:
             status, stop_reason, terminal_output, trace = _intrinsic_trace(
                 logical_id=_derived_id("intrinsic", item.trial.sha256),
@@ -413,12 +451,20 @@ def run_v2_repetitions(
                 "trial_ordinal": item.trial.payload["ordinal"],
                 "model_turns": 1,
             }
+            finished_at = clock()
 
-        finished_at = clock()
         if not isinstance(finished_at, str) or not finished_at:
             raise ValueError("clock must return non-empty timestamp strings")
         evidence_store.persist(trace)
         execution_records.append(trace)
+        execution_evidence = {
+            "primary": trace.reference.to_dict(),
+            "execution_binding": item.binding.reference.to_dict(),
+        }
+        if telemetry_record is not None:
+            evidence_store.persist(telemetry_record)
+            telemetry_records.append(telemetry_record)
+            execution_evidence["resource_telemetry"] = telemetry_record.reference.to_dict()
         case_record = case_result(
             _derived_id("case", manifest.sha256, item.trial.sha256),
             manifest=manifest.reference,
@@ -429,10 +475,7 @@ def run_v2_repetitions(
             started_at=started_at,
             finished_at=finished_at,
             metrics=metrics,
-            execution_evidence={
-                "primary": trace.reference.to_dict(),
-                "execution_binding": item.binding.reference.to_dict(),
-            },
+            execution_evidence=execution_evidence,
             terminal_output=terminal_output,
         )
         evidence_store.persist(case_record)
@@ -450,6 +493,7 @@ def run_v2_repetitions(
         for extra in extras:
             if not isinstance(extra, SealedEvidence):
                 raise ValueError("supplemental_evidence must contain SealedEvidence values")
+        observed_telemetry = () if telemetry_record is None else (telemetry_record,)
         available = (
             host,
             runtime,
@@ -460,6 +504,7 @@ def run_v2_repetitions(
             item.binding,
             manifest,
             trace,
+            *observed_telemetry,
             *tuple(extras),
         )
         for evaluator_ref in item.case["evaluators"]:
@@ -491,6 +536,7 @@ def run_v2_repetitions(
         execution_bindings=tuple(item.binding for item in planned),
         manifest=manifest,
         execution_evidence=tuple(execution_records),
+        resource_telemetry=tuple(telemetry_records),
         case_results=tuple(case_records),
         evaluation_results=tuple(evaluation_records),
     )

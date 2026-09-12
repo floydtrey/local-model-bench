@@ -108,6 +108,17 @@ from .reporting import (
     render_aggregate_csv,
     render_aggregate_markdown,
 )
+from .resource_telemetry import (
+    RESOURCE_TELEMETRY_VERSION,
+    SYSTEM_RESOURCE_PROBE_ID,
+    ResourceTelemetryBinding,
+    SystemResourceProbe,
+    ThreadedResourceTelemetrySession,
+    parse_nvidia_telemetry_csv,
+    resource_telemetry_trace,
+    summarize_resource_samples,
+    system_resource_telemetry_binding,
+)
 from .tool_harness import (
     BOUNDED_FILE_SURFACE_ID,
     BOUNDED_FILE_TOOL_DEFINITIONS,
@@ -216,6 +227,15 @@ __all__ = [
     "persist_aggregate_report",
     "render_aggregate_markdown",
     "render_aggregate_csv",
+    "RESOURCE_TELEMETRY_VERSION",
+    "SYSTEM_RESOURCE_PROBE_ID",
+    "ResourceTelemetryBinding",
+    "SystemResourceProbe",
+    "ThreadedResourceTelemetrySession",
+    "parse_nvidia_telemetry_csv",
+    "resource_telemetry_trace",
+    "summarize_resource_samples",
+    "system_resource_telemetry_binding",
     "BOUNDED_FILE_SURFACE_ID",
     "BOUNDED_FILE_TOOL_DEFINITIONS",
     "BOUNDED_FILE_TOOL_SCHEMA_SHA256",
