@@ -26,6 +26,7 @@ from localbench.v2 import (
     aggregate_repeated_run,
     case_result,
     evaluation_result,
+    execution_interface_identity,
     host_profile,
     model_identity,
     run_v2_repetitions,
@@ -75,6 +76,21 @@ def foundation():
         declared_context_tokens=8192,
     )
     return host, runtime, model
+
+
+def interface_identity(runtime, model):
+    return execution_interface_identity(
+        "fake-invariant-tools",
+        runtime=runtime.reference,
+        model=model.reference,
+        backend_kind="fake",
+        adapter_id="fake-adapter:v1",
+        tool_transport_mode="native_structured",
+        parser_mode="provider_native",
+        parser_id="fake-native-parser:v1",
+        raw_interaction_contract="synthetic-raw-interaction:v1",
+        capabilities={"chat": True, "tools": True},
+    )
 
 
 def configuration(*, tools: bool) -> ConfigurationBinding:
@@ -236,6 +252,7 @@ class BL8BInvariantTests(unittest.TestCase):
 
     def test_repeated_l2_without_workspace_factory_fails_before_manifest_or_driver(self):
         host, runtime, model = foundation()
+        interface = interface_identity(runtime, model)
         called = False
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "workspace"
@@ -259,7 +276,12 @@ class BL8BInvariantTests(unittest.TestCase):
                     model=model,
                     configuration_bindings={"profile-a": configuration(tools=True)},
                     evaluator_registry=registry(),
-                    driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                    driver_binding=DriverBinding(
+                        "fake-tool-driver",
+                        DRIVER_DIGEST,
+                        driver,
+                        execution_interface=interface,
+                    ),
                     evidence_store=store,
                     harness_source={"kind": "git", "commit": HARNESS_COMMIT},
                     workspaces={
@@ -275,6 +297,7 @@ class BL8BInvariantTests(unittest.TestCase):
 
     def test_repeated_l2_workspace_root_reuse_fails_before_driver(self):
         host, runtime, model = foundation()
+        interface = interface_identity(runtime, model)
         called = False
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "workspace"
@@ -303,7 +326,12 @@ class BL8BInvariantTests(unittest.TestCase):
                     model=model,
                     configuration_bindings={"profile-a": configuration(tools=True)},
                     evaluator_registry=registry(),
-                    driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                    driver_binding=DriverBinding(
+                        "fake-tool-driver",
+                        DRIVER_DIGEST,
+                        driver,
+                        execution_interface=interface,
+                    ),
                     evidence_store=store,
                     harness_source={"kind": "git", "commit": HARNESS_COMMIT},
                     workspace_factory=lambda case_id, ordinal: binding,
