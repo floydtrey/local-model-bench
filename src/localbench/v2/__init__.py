@@ -60,6 +60,7 @@ from .execution_interface import (
     PARSER_MODES,
     TOOL_TRANSPORT_MODES,
     execution_interface_identity,
+    validate_execution_interface_identity,
 )
 from .orchestrator import (
     INTRINSIC_TRACE_VERSION,
@@ -192,6 +193,7 @@ __all__ = [
     "MALFORMED_CALL_POLICIES",
     "BACKEND_TOOL_EXECUTION_POLICIES",
     "execution_interface_identity",
+    "validate_execution_interface_identity",
     "OLLAMA_ADAPTER_ID",
     "OLLAMA_CONTEXT_DELIVERY",
     "OllamaChatDriver",
