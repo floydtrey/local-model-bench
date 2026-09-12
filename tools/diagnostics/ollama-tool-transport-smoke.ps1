@@ -19,9 +19,18 @@ function ConvertTo-SafeName {
     return ($Value -replace '[^A-Za-z0-9._-]', '_')
 }
 
+$Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $Here)
+$ResolvedOutputRoot = if ([System.IO.Path]::IsPathRooted($OutputRoot)) {
+    [System.IO.Path]::GetFullPath($OutputRoot)
+}
+else {
+    [System.IO.Path]::GetFullPath((Join-Path $RepoRoot $OutputRoot))
+}
+
 $Timestamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssZ")
 $SafeModel = ConvertTo-SafeName $Model
-$RunDir = Join-Path $OutputRoot "$SafeModel-$Timestamp"
+$RunDir = Join-Path $ResolvedOutputRoot "$SafeModel-$Timestamp"
 New-Item -ItemType Directory -Path $RunDir -Force | Out-Null
 
 $ToolDefinitions = @(
@@ -101,7 +110,7 @@ $SummaryPath = Join-Path $RunDir "summary.json"
 $MetadataPath = Join-Path $RunDir "metadata.json"
 
 [System.IO.File]::WriteAllText(
-    [System.IO.Path]::GetFullPath($RequestPath),
+    $RequestPath,
     $RequestJson,
     [System.Text.UTF8Encoding]::new($false)
 )
@@ -161,7 +170,7 @@ $Stopwatch.Stop()
 
 $ResponseJson = $Response | ConvertTo-Json -Depth 30
 [System.IO.File]::WriteAllText(
-    [System.IO.Path]::GetFullPath($ResponsePath),
+    $ResponsePath,
     $ResponseJson,
     [System.Text.UTF8Encoding]::new($false)
 )
