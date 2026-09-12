@@ -27,6 +27,7 @@ from localbench.v2 import (
     OrchestrationBlocked,
     ToolCall,
     WorkspaceBinding,
+    execution_interface_identity,
     host_profile,
     model_identity,
     resolve_effective_configuration,
@@ -145,6 +146,20 @@ class BL8AOrchestratorTests(unittest.TestCase):
             declared_context_tokens=8192,
         )
         return host, runtime, model
+
+    def execution_interface(self, runtime, model):
+        return execution_interface_identity(
+            "fake-native-tools",
+            runtime=runtime.reference,
+            model=model.reference,
+            backend_kind="fake",
+            adapter_id="fake-adapter:v1",
+            tool_transport_mode="native_structured",
+            parser_mode="provider_native",
+            parser_id="fake-native-parser:v1",
+            raw_interaction_contract="synthetic-raw-interaction:v1",
+            capabilities={"chat": True, "tools": True},
+        )
 
     def config(self, *, tools: bool):
         return ConfigurationBinding(
@@ -443,6 +458,7 @@ class BL8AOrchestratorTests(unittest.TestCase):
 
     def test_l2_scope_and_portable_mapping_are_sealed_before_bounded_execution(self):
         host, runtime, model = self.foundation()
+        execution_interface = self.execution_interface(runtime, model)
         input_bytes = b"hello"
         input_sha = sha(input_bytes)
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -453,7 +469,9 @@ class BL8AOrchestratorTests(unittest.TestCase):
 
             def driver(request):
                 manifest_dir = store.root / "records" / "run_manifest"
+                interface_dir = store.root / "records" / "execution_interface_identity"
                 self.assertEqual(len(list(manifest_dir.glob("*.json"))), 1)
+                self.assertEqual(len(list(interface_dir.glob("*.json"))), 1)
                 if request.turn == 1:
                     return ModelTurnResponse(
                         tool_calls=(ToolCall("read-1", "read_file", {"path": "input.txt"}),)
@@ -479,7 +497,12 @@ class BL8AOrchestratorTests(unittest.TestCase):
                 model=model,
                 configuration_bindings={"profile-a": self.config(tools=True)},
                 evaluator_registry=self.registry("tool_execution_trace"),
-                driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                driver_binding=DriverBinding(
+                    "fake-tool-driver",
+                    DRIVER_DIGEST,
+                    driver,
+                    execution_interface=execution_interface,
+                ),
                 evidence_store=store,
                 harness_source={"kind": "git", "commit": DIGEST_B},
                 workspaces={
@@ -496,6 +519,10 @@ class BL8AOrchestratorTests(unittest.TestCase):
             binding = result.execution_bindings[0]
             self.assertEqual(binding.payload["workspace_scope"]["readable_paths"], ("input.txt",))
             self.assertEqual(binding.payload["workspace_scope"]["writable_paths"], ("out.txt",))
+            self.assertEqual(
+                binding.payload["execution_interface"],
+                execution_interface.reference.to_dict(),
+            )
             tool_binding = binding.payload["driver"]["tool_surface_binding"]
             self.assertEqual(
                 tool_binding["required_capability"], PORTABLE_BOUNDED_FILES_CAPABILITY
@@ -506,8 +533,52 @@ class BL8AOrchestratorTests(unittest.TestCase):
             )
             trace = result.execution_evidence[0]
             self.assertEqual(trace.payload["initial_workspace"]["files"][0]["sha256"], input_sha)
+            self.assertEqual(
+                trace.payload["execution_interface"],
+                execution_interface.reference.to_dict(),
+            )
             self.assertEqual(result.case_results[0].payload["status"], "success")
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
+
+    def test_l2_missing_execution_interface_blocks_before_driver_and_manifest(self):
+        host, runtime, model = self.foundation()
+        called = False
+
+        def driver(request):
+            nonlocal called
+            called = True
+            return ModelTurnResponse(content="must not run")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "workspace"
+            root.mkdir()
+            store = EvidenceStore(Path(temp_dir) / "evidence")
+            with self.assertRaisesRegex(
+                OrchestrationBlocked,
+                "requires an explicit execution_interface_identity",
+            ):
+                run_v2_pack(
+                    run_id="run-l2-missing-interface",
+                    pack_source=pack_bytes(level="L2"),
+                    pack_source_locator=None,
+                    host=host,
+                    runtime=runtime,
+                    model=model,
+                    configuration_bindings={"profile-a": self.config(tools=True)},
+                    evaluator_registry=self.registry("tool_execution_trace"),
+                    driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                    evidence_store=store,
+                    harness_source={"kind": "git", "commit": DIGEST_B},
+                    workspaces={
+                        "case-a": WorkspaceBinding(
+                            root=root,
+                            readable_paths=(),
+                            writable_paths=(),
+                        )
+                    },
+                )
+            self.assertFalse(called)
+            self.assertFalse((store.root / "records" / "run_manifest").exists())
 
     def test_subprocess_driver_preflight_blocks_before_manifest_and_driver(self):
         host, runtime, model = self.foundation()
@@ -650,4 +721,3 @@ class BL8AOrchestratorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
