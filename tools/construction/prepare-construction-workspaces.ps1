@@ -6,7 +6,7 @@ param(
 
     [string]$FixtureBranch = "construction-lab-fixtures-v1",
 
-    [string]$ExpectedFixtureCommit = "d163731a14e5a5ab838a25fb76be83177799bd9b",
+    [string]$ExpectedFixtureCommit = "429ef04722093bf9f355a48b4d236a119f3b03e6",
 
     [string]$OutputRoot = "local-state/construction-lab/workspaces",
 
