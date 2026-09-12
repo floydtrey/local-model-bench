@@ -9,16 +9,26 @@
       "readable_paths": ["README.md","calculator/__init__.py","calculator/core.py","calculator/cli.py","tests/test_core.py"],
       "writable_paths": ["calculator/core.py","calculator/cli.py","tests/test_core.py"],
       "deletable_paths": [],
-      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]}
+      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
+      "acceptance": {
+        "required_command_passes": ["tests"],
+        "required_missing_paths": [],
+        "max_changed_paths": 3
+      }
     },
     {
       "task_id": "add-json-report",
       "project_path": "projects/add-report-feature",
       "prompt": "Add a machine-readable JSON report option to this project. The CLI must accept --json and, when selected, emit exactly one JSON object with keys count, total, and average. The existing default text report must remain unchanged. Implement the feature cleanly, create files if useful, run the authorized test command, and stop when verified.",
-      "readable_paths": ["README.md","reporting/__init__.py","reporting/domain.py","reporting/render.py","reporting/cli.py","tests/test_reporting.py","tests/test_json_feature.py"],
+      "readable_paths": ["README.md","reporting/__init__.py","reporting/domain.py","reporting/render.py","reporting/cli.py","reporting/json_renderer.py","tests/test_reporting.py","tests/test_json_feature.py"],
       "writable_paths": ["reporting/domain.py","reporting/render.py","reporting/cli.py","reporting/json_renderer.py","tests/test_reporting.py","tests/test_json_feature.py"],
       "deletable_paths": [],
-      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]}
+      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
+      "acceptance": {
+        "required_command_passes": ["tests"],
+        "required_missing_paths": [],
+        "max_changed_paths": 6
+      }
     },
     {
       "task_id": "remove-legacy-mode",
@@ -27,7 +37,12 @@
       "readable_paths": ["README.md","legacyapp/__init__.py","legacyapp/main.py","legacyapp/legacy.py","tests/test_main.py","tests/test_legacy.py"],
       "writable_paths": ["legacyapp/main.py","tests/test_main.py"],
       "deletable_paths": ["legacyapp/legacy.py","tests/test_legacy.py"],
-      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]}
+      "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
+      "acceptance": {
+        "required_command_passes": ["tests"],
+        "required_missing_paths": ["legacyapp/legacy.py","tests/test_legacy.py"],
+        "max_changed_paths": 4
+      }
     }
   ]
 }
