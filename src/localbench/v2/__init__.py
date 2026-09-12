@@ -24,6 +24,16 @@ from .compatibility import (
     validate_compatibility_observation_evidence,
 )
 from .configuration import CONFIG_SPEC_VERSION, resolve_effective_configuration
+from .construction_harness import (
+    CONSTRUCTION_HARNESS_VERSION,
+    CONSTRUCTION_TOOL_DEFINITIONS,
+    CONSTRUCTION_TOOL_SCHEMA_SHA256,
+    CONSTRUCTION_TOOL_SURFACE_ID,
+    AuthorizedCommand,
+    ConstructionScope,
+    ConstructionWorkspace,
+    construction_scope_sha256,
+)
 from .containment import (
     CONTAINMENT_EXECUTION_VERSION,
     CONTAINMENT_POLICY_VERSION,
@@ -178,6 +188,14 @@ __all__ = [
     "seal_compatibility_observation",
     "validate_compatibility_observation_evidence",
     "CONFIG_SPEC_VERSION",
+    "CONSTRUCTION_HARNESS_VERSION",
+    "CONSTRUCTION_TOOL_SURFACE_ID",
+    "CONSTRUCTION_TOOL_DEFINITIONS",
+    "CONSTRUCTION_TOOL_SCHEMA_SHA256",
+    "AuthorizedCommand",
+    "ConstructionScope",
+    "ConstructionWorkspace",
+    "construction_scope_sha256",
     "CONTAINMENT_EXECUTION_VERSION",
     "CONTAINMENT_POLICY_VERSION",
     "NETWORK_POLICIES",
