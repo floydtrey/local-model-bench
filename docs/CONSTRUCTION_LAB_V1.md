@@ -14,9 +14,9 @@ Fixture corpus branch:
 
 Pinned fixture commit for v1:
 
-`d163731a14e5a5ab838a25fb76be83177799bd9b`
+`429ef04722093bf9f355a48b4d236a119f3b03e6`
 
-The branch contains only the disposable project corpus plus `construction-manifest.json`. It is intended to be cloned separately for each candidate model.
+The branch contains only the disposable project corpus plus `construction-manifest.json`. It is intended to be cloned separately for each candidate model. Acceptance test files are readable but not writable; the removal task may delete only the specifically obsolete test file named by its bounded scope.
 
 Initial tasks:
 
