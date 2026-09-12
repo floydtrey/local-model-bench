@@ -15,6 +15,7 @@ from .configuration import resolve_effective_configuration
 from .containment import ContainmentBackend, ContainmentPolicy, preflight
 from .contracts import EvidenceRef, SealedEvidence, canonical_json_bytes, seal_evidence, sha256_json
 from .evaluators import EvaluatorDefinition, EvaluatorRegistry
+from .execution_interface import validate_execution_interface_identity
 from .records import case_result, execution_binding, run_manifest, trial_identity
 from .tool_harness import (
     BOUNDED_FILE_SURFACE_ID,
@@ -24,6 +25,7 @@ from .tool_harness import (
     ModelTurnRequest,
     ModelTurnResponse,
     run_bounded_tool_harness,
+    validate_tool_execution_trace,
 )
 
 
@@ -190,6 +192,7 @@ class DriverBinding:
     driver_id: str
     implementation_sha256: str
     driver: ModelDriver
+    execution_interface: SealedEvidence | None = None
     execution_kind: str = "in_process"
     containment_policy: ContainmentPolicy | None = None
     containment_backend: ContainmentBackend | None = None
@@ -200,6 +203,8 @@ class DriverBinding:
             raise ValueError("implementation_sha256 must be a lowercase SHA-256 digest")
         if not callable(self.driver):
             raise ValueError("driver must be callable")
+        if self.execution_interface is not None:
+            validate_execution_interface_identity(self.execution_interface)
         if self.execution_kind not in EXECUTION_KINDS:
             raise ValueError(f"execution_kind must be one of {sorted(EXECUTION_KINDS)}")
         if self.execution_kind == "in_process":
@@ -680,6 +685,22 @@ def run_v2_pack(
         raise OrchestrationBlocked(
             f"orchestrator v1 supports only {sorted(SUPPORTED_LEVELS)}, got {pack.level}"
         )
+    execution_interface = driver_binding.execution_interface
+    if pack.level == "L2":
+        if execution_interface is None:
+            raise OrchestrationBlocked(
+                "L2 execution requires an explicit execution_interface_identity"
+            )
+        validate_execution_interface_identity(execution_interface)
+        if _thaw_json(execution_interface.payload.get("runtime")) != runtime.reference.to_dict():
+            raise OrchestrationBlocked(
+                "execution interface runtime does not match the run runtime"
+            )
+        if _thaw_json(execution_interface.payload.get("model")) != model.reference.to_dict():
+            raise OrchestrationBlocked(
+                "execution interface model does not match the run model"
+            )
+
     benchmark = pack.to_benchmark_input(source_locator=pack_source_locator)
     workspaces = {} if workspaces is None else dict(workspaces)
     supplemental_evidence = {} if supplemental_evidence is None else dict(supplemental_evidence)
@@ -770,6 +791,9 @@ def run_v2_pack(
                 workspace_scope=workspace_scope,
                 context_assets=[asset.binding_descriptor for asset in assets],
                 containment=containment,
+                execution_interface=None
+                if execution_interface is None
+                else execution_interface.reference,
             )
         )
 
@@ -789,6 +813,8 @@ def run_v2_pack(
         },
     )
 
+    if execution_interface is not None:
+        evidence_store.persist(execution_interface)
     evidence_store.persist_many(
         (
             host,
@@ -825,6 +851,7 @@ def run_v2_pack(
             raise ValueError("clock must return non-empty timestamp strings")
 
         if pack.level == "L2":
+            assert execution_interface is not None
             workspace = workspace_by_case[case_id]
             _materialize_reference_assets(workspace, assets_by_case[case_id])
             result = run_bounded_tool_harness(
@@ -839,7 +866,15 @@ def run_v2_pack(
             status = result.status
             stop_reason = result.stop_reason
             terminal_output = None if result.terminal_output is None else _thaw_json(result.terminal_output)
-            trace = result.trace
+            trace = seal_evidence(
+                "tool_execution_trace",
+                result.trace.logical_id,
+                {
+                    **_thaw_json(result.trace.payload),
+                    "execution_interface": execution_interface.reference.to_dict(),
+                },
+            )
+            validate_tool_execution_trace(trace)
             metrics = {
                 "execution_mode": "lab_tool",
                 "stop_reason": stop_reason,
@@ -897,6 +932,7 @@ def run_v2_pack(
         for item in extras:
             if not isinstance(item, SealedEvidence):
                 raise ValueError("supplemental_evidence must contain SealedEvidence values")
+        interface_evidence = () if execution_interface is None else (execution_interface,)
         available = (
             host,
             runtime,
@@ -904,6 +940,7 @@ def run_v2_pack(
             benchmark,
             effective,
             trial,
+            *interface_evidence,
             binding,
             manifest,
             trace,
@@ -934,4 +971,3 @@ def run_v2_pack(
         case_results=tuple(case_records),
         evaluation_results=tuple(evaluation_records),
     )
-
