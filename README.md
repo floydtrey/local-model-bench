@@ -1,6 +1,6 @@
 # Local Model Bench
 
-A Windows-friendly, dependency-free benchmark harness for running fixed JSON or Markdown prompt suites against local chat models. It processes one model at a time, writes each case immediately, resumes interrupted runs, and stays quiet unless `--verbose` is requested.
+A Windows-friendly benchmark harness for running fixed JSON or Markdown prompt suites against local chat models. It processes one model at a time, writes each case immediately, resumes interrupted runs, and stays quiet unless `--verbose` is requested.
 
 This project is independent of Worker Lab. Put it in its own folder or Git repository; it neither imports nor edits Worker Lab.
 
@@ -47,6 +47,22 @@ Create a separate review bundle for that round with:
 
 This produces `construction-lab-review-bundle-round-1.zip` and refuses to
 replace an existing bundle.
+
+### Model-aware llama.cpp interface
+
+Construction Lab supports an explicitly labeled model-aware llama.cpp
+interface for models whose correct tool intent is serialized in a qualified
+text transport instead of provider-native `tool_calls`. This interface is never
+enabled as an Ollama fallback. It has a separate provider/profile identity,
+preserves every raw response and normalization decision, validates recovered
+calls against the offered JSON Schemas, and still executes exclusively through
+the existing bounded Construction authority surface.
+
+Prepare the exact model alias as a normal disposable round workspace, then use
+`tools/construction/run-construction-llama-cpp.ps1`. The wrapper owns one
+loopback-only server process, uses a random process-scoped API key, hashes the
+server and every GGUF shard, runs the task battery, and stops only the process
+it created. Native and normalized scores remain separate execution interfaces.
 
 ## Planning round 2 (current)
 

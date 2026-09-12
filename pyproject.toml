@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [{name = "Local Model Bench contributors"}]
-dependencies = []
+dependencies = ["jsonschema>=4.23,<5"]
 
 [project.scripts]
 local-model-bench = "localbench.cli:main"

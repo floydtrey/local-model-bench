@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,14 @@ from localbench.v2.construction_harness import (
     ConstructionWorkspace,
 )
 from localbench.v2.tool_harness import ToolCall
+from localbench.v2.tool_call_normalizer import (
+    PROFILES,
+    TOOL_CALL_NORMALIZER_VERSION,
+    ModelTransportRegistry,
+    NormalizeStatus,
+    ToolCallNormalizer,
+)
+from localbench.v2.contracts import sha256_json
 
 
 def utc_stamp() -> str:
@@ -67,7 +76,7 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def ollama_tools() -> list[dict[str, Any]]:
+def provider_tools() -> list[dict[str, Any]]:
     return [
         {
             "type": "function",
@@ -81,12 +90,18 @@ def ollama_tools() -> list[dict[str, Any]]:
     ]
 
 
-def post_json(url: str, payload: dict[str, Any], timeout: int) -> dict[str, Any]:
+def post_json(
+    url: str,
+    payload: dict[str, Any],
+    timeout: int,
+    *,
+    headers: dict[str, str] | None = None,
+) -> dict[str, Any]:
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     request = urllib.request.Request(
         url,
         data=body,
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", **(headers or {})},
         method="POST",
     )
     try:
@@ -94,12 +109,12 @@ def post_json(url: str, payload: dict[str, Any], timeout: int) -> dict[str, Any]
             raw = response.read()
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Ollama HTTP {exc.code}: {detail}") from exc
+        raise RuntimeError(f"provider HTTP {exc.code}: {detail}") from exc
     except urllib.error.URLError as exc:
-        raise RuntimeError(f"Ollama request failed: {exc}") from exc
+        raise RuntimeError(f"provider request failed: {exc}") from exc
     value = json.loads(raw.decode("utf-8"))
     if not isinstance(value, dict):
-        raise RuntimeError("Ollama response must be a JSON object")
+        raise RuntimeError("provider response must be a JSON object")
     return value
 
 
@@ -197,16 +212,168 @@ def changed_paths(before: dict[str, Any], after: dict[str, Any]) -> list[str]:
     )
 
 
-def provider_message_for_history(message: dict[str, Any]) -> dict[str, Any]:
+def provider_message_for_history(
+    provider: str,
+    message: dict[str, Any],
+    calls: list[tuple[ToolCall, str]],
+) -> dict[str, Any]:
     result: dict[str, Any] = {
         "role": "assistant",
-        "content": message.get("content") or "",
+        # The adapter deliberately writes canonical structured calls into history.
+        # Raw assistant content remains in turn evidence, but is not duplicated as
+        # executable-looking prose on the next turn.
+        "content": None,
     }
-    if isinstance(message.get("thinking"), str):
+    if provider == "ollama" and isinstance(message.get("thinking"), str):
         result["thinking"] = message["thinking"]
-    if isinstance(message.get("tool_calls"), list):
-        result["tool_calls"] = message["tool_calls"]
+    result["tool_calls"] = [
+        {
+            "id": provider_call_id,
+            "type": "function",
+            "function": {
+                "name": call.name,
+                "arguments": dict(call.arguments)
+                if provider == "ollama"
+                else json.dumps(
+                    dict(call.arguments), ensure_ascii=False, separators=(",", ":")
+                ),
+            },
+        }
+        for call, provider_call_id in calls
+    ]
     return result
+
+
+def tool_result_message(
+    provider: str,
+    *,
+    name: str,
+    provider_call_id: str,
+    result: dict[str, Any],
+) -> dict[str, Any]:
+    message: dict[str, Any] = {
+        "role": "tool",
+        "content": json.dumps(result, ensure_ascii=False, sort_keys=True),
+    }
+    if provider == "ollama":
+        message["tool_name"] = name
+    else:
+        message["tool_call_id"] = provider_call_id
+        message["name"] = name
+    return message
+
+
+def extract_provider_message(provider: str, response: dict[str, Any]) -> dict[str, Any]:
+    if provider == "ollama":
+        message = response.get("message")
+    else:
+        choices = response.get("choices")
+        message = (
+            choices[0].get("message")
+            if isinstance(choices, list)
+            and choices
+            and isinstance(choices[0], dict)
+            else None
+        )
+    if not isinstance(message, dict):
+        raise RuntimeError(f"{provider} response missing assistant message object")
+    return message
+
+
+def request_payload(
+    provider: str,
+    *,
+    model: str,
+    messages: list[dict[str, Any]],
+    tools: list[dict[str, Any]],
+    num_ctx: int,
+    num_predict: int,
+) -> dict[str, Any]:
+    if provider == "ollama":
+        return {
+            "model": model,
+            "messages": messages,
+            "tools": tools,
+            "stream": False,
+            "options": {
+                "num_ctx": num_ctx,
+                "num_predict": num_predict,
+                "temperature": 0,
+                "seed": 42,
+                "top_p": 1,
+            },
+            "keep_alive": "15m",
+        }
+    return {
+        "model": model,
+        "messages": messages,
+        "tools": tools,
+        "stream": False,
+        "max_tokens": num_predict,
+        "temperature": 0,
+        "seed": 42,
+        "top_p": 1,
+    }
+
+
+def provider_endpoint(provider: str, base_url: str) -> str:
+    suffix = "/api/chat" if provider == "ollama" else "/v1/chat/completions"
+    return base_url.rstrip("/") + suffix
+
+
+def provider_headers(provider: str, api_key_env: str | None) -> dict[str, str]:
+    if provider == "ollama":
+        if api_key_env is not None:
+            raise ValueError("--api-key-env is valid only for openai_compatible")
+        return {}
+    if api_key_env is None:
+        return {}
+    value = os.environ.get(api_key_env)
+    if not value:
+        raise ValueError(f"required API-key environment variable {api_key_env!r} is not set")
+    return {"Authorization": f"Bearer {value}"}
+
+
+def interface_identity(
+    *,
+    provider: str,
+    model: str,
+    profile_name: str,
+    tools: list[dict[str, Any]],
+    provider_provenance: dict[str, Any] | None,
+) -> dict[str, Any]:
+    profile = PROFILES[profile_name]
+    body = {
+        "schema_version": "construction-lab-execution-interface:v1",
+        "model": model,
+        "provider": provider,
+        "adapter_id": (
+            "construction-ollama-native-chat:v1"
+            if profile_name == "openai_native"
+            else "construction-openai-compatible-normalizer:v1"
+        ),
+        "tool_transport_mode": (
+            "native_structured"
+            if profile_name == "openai_native"
+            else "model_aware_structured"
+        ),
+        "parser_mode": (
+            "provider_native" if profile_name == "openai_native" else "model_aware"
+        ),
+        "normalizer_version": TOOL_CALL_NORMALIZER_VERSION,
+        "profile": profile.to_dict(),
+        "profile_sha256": profile.sha256,
+        "offered_tool_schema_sha256": sha256_json(tools),
+        "malformed_call_policy": "fail_closed",
+        "backend_tool_execution": "forbidden",
+        "history_policy": "canonical_structured_tool_calls:v1",
+        "raw_response_evidence": "complete_per_turn_json",
+        "provider_provenance": provider_provenance,
+        "provider_provenance_sha256": (
+            sha256_json(provider_provenance) if provider_provenance is not None else None
+        ),
+    }
+    return {**body, "sha256": sha256_json(body)}
 
 
 def build_system_prompt(scope: ConstructionScope) -> str:
@@ -235,8 +402,32 @@ def classify_denial(result: dict[str, Any]) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run one real Construction Lab task against Ollama.")
+    parser = argparse.ArgumentParser(
+        description="Run one real Construction Lab task through a sealed tool interface."
+    )
     parser.add_argument("--model", required=True)
+    parser.add_argument(
+        "--provider",
+        choices=("ollama", "openai_compatible"),
+        default="ollama",
+    )
+    parser.add_argument(
+        "--tool-profile",
+        choices=tuple(PROFILES),
+        default=None,
+        help="transport profile; defaults to openai_native for Ollama and is required otherwise",
+    )
+    parser.add_argument(
+        "--api-key-env",
+        default=None,
+        help="environment variable containing the OpenAI-compatible server API key",
+    )
+    parser.add_argument(
+        "--provider-provenance-file",
+        type=Path,
+        default=None,
+        help="immutable runtime/model provenance JSON captured by the provider owner",
+    )
     parser.add_argument("--workspace-clone", required=True, type=Path)
     parser.add_argument("--task-id", required=True)
     parser.add_argument(
@@ -271,6 +462,32 @@ def main() -> int:
     parser.add_argument("--docker-cpus", default="2")
     parser.add_argument("--docker-pids-limit", type=int, default=128)
     args = parser.parse_args()
+
+    profile_name = args.tool_profile
+    if profile_name is None:
+        if args.provider != "ollama":
+            parser.error("--tool-profile is required for openai_compatible providers")
+        profile_name = "openai_native"
+    if args.provider == "ollama" and profile_name != "openai_native":
+        parser.error("Ollama Construction runs remain native-only")
+    headers = provider_headers(args.provider, args.api_key_env)
+    registry = ModelTransportRegistry({args.model: profile_name})
+    normalizer = ToolCallNormalizer()
+    offered_tools = provider_tools()
+    provider_provenance = (
+        load_json(args.provider_provenance_file.resolve(strict=True))
+        if args.provider_provenance_file is not None
+        else None
+    )
+    if provider_provenance is not None and not isinstance(provider_provenance, dict):
+        parser.error("--provider-provenance-file must contain a JSON object")
+    execution_interface = interface_identity(
+        provider=args.provider,
+        model=args.model,
+        profile_name=profile_name,
+        tools=offered_tools,
+        provider_provenance=provider_provenance,
+    )
 
     clone_root = args.workspace_clone.resolve(strict=True)
     manifest_path = clone_root / "construction-manifest.json"
@@ -314,6 +531,7 @@ def main() -> int:
 
     initial_snapshot = workspace.snapshot()
     write_json(run_dir / "initial-snapshot.json", initial_snapshot)
+    write_json(run_dir / "execution-interface.json", execution_interface)
 
     baseline_commands: dict[str, Any] = {}
     for command_id in task.get("acceptance", {}).get("required_command_passes", []):
@@ -345,78 +563,98 @@ def main() -> int:
 
     try:
         for turn in range(1, args.max_turns + 1):
-            request_payload = {
-                "model": args.model,
-                "messages": messages,
-                "tools": ollama_tools(),
-                "stream": False,
-                "options": {
-                    "num_ctx": args.num_ctx,
-                    "num_predict": args.num_predict,
-                    "temperature": 0,
-                    "seed": 42,
-                    "top_p": 1,
-                },
-                "keep_alive": "15m",
-            }
-            write_json(run_dir / f"turn-{turn:02d}-request.json", request_payload)
+            payload = request_payload(
+                args.provider,
+                model=args.model,
+                messages=messages,
+                tools=offered_tools,
+                num_ctx=args.num_ctx,
+                num_predict=args.num_predict,
+            )
+            write_json(run_dir / f"turn-{turn:02d}-request.json", payload)
 
             turn_started = time.perf_counter()
             response = post_json(
-                args.base_url.rstrip("/") + "/api/chat",
-                request_payload,
+                provider_endpoint(args.provider, args.base_url),
+                payload,
                 args.request_timeout,
+                headers=headers,
             )
             turn_wall_ms = round((time.perf_counter() - turn_started) * 1000, 3)
             write_json(run_dir / f"turn-{turn:02d}-response.json", response)
 
             totals["model_turns"] += 1
-            for name in (
-                "prompt_eval_count",
-                "eval_count",
-                "total_duration",
-                "load_duration",
-                "prompt_eval_duration",
-                "eval_duration",
-            ):
-                value = response.get(name)
-                if not isinstance(value, int):
-                    continue
-                target = {
-                    "total_duration": "provider_total_duration_ns",
-                    "load_duration": "provider_load_duration_ns",
-                    "prompt_eval_duration": "provider_prompt_eval_duration_ns",
-                    "eval_duration": "provider_eval_duration_ns",
-                }.get(name, name)
-                totals[target] += value
+            if args.provider == "ollama":
+                for name in (
+                    "prompt_eval_count",
+                    "eval_count",
+                    "total_duration",
+                    "load_duration",
+                    "prompt_eval_duration",
+                    "eval_duration",
+                ):
+                    value = response.get(name)
+                    if not isinstance(value, int):
+                        continue
+                    target = {
+                        "total_duration": "provider_total_duration_ns",
+                        "load_duration": "provider_load_duration_ns",
+                        "prompt_eval_duration": "provider_prompt_eval_duration_ns",
+                        "eval_duration": "provider_eval_duration_ns",
+                    }.get(name, name)
+                    totals[target] += value
+            else:
+                usage = response.get("usage")
+                if isinstance(usage, dict):
+                    prompt_tokens = usage.get("prompt_tokens")
+                    completion_tokens = usage.get("completion_tokens")
+                    if isinstance(prompt_tokens, int):
+                        totals["prompt_eval_count"] += prompt_tokens
+                    if isinstance(completion_tokens, int):
+                        totals["eval_count"] += completion_tokens
 
-            message = response.get("message")
-            if not isinstance(message, dict):
-                raise RuntimeError("Ollama response missing message object")
-            tool_calls = message.get("tool_calls")
-            if tool_calls is None:
-                tool_calls = []
-            if not isinstance(tool_calls, list):
-                raise RuntimeError(
-                    "Ollama message.tool_calls must be an array when present"
-                )
+            message = extract_provider_message(args.provider, response)
+            normalization = normalizer.normalize_assigned(
+                model_id=args.model,
+                registry=registry,
+                offered_tools=offered_tools,
+                message=message,
+            )
+            choices = response.get("choices")
+            finish_reason = response.get("done_reason")
+            if (
+                args.provider != "ollama"
+                and isinstance(choices, list)
+                and choices
+                and isinstance(choices[0], dict)
+            ):
+                finish_reason = choices[0].get("finish_reason")
 
             events.append(
                 {
                     "type": "model_response",
                     "turn": turn,
                     "wall_time_ms": turn_wall_ms,
+                    "provider": args.provider,
                     "done": response.get("done"),
-                    "done_reason": response.get("done_reason"),
+                    "done_reason": finish_reason,
                     "content": message.get("content"),
                     "thinking": message.get("thinking"),
-                    "tool_call_count": len(tool_calls),
+                    "normalization": normalization.to_dict(),
+                    "tool_call_count": len(normalization.calls),
                     "prompt_eval_count": response.get("prompt_eval_count"),
                     "eval_count": response.get("eval_count"),
                 }
             )
 
-            if not tool_calls:
+            if normalization.status in {
+                NormalizeStatus.INVALID_TOOL_CALL,
+                NormalizeStatus.UNKNOWN_MODEL,
+            }:
+                stop_reason = "protocol_failure"
+                break
+
+            if normalization.status is NormalizeStatus.NOT_TOOL_CALL:
                 terminal_content = (
                     message.get("content")
                     if isinstance(message.get("content"), str)
@@ -424,23 +662,27 @@ def main() -> int:
                 )
                 stop_reason = (
                     "output_limit"
-                    if response.get("done_reason") == "length"
+                    if finish_reason == "length"
                     else "terminal_response"
                 )
                 break
 
-            messages.append(provider_message_for_history(message))
-            for index, raw_call in enumerate(tool_calls, start=1):
-                function = raw_call.get("function") if isinstance(raw_call, dict) else None
-                if not isinstance(function, dict):
-                    raise RuntimeError("tool call missing function object")
-                name = function.get("name")
-                arguments = function.get("arguments")
-                if not isinstance(name, str) or not isinstance(arguments, dict):
-                    raise RuntimeError(
-                        "tool call requires string name and object arguments"
-                    )
-                call = ToolCall(f"ollama-{turn}-{index}", name, arguments)
+            normalized_calls: list[tuple[ToolCall, str]] = []
+            for index, normalized in enumerate(normalization.calls, start=1):
+                provider_call_id = normalized.call_id or f"normalized-{turn}-{index}"
+                call = ToolCall(
+                    f"interface-{turn}-{index}",
+                    normalized.name,
+                    dict(normalized.arguments),
+                )
+                normalized_calls.append((call, provider_call_id))
+
+            messages.append(
+                provider_message_for_history(args.provider, message, normalized_calls)
+            )
+            for call, provider_call_id in normalized_calls:
+                name = call.name
+                arguments = dict(call.arguments)
                 totals["tool_calls"] += 1
                 result = workspace.execute(call)
                 if classify_denial(result):
@@ -459,13 +701,12 @@ def main() -> int:
                     }
                 )
                 messages.append(
-                    {
-                        "role": "tool",
-                        "tool_name": name,
-                        "content": json.dumps(
-                            result, ensure_ascii=False, sort_keys=True
-                        ),
-                    }
+                    tool_result_message(
+                        args.provider,
+                        name=name,
+                        provider_call_id=provider_call_id,
+                        result=result,
+                    )
                 )
         else:
             stop_reason = "max_turns"
@@ -518,6 +759,7 @@ def main() -> int:
         "model": args.model,
         "task_id": args.task_id,
         "round_label": args.round_label,
+        "execution_interface": execution_interface,
         "fixture_manifest_sha256": sha256_file(manifest_path),
         "workspace_clone": str(clone_root),
         "project_root": str(project_root),
@@ -534,7 +776,10 @@ def main() -> int:
         "passed": passed,
         "run_directory": str(run_dir),
         "configuration": {
+            "provider": args.provider,
             "base_url": args.base_url,
+            "tool_profile": profile_name,
+            "api_key_env": args.api_key_env,
             "num_ctx": args.num_ctx,
             "num_predict": args.num_predict,
             "max_turns": args.max_turns,

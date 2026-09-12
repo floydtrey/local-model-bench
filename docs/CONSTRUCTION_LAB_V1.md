@@ -70,17 +70,32 @@ The model therefore cannot turn modified Python source into a host-level command
 
 ## Model interaction
 
-`tools/construction/run-construction-task.py` performs a real multi-turn Ollama interaction:
+`tools/construction/run-construction-task.py` performs a real multi-turn interaction through one explicitly selected execution interface:
 
 1. provide task prompt, exact authorized paths, tool schemas, and authorized command IDs;
-2. accept only native structured `message.tool_calls`;
+2. normalize only formats permitted by the content-addressed exact-model transport profile;
 3. execute calls through `ConstructionWorkspace`;
 4. return real file contents, SHA-256 values, mutation results, and test stdout/stderr to the model;
 5. allow the model to iterate until it sends a terminal response or reaches a hard limit;
 6. independently rerun the task acceptance commands after the model stops;
 7. compare initial/final snapshots and enforce task acceptance gates.
 
-Ordinary assistant text is never promoted to an executable call.
+Ollama remains locked to the `openai_native` profile. Alternate OpenAI-compatible
+providers require an explicit profile and are recorded as a distinct execution
+interface. Ordinary assistant prose is never promoted to an executable call.
+
+The initial compatibility profile for Qwen2.5 accepts only whole-response native
+calls, exact `<tool_call>`, `<function_call>`, or `<tools>` blocks, fenced JSON, or
+plain JSON. The recovered name must identify an offered tool and the arguments must
+pass that tool's JSON Schema. Malformed, ambiguous, oversized, excessively nested,
+unknown-model, unknown-tool, and no-tools calls fail closed as protocol failures.
+The normalizer never executes tools or expands Construction Lab authority.
+
+`tools/construction/run-construction-llama-cpp.ps1` owns one loopback-only
+`llama-server` process for an alternate-interface batch. It generates a random
+process-scoped API key, hashes the executable and every GGUF shard, captures the
+server version and redacted launch arguments, runs the selected task battery, and
+stops only the process it created.
 
 ## Evidence captured
 
@@ -88,8 +103,11 @@ Each task run stores:
 
 - initial snapshot;
 - baseline verification result;
-- every Ollama request;
-- every raw Ollama response;
+- every provider request;
+- every raw provider response;
+- the content-addressed provider/parser/profile/tool-schema identity;
+- llama.cpp executable and model-shard provenance for managed runs;
+- every normalization decision, source format, and validation error;
 - normalized tool calls and tool results;
 - final snapshot;
 - independent assessor verification;
@@ -120,7 +138,7 @@ A model may make ordinary coding mistakes, run failing tests, repair its work, a
 
 ## Batch behavior
 
-`tools/construction/run-construction-batch.ps1` runs the selected task battery sequentially for each candidate. The model stays resident across that model's tasks, then `ollama stop` unloads it before the next candidate. This captures practical warm-task throughput while preventing candidates from competing for VRAM.
+`tools/construction/run-construction-batch.ps1` runs the selected task battery sequentially for each candidate. With Ollama, the model stays resident across that model's tasks and is unloaded before the next candidate. A managed llama.cpp wrapper owns residency for its complete batch. This captures practical warm-task throughput while preventing candidates from competing for VRAM.
 
 The batch emits JSON and CSV comparison evidence and attaches per-task runtime telemetry when the sampler can collect it. Telemetry collection is best effort; missing host metrics never grant authority, change model inputs, or manufacture a benchmark pass/fail.
 
@@ -143,6 +161,6 @@ Construction Lab v1 does not:
 - grant network access to model-authored code;
 - permit filesystem access outside the selected disposable project;
 - change historical BL-6 evidence semantics;
-- silently parse tool-shaped assistant prose.
+- silently or heuristically parse arbitrary assistant prose.
 
 Future versions can add larger projects, hidden assessor suites, bounded Git operations, dependency installation fixtures, or more complex build commands after this surface has been qualified.

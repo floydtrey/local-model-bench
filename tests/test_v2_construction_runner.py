@@ -88,6 +88,60 @@ class ConstructionRunnerTests(unittest.TestCase):
         self.assertEqual(command.command_id, "tests")
         self.assertEqual(command.argv[1:], ("-m", "unittest"))
 
+    def test_openai_request_uses_standard_chat_endpoint_and_options(self):
+        payload = self.runner.request_payload(
+            "openai_compatible",
+            model="exact-model",
+            messages=[{"role": "user", "content": "test"}],
+            tools=self.runner.provider_tools(),
+            num_ctx=8192,
+            num_predict=512,
+        )
+        self.assertEqual(
+            self.runner.provider_endpoint("openai_compatible", "http://127.0.0.1:18082/"),
+            "http://127.0.0.1:18082/v1/chat/completions",
+        )
+        self.assertEqual(payload["max_tokens"], 512)
+        self.assertNotIn("options", payload)
+        self.assertNotIn("num_ctx", payload)
+
+    def test_model_aware_interface_is_distinct_and_content_addressed(self):
+        tools = self.runner.provider_tools()
+        native = self.runner.interface_identity(
+            provider="ollama",
+            model="same-model",
+            profile_name="openai_native",
+            tools=tools,
+            provider_provenance=None,
+        )
+        aware = self.runner.interface_identity(
+            provider="openai_compatible",
+            model="same-model",
+            profile_name="qwen_25_compat",
+            tools=tools,
+            provider_provenance={"runtime": "llama.cpp"},
+        )
+        self.assertNotEqual(native["sha256"], aware["sha256"])
+        self.assertEqual(aware["tool_transport_mode"], "model_aware_structured")
+        self.assertEqual(aware["backend_tool_execution"], "forbidden")
+        self.assertEqual(aware["malformed_call_policy"], "fail_closed")
+
+    def test_normalized_history_uses_deterministic_structured_call(self):
+        call = self.runner.ToolCall(
+            "interface-1-1", "read_file", {"path": "facts.txt"}
+        )
+        message = self.runner.provider_message_for_history(
+            "openai_compatible",
+            {"content": '```json\n{"name":"read_file"}\n```'},
+            [(call, "normalized-1-1")],
+        )
+        self.assertIsNone(message["content"])
+        self.assertEqual(message["tool_calls"][0]["id"], "normalized-1-1")
+        self.assertEqual(
+            message["tool_calls"][0]["function"]["arguments"],
+            '{"path":"facts.txt"}',
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

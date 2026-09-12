@@ -15,6 +15,17 @@ param(
 
     [string]$ResultRoot = "local-state/construction-lab/runs",
 
+    [ValidateSet("ollama", "openai_compatible")]
+    [string]$Provider = "ollama",
+
+    [string]$ToolProfile,
+
+    [string]$BaseUrl = "http://127.0.0.1:11434",
+
+    [string]$ApiKeyEnv,
+
+    [string]$ProviderProvenanceFile,
+
     [string]$CommandBackend = "docker",
 
     [string]$DockerImage = "python:3.12-slim"
@@ -103,7 +114,18 @@ $Python = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path -LiteralPath $Python -PathType Leaf)) {
     $Python = (Get-Command python -ErrorAction Stop).Source
 }
-$OllamaPath = (Get-Command ollama -ErrorAction Stop).Source
+$OllamaPath = if ($Provider -eq "ollama") {
+    (Get-Command ollama -ErrorAction Stop).Source
+}
+else {
+    $null
+}
+if ($Provider -eq "openai_compatible" -and [string]::IsNullOrWhiteSpace($ToolProfile)) {
+    throw "ToolProfile is required for openai_compatible Construction runs."
+}
+if ($Provider -eq "ollama" -and -not [string]::IsNullOrWhiteSpace($ToolProfile) -and $ToolProfile -ne "openai_native") {
+    throw "Ollama Construction runs remain native-only."
+}
 
 if (-not (Test-Path -LiteralPath $TelemetryScript -PathType Leaf)) {
     throw "Construction telemetry sampler is missing: $TelemetryScript"
@@ -169,15 +191,29 @@ foreach ($Model in $Models) {
 
         try {
             $Code = 1
-            & $Python $Runner `
-                --model $Model `
-                --workspace-clone $Workspace `
-                --task-id $Task `
-                --output-root $RoundResultRoot `
-                --round-label $RoundLabel `
-                --run-directory-file $RunDirectoryFile `
-                --command-backend $CommandBackend `
-                --docker-image $DockerImage
+            $RunnerArgs = @(
+                $Runner,
+                "--model", $Model,
+                "--provider", $Provider,
+                "--base-url", $BaseUrl,
+                "--workspace-clone", $Workspace,
+                "--task-id", $Task,
+                "--output-root", $RoundResultRoot,
+                "--round-label", $RoundLabel,
+                "--run-directory-file", $RunDirectoryFile,
+                "--command-backend", $CommandBackend,
+                "--docker-image", $DockerImage
+            )
+            if (-not [string]::IsNullOrWhiteSpace($ToolProfile)) {
+                $RunnerArgs += @("--tool-profile", $ToolProfile)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($ApiKeyEnv)) {
+                $RunnerArgs += @("--api-key-env", $ApiKeyEnv)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($ProviderProvenanceFile)) {
+                $RunnerArgs += @("--provider-provenance-file", $ProviderProvenanceFile)
+            }
+            & $Python @RunnerArgs
             $Code = $LASTEXITCODE
         }
         finally {
@@ -221,6 +257,9 @@ foreach ($Model in $Models) {
             $Result = Get-Content -LiteralPath $ResultPath -Raw | ConvertFrom-Json
             $Rows += [pscustomobject]@{
                 model = $Model
+                provider = $Provider
+                tool_profile = $Result.configuration.tool_profile
+                execution_interface_sha256 = $Result.execution_interface.sha256
                 task = $Task
                 passed = $Result.passed
                 stop_reason = $Result.stop_reason
@@ -240,6 +279,9 @@ foreach ($Model in $Models) {
         else {
             $Rows += [pscustomobject]@{
                 model = $Model
+                provider = $Provider
+                tool_profile = $ToolProfile
+                execution_interface_sha256 = $null
                 task = $Task
                 passed = $false
                 stop_reason = "result_missing"
@@ -262,7 +304,8 @@ foreach ($Model in $Models) {
     # moving to the next candidate so candidates do not compete for VRAM. Model
     # unload is cleanup only: stderr/noisy output or a non-zero stop exit must never
     # abort the remaining benchmark candidates.
-    try {
+    if ($Provider -eq "ollama") {
+      try {
         $StopProcess = Start-Process `
             -FilePath $OllamaPath `
             -ArgumentList @("stop", $Model) `
@@ -272,9 +315,10 @@ foreach ($Model in $Models) {
         if ($StopProcess.ExitCode -ne 0) {
             Write-Warning "ollama stop returned exit code $($StopProcess.ExitCode) for $Model; continuing batch."
         }
-    }
-    catch {
+      }
+      catch {
         Write-Warning "Unable to unload $Model after its task battery: $($_.Exception.Message). Continuing batch."
+      }
     }
 }
 
@@ -287,6 +331,11 @@ $Rows | ConvertTo-Json -Depth 20 | Set-Content -Path (Join-Path $BatchDir "compa
     round_label = $RoundLabel
     model_order = @($Models)
     task_order = @($Tasks)
+    provider = $Provider
+    tool_profile = if ([string]::IsNullOrWhiteSpace($ToolProfile)) { "openai_native" } else { $ToolProfile }
+    base_url = $BaseUrl
+    api_key_env = $ApiKeyEnv
+    provider_provenance_file = $ProviderProvenanceFile
     workspace_root = $RoundWorkspaceRoot
     result_root = $RoundResultRoot
     created_at_utc = (Get-Date).ToUniversalTime().ToString("o")
