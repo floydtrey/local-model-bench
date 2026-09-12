@@ -5,7 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from localbench.v2.configuration import CONFIG_SPEC_VERSION
+from localbench.v2.configuration import (
+    CONFIG_SPEC_VERSION,
+    resolve_effective_configuration,
+)
 from localbench.v2.evaluators import (
     EvidenceConsumption,
     EvaluationCheck,
@@ -221,6 +224,115 @@ def fixed_clock(trials: int):
 
 
 class BL8BRepetitionReportingTests(unittest.TestCase):
+    def test_presealed_effective_configuration_identity_is_reused_exactly(self):
+        host, runtime, model = foundation()
+        base = configuration(tools=False)
+        expected = resolve_effective_configuration(
+            "config-candidate-profile-a",
+            runtime=runtime,
+            model=model,
+            spec=base.spec,
+            adapter_resolution=base.adapter_resolution,
+        )
+        binding = ConfigurationBinding(
+            profile_id="profile-a",
+            spec=base.spec,
+            adapter_resolution=base.adapter_resolution,
+            effective_logical_id=expected.logical_id,
+            expected_effective_config=expected.reference,
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            run = run_v2_repetitions(
+                run_id="run-presealed-config",
+                repetition_phase="screen",
+                pack_source=pack_bytes(
+                    level="L0", screen_trials=1, qualification_trials=3
+                ),
+                pack_source_locator=None,
+                host=host,
+                runtime=runtime,
+                model=model,
+                configuration_bindings={"profile-a": binding},
+                evaluator_registry=registry(),
+                driver_binding=DriverBinding(
+                    "fake-driver",
+                    DRIVER_DIGEST,
+                    lambda request: ModelTurnResponse(content="good"),
+                ),
+                evidence_store=EvidenceStore(Path(temp_dir) / "evidence"),
+                harness_source={"kind": "git", "commit": HARNESS_COMMIT},
+                clock=fixed_clock(1),
+            )
+
+        self.assertEqual(run.effective_configs, (expected,))
+        self.assertEqual(
+            run.trials[0].payload["effective_config"],
+            expected.reference.to_dict(),
+        )
+
+    def test_presealed_effective_configuration_mismatch_blocks_before_driver(self):
+        host, runtime, model = foundation()
+        base = configuration(tools=False)
+        changed_spec = {
+            **base.spec,
+            "generation": {
+                **base.spec["generation"],
+                "temperature": 0.25,
+            },
+        }
+        expected = resolve_effective_configuration(
+            "config-candidate-profile-a",
+            runtime=runtime,
+            model=model,
+            spec=changed_spec,
+            adapter_resolution=base.adapter_resolution,
+        )
+        binding = ConfigurationBinding(
+            profile_id="profile-a",
+            spec=base.spec,
+            adapter_resolution=base.adapter_resolution,
+            effective_logical_id=expected.logical_id,
+            expected_effective_config=expected.reference,
+        )
+        called = False
+
+        def driver(request):
+            nonlocal called
+            called = True
+            return ModelTurnResponse(content="good")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with self.assertRaisesRegex(
+                OrchestrationBlocked, "presealed identity"
+            ):
+                run_v2_repetitions(
+                    run_id="run-mismatched-config",
+                    repetition_phase="screen",
+                    pack_source=pack_bytes(
+                        level="L0", screen_trials=1, qualification_trials=3
+                    ),
+                    pack_source_locator=None,
+                    host=host,
+                    runtime=runtime,
+                    model=model,
+                    configuration_bindings={"profile-a": binding},
+                    evaluator_registry=registry(),
+                    driver_binding=DriverBinding(
+                        "fake-driver", DRIVER_DIGEST, driver
+                    ),
+                    evidence_store=EvidenceStore(
+                        Path(temp_dir) / "evidence"
+                    ),
+                    harness_source={
+                        "kind": "git",
+                        "commit": HARNESS_COMMIT,
+                    },
+                    clock=fixed_clock(1),
+                )
+
+        self.assertFalse(called)
+
     def test_screen_phase_uses_each_cases_predeclared_count_and_ordinals(self):
         host, runtime, model = foundation()
         calls = 0

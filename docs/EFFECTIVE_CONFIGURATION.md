@@ -127,6 +127,18 @@ This is deliberate. A JSON-structured case and a free-text repair case may requi
 
 The runner must not perform a hidden V1-style merge of case options into model options after the manifest is sealed.
 
+### Reusing a presealed campaign configuration
+
+`ConfigurationBinding` normally derives an EffectiveRuntimeConfig logical ID from
+the configuration profile ID. A campaign that seals its configuration matrix
+before execution may instead supply both `effective_logical_id` and
+`expected_effective_config`. The runner resolves the configuration under that
+predeclared logical ID and blocks before model execution unless the resulting
+reference exactly matches the expected content-addressed identity.
+
+The profile ID still selects the configuration required by a benchmark case; it
+does not replace the separately sealed configuration identity.
+
 ## Relationship to provider defaults
 
 V1 allowed some defaults to be supplied inside provider code or by the provider process itself. That remains valid historical behavior for V1 reproduction.
