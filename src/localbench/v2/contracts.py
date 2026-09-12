@@ -27,6 +27,7 @@ RECORD_TYPES = frozenset(
         "aggregate_report",
         "intrinsic_execution_trace",
         "tool_execution_trace",
+        "resource_telemetry_trace",
         "containment_execution",
     }
 )
