@@ -42,7 +42,10 @@ class ConstructionRunnerTests(unittest.TestCase):
             run_dir = self.runner.create_unique_directory(root / "runs", "run")
             pointer = root / "staging" / "run-directory.txt"
             self.runner.write_run_directory_file(pointer, run_dir)
-            self.assertEqual(Path(pointer.read_text(encoding="utf-8").strip()), run_dir)
+            self.assertEqual(
+                Path(pointer.read_text(encoding="utf-8").strip()),
+                run_dir.resolve(strict=True),
+            )
             with self.assertRaises(FileExistsError):
                 self.runner.write_run_directory_file(pointer, run_dir)
 

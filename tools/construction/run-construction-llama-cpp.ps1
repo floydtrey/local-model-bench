@@ -102,9 +102,15 @@ $ResolvedModel = $ModelParts[0]
 $BaseUrl = "http://127.0.0.1:$Port"
 $ApiKeyEnvironmentName = "LOCALBENCH_CONSTRUCTION_LLAMA_CPP_API_KEY"
 $PriorApiKey = [Environment]::GetEnvironmentVariable($ApiKeyEnvironmentName, "Process")
-$SessionApiKey = [Convert]::ToHexString(
-    [System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32)
-).ToLowerInvariant()
+$ApiKeyBytes = New-Object byte[] 32
+$RandomNumberGenerator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+try {
+    $RandomNumberGenerator.GetBytes($ApiKeyBytes)
+}
+finally {
+    $RandomNumberGenerator.Dispose()
+}
+$SessionApiKey = ([System.BitConverter]::ToString($ApiKeyBytes) -replace "-", "").ToLowerInvariant()
 
 $ResolvedServerEvidenceRoot = if ([System.IO.Path]::IsPathRooted($ServerEvidenceRoot)) {
     [System.IO.Path]::GetFullPath($ServerEvidenceRoot)
