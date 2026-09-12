@@ -238,9 +238,9 @@ try {
         stdout_log = $StdoutLog
         stderr_log = $StderrLog
     }
-    $Provenance | ConvertTo-Json -Depth 20 | Set-Content `
-        -LiteralPath $ProvenanceFile `
-        -Encoding utf8
+    $ProvenanceJson = ($Provenance | ConvertTo-Json -Depth 20) + "`n"
+    $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($ProvenanceFile, $ProvenanceJson, $Utf8NoBomEncoding)
 
     & $BatchScript `
         -Models @($ModelAlias) `
