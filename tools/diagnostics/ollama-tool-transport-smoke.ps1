@@ -101,7 +101,7 @@ $SummaryPath = Join-Path $RunDir "summary.json"
 $MetadataPath = Join-Path $RunDir "metadata.json"
 
 [System.IO.File]::WriteAllText(
-    (Join-Path (Get-Location) $RequestPath),
+    [System.IO.Path]::GetFullPath($RequestPath),
     $RequestJson,
     [System.Text.UTF8Encoding]::new($false)
 )
@@ -146,17 +146,22 @@ catch {
         wall_time_ms = $Stopwatch.ElapsedMilliseconds
         error_type = $_.Exception.GetType().FullName
         error = $_.Exception.Message
+        structured_tool_call_present = $false
+        semantic_tool_selection = "unknown"
+        argument_correctness = "unknown"
+        protocol_parser_compatibility = "unknown"
+        end_to_end_success = "not_applicable"
         run_directory = $RunDir
     }
     $Failure | ConvertTo-Json -Depth 10 | Set-Content -Path $SummaryPath -Encoding utf8
     $Failure | Format-List
-    exit 1
+    throw "Ollama transport smoke failed for $Model after preserving evidence in $RunDir"
 }
 $Stopwatch.Stop()
 
 $ResponseJson = $Response | ConvertTo-Json -Depth 30
 [System.IO.File]::WriteAllText(
-    (Join-Path (Get-Location) $ResponsePath),
+    [System.IO.Path]::GetFullPath($ResponsePath),
     $ResponseJson,
     [System.Text.UTF8Encoding]::new($false)
 )
