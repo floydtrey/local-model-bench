@@ -1,8 +1,68 @@
 # Local Model Bench
 
-A Windows-friendly, dependency-free benchmark harness for running fixed JSON or Markdown prompt suites against local chat models. It processes one model at a time, writes each case immediately, resumes interrupted runs, and stays quiet unless `--verbose` is requested.
+A Windows-friendly benchmark harness for running fixed JSON or Markdown prompt suites against local chat models. It processes one model at a time, writes each case immediately, resumes interrupted runs, and stays quiet unless `--verbose` is requested.
 
 This project is independent of Worker Lab. Put it in its own folder or Git repository; it neither imports nor edits Worker Lab.
+
+## Construction Lab repeat rounds
+
+Round 0 evidence under `local-state/construction-lab/runs/` is immutable. Repeat
+rounds use a new label, fresh fixture clones, and a separately labelled evidence
+tree. The three fixture tasks, their prompts, accepted commands, and the bounded
+tool authority are unchanged.
+
+Prepare a round with the desired model order. `-Reset` may rebuild only a clone
+that this script previously marked as a disposable Construction Lab workspace;
+it refuses unmarked or mismatched directories. Round labels must start with a
+letter or digit and may contain only letters, digits, periods, underscores, and
+hyphens.
+
+```powershell
+.\tools\construction\prepare-construction-workspaces.ps1 `
+  -RoundLabel "round-1" `
+  -Models @("gpt-oss:20b", "qwen3.5:9b")
+```
+
+Run the same three-task battery using that exact order:
+
+```powershell
+.\tools\construction\run-construction-batch.ps1 `
+  -RoundLabel "round-1" `
+  -Models @("gpt-oss:20b", "qwen3.5:9b")
+```
+
+Evidence is written below `runs/round-1/`; every task gets a unique
+timestamped directory, with a numeric suffix if a name collision occurs. Each
+batch includes its round label, model order, task order, comparison files, and
+per-task telemetry. Before making any model call, the batch verifies each clone's
+marker, fixture commit, round identity, and clean starting state. Reusing a label
+is allowed only with `-Reset` during preparation, and still creates new evidence
+rather than overwriting prior runs.
+
+Create a separate review bundle for that round with:
+
+```powershell
+.\tools\construction\create-construction-review-bundle.ps1 -RoundLabel "round-1"
+```
+
+This produces `construction-lab-review-bundle-round-1.zip` and refuses to
+replace an existing bundle.
+
+### Model-aware llama.cpp interface
+
+Construction Lab supports an explicitly labeled model-aware llama.cpp
+interface for models whose correct tool intent is serialized in a qualified
+text transport instead of provider-native `tool_calls`. This interface is never
+enabled as an Ollama fallback. It has a separate provider/profile identity,
+preserves every raw response and normalization decision, validates recovered
+calls against the offered JSON Schemas, and still executes exclusively through
+the existing bounded Construction authority surface.
+
+Prepare the exact model alias as a normal disposable round workspace, then use
+`tools/construction/run-construction-llama-cpp.ps1`. The wrapper owns one
+loopback-only server process, uses a random process-scoped API key, hashes the
+server and every GGUF shard, runs the task battery, and stops only the process
+it created. Native and normalized scores remain separate execution interfaces.
 
 ## Planning round 2 (current)
 

@@ -176,9 +176,14 @@ Attach the execution-interface reference to L2 execution bindings and traces whi
 
 Record semantic selection, argument correctness, parser/protocol compatibility, and end-to-end success independently.
 
-### MI-4 — alternate backend adapter
+### MI-4 — alternate backend adapter (implemented for Construction Lab)
 
-Implement the first alternate backend, initially llama.cpp, behind the normalized model-turn boundary.
+The Construction Lab runner now supports an explicit OpenAI-compatible provider
+with a content-addressed exact-model transport profile. A managed llama.cpp wrapper records
+runtime and model-shard provenance and leaves BL-6/Construction authority as the
+only tool executor. Native Ollama and model-aware llama.cpp results remain distinct
+execution interfaces. Promotion into the complete V2 orchestration/report matrix
+remains separate work.
 
 ### MI-5 — cross-interface reporting
 

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - architecture/benchmark-lab-v2
+      - architecture/construction-lab-v1
   pull_request:
   workflow_dispatch:
 
