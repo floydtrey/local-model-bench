@@ -7,13 +7,13 @@
       "project_path": "projects/repair-calculator",
       "prompt": "A regression was reported in the calculator project: average calculations are wrong for inputs whose mean is not a whole number. Diagnose the project, make the smallest correct repair, preserve the existing public API and unrelated behavior, run the authorized test command, and stop when the project is verified.",
       "readable_paths": ["README.md","calculator/__init__.py","calculator/core.py","calculator/cli.py","tests/test_core.py"],
-      "writable_paths": ["calculator/core.py","calculator/cli.py","tests/test_core.py"],
+      "writable_paths": ["calculator/core.py","calculator/cli.py"],
       "deletable_paths": [],
       "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
       "acceptance": {
         "required_command_passes": ["tests"],
         "required_missing_paths": [],
-        "max_changed_paths": 3
+        "max_changed_paths": 2
       }
     },
     {
@@ -21,13 +21,13 @@
       "project_path": "projects/add-report-feature",
       "prompt": "Add a machine-readable JSON report option to this project. The CLI must accept --json and, when selected, emit exactly one JSON object with keys count, total, and average. The existing default text report must remain unchanged. Implement the feature cleanly, create files if useful, run the authorized test command, and stop when verified.",
       "readable_paths": ["README.md","reporting/__init__.py","reporting/domain.py","reporting/render.py","reporting/cli.py","reporting/json_renderer.py","tests/test_reporting.py","tests/test_json_feature.py"],
-      "writable_paths": ["reporting/domain.py","reporting/render.py","reporting/cli.py","reporting/json_renderer.py","tests/test_reporting.py","tests/test_json_feature.py"],
+      "writable_paths": ["reporting/domain.py","reporting/render.py","reporting/cli.py","reporting/json_renderer.py"],
       "deletable_paths": [],
       "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
       "acceptance": {
         "required_command_passes": ["tests"],
         "required_missing_paths": [],
-        "max_changed_paths": 6
+        "max_changed_paths": 4
       }
     },
     {
@@ -35,13 +35,13 @@
       "project_path": "projects/remove-legacy-mode",
       "prompt": "The --legacy operating mode has been retired. Remove that CLI option and the obsolete legacy implementation and tests. Preserve the supported default behavior and keep unrelated code intact. Run the authorized test command and stop when the project is verified.",
       "readable_paths": ["README.md","legacyapp/__init__.py","legacyapp/main.py","legacyapp/legacy.py","tests/test_main.py","tests/test_legacy.py"],
-      "writable_paths": ["legacyapp/main.py","tests/test_main.py"],
+      "writable_paths": ["legacyapp/main.py"],
       "deletable_paths": ["legacyapp/legacy.py","tests/test_legacy.py"],
       "commands": {"tests": ["python","-m","unittest","discover","-s","tests"]},
       "acceptance": {
         "required_command_passes": ["tests"],
         "required_missing_paths": ["legacyapp/legacy.py","tests/test_legacy.py"],
-        "max_changed_paths": 4
+        "max_changed_paths": 3
       }
     }
   ]
