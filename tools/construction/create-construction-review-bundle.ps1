@@ -20,7 +20,9 @@ param(
 
     [string]$OutputRoot = "local-state/construction-lab/review-bundle",
 
-    [string]$ZipPath = "construction-lab-review-bundle.zip"
+    [string]$ZipPath = "construction-lab-review-bundle.zip",
+
+    [string]$RoundLabel
 )
 
 $ErrorActionPreference = "Stop"
@@ -42,10 +44,65 @@ function ConvertTo-ReviewName {
     return ($Path -replace '[\\/:*?"<>|]', '_')
 }
 
+function ConvertTo-SafeName {
+    param([Parameter(Mandatory = $true)][string]$Value)
+    return ($Value -replace '[^A-Za-z0-9._-]', '_')
+}
+
+function Get-RoundName {
+    param([Parameter(Mandatory = $true)][string]$Value)
+    if ($Value -notmatch '\A[A-Za-z0-9][A-Za-z0-9._-]*\z') {
+        throw "RoundLabel must start with an ASCII letter or digit and contain only letters, digits, periods, underscores, or hyphens."
+    }
+    return $Value
+}
+
+function Get-PathSegment {
+    param(
+        [Parameter(Mandatory = $true)][string]$Value,
+        [Parameter(Mandatory = $true)][string]$ParameterName
+    )
+    if ($Value -notmatch '\A[A-Za-z0-9][A-Za-z0-9._-]*\z') {
+        throw "$ParameterName must start with an ASCII letter or digit and contain only letters, digits, periods, underscores, or hyphens: $Value"
+    }
+    return $Value
+}
+
+function Resolve-ContainedChild {
+    param(
+        [Parameter(Mandatory = $true)][string]$Parent,
+        [Parameter(Mandatory = $true)][string]$Child
+    )
+    $ResolvedParent = [System.IO.Path]::GetFullPath($Parent)
+    $Prefix = $ResolvedParent.TrimEnd(
+        [System.IO.Path]::DirectorySeparatorChar,
+        [System.IO.Path]::AltDirectorySeparatorChar
+    ) + [System.IO.Path]::DirectorySeparatorChar
+    $Candidate = [System.IO.Path]::GetFullPath((Join-Path $ResolvedParent $Child))
+    if (-not $Candidate.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Resolved child path escapes its configured root: $Candidate"
+    }
+    return $Candidate
+}
+
 $ResolvedWorkspaceRoot = Resolve-RepoPath $WorkspaceRoot
 $ResolvedRunRoot = Resolve-RepoPath $RunRoot
 $ResolvedOutputRoot = Resolve-RepoPath $OutputRoot
 $ResolvedZipPath = Resolve-RepoPath $ZipPath
+
+if (-not [string]::IsNullOrWhiteSpace($RoundLabel)) {
+    $SafeRound = Get-RoundName $RoundLabel
+    $ResolvedWorkspaceRoot = Resolve-ContainedChild $ResolvedWorkspaceRoot $SafeRound
+    $ResolvedRunRoot = Resolve-ContainedChild $ResolvedRunRoot $SafeRound
+    $ResolvedOutputRoot = Resolve-ContainedChild $ResolvedOutputRoot $SafeRound
+    if ($ZipPath -eq "construction-lab-review-bundle.zip") {
+        $ResolvedZipPath = Resolve-RepoPath ("construction-lab-review-bundle-" + $SafeRound + ".zip")
+    }
+}
+
+if (Test-Path -LiteralPath $ResolvedZipPath) {
+    throw "Refusing to overwrite an existing review bundle: $ResolvedZipPath"
+}
 
 if (Test-Path -LiteralPath $ResolvedOutputRoot) {
     Remove-Item -LiteralPath $ResolvedOutputRoot -Recurse -Force
@@ -53,13 +110,14 @@ if (Test-Path -LiteralPath $ResolvedOutputRoot) {
 New-Item -ItemType Directory -Path $ResolvedOutputRoot -Force | Out-Null
 
 foreach ($Model in $Models) {
-    $Workspace = Join-Path $ResolvedWorkspaceRoot $Model
+    $ModelSegment = Get-PathSegment $Model "Model"
+    $Workspace = Resolve-ContainedChild $ResolvedWorkspaceRoot $ModelSegment
     if (-not (Test-Path -LiteralPath $Workspace -PathType Container)) {
         Write-Warning "Skipping missing workspace: $Workspace"
         continue
     }
 
-    $ModelOut = Join-Path $ResolvedOutputRoot $Model
+    $ModelOut = Resolve-ContainedChild $ResolvedOutputRoot $ModelSegment
     $FilesOut = Join-Path $ModelOut "files"
     New-Item -ItemType Directory -Path $FilesOut -Force | Out-Null
 
@@ -74,7 +132,7 @@ foreach ($Model in $Models) {
     )
     $Untracked = @(
         git -C $Workspace ls-files --others --exclude-standard
-    )
+    ) | Where-Object { $_ -ne ".construction-lab-workspace.json" }
     $ChangedFiles = @($TrackedChanged + $Untracked) |
         Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
         Sort-Object -Unique
@@ -115,7 +173,8 @@ foreach ($Model in $Models) {
     }
 
     foreach ($Task in $Tasks) {
-        $TaskRoot = Join-Path (Join-Path $ResolvedRunRoot $Model) $Task
+        $TaskSegment = Get-PathSegment $Task "Task"
+        $TaskRoot = Resolve-ContainedChild (Resolve-ContainedChild $ResolvedRunRoot $ModelSegment) $TaskSegment
         if (-not (Test-Path -LiteralPath $TaskRoot -PathType Container)) {
             continue
         }
@@ -127,7 +186,7 @@ foreach ($Model in $Models) {
             continue
         }
 
-        $TaskOut = Join-Path $ModelOut $Task
+        $TaskOut = Resolve-ContainedChild $ModelOut $TaskSegment
         New-Item -ItemType Directory -Path $TaskOut -Force | Out-Null
 
         foreach ($EvidenceName in @(
@@ -147,9 +206,6 @@ foreach ($Model in $Models) {
     }
 }
 
-if (Test-Path -LiteralPath $ResolvedZipPath) {
-    Remove-Item -LiteralPath $ResolvedZipPath -Force
-}
 Compress-Archive `
     -Path (Join-Path $ResolvedOutputRoot "*") `
     -DestinationPath $ResolvedZipPath `

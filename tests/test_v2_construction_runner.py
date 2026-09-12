@@ -27,6 +27,25 @@ class ConstructionRunnerTests(unittest.TestCase):
     def test_runner_python_source_imports(self):
         self.assertTrue(callable(self.runner.main))
 
+    def test_evidence_directory_allocation_never_reuses_a_prior_run(self):
+        with tempfile.TemporaryDirectory() as temp:
+            parent = Path(temp)
+            first = self.runner.create_unique_directory(parent, "same-second")
+            second = self.runner.create_unique_directory(parent, "same-second")
+        self.assertEqual(first.name, "same-second")
+        self.assertEqual(second.name, "same-second-01")
+        self.assertNotEqual(first, second)
+
+    def test_run_directory_pointer_is_exact_and_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = self.runner.create_unique_directory(root / "runs", "run")
+            pointer = root / "staging" / "run-directory.txt"
+            self.runner.write_run_directory_file(pointer, run_dir)
+            self.assertEqual(Path(pointer.read_text(encoding="utf-8").strip()), run_dir)
+            with self.assertRaises(FileExistsError):
+                self.runner.write_run_directory_file(pointer, run_dir)
+
     def test_docker_command_is_networkless_read_only_and_pinned_no_pull(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp).resolve()

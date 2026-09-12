@@ -30,6 +30,27 @@ def safe_name(value: str) -> str:
     return "".join(char if char.isalnum() or char in "._-" else "_" for char in value)
 
 
+def create_unique_directory(parent: Path, stem: str) -> Path:
+    """Create an evidence directory without ever reusing a prior name."""
+    parent.mkdir(parents=True, exist_ok=True)
+    for suffix in range(10_000):
+        name = stem if suffix == 0 else f"{stem}-{suffix:02d}"
+        candidate = parent / name
+        try:
+            candidate.mkdir()
+        except FileExistsError:
+            continue
+        return candidate
+    raise RuntimeError(f"unable to allocate a unique evidence directory under {parent}")
+
+
+def write_run_directory_file(pointer: Path, run_dir: Path) -> None:
+    """Publish the exact newly allocated run directory without overwriting a pointer."""
+    pointer.parent.mkdir(parents=True, exist_ok=True)
+    with pointer.open("x", encoding="utf-8", newline="\n") as handle:
+        handle.write(str(run_dir.resolve(strict=True)) + "\n")
+
+
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -218,6 +239,17 @@ def main() -> int:
     parser.add_argument("--model", required=True)
     parser.add_argument("--workspace-clone", required=True, type=Path)
     parser.add_argument("--task-id", required=True)
+    parser.add_argument(
+        "--round-label",
+        default=None,
+        help="operator-supplied repeat-round label recorded with this evidence",
+    )
+    parser.add_argument(
+        "--run-directory-file",
+        type=Path,
+        default=None,
+        help="write the exact allocated run directory to this new operator-side file",
+    )
     parser.add_argument("--base-url", default="http://127.0.0.1:11434")
     parser.add_argument(
         "--output-root",
@@ -275,13 +307,10 @@ def main() -> int:
     workspace = ConstructionWorkspace(project_root, scope)
 
     timestamp = utc_stamp()
-    run_dir = (
-        args.output_root.resolve(strict=False)
-        / safe_name(args.model)
-        / args.task_id
-        / timestamp
-    )
-    run_dir.mkdir(parents=True, exist_ok=False)
+    run_parent = args.output_root.resolve(strict=False) / safe_name(args.model) / args.task_id
+    run_dir = create_unique_directory(run_parent, timestamp)
+    if args.run_directory_file is not None:
+        write_run_directory_file(args.run_directory_file, run_dir)
 
     initial_snapshot = workspace.snapshot()
     write_json(run_dir / "initial-snapshot.json", initial_snapshot)
@@ -488,6 +517,7 @@ def main() -> int:
         "schema_version": "construction-lab-run:v1",
         "model": args.model,
         "task_id": args.task_id,
+        "round_label": args.round_label,
         "fixture_manifest_sha256": sha256_file(manifest_path),
         "workspace_clone": str(clone_root),
         "project_root": str(project_root),

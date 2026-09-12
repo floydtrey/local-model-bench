@@ -4,6 +4,50 @@ A Windows-friendly, dependency-free benchmark harness for running fixed JSON or 
 
 This project is independent of Worker Lab. Put it in its own folder or Git repository; it neither imports nor edits Worker Lab.
 
+## Construction Lab repeat rounds
+
+Round 0 evidence under `local-state/construction-lab/runs/` is immutable. Repeat
+rounds use a new label, fresh fixture clones, and a separately labelled evidence
+tree. The three fixture tasks, their prompts, accepted commands, and the bounded
+tool authority are unchanged.
+
+Prepare a round with the desired model order. `-Reset` may rebuild only a clone
+that this script previously marked as a disposable Construction Lab workspace;
+it refuses unmarked or mismatched directories. Round labels must start with a
+letter or digit and may contain only letters, digits, periods, underscores, and
+hyphens.
+
+```powershell
+.\tools\construction\prepare-construction-workspaces.ps1 `
+  -RoundLabel "round-1" `
+  -Models @("gpt-oss:20b", "qwen3.5:9b")
+```
+
+Run the same three-task battery using that exact order:
+
+```powershell
+.\tools\construction\run-construction-batch.ps1 `
+  -RoundLabel "round-1" `
+  -Models @("gpt-oss:20b", "qwen3.5:9b")
+```
+
+Evidence is written below `runs/round-1/`; every task gets a unique
+timestamped directory, with a numeric suffix if a name collision occurs. Each
+batch includes its round label, model order, task order, comparison files, and
+per-task telemetry. Before making any model call, the batch verifies each clone's
+marker, fixture commit, round identity, and clean starting state. Reusing a label
+is allowed only with `-Reset` during preparation, and still creates new evidence
+rather than overwriting prior runs.
+
+Create a separate review bundle for that round with:
+
+```powershell
+.\tools\construction\create-construction-review-bundle.ps1 -RoundLabel "round-1"
+```
+
+This produces `construction-lab-review-bundle-round-1.zip` and refuses to
+replace an existing bundle.
+
 ## Planning round 2 (current)
 
 The current decision run is a 90-call planning and task-contract benchmark: 18 cases per model across five models. Nine independent scenarios each have a `PLAN` turn followed by a preserved-context `TASK_CREATE` turn. Context resets between scenarios and models.
