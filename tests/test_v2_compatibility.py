@@ -9,8 +9,10 @@ from localbench.v2.compatibility import (
     CompatibilityDimension,
     ToolCompatibilityObservation,
     compatibility_observation,
+    seal_compatibility_observation,
+    validate_compatibility_observation_evidence,
 )
-from localbench.v2.contracts import EvidenceRef
+from localbench.v2.contracts import EvidenceRef, SealedEvidence
 
 
 INTERFACE_REF = EvidenceRef(
@@ -25,36 +27,38 @@ TRACE_REF = EvidenceRef(
 )
 
 
+def sample_observation() -> ToolCompatibilityObservation:
+    return compatibility_observation(
+        case_id="read-only-evidence-answer",
+        turn=1,
+        execution_interface=INTERFACE_REF,
+        semantic_tool_selection=CompatibilityDimension(
+            "pass",
+            "read_file was selected",
+            (TRACE_REF,),
+        ),
+        argument_correctness=CompatibilityDimension(
+            "pass",
+            "facts.txt was selected",
+            (TRACE_REF,),
+        ),
+        protocol_parser_compatibility=CompatibilityDimension(
+            "fail",
+            "tool-shaped content was not promoted to a structured tool call",
+            (TRACE_REF,),
+        ),
+        end_to_end_success=CompatibilityDimension(
+            "fail",
+            "no executable normalized ToolCall reached BL-6",
+            (TRACE_REF,),
+        ),
+        diagnostic_metadata={"provider_finish_reason": "stop"},
+    )
+
+
 class CompatibilityObservationTests(unittest.TestCase):
     def test_observation_keeps_four_dimensions_independent(self):
-        observation = compatibility_observation(
-            case_id="read-only-evidence-answer",
-            turn=1,
-            execution_interface=INTERFACE_REF,
-            semantic_tool_selection=CompatibilityDimension(
-                "pass",
-                "read_file was selected",
-                (TRACE_REF,),
-            ),
-            argument_correctness=CompatibilityDimension(
-                "pass",
-                "facts.txt was selected",
-                (TRACE_REF,),
-            ),
-            protocol_parser_compatibility=CompatibilityDimension(
-                "fail",
-                "tool-shaped content was not promoted to a structured tool call",
-                (TRACE_REF,),
-            ),
-            end_to_end_success=CompatibilityDimension(
-                "fail",
-                "no executable normalized ToolCall reached BL-6",
-                (TRACE_REF,),
-            ),
-            diagnostic_metadata={"provider_finish_reason": "stop"},
-        )
-
-        payload = observation.to_dict()
+        payload = sample_observation().to_dict()
         self.assertEqual(
             payload["observation_version"],
             COMPATIBILITY_OBSERVATION_VERSION,
@@ -89,6 +93,33 @@ class CompatibilityObservationTests(unittest.TestCase):
         self.assertFalse(hasattr(observation, "to_tool_call"))
         self.assertFalse(hasattr(observation, "execute"))
         self.assertFalse(hasattr(observation, "authorize"))
+
+    def test_observation_can_be_sealed_as_content_addressed_evidence(self):
+        sealed = seal_compatibility_observation(
+            "read-only-evidence-answer-turn-1-compatibility",
+            sample_observation(),
+        )
+        self.assertIsInstance(sealed, SealedEvidence)
+        self.assertEqual(sealed.record_type, "tool_compatibility_observation")
+        self.assertTrue(sealed.payload["diagnostic_only"])
+        self.assertEqual(sealed.payload["execution_authority"], "none")
+        validate_compatibility_observation_evidence(sealed)
+
+    def test_sealing_is_deterministic(self):
+        first = seal_compatibility_observation("compatibility-a", sample_observation())
+        second = seal_compatibility_observation("compatibility-a", sample_observation())
+        self.assertEqual(first.sha256, second.sha256)
+        self.assertEqual(first.to_dict(), second.to_dict())
+
+    def test_sealed_evidence_cannot_claim_execution_authority(self):
+        sealed = seal_compatibility_observation("compatibility-a", sample_observation())
+        tampered = dict(sealed.payload)
+        tampered["execution_authority"] = "bl6"
+        from localbench.v2.contracts import seal_evidence
+
+        invalid = seal_evidence("tool_compatibility_observation", "compatibility-b", tampered)
+        with self.assertRaises(ValueError):
+            validate_compatibility_observation_evidence(invalid)
 
     def test_invalid_status_is_rejected(self):
         with self.assertRaises(ValueError):
