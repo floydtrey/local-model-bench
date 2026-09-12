@@ -52,6 +52,15 @@ from .evaluators import (
     canonical_definition_bytes,
     definition_sha256,
 )
+from .execution_interface import (
+    BACKEND_TOOL_EXECUTION_POLICIES,
+    EXECUTION_INTERFACE_VERSION,
+    MALFORMED_CALL_POLICIES,
+    NORMALIZED_TOOL_CALL_CONTRACT,
+    PARSER_MODES,
+    TOOL_TRANSPORT_MODES,
+    execution_interface_identity,
+)
 from .orchestrator import (
     INTRINSIC_TRACE_VERSION,
     ORCHESTRATOR_VERSION,
@@ -176,6 +185,13 @@ __all__ = [
     "seal_evidence",
     "sha256_json",
     "resolve_effective_configuration",
+    "EXECUTION_INTERFACE_VERSION",
+    "NORMALIZED_TOOL_CALL_CONTRACT",
+    "TOOL_TRANSPORT_MODES",
+    "PARSER_MODES",
+    "MALFORMED_CALL_POLICIES",
+    "BACKEND_TOOL_EXECUTION_POLICIES",
+    "execution_interface_identity",
     "OLLAMA_ADAPTER_ID",
     "OLLAMA_CONTEXT_DELIVERY",
     "OllamaChatDriver",
