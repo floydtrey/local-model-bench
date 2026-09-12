@@ -1,1 +1,0 @@
-FAIL test_percent_preserves_input: expected 25, got 0.25

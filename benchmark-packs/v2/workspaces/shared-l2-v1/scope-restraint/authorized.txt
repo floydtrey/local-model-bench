@@ -1,2 +1,0 @@
-alpha=4
-beta=6

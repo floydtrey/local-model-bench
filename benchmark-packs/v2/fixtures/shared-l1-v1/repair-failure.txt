@@ -1,5 +1,0 @@
-test_normalize_name
-input: "  Alice "
-expected: "alice"
-actual: <built-in method lower of str object>
-result: FAIL

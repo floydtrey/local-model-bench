@@ -1,3 +1,0 @@
-mode=steady
-retry_limit=2
-window=45

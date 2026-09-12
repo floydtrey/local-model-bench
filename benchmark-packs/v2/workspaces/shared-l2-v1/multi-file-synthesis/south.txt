@@ -1,2 +1,0 @@
-widget=4
-gizmo=5

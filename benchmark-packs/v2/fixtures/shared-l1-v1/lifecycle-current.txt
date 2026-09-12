@@ -1,4 +1,0 @@
-record_id=LC-CUR
-status=current
-batch_limit=24
-note=Use this rule for current operations.
