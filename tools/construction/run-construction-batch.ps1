@@ -28,6 +28,7 @@ function ConvertTo-SafeName {
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $Here)
 $Runner = Join-Path $Here "run-construction-task.py"
+$TelemetryScript = Join-Path $Here "capture-construction-telemetry.ps1"
 
 $ResolvedWorkspaceRoot = if ([System.IO.Path]::IsPathRooted($WorkspaceRoot)) {
     [System.IO.Path]::GetFullPath($WorkspaceRoot)
@@ -49,6 +50,13 @@ if (-not (Test-Path -LiteralPath $Python -PathType Leaf)) {
 }
 $OllamaPath = (Get-Command ollama -ErrorAction Stop).Source
 
+if (-not (Test-Path -LiteralPath $TelemetryScript -PathType Leaf)) {
+    throw "Construction telemetry sampler is missing: $TelemetryScript"
+}
+
+$TelemetryStaging = Join-Path $ResolvedResultRoot ".telemetry-staging"
+New-Item -ItemType Directory -Path $TelemetryStaging -Force | Out-Null
+
 $Rows = @()
 foreach ($Model in $Models) {
     $SafeModel = ConvertTo-SafeName $Model
@@ -58,22 +66,50 @@ foreach ($Model in $Models) {
     }
 
     foreach ($Task in $Tasks) {
-        Write-Host "" 
+        Write-Host ""
         Write-Host "=== $Model :: $Task ===" -ForegroundColor Cyan
-        & $Python $Runner `
-            --model $Model `
-            --workspace-clone $Workspace `
-            --task-id $Task `
-            --output-root $ResolvedResultRoot `
-            --command-backend $CommandBackend `
-            --docker-image $DockerImage
-        $Code = $LASTEXITCODE
+
+        $TelemetryId = [guid]::NewGuid().ToString("N")
+        $TelemetryCsv = Join-Path $TelemetryStaging "$TelemetryId.csv"
+        $TelemetryStop = Join-Path $TelemetryStaging "$TelemetryId.stop"
+        New-Item -ItemType File -Path $TelemetryStop -Force | Out-Null
+        $TelemetryJob = Start-Job `
+            -FilePath $TelemetryScript `
+            -ArgumentList @($TelemetryCsv, $TelemetryStop, 2.0)
+
+        try {
+            & $Python $Runner `
+                --model $Model `
+                --workspace-clone $Workspace `
+                --task-id $Task `
+                --output-root $ResolvedResultRoot `
+                --command-backend $CommandBackend `
+                --docker-image $DockerImage
+            $Code = $LASTEXITCODE
+        }
+        finally {
+            Remove-Item -LiteralPath $TelemetryStop -Force -ErrorAction SilentlyContinue
+            Wait-Job -Job $TelemetryJob -Timeout 15 | Out-Null
+            Receive-Job -Job $TelemetryJob -ErrorAction SilentlyContinue | Out-Null
+            Remove-Job -Job $TelemetryJob -Force -ErrorAction SilentlyContinue
+        }
 
         $TaskRoot = Join-Path (Join-Path $ResolvedResultRoot $SafeModel) $Task
         $Latest = Get-ChildItem -LiteralPath $TaskRoot -Directory -ErrorAction SilentlyContinue |
             Sort-Object Name -Descending |
             Select-Object -First 1
         $ResultPath = if ($null -eq $Latest) { $null } else { Join-Path $Latest.FullName "result.json" }
+        $TelemetryPath = if ($null -eq $Latest) { $null } else { Join-Path $Latest.FullName "telemetry.csv" }
+
+        if (
+            $null -ne $TelemetryPath -and
+            (Test-Path -LiteralPath $TelemetryCsv -PathType Leaf)
+        ) {
+            Move-Item -LiteralPath $TelemetryCsv -Destination $TelemetryPath -Force
+        }
+        else {
+            Remove-Item -LiteralPath $TelemetryCsv -Force -ErrorAction SilentlyContinue
+        }
 
         if ($null -ne $ResultPath -and (Test-Path -LiteralPath $ResultPath -PathType Leaf)) {
             $Result = Get-Content -LiteralPath $ResultPath -Raw | ConvertFrom-Json
@@ -90,6 +126,7 @@ foreach ($Model in $Models) {
                 prompt_eval_count = $Result.totals.prompt_eval_count
                 eval_count = $Result.totals.eval_count
                 changed_paths = @($Result.changed_paths).Count
+                telemetry_file = if ($null -ne $TelemetryPath -and (Test-Path -LiteralPath $TelemetryPath)) { $TelemetryPath } else { $null }
                 result_file = $ResultPath
                 exit_code = $Code
             }
@@ -108,6 +145,7 @@ foreach ($Model in $Models) {
                 prompt_eval_count = $null
                 eval_count = $null
                 changed_paths = $null
+                telemetry_file = $TelemetryPath
                 result_file = $ResultPath
                 exit_code = $Code
             }
