@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 
-from .contracts import EvidenceRef, canonical_json_bytes
+from .contracts import EvidenceRef, SealedEvidence, canonical_json_bytes, seal_evidence
 
 
 COMPATIBILITY_OBSERVATION_VERSION = "benchmark-lab-tool-compatibility-observation:v1"
@@ -147,3 +147,54 @@ def compatibility_observation(
         end_to_end_success=end_to_end_success,
         diagnostic_metadata=diagnostic_metadata,
     )
+
+
+def seal_compatibility_observation(
+    logical_id: str, observation: ToolCompatibilityObservation
+) -> SealedEvidence:
+    """Seal one diagnostic observation without granting any execution authority."""
+
+    if not isinstance(observation, ToolCompatibilityObservation):
+        raise TypeError("observation must be a ToolCompatibilityObservation")
+    evidence = seal_evidence(
+        "tool_compatibility_observation",
+        logical_id,
+        observation.to_dict(),
+    )
+    validate_compatibility_observation_evidence(evidence)
+    return evidence
+
+
+def validate_compatibility_observation_evidence(evidence: SealedEvidence) -> None:
+    if not isinstance(evidence, SealedEvidence):
+        raise TypeError("evidence must be SealedEvidence")
+    if evidence.record_type != "tool_compatibility_observation":
+        raise ValueError("expected tool_compatibility_observation evidence")
+    payload = evidence.payload
+    if payload.get("observation_version") != COMPATIBILITY_OBSERVATION_VERSION:
+        raise ValueError("unsupported compatibility observation version")
+    if payload.get("diagnostic_only") is not True:
+        raise ValueError("compatibility observation must remain diagnostic-only")
+    if payload.get("execution_authority") != "none":
+        raise ValueError("compatibility observation must have no execution authority")
+    interface = payload.get("execution_interface")
+    if not isinstance(interface, Mapping):
+        raise ValueError("compatibility observation execution interface is missing")
+    if interface.get("record_type") != "execution_interface_identity":
+        raise ValueError("compatibility observation interface reference type is invalid")
+    dimensions = payload.get("dimensions")
+    if not isinstance(dimensions, Mapping):
+        raise ValueError("compatibility observation dimensions are missing")
+    if set(dimensions) != set(COMPATIBILITY_DIMENSIONS):
+        raise ValueError("compatibility observation dimensions are not canonical")
+    for name in COMPATIBILITY_DIMENSIONS:
+        dimension = dimensions.get(name)
+        if not isinstance(dimension, Mapping):
+            raise ValueError(f"compatibility dimension {name} must be an object")
+        if dimension.get("status") not in COMPATIBILITY_STATUSES:
+            raise ValueError(f"compatibility dimension {name} has invalid status")
+        refs = dimension.get("evidence")
+        if not isinstance(refs, (list, tuple)):
+            raise ValueError(f"compatibility dimension {name} evidence must be an array")
+        for ref in refs:
+            EvidenceRef.from_dict(ref)
