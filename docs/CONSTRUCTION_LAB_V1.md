@@ -100,6 +100,8 @@ Each task run stores:
 - changed paths;
 - acceptance checks and final pass/fail result.
 
+When a task is launched through `tools/construction/run-construction-batch.ps1`, the batch also stores `telemetry.csv` beside the task evidence. The sampler records UTC timestamp, total CPU utilization, available/total physical memory, NVIDIA GPU utilization, VRAM usage, GPU power draw, and GPU temperature every two seconds when those host metrics are available. Telemetry is observational only and is not part of the model authority path or acceptance decision.
+
 Output root:
 
 `local-state/construction-lab/runs/`
@@ -120,7 +122,17 @@ A model may make ordinary coding mistakes, run failing tests, repair its work, a
 
 `tools/construction/run-construction-batch.ps1` runs the selected task battery sequentially for each candidate. The model stays resident across that model's tasks, then `ollama stop` unloads it before the next candidate. This captures practical warm-task throughput while preventing candidates from competing for VRAM.
 
-The batch emits JSON and CSV comparison evidence.
+The batch emits JSON and CSV comparison evidence and attaches per-task runtime telemetry when the sampler can collect it. Telemetry collection is best effort; missing host metrics never grant authority, change model inputs, or manufacture a benchmark pass/fail.
+
+## Review bundles
+
+`tools/construction/create-construction-review-bundle.ps1` creates an operator review archive containing each selected model workspace's Git status, tracked diff, complete changed-file list, baseline/current copies for tracked changes and untracked files, and the latest run evidence for the selected tasks. Deleted files are represented explicitly, and files that did not exist in the fixture baseline are marked as new rather than silently omitted.
+
+The default archive is:
+
+`construction-lab-review-bundle.zip`
+
+The review bundle is operator-side evidence only; models never receive Git or archive access through this utility.
 
 ## Non-goals for v1
 
