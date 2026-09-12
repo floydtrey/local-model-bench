@@ -262,6 +262,65 @@ class BL8AOrchestratorTests(unittest.TestCase):
             self.assertEqual(result.evaluation_results[0].payload["verdict"], "pass")
             self.assertEqual(store.load(result.manifest.reference), result.manifest)
 
+    def test_intrinsic_driver_error_preserves_evidence_and_stops_before_scoring(self):
+        host, runtime, model = self.foundation()
+
+        def driver(request):
+            raise RuntimeError("synthetic provider failure")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = EvidenceStore(Path(temp_dir) / "evidence")
+
+            with self.assertRaisesRegex(
+                OrchestrationBlocked,
+                "model driver failed for case case-a",
+            ):
+                run_v2_pack(
+                    run_id="run-driver-error",
+                    pack_source=pack_bytes(level="L0"),
+                    pack_source_locator=None,
+                    host=host,
+                    runtime=runtime,
+                    model=model,
+                    configuration_bindings={
+                        "profile-a": self.config(tools=False)
+                    },
+                    evaluator_registry=self.registry(
+                        "intrinsic_execution_trace"
+                    ),
+                    driver_binding=DriverBinding(
+                        "fake-driver",
+                        DRIVER_DIGEST,
+                        driver,
+                    ),
+                    evidence_store=store,
+                    harness_source={"kind": "git", "commit": DIGEST_B},
+                    clock=self.fixed_clock(),
+                )
+
+            traces = list(
+                (store.root / "records" / "intrinsic_execution_trace")
+                .glob("*.json")
+            )
+            cases = list(
+                (store.root / "records" / "case_result").glob("*.json")
+            )
+            evaluations = list(
+                (store.root / "records" / "evaluation_result")
+                .glob("*.json")
+            )
+
+            self.assertEqual(len(traces), 1)
+            self.assertEqual(len(cases), 1)
+            self.assertEqual(len(evaluations), 0)
+
+            trace = json.loads(traces[0].read_text(encoding="utf-8"))
+            self.assertEqual(trace["payload"]["status"], "error")
+            self.assertEqual(
+                trace["payload"]["stop_reason"],
+                "model_driver_error",
+            )
+
     def test_pack_run_reuses_presealed_effective_configuration_identity(self):
         host, runtime, model = self.foundation()
         base = self.config(tools=False)
@@ -591,3 +650,4 @@ class BL8AOrchestratorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
