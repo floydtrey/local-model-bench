@@ -438,6 +438,12 @@ def run_v2_repetitions(
         evidence_store.persist(case_record)
         case_records.append(case_record)
 
+        if status == "error" and stop_reason == "model_driver_error":
+            raise OrchestrationBlocked(
+                f"model driver failed for case {case_id}; "
+                "qualification evidence was preserved and scoring was stopped"
+            )
+
         extras = supplemental_evidence.get(case_id, ())
         if isinstance(extras, (str, bytes, bytearray)):
             raise ValueError("supplemental_evidence values must be sequences")

@@ -606,5 +606,71 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
             self.assertEqual(raw_path.read_bytes(), before)
 
 
+    def test_model_driver_error_preserves_evidence_and_stops_before_scoring(self):
+        host, runtime, model = foundation()
+
+        def driver(request):
+            raise RuntimeError("synthetic driver failure")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = EvidenceStore(Path(temp_dir) / "evidence")
+
+            with self.assertRaisesRegex(
+                OrchestrationBlocked,
+                "qualification evidence was preserved and scoring was stopped",
+            ):
+                run_v2_repetitions(
+                    run_id="run-driver-error",
+                    repetition_phase="screen",
+                    pack_source=pack_bytes(
+                        level="L0",
+                        screen_trials=1,
+                        qualification_trials=1,
+                    ),
+                    pack_source_locator=None,
+                    host=host,
+                    runtime=runtime,
+                    model=model,
+                    configuration_bindings={
+                        "profile-a": configuration(tools=False)
+                    },
+                    evaluator_registry=registry(),
+                    driver_binding=DriverBinding(
+                        "failing-driver",
+                        DRIVER_DIGEST,
+                        driver,
+                    ),
+                    evidence_store=store,
+                    harness_source={
+                        "kind": "git",
+                        "commit": HARNESS_COMMIT,
+                    },
+                    clock=fixed_clock(1),
+                )
+
+            traces = list(
+                (store.root / "records" / "intrinsic_execution_trace").glob("*.json")
+            )
+            cases = list(
+                (store.root / "records" / "case_result").glob("*.json")
+            )
+            evaluations = list(
+                (store.root / "records" / "evaluation_result").glob("*.json")
+            )
+
+            self.assertEqual(len(traces), 1)
+            self.assertEqual(len(cases), 1)
+            self.assertEqual(len(evaluations), 0)
+
+            case_payload = json.loads(
+                cases[0].read_text(encoding="utf-8")
+            )["payload"]
+
+            self.assertEqual(case_payload["status"], "error")
+            self.assertEqual(
+                case_payload["metrics"]["stop_reason"],
+                "model_driver_error",
+            )
+
 if __name__ == "__main__":
     unittest.main()
