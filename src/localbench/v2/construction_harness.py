@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import hashlib
 import os
+import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping, Sequence
+from typing import Any
 
-from .contracts import canonical_json_bytes, sha256_json
+from .contracts import sha256_json
 from .tool_harness import BoundedWorkspace, ToolCall, WorkspaceSafetyError
 
 
 CONSTRUCTION_HARNESS_VERSION = "benchmark-lab-construction-harness:v1"
 CONSTRUCTION_TOOL_SURFACE_ID = "lab-construction-tools:v1"
+SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 CONSTRUCTION_TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
@@ -118,7 +121,10 @@ def _inside(root: Path, relative: str) -> Path:
     current = root
     for part in PurePosixPath(relative).parts:
         current = current / part
-        if current.exists() and (current.is_symlink() or getattr(os.path, "isjunction", lambda _: False)(str(current))):
+        if current.exists() and (
+            current.is_symlink()
+            or getattr(os.path, "isjunction", lambda _: False)(str(current))
+        ):
             raise WorkspaceSafetyError("link-like path components are forbidden")
     return target
 
@@ -158,7 +164,9 @@ class ConstructionScope:
 
     def __post_init__(self) -> None:
         for field_name in ("readable_paths", "writable_paths", "deletable_paths"):
-            values = tuple(_canonical_relative_path(item) for item in getattr(self, field_name))
+            values = tuple(
+                _canonical_relative_path(item) for item in getattr(self, field_name)
+            )
             if len(values) != len(set(values)):
                 raise ValueError(f"{field_name} must not contain duplicates")
             object.__setattr__(self, field_name, tuple(sorted(values)))
@@ -187,11 +195,7 @@ class ConstructionScope:
 
 
 class ConstructionWorkspace:
-    """Bounded mutation and command authority for a disposable project copy.
-
-    Existing BL-6 read/write behavior is reused. Delete and command execution are
-    additive and separately authorized. No arbitrary shell string is ever accepted.
-    """
+    """Bounded mutation and command authority for a disposable project copy."""
 
     def __init__(self, root: Path, scope: ConstructionScope) -> None:
         self.root = Path(root).resolve(strict=True)
@@ -208,7 +212,9 @@ class ConstructionWorkspace:
         for relative in self._deletable:
             target = _inside(self.root, relative)
             if target.exists() and not target.is_file():
-                raise WorkspaceSafetyError(f"deletable path is not a regular file: {relative}")
+                raise WorkspaceSafetyError(
+                    f"deletable path is not a regular file: {relative}"
+                )
 
     def snapshot(self) -> dict[str, Any]:
         base = self.files.snapshot()
@@ -226,8 +232,6 @@ class ConstructionWorkspace:
                 }
             else:
                 raw = target.read_bytes()
-                import hashlib
-
                 known[relative] = {
                     "path": relative,
                     "state": "file",
@@ -260,15 +264,13 @@ class ConstructionWorkspace:
         if relative not in self._deletable:
             return {"ok": False, "path": relative, "error": "path_not_deletable"}
         expected = args.get("expected_sha256")
-        if not isinstance(expected, str) or len(expected) != 64:
+        if not isinstance(expected, str) or not SHA256.fullmatch(expected):
             return {"ok": False, "path": relative, "error": "invalid_arguments"}
         target = _inside(self.root, relative)
         if not target.exists():
             return {"ok": False, "path": relative, "error": "file_missing"}
         if not target.is_file():
             return {"ok": False, "path": relative, "error": "not_regular_file"}
-        import hashlib
-
         actual = hashlib.sha256(target.read_bytes()).hexdigest()
         if actual != expected:
             return {
@@ -282,7 +284,9 @@ class ConstructionWorkspace:
 
     def _run(self, call: ToolCall) -> dict[str, Any]:
         args = dict(call.arguments)
-        if set(args) != {"command_id"} or not isinstance(args.get("command_id"), str):
+        if set(args) != {"command_id"} or not isinstance(
+            args.get("command_id"), str
+        ):
             return {"ok": False, "error": "invalid_arguments"}
         command = self._commands.get(args["command_id"])
         if command is None:
@@ -297,7 +301,11 @@ class ConstructionWorkspace:
                 timeout=command.timeout_seconds,
                 shell=False,
                 check=False,
-                env={**os.environ, "PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1"},
+                env={
+                    **os.environ,
+                    "PYTHONNOUSERSITE": "1",
+                    "PYTHONDONTWRITEBYTECODE": "1",
+                },
             )
         except subprocess.TimeoutExpired as exc:
             stdout = (exc.stdout or b"")[: command.max_output_bytes]
