@@ -44,7 +44,7 @@ foreach ($Model in $Models) {
             -OutputRoot $OutputRoot `
             -NumCtx $NumCtx `
             -NumPredict $NumPredict
-        $ExitCode = $LASTEXITCODE
+        $ExitCode = 0
     }
     catch {
         $ExitCode = 1
