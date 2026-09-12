@@ -16,7 +16,8 @@ if (-not (Test-Path -LiteralPath $OutputDirectory -PathType Container)) {
     New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 }
 
-$NvidiaSmi = (Get-Command nvidia-smi -ErrorAction SilentlyContinue).Source
+$NvidiaCommand = Get-Command nvidia-smi -ErrorAction SilentlyContinue
+$NvidiaSmi = if ($null -eq $NvidiaCommand) { $null } else { $NvidiaCommand.Source }
 $First = $true
 
 while (Test-Path -LiteralPath $StopFile -PathType Leaf) {
