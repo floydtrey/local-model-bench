@@ -10,6 +10,7 @@ from localbench.v2.resource_telemetry import (
     resource_telemetry_trace,
     summarize_resource_samples,
 )
+from localbench.v2.resource_telemetry_integration import SafeResourceTelemetryCapture
 
 
 TRIAL = EvidenceRef("trial_identity", "trial-test", "a" * 64)
@@ -173,6 +174,60 @@ class ResourceTelemetryTests(unittest.TestCase):
         )
         self.assertIsInstance(
             binding.create_session("telemetry-a", "case-a", TRIAL), FakeSession
+        )
+
+    def test_safe_capture_turns_start_failure_into_unavailable_evidence(self):
+        class BadStart:
+            def start(self):
+                raise RuntimeError("synthetic")
+
+            def stop(self):
+                raise AssertionError("must not be called")
+
+        binding = ResourceTelemetryBinding(
+            probe_id="fake-probe:v1",
+            sampling_interval_ms=500,
+            session_factory=lambda logical_id, case_id, trial: BadStart(),
+        )
+        capture = SafeResourceTelemetryCapture(
+            binding, "telemetry-start-fail", "case-a", TRIAL
+        )
+
+        capture.start()
+        record = capture.stop()
+
+        self.assertEqual(record.record_type, "resource_telemetry_trace")
+        self.assertEqual(record.payload["summary"]["sample_count"], 1)
+        self.assertEqual(record.payload["summary"]["probe_non_ok_samples"], 1)
+        self.assertEqual(
+            record.payload["samples"][0]["probe_errors"],
+            ("telemetry_start:RuntimeError",),
+        )
+
+    def test_safe_capture_turns_stop_failure_into_unavailable_evidence(self):
+        class BadStop:
+            def start(self):
+                pass
+
+            def stop(self):
+                raise RuntimeError("synthetic")
+
+        binding = ResourceTelemetryBinding(
+            probe_id="fake-probe:v1",
+            sampling_interval_ms=500,
+            session_factory=lambda logical_id, case_id, trial: BadStop(),
+        )
+        capture = SafeResourceTelemetryCapture(
+            binding, "telemetry-stop-fail", "case-a", TRIAL
+        )
+
+        capture.start()
+        record = capture.stop()
+
+        self.assertEqual(record.record_type, "resource_telemetry_trace")
+        self.assertEqual(
+            record.payload["samples"][0]["probe_errors"],
+            ("telemetry_stop:RuntimeError",),
         )
 
     def test_invalid_trial_type_is_rejected(self):
