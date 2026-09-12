@@ -95,13 +95,22 @@ foreach ($Model in $Models) {
             "FILE DELETED" | Set-Content -LiteralPath $CurrentOut -Encoding utf8
         }
 
-        $Baseline = & git -C $Workspace show "HEAD:$RelativePath" 2>$null
-        if ($LASTEXITCODE -eq 0) {
-            $Baseline | Set-Content -LiteralPath $OriginalOut -Encoding utf8
-        }
-        else {
+        # Untracked files are intentionally part of the review bundle, but by
+        # definition they have no HEAD version. Do not invoke `git show` for them:
+        # PowerShell can promote git's expected stderr into a terminating error
+        # under ErrorActionPreference=Stop before LASTEXITCODE can be inspected.
+        if ($Untracked -contains $RelativePath) {
             "FILE DID NOT EXIST IN BASELINE" |
                 Set-Content -LiteralPath $OriginalOut -Encoding utf8
+        }
+        else {
+            # Every remaining changed path came from `git diff HEAD`, so it was
+            # tracked in the fixture baseline even when it is now deleted.
+            $Baseline = & git -C $Workspace show "HEAD:$RelativePath"
+            if ($LASTEXITCODE -ne 0) {
+                throw "Unable to read baseline content for tracked path: $RelativePath"
+            }
+            $Baseline | Set-Content -LiteralPath $OriginalOut -Encoding utf8
         }
     }
 
