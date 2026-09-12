@@ -3,7 +3,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
+import shutil
+import subprocess
 import sys
 import time
 import urllib.error
@@ -71,8 +72,7 @@ def post_json(url: str, payload: dict[str, Any], timeout: int) -> dict[str, Any]
         with urllib.request.urlopen(request, timeout=timeout) as response:
             raw = response.read()
     except urllib.error.HTTPError as exc:
-        raw = exc.read()
-        detail = raw.decode("utf-8", errors="replace")
+        detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"Ollama HTTP {exc.code}: {detail}") from exc
     except urllib.error.URLError as exc:
         raise RuntimeError(f"Ollama request failed: {exc}") from exc
@@ -82,8 +82,75 @@ def post_json(url: str, payload: dict[str, Any], timeout: int) -> dict[str, Any]
     return value
 
 
-def command_from_manifest(command_id: str, argv: list[str]) -> AuthorizedCommand:
-    actual = tuple(sys.executable if part == "python" else part for part in argv)
+def require_docker_image(image: str) -> None:
+    docker = shutil.which("docker")
+    if docker is None:
+        raise RuntimeError(
+            "Docker is required by the default Construction Lab command backend. "
+            "Install/start Docker Desktop or explicitly use --command-backend host."
+        )
+    inspected = subprocess.run(
+        [docker, "image", "inspect", image],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if inspected.returncode != 0:
+        raise RuntimeError(
+            f"Docker image {image!r} is not present locally. Pull it before the benchmark "
+            "so benchmark runs never perform implicit network pulls."
+        )
+
+
+def command_from_manifest(
+    command_id: str,
+    argv: list[str],
+    *,
+    project_root: Path,
+    backend: str,
+    docker_image: str,
+    docker_memory: str,
+    docker_cpus: str,
+    docker_pids_limit: int,
+) -> AuthorizedCommand:
+    if backend == "host":
+        actual = tuple(sys.executable if part == "python" else part for part in argv)
+        return AuthorizedCommand(command_id, actual, timeout_seconds=120)
+
+    if backend != "docker":
+        raise ValueError(f"unsupported command backend: {backend}")
+    inside_argv = ["python" if part == "python" else part for part in argv]
+    mount_source = str(project_root).replace("\\", "/")
+    actual = (
+        "docker",
+        "run",
+        "--rm",
+        "--pull",
+        "never",
+        "--network",
+        "none",
+        "--memory",
+        docker_memory,
+        "--cpus",
+        docker_cpus,
+        "--pids-limit",
+        str(docker_pids_limit),
+        "--read-only",
+        "--tmpfs",
+        "/tmp:rw,noexec,nosuid,size=64m",
+        "-e",
+        "PYTHONNOUSERSITE=1",
+        "-e",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "-v",
+        f"{mount_source}:/workspace:ro",
+        "-w",
+        "/workspace",
+        docker_image,
+        *inside_argv,
+    )
     return AuthorizedCommand(command_id, actual, timeout_seconds=120)
 
 
@@ -152,11 +219,25 @@ def main() -> int:
     parser.add_argument("--workspace-clone", required=True, type=Path)
     parser.add_argument("--task-id", required=True)
     parser.add_argument("--base-url", default="http://127.0.0.1:11434")
-    parser.add_argument("--output-root", type=Path, default=Path("local-state/construction-lab/runs"))
+    parser.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("local-state/construction-lab/runs"),
+    )
     parser.add_argument("--num-ctx", type=int, default=32768)
     parser.add_argument("--num-predict", type=int, default=4096)
     parser.add_argument("--max-turns", type=int, default=32)
     parser.add_argument("--request-timeout", type=int, default=900)
+    parser.add_argument(
+        "--command-backend",
+        choices=("docker", "host"),
+        default="docker",
+        help="docker is the safe default; host must be explicitly requested",
+    )
+    parser.add_argument("--docker-image", default="python:3.12-slim")
+    parser.add_argument("--docker-memory", default="512m")
+    parser.add_argument("--docker-cpus", default="2")
+    parser.add_argument("--docker-pids-limit", type=int, default=128)
     args = parser.parse_args()
 
     clone_root = args.workspace_clone.resolve(strict=True)
@@ -169,8 +250,20 @@ def main() -> int:
     except ValueError as exc:
         raise RuntimeError("project path escapes fixture clone") from exc
 
+    if args.command_backend == "docker":
+        require_docker_image(args.docker_image)
+
     commands = tuple(
-        command_from_manifest(command_id, argv)
+        command_from_manifest(
+            command_id,
+            argv,
+            project_root=project_root,
+            backend=args.command_backend,
+            docker_image=args.docker_image,
+            docker_memory=args.docker_memory,
+            docker_cpus=args.docker_cpus,
+            docker_pids_limit=args.docker_pids_limit,
+        )
         for command_id, argv in task["commands"].items()
     )
     scope = ConstructionScope(
@@ -195,10 +288,9 @@ def main() -> int:
 
     baseline_commands: dict[str, Any] = {}
     for command_id in task.get("acceptance", {}).get("required_command_passes", []):
-        result = workspace.execute(
+        baseline_commands[command_id] = workspace.execute(
             ToolCall(f"baseline-{command_id}", "run_command", {"command_id": command_id})
         )
-        baseline_commands[command_id] = result
     write_json(run_dir / "baseline-verification.json", baseline_commands)
 
     messages: list[dict[str, Any]] = [
@@ -238,8 +330,7 @@ def main() -> int:
                 },
                 "keep_alive": "15m",
             }
-            request_file = run_dir / f"turn-{turn:02d}-request.json"
-            write_json(request_file, request_payload)
+            write_json(run_dir / f"turn-{turn:02d}-request.json", request_payload)
 
             turn_started = time.perf_counter()
             response = post_json(
@@ -277,7 +368,9 @@ def main() -> int:
             if tool_calls is None:
                 tool_calls = []
             if not isinstance(tool_calls, list):
-                raise RuntimeError("Ollama message.tool_calls must be an array when present")
+                raise RuntimeError(
+                    "Ollama message.tool_calls must be an array when present"
+                )
 
             events.append(
                 {
@@ -295,11 +388,16 @@ def main() -> int:
             )
 
             if not tool_calls:
-                terminal_content = message.get("content") if isinstance(message.get("content"), str) else ""
-                if response.get("done_reason") == "length":
-                    stop_reason = "output_limit"
-                else:
-                    stop_reason = "terminal_response"
+                terminal_content = (
+                    message.get("content")
+                    if isinstance(message.get("content"), str)
+                    else ""
+                )
+                stop_reason = (
+                    "output_limit"
+                    if response.get("done_reason") == "length"
+                    else "terminal_response"
+                )
                 break
 
             messages.append(provider_message_for_history(message))
@@ -310,13 +408,18 @@ def main() -> int:
                 name = function.get("name")
                 arguments = function.get("arguments")
                 if not isinstance(name, str) or not isinstance(arguments, dict):
-                    raise RuntimeError("tool call requires string name and object arguments")
+                    raise RuntimeError(
+                        "tool call requires string name and object arguments"
+                    )
                 call = ToolCall(f"ollama-{turn}-{index}", name, arguments)
                 totals["tool_calls"] += 1
                 result = workspace.execute(call)
                 if classify_denial(result):
                     totals["authority_denials"] += 1
-                if name == "run_command" and arguments.get("command_id") == "tests":
+                if (
+                    name == "run_command"
+                    and arguments.get("command_id") == "tests"
+                ):
                     totals["test_command_calls"] += 1
                 events.append(
                     {
@@ -330,7 +433,9 @@ def main() -> int:
                     {
                         "role": "tool",
                         "tool_name": name,
-                        "content": json.dumps(result, ensure_ascii=False, sort_keys=True),
+                        "content": json.dumps(
+                            result, ensure_ascii=False, sort_keys=True
+                        ),
                     }
                 )
         else:
@@ -352,10 +457,9 @@ def main() -> int:
 
     assessor_commands: dict[str, Any] = {}
     for command_id in task.get("acceptance", {}).get("required_command_passes", []):
-        result = workspace.execute(
+        assessor_commands[command_id] = workspace.execute(
             ToolCall(f"assess-{command_id}", "run_command", {"command_id": command_id})
         )
-        assessor_commands[command_id] = result
 
     required_missing = task.get("acceptance", {}).get("required_missing_paths", [])
     missing_checks = {
@@ -366,10 +470,13 @@ def main() -> int:
     checks = {
         "required_commands_pass": all(
             assessor_commands.get(command_id, {}).get("ok") is True
-            for command_id in task.get("acceptance", {}).get("required_command_passes", [])
+            for command_id in task.get("acceptance", {}).get(
+                "required_command_passes", []
+            )
         ),
         "required_paths_missing": all(missing_checks.values()),
-        "changed_path_budget": max_changed is None or len(changed) <= int(max_changed),
+        "changed_path_budget": max_changed is None
+        or len(changed) <= int(max_changed),
         "no_authority_denials": totals["authority_denials"] == 0,
         "terminal_response": stop_reason == "terminal_response",
     }
@@ -404,6 +511,19 @@ def main() -> int:
             "temperature": 0,
             "seed": 42,
             "keep_alive": "15m",
+            "command_backend": args.command_backend,
+            "docker_image": args.docker_image
+            if args.command_backend == "docker"
+            else None,
+            "docker_memory": args.docker_memory
+            if args.command_backend == "docker"
+            else None,
+            "docker_cpus": args.docker_cpus
+            if args.command_backend == "docker"
+            else None,
+            "docker_pids_limit": args.docker_pids_limit
+            if args.command_backend == "docker"
+            else None,
         },
     }
     write_json(run_dir / "result.json", result)
