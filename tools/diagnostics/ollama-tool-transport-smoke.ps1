@@ -8,7 +8,7 @@ param(
 
     [int]$NumCtx = 32768,
 
-    [int]$NumPredict = 128
+    [int]$NumPredict = 4096
 )
 
 $ErrorActionPreference = "Stop"
@@ -17,6 +17,21 @@ Set-StrictMode -Version Latest
 function ConvertTo-SafeName {
     param([Parameter(Mandatory = $true)][string]$Value)
     return ($Value -replace '[^A-Za-z0-9._-]', '_')
+}
+
+function Get-OptionalPropertyValue {
+    param(
+        [Parameter(Mandatory = $false)]$Object,
+        [Parameter(Mandatory = $true)][string]$Name
+    )
+    if ($null -eq $Object) {
+        return $null
+    }
+    $Property = $Object.PSObject.Properties[$Name]
+    if ($null -eq $Property) {
+        return $null
+    }
+    return $Property.Value
 }
 
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -175,10 +190,11 @@ $ResponseJson = $Response | ConvertTo-Json -Depth 30
     [System.Text.UTF8Encoding]::new($false)
 )
 
-$Message = $Response.message
+$Message = Get-OptionalPropertyValue -Object $Response -Name "message"
 $ToolCalls = @()
-if ($null -ne $Message -and $null -ne $Message.tool_calls) {
-    $ToolCalls = @($Message.tool_calls)
+$RawToolCalls = Get-OptionalPropertyValue -Object $Message -Name "tool_calls"
+if ($null -ne $RawToolCalls) {
+    $ToolCalls = @($RawToolCalls)
 }
 
 $Structured = $ToolCalls.Count -gt 0
@@ -189,14 +205,19 @@ if ($Structured) {
     $FirstArguments = $ToolCalls[0].function.arguments
 }
 
-$Content = $null
-if ($null -ne $Message) {
-    $Content = $Message.content
-}
+$Content = Get-OptionalPropertyValue -Object $Message -Name "content"
+$Done = Get-OptionalPropertyValue -Object $Response -Name "done"
+$DoneReason = Get-OptionalPropertyValue -Object $Response -Name "done_reason"
+$PromptEvalCount = Get-OptionalPropertyValue -Object $Response -Name "prompt_eval_count"
+$EvalCount = Get-OptionalPropertyValue -Object $Response -Name "eval_count"
+$TotalDuration = Get-OptionalPropertyValue -Object $Response -Name "total_duration"
+$LoadDuration = Get-OptionalPropertyValue -Object $Response -Name "load_duration"
+$PromptEvalDuration = Get-OptionalPropertyValue -Object $Response -Name "prompt_eval_duration"
+$EvalDuration = Get-OptionalPropertyValue -Object $Response -Name "eval_duration"
 
 $SemanticSelection = "unknown"
 $ArgumentCorrectness = "unknown"
-$ProtocolCompatibility = if ($Structured) { "pass" } else { "fail" }
+$ProtocolCompatibility = if ($Structured) { "pass" } elseif ($DoneReason -eq "length") { "unknown" } else { "fail" }
 
 if ($Structured) {
     $SemanticSelection = if ($FirstName -eq "read_file") { "pass" } else { "fail" }
@@ -210,13 +231,20 @@ $Summary = [ordered]@{
     status = "completed"
     model = $Model
     wall_time_ms = $Stopwatch.ElapsedMilliseconds
+    num_predict_limit = $NumPredict
+    prompt_eval_count = $PromptEvalCount
+    eval_count = $EvalCount
+    total_duration_ns = $TotalDuration
+    load_duration_ns = $LoadDuration
+    prompt_eval_duration_ns = $PromptEvalDuration
+    eval_duration_ns = $EvalDuration
     structured_tool_call_present = $Structured
     tool_call_count = $ToolCalls.Count
     first_tool_name = $FirstName
     first_tool_arguments = $FirstArguments
     assistant_content = $Content
-    done = $Response.done
-    done_reason = $Response.done_reason
+    done = $Done
+    done_reason = $DoneReason
     semantic_tool_selection = $SemanticSelection
     argument_correctness = $ArgumentCorrectness
     protocol_parser_compatibility = $ProtocolCompatibility
@@ -235,6 +263,9 @@ Write-Host ""
 Write-Host "=== OLLAMA TOOL TRANSPORT SMOKE ===" -ForegroundColor Cyan
 Write-Host "Model:              $Model"
 Write-Host "Wall time:          $($Stopwatch.ElapsedMilliseconds) ms"
+Write-Host "Output limit:       $NumPredict tokens"
+Write-Host "Tokens generated:   $EvalCount"
+Write-Host "Done reason:        $DoneReason"
 Write-Host "Structured call:    $Structured"
 Write-Host "Semantic selection: $SemanticSelection"
 Write-Host "Arguments:          $ArgumentCorrectness"
