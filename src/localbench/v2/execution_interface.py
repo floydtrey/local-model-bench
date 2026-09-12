@@ -124,3 +124,32 @@ def execution_interface_identity(
         "backend_tool_execution": backend_tool_execution,
     }
     return seal_evidence("execution_interface_identity", logical_id, payload)
+
+
+def validate_execution_interface_identity(record: SealedEvidence) -> None:
+    """Fail closed if a sealed interface record violates the MI-1 contract."""
+
+    if not isinstance(record, SealedEvidence) or record.record_type != "execution_interface_identity":
+        raise ValueError("expected execution_interface_identity evidence")
+    payload = record.payload
+    if payload.get("interface_version") != EXECUTION_INTERFACE_VERSION:
+        raise ValueError("unsupported execution interface version")
+    if payload.get("normalized_tool_call_contract") != NORMALIZED_TOOL_CALL_CONTRACT:
+        raise ValueError("execution interface normalized tool-call contract mismatch")
+
+    rebuilt = execution_interface_identity(
+        record.logical_id,
+        runtime=payload.get("runtime"),
+        model=payload.get("model"),
+        backend_kind=payload.get("backend_kind"),
+        adapter_id=payload.get("adapter_id"),
+        tool_transport_mode=payload.get("tool_transport_mode"),
+        parser_mode=payload.get("parser_mode"),
+        parser_id=payload.get("parser_id"),
+        raw_interaction_contract=payload.get("raw_interaction_contract"),
+        capabilities=payload.get("capabilities"),
+        malformed_call_policy=payload.get("malformed_call_policy"),
+        backend_tool_execution=payload.get("backend_tool_execution"),
+    )
+    if rebuilt.reference != record.reference:
+        raise ValueError("execution interface identity is not canonical")
