@@ -49,6 +49,16 @@
       },
       "additionalProperties": false
     },
+    "execution_interface": {
+      "type": "object",
+      "required": ["record_type", "logical_id", "sha256"],
+      "properties": {
+        "record_type": {"const": "execution_interface_identity"},
+        "logical_id": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
     "workspace_scope": {
       "oneOf": [
         {"type": "null"},
