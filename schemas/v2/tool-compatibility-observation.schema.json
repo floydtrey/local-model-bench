@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "benchmark-lab-tool-compatibility-observation:v1",
+  "title": "Benchmark Lab V2 Tool Compatibility Observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_type", "logical_id", "sha256", "payload"],
+  "properties": {
+    "schema_version": {"const": "benchmark-lab-evidence:v2"},
+    "record_type": {"const": "tool_compatibility_observation"},
+    "logical_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_version",
+        "case_id",
+        "turn",
+        "execution_interface",
+        "dimensions",
+        "diagnostic_only",
+        "execution_authority",
+        "diagnostic_metadata"
+      ],
+      "properties": {
+        "observation_version": {
+          "const": "benchmark-lab-tool-compatibility-observation:v1"
+        },
+        "case_id": {"type": "string", "minLength": 1},
+        "turn": {"type": "integer", "minimum": 1},
+        "execution_interface": {"$ref": "#/$defs/interfaceRef"},
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "semantic_tool_selection",
+            "argument_correctness",
+            "protocol_parser_compatibility",
+            "end_to_end_success"
+          ],
+          "properties": {
+            "semantic_tool_selection": {"$ref": "#/$defs/dimension"},
+            "argument_correctness": {"$ref": "#/$defs/dimension"},
+            "protocol_parser_compatibility": {"$ref": "#/$defs/dimension"},
+            "end_to_end_success": {"$ref": "#/$defs/dimension"}
+          }
+        },
+        "diagnostic_only": {"const": true},
+        "execution_authority": {"const": "none"},
+        "diagnostic_metadata": {
+          "anyOf": [
+            {"type": "object"},
+            {"type": "null"}
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_type", "logical_id", "sha256"],
+      "properties": {
+        "record_type": {"type": "string"},
+        "logical_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "interfaceRef": {
+      "allOf": [
+        {"$ref": "#/$defs/evidenceRef"},
+        {"properties": {"record_type": {"const": "execution_interface_identity"}}}
+      ]
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "detail", "evidence"],
+      "properties": {
+        "status": {
+          "enum": ["pass", "fail", "unknown", "not_applicable"]
+        },
+        "detail": {
+          "anyOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "null"}
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidenceRef"}
+        }
+      }
+    }
+  }
+}
