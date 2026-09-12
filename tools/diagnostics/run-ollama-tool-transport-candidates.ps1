@@ -8,7 +8,7 @@ param(
 
     [int]$NumCtx = 32768,
 
-    [int]$NumPredict = 128
+    [int]$NumPredict = 4096
 )
 
 $ErrorActionPreference = "Stop"
@@ -77,6 +77,9 @@ foreach ($Model in $Models) {
             semantic_tool_selection = "unknown"
             argument_correctness = "unknown"
             protocol_parser_compatibility = "unknown"
+            eval_count = $null
+            num_predict_limit = $NumPredict
+            done_reason = $null
             wall_time_ms = $null
             run_directory = $null
             exit_code = $ExitCode
@@ -93,6 +96,9 @@ foreach ($Model in $Models) {
             semantic_tool_selection = "unknown"
             argument_correctness = "unknown"
             protocol_parser_compatibility = "unknown"
+            eval_count = $null
+            num_predict_limit = $NumPredict
+            done_reason = $null
             wall_time_ms = $null
             run_directory = $NewRun.FullName
             exit_code = $ExitCode
@@ -108,6 +114,9 @@ foreach ($Model in $Models) {
         semantic_tool_selection = $Summary.semantic_tool_selection
         argument_correctness = $Summary.argument_correctness
         protocol_parser_compatibility = $Summary.protocol_parser_compatibility
+        eval_count = $Summary.eval_count
+        num_predict_limit = $Summary.num_predict_limit
+        done_reason = $Summary.done_reason
         wall_time_ms = $Summary.wall_time_ms
         run_directory = $Summary.run_directory
         exit_code = $ExitCode
