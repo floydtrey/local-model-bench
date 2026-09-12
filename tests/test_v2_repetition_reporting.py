@@ -16,6 +16,7 @@ from localbench.v2.evaluators import (
     EvaluatorDefinition,
     EvaluatorRegistry,
 )
+from localbench.v2.execution_interface import execution_interface_identity
 from localbench.v2.orchestrator import (
     ConfigurationBinding,
     DriverBinding,
@@ -81,6 +82,21 @@ def foundation():
         declared_context_tokens=8192,
     )
     return host, runtime, model
+
+
+def interface_identity(runtime, model):
+    return execution_interface_identity(
+        "fake-native-tools",
+        runtime=runtime.reference,
+        model=model.reference,
+        backend_kind="fake",
+        adapter_id="fake-adapter:v1",
+        tool_transport_mode="native_structured",
+        parser_mode="provider_native",
+        parser_id="fake-native-parser:v1",
+        raw_interaction_contract="synthetic-raw-interaction:v1",
+        capabilities={"chat": True, "tools": True},
+    )
 
 
 def configuration(*, tools: bool) -> ConfigurationBinding:
@@ -404,6 +420,7 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
 
     def test_repeated_l2_requires_distinct_equal_start_workspaces(self):
         host, runtime, model = foundation()
+        execution_interface = interface_identity(runtime, model)
         driver_calls = 0
         with tempfile.TemporaryDirectory() as temp_dir:
             roots = []
@@ -456,7 +473,12 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
                 model=model,
                 configuration_bindings={"profile-a": configuration(tools=True)},
                 evaluator_registry=registry(),
-                driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                driver_binding=DriverBinding(
+                    "fake-tool-driver",
+                    DRIVER_DIGEST,
+                    driver,
+                    execution_interface=execution_interface,
+                ),
                 evidence_store=store,
                 harness_source={"kind": "git", "commit": HARNESS_COMMIT},
                 workspace_factory=factory,
@@ -470,9 +492,24 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
             self.assertEqual(len(initial_ids), 1)
             self.assertEqual((roots[0] / "out.txt").read_text(encoding="utf-8"), "done")
             self.assertEqual((roots[1] / "out.txt").read_text(encoding="utf-8"), "done")
+            self.assertTrue(
+                all(
+                    item.payload["execution_interface"]
+                    == execution_interface.reference.to_dict()
+                    for item in run.execution_bindings
+                )
+            )
+            self.assertTrue(
+                all(
+                    item.payload["execution_interface"]
+                    == execution_interface.reference.to_dict()
+                    for item in run.execution_evidence
+                )
+            )
 
     def test_repeated_l2_mismatched_start_state_blocks_before_driver_or_manifest(self):
         host, runtime, model = foundation()
+        execution_interface = interface_identity(runtime, model)
         called = False
         with tempfile.TemporaryDirectory() as temp_dir:
             roots = []
@@ -508,7 +545,12 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
                     model=model,
                     configuration_bindings={"profile-a": configuration(tools=True)},
                     evaluator_registry=registry(),
-                    driver_binding=DriverBinding("fake-tool-driver", DRIVER_DIGEST, driver),
+                    driver_binding=DriverBinding(
+                        "fake-tool-driver",
+                        DRIVER_DIGEST,
+                        driver,
+                        execution_interface=execution_interface,
+                    ),
                     evidence_store=store,
                     harness_source={"kind": "git", "commit": HARNESS_COMMIT},
                     workspace_factory=factory,
@@ -604,7 +646,6 @@ class BL8BRepetitionReportingTests(unittest.TestCase):
             report = aggregate_repeated_run("aggregate-raw-preservation", run)
             persist_aggregate_report(report, store)
             self.assertEqual(raw_path.read_bytes(), before)
-
 
     def test_model_driver_error_preserves_evidence_and_stops_before_scoring(self):
         host, runtime, model = foundation()
