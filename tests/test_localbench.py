@@ -5,6 +5,7 @@ import os
 import tempfile
 import threading
 import unittest
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
@@ -12,7 +13,7 @@ from unittest.mock import patch
 from localbench.config import load_config
 from localbench.evaluate import evaluate_case, evaluate_run
 from localbench.providers import OllamaProvider, OpenAICompatibleProvider, ProviderError
-from localbench.runner import BenchmarkRunner
+from localbench.runner import BenchmarkRunner, WallClockLimitReached
 from localbench.suites import load_suite
 from localbench.util import atomic_write_json
 
@@ -375,6 +376,7 @@ class RunnerTests(unittest.TestCase):
                     ],
                     "run": {
                         "timeout_seconds": 2,
+                        "wall_clock_seconds": 600,
                         "retries": 1,
                         "retry_delay_seconds": 0,
                         "unload_after_model": True,
@@ -421,13 +423,20 @@ class RunnerTests(unittest.TestCase):
             self.assertIsNone(checkpoint["current"])
             self.assertTrue((run_dir / "summary.csv").exists())
 
-            # A running case checkpoint exposes the authoritative provider-call
-            # timeout window for read-only terminal monitoring.
+            # Monitoring exposes the whole-run deadline, not a misleading
+            # per-case deadline. Quiet checkpoints do not imply a stall.
             runner._checkpoint(1, config["models"][0], suites[0], suites[0].cases[0], "running")
             active = json.loads((run_dir / "checkpoint.json").read_text())
-            self.assertEqual(active["current"]["timeout_seconds"], 2.0)
+            self.assertEqual(active["wall_clock"]["limit_seconds"], 600.0)
+            self.assertIsNotNone(active["wall_clock"]["deadline_at"])
+            self.assertGreater(active["wall_clock"]["remaining_seconds"], 0)
             self.assertIn("started_at", active["current"])
-            self.assertIn("deadline_at", active["current"])
+            self.assertNotIn("deadline_at", active["current"])
+            self.assertNotIn("timeout_seconds", active["current"])
+
+            runner.wall_clock_deadline = datetime.now(timezone.utc) - timedelta(seconds=1)
+            with self.assertRaises(WallClockLimitReached):
+                runner._bounded_timeout(2)
 
             before = len(case_requests)
             resumed = BenchmarkRunner(
