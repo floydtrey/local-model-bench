@@ -35,6 +35,8 @@
 # No automatic context compaction or model-visible context rewriting.
 - id: compaction-basic
   disabled: true
+- id: command-compact
+  disabled: true
 - id: tool-result-pruner
   disabled: true
 - id: image-offload
