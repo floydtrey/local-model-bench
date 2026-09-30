@@ -1,0 +1,18 @@
+{
+  "captured": "2026-09-30",
+  "dsh": "0.1.5-rc.2",
+  "node": "v24.21.0",
+  "packages": {
+    "dsh-base": "0.1.5-rc.2",
+    "dsh-web-app": "0.1.5-rc.2",
+    "dsh-headless": "0.1.5-rc.2",
+    "dsh-llm-pi-ai": "0.1.5-rc.2",
+    "dsh-agent-presets": "0.1.5-rc.2",
+    "dsh-tool-subagent": "0.1.5-rc.2",
+    "dsh-subagent-spawn-in-process": "0.1.5-rc.2",
+    "dsh-subagent-fork-in-process": "0.1.5-rc.2",
+    "dsh-tool-web": "0.1.5-rc.2"
+  },
+  "source_checkout_commit": "ddefc45fbc7f8e46dd73185e68295696d1297887",
+  "source_checkout_is_not_installed_runtime": true
+}

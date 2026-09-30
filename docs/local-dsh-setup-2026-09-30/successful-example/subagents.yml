@@ -1,0 +1,12 @@
+- id: tool-subagent
+
+  disabled: false
+
+- id: tool-subagent-control
+
+  disabled: false
+
+- id: tool-subagent-list-agents
+
+  disabled: false
+

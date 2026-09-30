@@ -1,0 +1,20 @@
+{
+  "note": "Existing expert profile data; not enabled by the verified Inspect launch. Payload omitted to keep the reference compact.",
+  "files": [
+    {
+      "name": "planner-reviewer.csv",
+      "bytes": 2405232,
+      "sha256": "c2ee7e09eb559eb3c788e08ddf114d915b11ebb0eecd422f3b3f866bcd1f614b"
+    },
+    {
+      "name": "planner.csv",
+      "bytes": 1208120,
+      "sha256": "4f2778d2d58cea8cd9f8fa8edac7e4e9c5d55918636d140443b8255a8273e510"
+    },
+    {
+      "name": "reviewer.csv",
+      "bytes": 1197112,
+      "sha256": "7c9a4af36116d15dd70a86d529bf35c41542f4619f26a03212aab3cbb4e96c63"
+    }
+  ]
+}

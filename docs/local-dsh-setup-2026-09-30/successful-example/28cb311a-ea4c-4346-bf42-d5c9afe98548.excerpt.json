@@ -1,0 +1,120 @@
+[
+  {
+    "type": "session",
+    "version": 3,
+    "id": "28cb311a-ea4c-4346-bf42-d5c9afe98548",
+    "createdAt": 1790059521405,
+    "cwd": "${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground",
+    "parentSession": "session-c3ca20ec-1ba4-4be1-b902-5065a5f3f669",
+    "isSeeded": false,
+    "origin": "subagent",
+    "delegationDepth": 1
+  },
+  {
+    "type": "assistant/message",
+    "seq": 14,
+    "time": 1790059524219,
+    "data": {
+      "message": {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool-call",
+            "id": "call_p91v9xvl",
+            "name": "read",
+            "arguments": "{\"file_path\":\"C:\\\\Users\\\\LOCAL_USER\\\\Documents\\\\Codex\\\\2026-09-21\\\\do\\\\work\\\\qwen35-tests\\\\cases\\\\two-subagents-foreground\\\\disk.json\"}"
+          }
+        ],
+        "id": "257ffb6e-b689-432c-9311-1a043c54976a"
+      }
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "tool/call",
+    "seq": 15,
+    "time": 1790059524219,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "callId": "call_p91v9xvl",
+      "name": "read",
+      "arguments": "{\"file_path\":\"C:\\\\Users\\\\LOCAL_USER\\\\Documents\\\\Codex\\\\2026-09-21\\\\do\\\\work\\\\qwen35-tests\\\\cases\\\\two-subagents-foreground\\\\disk.json\"}"
+    }
+  },
+  {
+    "type": "tool/result",
+    "seq": 16,
+    "time": 1790059524222,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "message": {
+        "source": {
+          "kind": "tool",
+          "callId": "call_p91v9xvl"
+        },
+        "content": [
+          {
+            "type": "tool-result",
+            "toolCallId": "call_p91v9xvl",
+            "content": [
+              {
+                "type": "text",
+                "text": "<path>${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground\\disk.json</path>\n<type>file</type>\n<content>\n1: {\"free_gb\":30}\n\n(End of file - total 1 lines)\n</content>"
+              }
+            ],
+            "isError": false
+          }
+        ],
+        "role": "user",
+        "id": "2cc5e409-d706-4d52-8df1-4a4ba80a756c"
+      },
+      "meta": {
+        "path": "${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground\\disk.json",
+        "offset": 1,
+        "lines": [
+          {
+            "number": 1,
+            "text": "{\"free_gb\":30}"
+          }
+        ],
+        "totalLines": 1,
+        "lang": "json"
+      }
+    },
+    "sourceEventSeqs": [
+      15
+    ],
+    "surfaceOp": "append"
+  },
+  {
+    "type": "assistant/message",
+    "seq": 19,
+    "time": 1790059525914,
+    "data": {
+      "message": {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "The file shows `{\"free_gb\":30}`, which means free_GB = 30. Since 30 >= 5, the status is **OK**."
+          }
+        ],
+        "id": "9e704c1e-11f0-4c94-a5d9-b152a809d945"
+      }
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "turn/end",
+    "seq": 21,
+    "time": 1790059525915,
+    "data": {
+      "turn": 1,
+      "reason": {
+        "kind": "completed"
+      }
+    }
+  }
+]
