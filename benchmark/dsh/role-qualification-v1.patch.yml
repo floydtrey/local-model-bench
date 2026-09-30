@@ -39,8 +39,6 @@
   disabled: true
 - id: tool-result-pruner
   disabled: true
-- id: image-offload
-  disabled: true
 
 # Planner role exposes no execution or retrieval tools.
 - id: tool-pwsh
@@ -60,8 +58,6 @@
 - id: tool-web
   disabled: true
 - id: web-search-deepseek
-  disabled: true
-- id: web-fetch-http
   disabled: true
 - id: tool-todo
   disabled: true
