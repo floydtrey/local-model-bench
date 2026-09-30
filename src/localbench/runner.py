@@ -23,6 +23,11 @@ from .util import atomic_write_json, path_key, read_json, redact_config, utc_now
 TERMINAL_CASE_STATUSES = {"success", "error"}
 
 
+class WallClockLimitReached(RuntimeError):
+    """Raised when the configured whole-run wall-clock boundary is exhausted."""
+
+
+
 def _host_metadata() -> dict[str, Any]:
     return {
         "hostname": socket.gethostname(),
@@ -133,6 +138,9 @@ class BenchmarkRunner:
                 )
         self.manifest_path = self.run_dir / "manifest.json"
         self.checkpoint_path = self.run_dir / "checkpoint.json"
+        wall_clock = self.config.get("run", {}).get("wall_clock_seconds")
+        self.wall_clock_seconds = float(wall_clock) if wall_clock is not None else None
+        self.wall_clock_deadline: datetime | None = None
 
     def _validate_resume(self) -> None:
         manifest_path = self.run_dir / "manifest.json"
@@ -153,14 +161,28 @@ class BenchmarkRunner:
             raise ValueError("suite inputs or their deterministic order changed; cannot safely resume")
 
     def _initial_manifest(self) -> dict[str, Any]:
+        started = datetime.now(timezone.utc)
+        self.wall_clock_deadline = (
+            started + timedelta(seconds=self.wall_clock_seconds)
+            if self.wall_clock_seconds is not None
+            else None
+        )
         return {
             "schema_version": 1,
             "harness_version": __version__,
             "run_id": self.run_id,
             "status": "running",
-            "started_at": utc_now(),
+            "started_at": started.isoformat().replace("+00:00", "Z"),
             "finished_at": None,
             "last_updated_at": utc_now(),
+            "wall_clock": {
+                "limit_seconds": self.wall_clock_seconds,
+                "deadline_at": (
+                    self.wall_clock_deadline.isoformat().replace("+00:00", "Z")
+                    if self.wall_clock_deadline is not None
+                    else None
+                ),
+            },
             "config_path": str(self.config_path),
             "config_sha256": self.config_hash,
             "host": _host_metadata(),
@@ -193,6 +215,19 @@ class BenchmarkRunner:
     def _prepare(self) -> dict[str, Any]:
         if self.manifest_path.exists():
             manifest = read_json(self.manifest_path)
+            started_at = datetime.fromisoformat(str(manifest["started_at"]).replace("Z", "+00:00"))
+            if self.wall_clock_seconds is not None:
+                self.wall_clock_deadline = started_at + timedelta(seconds=self.wall_clock_seconds)
+            else:
+                self.wall_clock_deadline = None
+            manifest["wall_clock"] = {
+                "limit_seconds": self.wall_clock_seconds,
+                "deadline_at": (
+                    self.wall_clock_deadline.isoformat().replace("+00:00", "Z")
+                    if self.wall_clock_deadline is not None
+                    else None
+                ),
+            }
             manifest["status"] = "running"
             manifest["finished_at"] = None
             manifest["last_updated_at"] = utc_now()
@@ -216,14 +251,36 @@ class BenchmarkRunner:
         self._write_checkpoint("running", None)
         return manifest
 
+    def _remaining_wall_seconds(self) -> float | None:
+        if self.wall_clock_deadline is None:
+            return None
+        return (self.wall_clock_deadline - datetime.now(timezone.utc)).total_seconds()
+
+    def _bounded_timeout(self, configured_timeout: float) -> float:
+        remaining = self._remaining_wall_seconds()
+        if remaining is None:
+            return configured_timeout
+        if remaining <= 0:
+            raise WallClockLimitReached("whole-run wall-clock boundary reached")
+        return min(configured_timeout, remaining)
+
+    def _require_wall_clock(self) -> None:
+        remaining = self._remaining_wall_seconds()
+        if remaining is not None and remaining <= 0:
+            raise WallClockLimitReached("whole-run wall-clock boundary reached")
+
     def run(self) -> Path:
         manifest = self._prepare()
         try:
+            self._require_wall_clock()
             for model_sequence, model in enumerate(self.config["models"], 1):
+                self._require_wall_clock()
                 self._run_model(model_sequence, model)
             manifest["status"] = (
                 "completed_with_errors" if self._has_case_errors() else "completed"
             )
+        except WallClockLimitReached:
+            manifest["status"] = "wall_clock_exhausted"
         except KeyboardInterrupt:
             manifest["status"] = "interrupted"
             raise
@@ -264,8 +321,8 @@ class BenchmarkRunner:
             "captured_at": utc_now(),
         }
         try:
-            metadata_record["provider_runtime_metadata"] = provider.runtime_metadata(timeout)
-            metadata_record["model_runtime_metadata"] = provider.model_metadata(model["name"], timeout)
+            metadata_record["provider_runtime_metadata"] = provider.runtime_metadata(self._bounded_timeout(timeout))
+            metadata_record["model_runtime_metadata"] = provider.model_metadata(model["name"], self._bounded_timeout(timeout))
             metadata_record["installed"] = metadata_record["model_runtime_metadata"] is not None
         except BaseException as exc:
             metadata_record["installed"] = None
@@ -278,6 +335,7 @@ class BenchmarkRunner:
         try:
             for suite in self.suites:
                 for case in suite.cases:
+                    self._require_wall_clock()
                     global_sequence += 1
                     case_path = cases_dir / _case_filename(global_sequence, suite, case)
                     if case_path.exists():
@@ -303,8 +361,10 @@ class BenchmarkRunner:
             if should_unload:
                 unload_record["attempted"] = True
                 try:
-                    unload_record["response"] = provider.unload_model(model["name"], timeout)
+                    unload_record["response"] = provider.unload_model(model["name"], self._bounded_timeout(timeout))
                     unload_record["status"] = "success"
+                except WallClockLimitReached:
+                    unload_record["status"] = "skipped_wall_clock_exhausted"
                 except BaseException as exc:
                     unload_record["status"] = "error"
                     unload_record["error"] = _error_record(exc)
@@ -332,7 +392,7 @@ class BenchmarkRunner:
             monotonic_start = time.monotonic()
             attempt: dict[str, Any] = {"number": attempt_number, "started_at": utc_now()}
             try:
-                response = provider.chat(model["name"], messages, options, timeout)
+                response = provider.chat(model["name"], messages, options, self._bounded_timeout(timeout))
                 wall = time.monotonic() - monotonic_start
                 attempt.update({"status": "success", "wall_seconds": wall})
                 attempts.append(attempt)
@@ -375,6 +435,8 @@ class BenchmarkRunner:
                     "started_at": started,
                     "finished_at": utc_now(),
                 }
+            except WallClockLimitReached:
+                raise
             except KeyboardInterrupt:
                 raise
             except BaseException as exc:
@@ -384,7 +446,11 @@ class BenchmarkRunner:
                 )
                 attempts.append(attempt)
                 if attempt_number <= retries:
-                    time.sleep(retry_delay)
+                    remaining = self._remaining_wall_seconds()
+                    if remaining is not None and remaining <= 0:
+                        raise WallClockLimitReached("whole-run wall-clock boundary reached")
+                    sleep_seconds = retry_delay if remaining is None else min(retry_delay, max(0.0, remaining))
+                    time.sleep(sleep_seconds)
         return {
             "schema_version": 1,
             "status": "error",
@@ -424,11 +490,8 @@ class BenchmarkRunner:
             "case_id": case.id,
         }
         if status == "running":
-            timeout = float(self.config.get("run", {}).get("timeout_seconds", 600))
             started = datetime.now(timezone.utc)
             current["started_at"] = started.isoformat().replace("+00:00", "Z")
-            current["timeout_seconds"] = timeout
-            current["deadline_at"] = (started + timedelta(seconds=timeout)).isoformat().replace("+00:00", "Z")
         self._write_checkpoint(status, current)
 
     def _write_checkpoint(
@@ -444,6 +507,19 @@ class BenchmarkRunner:
             "run_id": self.run_id,
             "last_updated_at": utc_now(),
             "status": status,
+            "wall_clock": {
+                "limit_seconds": self.wall_clock_seconds,
+                "deadline_at": (
+                    self.wall_clock_deadline.isoformat().replace("+00:00", "Z")
+                    if self.wall_clock_deadline is not None
+                    else None
+                ),
+                "remaining_seconds": (
+                    max(0.0, self._remaining_wall_seconds())
+                    if self._remaining_wall_seconds() is not None
+                    else None
+                ),
+            },
             "progress": {
                 "completed": completed,
                 "total": total,
