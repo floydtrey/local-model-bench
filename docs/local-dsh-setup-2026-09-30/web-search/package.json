@@ -1,0 +1,62 @@
+{
+  "name": "dsh-web-search-chrome",
+  "version": "0.1.1",
+  "description": "Free Google search provider for the DeepSeek Harness web seam (ctx.web): drives local Chrome through the agent-browser CLI (headless, --profile) with no paid search API",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "docs",
+    "scripts",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "web-search",
+    "google",
+    "chrome",
+    "agent-browser",
+    "provider"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-web": "^0.1.0-rc.6"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@types/node": "^24.13.3",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^9.39.5",
+    "tsdown": "^0.22.14",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.67.0",
+    "vitest": "^4.1.10"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:live": "WSC_LIVE=1 vitest run tests/live.test.ts",
+    "test:coverage": "vitest run --coverage",
+    "verify-extraction": "node scripts/verify-extraction.mjs"
+  }
+}

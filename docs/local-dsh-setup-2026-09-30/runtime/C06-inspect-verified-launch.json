@@ -1,0 +1,64 @@
+{
+
+  "command": [
+
+    "C:\\AI\\llama.cpp-mindshub\\llama-server.exe",
+
+    "-m",
+
+    "C:/AI/Cache/HuggingFace/hub/models--bartowski--Qwen_Qwen3.5-9B-GGUF/snapshots/182be2fd6c7bc44887d88a91cb03ff009cc9f549/Qwen_Qwen3.5-9B-Q4_K_M.gguf",
+
+    "--alias",
+
+    "C06",
+
+    "--host",
+
+    "127.0.0.1",
+
+    "--port",
+
+    "8080",
+
+    "--ctx-size",
+
+    "262144",
+
+    "--fit",
+
+    "on",
+
+    "--parallel",
+
+    "1",
+
+    "--no-context-shift",
+
+    "--predict",
+
+    "-1",
+
+    "--reasoning-budget",
+
+    "-1",
+
+    "--no-cache-prompt",
+
+    "--cache-ram",
+
+    "0",
+
+    "--timeout",
+
+    "-1",
+
+    "--metrics"
+
+  ],
+
+  "environment": {},
+
+  "path_prefix": null
+
+}
+

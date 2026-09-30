@@ -1,0 +1,263 @@
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -9,10 +9,10 @@
+ * agent-browser CLI orchestration for the local-Chrome search provider.
+ *
+ * Responsibilities:
+-*  - Resolve the `agent-browser` executable (configured full path → PATH →
+-*    WSL-interop Windows npm global → actionable error), cached per configured
++*  - Resolve the `agent-browser` executable (configured full path â†’ PATH â†’
++*    WSL-interop Windows npm global â†’ actionable error), cached per configured
+ *    path.
+-*  - Verify the CLI version is ≥ {@link MIN_AGENT_BROWSER_VERSION} once.
++*  - Verify the CLI version is â‰¥ {@link MIN_AGENT_BROWSER_VERSION} once.
+ *  - Run CLI commands as subprocesses with a hard per-call timeout and kill on
+ *    expiry. agent-browser can HANG on some failure modes (missing executable,
+ *    unwritable profile), so the caller's timeout is the backstop and the
+@@ -20,7 +20,7 @@
+ *
+ * @module dsh-web-search-chrome/browser
+ */
+-/** The minimum agent-browser release this provider supports (PRD §5). */
++/** The minimum agent-browser release this provider supports (PRD Â§5). */
+ const MIN_AGENT_BROWSER_VERSION = [
+ 	0,
+ 	34,
+@@ -30,15 +30,15 @@
+ const WEB_PROVIDER_ERROR = "WEB_PROVIDER_ERROR";
+ /** Successful resolutions keyed by the configured path ('' = default name). */
+ const resolvedByPath = /* @__PURE__ */ new Map();
+-/** Binary paths whose version has already been verified as ≥ the minimum. */
++/** Binary paths whose version has already been verified as â‰¥ the minimum. */
+ const versionOkByBinary = /* @__PURE__ */ new Set();
+ /**
+ * Resolve the agent-browser executable, caching only a successful resolution
+ * per configured path (a missing binary is re-probed per call so a later
+ * `agent-browser install` is picked up, and a config change re-probes).
+ *
+-* Probe order (PRD §4.2): configured full path → PATH lookup for the bare
+-* name → (WSL detected and a Windows npm global exists) interop path. Returns
++* Probe order (PRD Â§4.2): configured full path â†’ PATH lookup for the bare
++* name â†’ (WSL detected and a Windows npm global exists) interop path. Returns
+ * `null` when nothing is found so the caller can raise the actionable
+ * "install agent-browser" error instead of letting agent-browser hang on a
+ * missing binary.
+@@ -156,7 +156,12 @@
+ 	return new Promise((resolve, reject) => {
+ 		let child;
+ 		try {
+-			child = spawn(binary, args, {
++			const spawnBinary = binary;
++const spawnArgs = process.platform === "win32"
++    ? args
++    : args;
++
++child = spawn(spawnBinary, spawnArgs, {
+ 				stdio: [
+ 					"pipe",
+ 					"pipe",
+@@ -251,14 +256,14 @@
+ 	const joined = args.join(" ");
+ 	if (/SingletonLock|ProcessSingleton|already in use/i.test(err)) return new WebError("Chrome is running. Close all Chrome windows before searching, or point profilePath at a dedicated profile directory.", WEB_PROVIDER_ERROR);
+ 	if (/Chrome exited early|exited before providing DevTools URL|chrome.*error while loading shared libraries/i.test(err)) return new WebError(`Chrome failed to start (exit code ${code}). Install Chrome or run: agent-browser install${err.length > 0 ? ` (${firstLines(err, 2)})` : ""}`, WEB_PROVIDER_ERROR);
+-	return new WebError(`agent-browser command failed (exit code ${code}): ${joined}${err.length > 0 ? ` — ${firstLines(err, 2)}` : ""}`, WEB_PROVIDER_ERROR);
++	return new WebError(`agent-browser command failed (exit code ${code}): ${joined}${err.length > 0 ? ` â€” ${firstLines(err, 2)}` : ""}`, WEB_PROVIDER_ERROR);
+ }
+ /** First `n` non-empty stderr lines, joined. */
+ function firstLines(stderr, n) {
+ 	return stderr.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, n).join(" | ");
+ }
+ /**
+-* Default disk-cache file path for the provider (PRD §10 decision D5):
++* Default disk-cache file path for the provider (PRD Â§10 decision D5):
+ * POSIX `~/.cache/dsh-web-search-chrome/cache.json`, Windows
+ * `%LOCALAPPDATA%\dsh-web-search-chrome\cache.json`.
+ */
+@@ -293,9 +298,9 @@
+ //#region src/cache.ts
+ /**
+ * Caching for the local-Chrome search provider: an in-session map plus a
+-* JSON-on-disk cache with a TTL (PRD §4.5 `cacheTtlMs`, §10 decision D5).
++* JSON-on-disk cache with a TTL (PRD Â§4.5 `cacheTtlMs`, Â§10 decision D5).
+ *
+-* Write strategy: last-write-wins, silent on failure (PRD §10). Reads are
++* Write strategy: last-write-wins, silent on failure (PRD Â§10). Reads are
+ * tolerant of missing/corrupt files. The disk cache is keyed by query; a hit
+ * returns the stored sources without touching the browser.
+ *
+@@ -306,14 +311,14 @@
+ /**
+ * Create the provider's cache.
+ * @param options - `{ diskPath, ttlMs }`; `ttlMs <= 0` disables the disk cache
+-*   (the session cache always stays on, per Q4 "同 query 秒回").
++*   (the session cache always stays on, per Q4 "åŒ query ç§’å›ž").
+ * @returns a cache handle.
+ */
+ function createCache(options) {
+ 	const { diskPath, ttlMs } = options;
+-	/** Session entries: query → { fetchedAt, result }. */
++	/** Session entries: query â†’ { fetchedAt, result }. */
+ 	const session = /* @__PURE__ */ new Map();
+-	/** Disk entries, lazily loaded: query → { fetchedAt, result }. */
++	/** Disk entries, lazily loaded: query â†’ { fetchedAt, result }. */
+ 	let disk = void 0;
+ 	function loadDisk() {
+ 		if (disk !== void 0 || ttlMs <= 0 || diskPath.length === 0) return;
+@@ -563,8 +568,8 @@
+ }
+ /**
+ * True for Google-internal hosts that must never surface as search results
+-* (PRD §8.6): google.com and its regional domains (google.co.jp, google.com.hk,
+-* google.de, …), plus webcache/googleusercontent.
++* (PRD Â§8.6): google.com and its regional domains (google.co.jp, google.com.hk,
++* google.de, â€¦), plus webcache/googleusercontent.
+ */
+ function isGoogleInternalUrl(url) {
+ 	let host;
+@@ -646,7 +651,7 @@
+ }
+ //#endregion
+ //#region src/provider.ts
+-/** Stable provider id registered under (PRD §2). */
++/** Stable provider id registered under (PRD Â§2). */
+ const LOCAL_CHROME_PROVIDER_ID = "local-chrome";
+ function createSerialQueue() {
+ 	let tail = Promise.resolve();
+@@ -667,7 +672,7 @@
+ */
+ var LocalChromeSearchProvider = class {
+ 	resolveOptions;
+-	/** Stable id this provider registers under (PRD §2). */
++	/** Stable id this provider registers under (PRD Â§2). */
+ 	id = LOCAL_CHROME_PROVIDER_ID;
+ 	queue;
+ 	cache;
+@@ -677,8 +682,8 @@
+ 		this.resolveOptions = resolveOptions;
+ 		this.queue = createSerialQueue();
+ 	}
+-	/** Cheap, no-network usability check (PRD §8.9): the profile is configured
+-	* and the agent-browser binary resolves across platforms (full path → PATH →
++	/** Cheap, no-network usability check (PRD Â§8.9): the profile is configured
++	* and the agent-browser binary resolves across platforms (full path â†’ PATH â†’
+ 	* WSL interop). Detailed actionable errors live at search time. */
+ 	available() {
+ 		const options = this.resolveOptions();
+@@ -700,7 +705,7 @@
+ 	}
+ 	/**
+ 	* Lazily create the cache from the current options, and recreate it when the
+-	* disk path or TTL changes — the options thunk is resolved per operation, so
++	* disk path or TTL changes â€” the options thunk is resolved per operation, so
+ 	* a settings change between searches must take effect without re-registering
+ 	* the provider.
+ 	*/
+@@ -732,8 +737,9 @@
+ 	async runBrowserSearch(query, maxResults, options, signal, deadline) {
+ 		const binary = resolveAgentBrowser(options.agentBrowserPath);
+ 		if (binary === null) throw new WebError("agent-browser CLI not found. Install with: npm install -g agent-browser (>= 0.34.0)", WEB_PROVIDER_ERROR);
+-		const label = `dsh-search-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+-		const globalFlags = ["--profile", options.profilePath];
++		// Keep every operation on the same dedicated daemon and launch configuration.
++		// agent-browser 0.38 reconfigures the browser when profile flags disappear.
++		const globalFlags = ["--session", "dsh-web-search", "--profile", options.profilePath];
+ 		if (options.headed) globalFlags.push("--headed");
+ 		let descriptor;
+ 		try {
+@@ -743,10 +749,7 @@
+ 			const url = buildSearchUrl(query, typeof maxResults === "number" ? Math.min(maxResults, options.num) : options.num, options.hl, options.engine);
+ 			await execAgentBrowser(binary, [
+ 				...globalFlags,
+-				"tab",
+-				"new",
+-				"--label",
+-				label,
++				"open",
+ 				url
+ 			], {
+ 				timeoutMs: remaining(deadline),
+@@ -754,6 +757,7 @@
+ 			});
+ 			throwIfAborted(signal);
+ 			await execAgentBrowser(binary, [
++				...globalFlags,
+ 				"wait",
+ 				"--load",
+ 				"domcontentloaded"
+@@ -762,17 +766,9 @@
+ 				signal
+ 			});
+ 			throwIfAborted(signal);
+-			descriptor = parseEvalOutput((await runExtractionWithRetry(binary, deadline, signal)).stdout);
++			descriptor = parseEvalOutput((await runExtractionWithRetry(binary, deadline, signal, globalFlags)).stdout);
+ 		} catch (error) {
+ 			throw asSearchError(error, options.timeoutMs);
+-		} finally {
+-			try {
+-				await execAgentBrowser(binary, [
+-					"tab",
+-					"close",
+-					label
+-				], { timeoutMs: 1e4 });
+-			} catch {}
+ 		}
+ 		throwIfAborted(signal);
+ 		const engine = options.engine;
+@@ -800,13 +796,13 @@
+ * `Cannot find default execution context`; the retry lets the navigation
+ * settle before extracting.
+ */
+-async function runExtractionWithRetry(binary, deadline, signal) {
++async function runExtractionWithRetry(binary, deadline, signal, globalFlags) {
+ 	const transient = /(Cannot find default execution context|Execution context was destroyed|Cannot find context|target closed|Inspected target navigated or closed|Target closed|navigated or closed)/i;
+ 	let lastError;
+ 	for (let attempt = 0; attempt < 3; attempt += 1) {
+ 		if (attempt > 0) await sleep(600);
+ 		try {
+-			return await execAgentBrowser(binary, ["eval", "--stdin"], {
++			return await execAgentBrowser(binary, [...globalFlags, "eval", "--stdin"], {
+ 				timeoutMs: remaining(deadline),
+ 				signal,
+ 				stdin: EXTRACTION_SCRIPT
+@@ -831,7 +827,7 @@
+ 	}
+ 	return new WebError(`Search failed: ${String(error?.message ?? error)}`, WEB_PROVIDER_ERROR, { cause: error });
+ }
+-/** Build the engine SERP URL (PRD §4.3 step 1, engine-aware). */
++/** Build the engine SERP URL (PRD Â§4.3 step 1, engine-aware). */
+ function buildSearchUrl(query, num, hl, engine = "bing") {
+ 	const params = new URLSearchParams();
+ 	params.set("q", query);
+@@ -850,7 +846,7 @@
+ const name = "web-search-chrome";
+ /** The web seam this provider registers into. */
+ const inject = ["web"];
+-/** Provider configuration (PRD §4.5, engine default bing per product decision). */
++/** Provider configuration (PRD Â§4.5, engine default bing per product decision). */
+ const Config = z.object({
+ 	/**
+ 	* agent-browser executable: a full path (e.g. a Windows-side exe via WSL
+@@ -868,14 +864,14 @@
+ 	headed: z.boolean().default(false),
+ 	/** Engine interface/result language (`hl` for Google, `setlang` for Bing). */
+ 	hl: z.string().default("en"),
+-	/** Engine result-count parameter — upper bound of results requested. */
++	/** Engine result-count parameter â€” upper bound of results requested. */
+ 	num: z.number().min(1).max(100).default(10),
+ 	/** Hard per-search timeout in ms. */
+ 	timeoutMs: z.number().min(1e3).default(2e4),
+ 	/** Disk-cache TTL in ms; 0 disables the disk cache (session cache stays). */
+ 	cacheTtlMs: z.number().min(0).default(864e5),
+ 	/**
+-	* Serial queue concurrency. 0.1 supports exactly 1 — the provider runs a
++	* Serial queue concurrency. 0.1 supports exactly 1 â€” the provider runs a
+ 	* strictly serial promise chain regardless of this value, which exists only
+ 	* as a forward-compatible placeholder for a future concurrent queue.
+ 	*/
+@@ -909,3 +905,6 @@
+ }
+ //#endregion
+ export { CACHE_VERSION, Config, EXTRACTION_SCRIPT, LOCAL_CHROME_PROVIDER_ID, LocalChromeSearchProvider, MIN_AGENT_BROWSER_VERSION, SERP_WAIT_MS, _resetResolvedBinary, apply, buildSearchUrl, classifyPage, createCache, defaultCachePath, ensureAgentBrowserVersion, ensureProfileDirectory, execAgentBrowser, inject, isBingInternalUrl, isEngineInternalUrl, isGoogleInternalUrl, mapPageResult, name, parseEvalOutput, resolveAgentBrowser, resolveOptions };
++
++
++

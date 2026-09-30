@@ -1,0 +1,287 @@
+[
+  {
+    "source": "${USERPROFILE}\\.dsh\\settings.yaml",
+    "export": "dsh-home/settings.yaml",
+    "source_sha256": "46d3ce0156087c8dd858e8baa94765219cf474b8dca2876d0f75740644c67881",
+    "export_sha256": "0086982802e94bd274bf44f3a564cd9efe741ef1c809e601beaca523aaf3ca02"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\AGENTS.md",
+    "export": "dsh-home/AGENTS.md",
+    "source_sha256": "5b16754781a0d961a6b4bfb263b648058e98f9fdb27f43f058a8fe3581a76fe8",
+    "export_sha256": "7c0c534fc36512dad17a4c47dd563b1e41a76d728b23781b57f3df08f72e6b65"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\LAB-CONTROLS.md",
+    "export": "dsh-home/LAB-CONTROLS.md",
+    "source_sha256": "38a23c72a0e1c93c67bef145ff8b35bbf848bc543405025254c74c405d6d1890",
+    "export_sha256": "7078b1ea27d7f25bf496b1a57641ece49fea6591afb7729b7c620698fc219ed6"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\cordis.yml",
+    "export": "dsh-home/profiles/web/cordis.yml",
+    "source_sha256": "c300dcf2ebc5f02062d6591268d29d3db6fe45e0cb138f5467276fe2ba06076e",
+    "export_sha256": "f6b75725842b10dd559600fbcd6d69b7019c24cf0ea3ca0e24ebcd2600cbbc49"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\cordis.patch.yml",
+    "export": "dsh-home/profiles/web/cordis.patch.yml",
+    "source_sha256": "97e5b7155fddfc1dda5ade3086d46ee6c6ae824cbf860ffbf1f9fe6d738dbc71",
+    "export_sha256": "2cf93a6dbffc33b9ff9f63a8a1c68a987efc858573b39dd32a1c734e0edc7088"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\package.json",
+    "export": "dsh-home/profiles/web/package.json",
+    "source_sha256": "69a7dbb8f24e526dee1a0e67f8928c813ec0ad45f9e38f376794e5f18cbefed1",
+    "export_sha256": "15f87bb401accef28035a43a3f9fc21a09bb86fdffbf55aa8d98eb499864ba93"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\.agent-presets\\lab-native\\agent.cordis.yml",
+    "export": "dsh-home/.agent-presets/lab-native/agent.cordis.yml",
+    "source_sha256": "740fe8afeb827818722d9ec09b45b764ac268a827f0fd9b93d4dd86694567504",
+    "export_sha256": "751ceec8ee817595bc419505b6ec20fdce123a2f3f7fc2c1729db4f2a4cc60d0"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\.agent-presets\\lab-native\\preset.yml",
+    "export": "dsh-home/.agent-presets/lab-native/preset.yml",
+    "source_sha256": "51d01b1262e293910d2214af54668c0d1559e413ca2bc78bfc88ea8e5617e948",
+    "export_sha256": "3a15876bd6ee23fec3a7033ae5cbe3fa325dcee1ae3d0ec1b6c8d2b71c3db64d"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\.agent-presets\\kc-memory-test\\agent.cordis.yml",
+    "export": "dsh-home/.agent-presets/kc-memory-test/agent.cordis.yml",
+    "source_sha256": "198355d436d00113db208ffbf2e58105274e40c99f346685e4bed77be73b72b4",
+    "export_sha256": "ab569e6392e0d7819c8fd4f12cea174d6e819566403e6bf70a69e058a88abb3c"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\.agent-presets\\kc-memory-test\\preset.yml",
+    "export": "dsh-home/.agent-presets/kc-memory-test/preset.yml",
+    "source_sha256": "dc030b6875cf95201a14d998b778aefd98ba0b8e00276a68414ca8c27233e527",
+    "export_sha256": "11c696e1386eedc2baa61b74f22b51727851dc4b85fc844ad58799bfe7380ceb"
+  },
+  {
+    "source": "${USERPROFILE}\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh\\node_modules\\@deepseek-ai\\dsh-base\\cordis.patch.yml",
+    "export": "installed-bundles/dsh-base.cordis.patch.yml",
+    "source_sha256": "1d34f61f498c5779ecaf2b13c4cbeea1254818450a1021dca594a30c03c230db",
+    "export_sha256": "bcd717a25bab5aa3e167988b8b6736b08bc92c49e785c8019056239ab2b57fe6"
+  },
+  {
+    "source": "${USERPROFILE}\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh\\node_modules\\@deepseek-ai\\dsh-web-app\\cordis.patch.yml",
+    "export": "installed-bundles/dsh-web-app.cordis.patch.yml",
+    "source_sha256": "1c0209b817d05d25ed9857c8d9611fa631301f1b9593e871f23595e83b17261d",
+    "export_sha256": "efbf4b864128419a356ff5b400a9267727dc3fc14d95ad429620ee873ca2f740"
+  },
+  {
+    "source": "${USERPROFILE}\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh\\node_modules\\@deepseek-ai\\dsh-headless\\cordis.patch.yml",
+    "export": "installed-bundles/dsh-headless.cordis.patch.yml",
+    "source_sha256": "f833fcb5d0ade52f9bf02756eff17348b518f56e39b052c6109dd4c21475f16d",
+    "export_sha256": "647bd22726796c5c8aef3b12d9bbac12d85b6b77d8fe20431230f44680899728"
+  },
+  {
+    "source": "${USERPROFILE}\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh\\LICENSE",
+    "export": "installed-bundles/LICENSE-dsh",
+    "source_sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+    "export_sha256": "e5b182b2fccc24c632788ed1e86a45e7a927d801bdf11c1b6b2a831854678826"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-cloudflare-auth.mjs",
+    "export": "custom-extensions/real-harness/native-cloudflare-auth.mjs",
+    "source_sha256": "5acd4edb39ff4ddc26f3e056ecd864cac97b7ac50a39da32b3c16b0c5546581e",
+    "export_sha256": "55b080c8532b3693cd5878c9d8de5543a1a5b46cc10e02cc72f1e3dcfb69e9cd"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-result-review.mjs",
+    "export": "custom-extensions/real-harness/native-result-review.mjs",
+    "source_sha256": "cd35c2c768079eb66b3cc847d49df58bdfc6a7773cc66406e33ae53894becbca",
+    "export_sha256": "6357c33122d2a7ea99257aa32a7c9ac809d9df21a5dccb713a1d5b54e231fd74"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-effect-guard.mjs",
+    "export": "custom-extensions/real-harness/native-effect-guard.mjs",
+    "source_sha256": "ebeefe8318056fa23994be9693f21d26b692a64298392e29e8e52ba9a26e0c59",
+    "export_sha256": "c37a634ba89f2c70b2f50442be7a946baed731991752dee576aac6ccde04ec6d"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-permission-boundary.mjs",
+    "export": "custom-extensions/real-harness/native-permission-boundary.mjs",
+    "source_sha256": "8ba7e264a0a9c1d4bbc26a1ee4c89e3648fdb83bd4bca3c07b44c605198fc040",
+    "export_sha256": "da3f98dc08e0823554a2698c9253132a784e3a96402f88cfb331175f89684119"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-progress-plugin.mjs",
+    "export": "custom-extensions/real-harness/native-progress-plugin.mjs",
+    "source_sha256": "7e5861cb8d35c82e3771fa38aa20ef07cb5eca38f28770afe68676fd6991dcd3",
+    "export_sha256": "7859cf0d438d719c2746865f64f95f3ec16402983228eefbb43e9cd517ddb6af"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\repetition-guard.mjs",
+    "export": "custom-extensions/real-harness/repetition-guard.mjs",
+    "source_sha256": "aea2dcf368a4f3cc680332f76d020d7b19a7eb7cbeb03683ed0656bacd664ffa",
+    "export_sha256": "81512cc3334d43a72fb915df175c9678762602a11492aaebe19551dc3cb6cdb3"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\tool-progress-guard.mjs",
+    "export": "custom-extensions/real-harness/tool-progress-guard.mjs",
+    "source_sha256": "4b4ab21d1567d6532c1237bb5ca61fb2966e2e38a9761aadff7af8478ea94f85",
+    "export_sha256": "ed25b1e1c4d8ffda4cabd85ef933e17dd4a3e0247fe7fd72e3166899fa179465"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-governance.mjs",
+    "export": "custom-extensions/real-harness/native-governance.mjs",
+    "source_sha256": "c437f58235927d322d13da6cf694a949779c3ab898542240cd0ae9b0ba7ab26f",
+    "export_sha256": "2469dae5ced46636f8ce517a6f3cbbdd4b89f45141e2a272e6483dbc9138a77a"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\compaction-trial\\runtime.mjs",
+    "export": "custom-extensions/compaction-trial/runtime.mjs",
+    "source_sha256": "fb7038f73674727e951a76e47546f4d51f59ac0b7ceb3044ca60d32467b0dfc3",
+    "export_sha256": "85be9d958758a7746e7efe0d28fe02ced9f95c2ec825dba2f1c9e445957197b8"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-memory-plugin.mjs",
+    "export": "custom-extensions/real-harness/native-memory-plugin.mjs",
+    "source_sha256": "bcac7edc00f14c423eb918a125cfae2b36b58008bc3e18f7258703adedf0621a",
+    "export_sha256": "78f5e97988415c87a1447f6c7fd9471b156a63f4e53dc56cb71a90552a6cb4ef"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\evidence-browser.mjs",
+    "export": "custom-extensions/real-harness/evidence-browser.mjs",
+    "source_sha256": "6fda61e4f76623e64c661e2962eb37c50df3ff279aac8b1bd2b51fd455f94d1a",
+    "export_sha256": "95f7def5a82d4860c3d42b87254a9ccb98cf15e308074f8b394112479908fe5a"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\real-harness\\native-memory-heads.mjs",
+    "export": "custom-extensions/real-harness/native-memory-heads.mjs",
+    "source_sha256": "cf1a8c949510e5126f1234c82a3e1bec6d376f4499741b94444ab45e0c5480ba",
+    "export_sha256": "221d9237d73aa517a727a1004ccdc5bd16cbd5bacdc814681dc690780bcd1b4b"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\compaction-trial\\carry-forward.mjs",
+    "export": "custom-extensions/compaction-trial/carry-forward.mjs",
+    "source_sha256": "6ebbfcf694fcd9570e3882c868487c17b1834ee91f4f880138c4d6f6b8a4625d",
+    "export_sha256": "296b78c13818b70ff990ac5bcee3954bd788b475469f720ef36074c25b40d262"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\compaction-trial\\task-state.mjs",
+    "export": "custom-extensions/compaction-trial/task-state.mjs",
+    "source_sha256": "3734ed05619f4b54dcdcc1dd92039a5e702f19b61d035c5840c20a3db925d381",
+    "export_sha256": "6269f47e5ff1d4b531da9194d96e6b466145568c0945ebcc69a6d0f1f6a726dd"
+  },
+  {
+    "source": "C:\\KC\\integrations\\deepseek\\compaction-trial\\recovery.mjs",
+    "export": "custom-extensions/compaction-trial/recovery.mjs",
+    "source_sha256": "b499e070908c03056680c1a120281bbd78e022a7b88f1d2341e62246eef9e3f1",
+    "export_sha256": "7cf318e9f64762b272a01547eab6723bc966228331ba82882d81b447ae91b0e9"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\node_modules\\dsh-web-search-chrome\\package.json",
+    "export": "web-search/package.json",
+    "source_sha256": "2b26c11f55a2fcbad782655cec2517acd88446cc040c394edf74d623ac2a8f47",
+    "export_sha256": "3b2d573005b2cb81fb3aa47ce5b71f78f0f83a1705428ef9a5b4fe4b1b7052e8"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\node_modules\\dsh-web-search-chrome\\LICENSE",
+    "export": "web-search/LICENSE",
+    "source_sha256": "7ded2ff8b65aa8c185c3497950b310d5d32dd7ee34d5f3c48d6720f3fb08bd34",
+    "export_sha256": "87feb5ad89b95ed7518d052f0e9266680151806c251a50baab8504be4406d1d2"
+  },
+  {
+    "source": "${USERPROFILE}\\.dsh\\profiles\\web\\node_modules\\dsh-web-search-chrome\\lib\\index.js",
+    "export": "web-search/installed-index.js",
+    "source_sha256": "71028fdbd5d4a0fc9e4c5e498b0d88e302f21d52bcbd9d1efb9f04a89575f321",
+    "export_sha256": "ae40918378f0ccdd1fd906e90ac41eedfd986a79f8eb69a085a7ca363c6cba1f"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\profile.yml",
+    "export": "successful-example/profile.yml",
+    "source_sha256": "c785f3b2f636edd4d3977cd135384027ded3c1b006fb21a507e2ab1460725fa3",
+    "export_sha256": "2839658b587c1132a4a9357da0235e8e0aa1547068e7ba234873fcaad739b08b"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\subagents.yml",
+    "export": "successful-example/subagents.yml",
+    "source_sha256": "11c7fdcbb9c315ec594babcf93254165e5f74934132899da384622a1c053c550",
+    "export_sha256": "415199b0eefec19f55f34b0c05bfc0543d13b5b6ddf1ac6269aa7411f2954745"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\Modelfile",
+    "export": "successful-example/Modelfile",
+    "source_sha256": "d1096091fc78f0089abc559692c271de3ee7b2e8c00599ffa12416986902a9aa",
+    "export_sha256": "bd95777c90d397162aef67dc7ccd0015ed8980314375187226f1323464c73333"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\cases\\two-subagents-foreground\\prompt.txt",
+    "export": "successful-example/prompt.txt",
+    "source_sha256": "0155d0faaffc5fd5e267e4dfe0121e47708ad8a14d493a05d1ac53ee208a4ae9",
+    "export_sha256": "0155d0faaffc5fd5e267e4dfe0121e47708ad8a14d493a05d1ac53ee208a4ae9"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\cases\\two-subagents-foreground\\result.json",
+    "export": "successful-example/result.json",
+    "source_sha256": "a7ced6f08410e48a1773c3f9b1420154515f353b6367ac6420a13d233b01cd1e",
+    "export_sha256": "6f8097d30bbe32fa285e40578fb43f294363440ffc702c457e2a3feca55944a4"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\cases\\two-subagents-foreground\\temperature.json",
+    "export": "successful-example/temperature.json",
+    "source_sha256": "fae445f37488cf1e8ce12409439e4479c35adec17aae2d689b3f435608edc833",
+    "export_sha256": "fae445f37488cf1e8ce12409439e4479c35adec17aae2d689b3f435608edc833"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\cases\\two-subagents-foreground\\disk.json",
+    "export": "successful-example/disk.json",
+    "source_sha256": "32d60c269c73b6028a3d689c19e3850a51dfb52d487d1797d15a5adb9e9f4f04",
+    "export_sha256": "32d60c269c73b6028a3d689c19e3850a51dfb52d487d1797d15a5adb9e9f4f04"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\traces\\session-c3ca20ec-1ba4-4be1-b902-5065a5f3f669.jsonl",
+    "export": "successful-example/session-c3ca20ec-1ba4-4be1-b902-5065a5f3f669.excerpt.json",
+    "source_sha256": "6a1fc5582e600e866f8c69462c4493a45c583a79bd88b67a44c4841d18e965ab",
+    "transformation": "Selected synthetic tool/messages only; paths redacted; reasoning/request/system frames omitted.",
+    "export_sha256": "3f43984b6d7a03e58614105cef2438f8688d7cf3acec754bba6662f5f697dad3"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\traces\\8fe15fc9-20e2-4db3-bfb1-36c474ccf905.jsonl",
+    "export": "successful-example/8fe15fc9-20e2-4db3-bfb1-36c474ccf905.excerpt.json",
+    "source_sha256": "665077ee177d0ef1130995ea7d3804c783d71cdc5cc833b94c81aed55cab8bda",
+    "transformation": "Selected synthetic tool/messages only; paths redacted; reasoning/request/system frames omitted.",
+    "export_sha256": "b43e9e03462feb17224afb7562cc915ecab905f5e95c0e1f59bb954da7d30a0c"
+  },
+  {
+    "source": "${QWEN_TEST_ROOT}\\traces\\28cb311a-ea4c-4346-bf42-d5c9afe98548.jsonl",
+    "export": "successful-example/28cb311a-ea4c-4346-bf42-d5c9afe98548.excerpt.json",
+    "source_sha256": "3ab7c07f42108bdce64cd38c947079c5e9ee23561c362a6cd4861c064e59f379",
+    "transformation": "Selected synthetic tool/messages only; paths redacted; reasoning/request/system frames omitted.",
+    "export_sha256": "29f0b4aa844ea69c657ba16dcf30c060ec3643d36d22eb3ca258ee3e1ca5f8ba"
+  },
+  {
+    "source": "C:\\AI\\FlashNext-Lab\\tools\\build-flashnext.cmd",
+    "export": "runtime/flashnext-historical/build-flashnext.cmd",
+    "source_sha256": "2265102099269cc0aad334a19a3de9fa81f013574b7d3a245a83eb6cca38315f",
+    "export_sha256": "e6a84efc85e0b9516f408901324e507737089d9dc0a8ce3983037ce9777c92a1"
+  },
+  {
+    "source": "C:\\AI\\FlashNext-Lab\\tools\\start-flashnext-server.cmd",
+    "export": "runtime/flashnext-historical/start-flashnext-server.cmd",
+    "source_sha256": "72a0c68c0c94da7dba01295c4a3a69d6ad8d60884c2999fc93273b96c6224dc1",
+    "export_sha256": "6cc88871f08bcca0c71213f2e6961dc7996ba146edeff733a6203ea4811dc4f7"
+  },
+  {
+    "source": "${USERPROFILE}\\Documents\\Codex\\2026-09-28\\the-benchmark-is-not-only-selecting-2\\outputs\\simple-inspect\\models\\C01\\server.json",
+    "export": "runtime/C01-inspect-verified-launch.json",
+    "source_sha256": "e4c9c80294cb940ce6af0a9711c6510b51d417c45b923d4965107c120b409482",
+    "export_sha256": "090f0c32d39d0ef8d56d3157489c169db27ab29202de5fe79858b2050283068e"
+  },
+  {
+    "source": "${USERPROFILE}\\Documents\\Codex\\2026-09-28\\the-benchmark-is-not-only-selecting-2\\outputs\\simple-inspect\\models\\C06\\server.json",
+    "export": "runtime/C06-inspect-verified-launch.json",
+    "source_sha256": "81d98c76ec90d7c1fc38253ffe34249e4229a2abf16a236538b1d46249041aae",
+    "export_sha256": "0ef5a63fd6057b1fe6b8455deab367cbdb352c6fc53b5a8447e753f713bdd959"
+  },
+  {
+    "source": "${USERPROFILE}\\Documents\\Codex\\2026-09-28\\the-benchmark-is-not-only-selecting-2\\outputs\\simple-inspect\\run-roster.json",
+    "export": "runtime/inspect-artifact-roster.json",
+    "source_sha256": "83c4ca66616a66513a23ccdb4598f98f738ba17d6d0096fbad78f18ad553e576",
+    "export_sha256": "778c2a4f97576b055da8623424bb0af641491e18ac3719a424af15533081e296"
+  }
+]

@@ -1,0 +1,38 @@
+- insert:
+    - id: web-search-chrome
+      name: dsh-web-search-chrome
+      config:
+        agentBrowserPath: ${USERPROFILE}\AppData\Roaming\npm\agent-browser.cmd
+        profilePath: ${USERPROFILE}\.dsh-web-search-chrome\profile
+        engine: bing
+
+- id: web
+  config:
+    searchProvider: local-chrome
+
+
+# KC uses its own authenticated API; this client never receives the owner key.
+- insert:
+    - id: kc-working-memory
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: kc
+        transport: streamable-http
+        url: http://127.0.0.1:8766/mcp
+        headers:
+          X-Knowledge-Key: !!js process.env.KC_BENCHMARK_KEY
+        toolCallTimeoutMs: 90000
+
+        reconnect:
+
+          enabled: true
+
+        failOnStartupError: false
+
+
+# Reuse the existing owner Access identity at the native public authority.
+- insert:
+    - id: lab-cloudflare-auth
+      name: C:/KC/integrations/deepseek/real-harness/native-cloudflare-auth.mjs
+
+

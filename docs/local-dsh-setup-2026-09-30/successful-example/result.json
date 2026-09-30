@@ -1,0 +1,15 @@
+{
+
+  "name": "two-subagents-foreground",
+
+  "exit_code": 0,
+
+  "timed_out": false,
+
+  "wall_seconds": 11.7,
+
+  "stdout": "{\"temperature\": \"HOT\", \"disk\": \"OK\"}\n",
+
+  "stderr": ""
+
+}

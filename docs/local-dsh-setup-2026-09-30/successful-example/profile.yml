@@ -1,0 +1,172 @@
+- id: agent-default-model
+
+  config:
+
+    provider: ollama-local-test
+
+    model: qwen3.5:9b-dsh-test
+
+- id: llm-pi-ai
+
+  config:
+
+    providers:
+
+      ollama-local-test:
+
+        api: openai-completions
+
+        baseURL: http://127.0.0.1:11434/v1
+
+        apiKeyEnv: QWEN_TEST_KEY
+
+        reasoning: off
+
+        timeoutMs: 120000
+
+        retryPolicy:
+
+          mode: normal
+
+          maxRetries: 0
+
+        compat:
+
+          supportsStore: false
+
+          supportsDeveloperRole: false
+
+          supportsReasoningEffort: true
+
+          maxTokensField: max_tokens
+
+        models:
+
+          - id: qwen3.5:9b-dsh-test
+
+            contextWindow: 16384
+
+            maxTokens: 2048
+
+            input: [text, image]
+
+            reasoningEfforts:
+
+              off: none
+
+              high: high
+
+- id: session-title-llm
+
+  disabled: true
+
+- id: session-telemetry-otel
+
+  disabled: true
+
+- id: llm-deepseek
+
+  disabled: true
+
+- id: tool-web
+
+  disabled: true
+
+- id: web-search-deepseek
+
+  disabled: true
+
+- id: tool-pwsh
+
+  disabled: true
+
+- id: tool-bash
+
+  disabled: true
+
+- id: tool-jobs
+
+  disabled: true
+
+- id: tool-skill
+
+  disabled: true
+
+- id: skill-filesystem
+
+  disabled: true
+
+- id: tool-subagent
+
+  disabled: true
+
+- id: tool-subagent-fork
+
+  disabled: true
+
+- id: tool-workflow
+
+  disabled: true
+
+- id: tool-ralph
+
+  disabled: true
+
+- id: tool-goal
+
+  disabled: true
+
+- id: approval
+
+  config:
+
+    policy: never
+
+- id: sandbox-policy
+
+  config:
+
+    mode: workspace-write
+
+- id: system-prompt
+
+  config:
+
+    personaSuffix: Your working directory is {{cwd}}. Resolve relative file paths against this exact directory.
+
+    personaPrefix: You are a local assistant being evaluated on synthetic tasks. Be concise. Use only the provided test workspace files. Do not read outside this workspace. Never change permissions or invoke external programs. State tool failures honestly. Stop if progress requires unavailable approval.
+
+- id: permission
+
+  config:
+
+    presets:
+
+      test-workspace:
+
+        sandbox: workspace-write
+
+        approval: never
+
+    defaultPreset: test-workspace
+
+- id: tools
+
+  config:
+
+    mode: native
+
+- id: agent-instructions
+
+  disabled: true
+
+- id: tool-subagent-control
+
+  disabled: true
+
+- id: tool-subagent-list-agents
+
+  disabled: true
+
+
+

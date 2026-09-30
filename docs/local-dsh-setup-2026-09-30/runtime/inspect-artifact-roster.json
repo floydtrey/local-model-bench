@@ -1,0 +1,270 @@
+[
+
+  {
+
+    "id": "C01",
+
+    "name": "Flash-Next UD-IQ3_XXS",
+
+    "runtime": "flash-fork",
+
+    "model_file": "C:\\AI\\FlashNext-Lab\\models\\Qwen3.8-Flash-Next\\UD-IQ3_XXS\\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C02",
+
+    "name": "qwen3:0.6b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa",
+
+    "context": 40960
+
+  },
+
+  {
+
+    "id": "C03",
+
+    "name": "gemma3:1b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-7cd4618c1faf8b7233c6c906dac1694b6a47684b37b8895d470ac688520b9c01",
+
+    "context": 32768
+
+  },
+
+  {
+
+    "id": "C04",
+
+    "name": "llama3.2:1b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-74701a8c35f6c8d9a4b91f3f3497643001d63e0c7a84e085bed452548fa88d45",
+
+    "context": 131072
+
+  },
+
+  {
+
+    "id": "C05",
+
+    "name": "qwen2.5-coder:7b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463",
+
+    "context": 32768
+
+  },
+
+  {
+
+    "id": "C06",
+
+    "name": "qwen3.5:9b",
+
+    "runtime": "normal",
+
+    "model_file": "C:/AI/Cache/HuggingFace/hub/models--bartowski--Qwen_Qwen3.5-9B-GGUF/snapshots/182be2fd6c7bc44887d88a91cb03ff009cc9f549/Qwen_Qwen3.5-9B-Q4_K_M.gguf",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C07",
+
+    "name": "gemma4:latest",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-4c27e0f5b5adf02ac956c7322bd2ee7636fe3f45a8512c9aba5385242cb6e09a",
+
+    "context": 131072
+
+  },
+
+  {
+
+    "id": "C08",
+
+    "name": "gemma4:12b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-1278394b693672ac2799eadc9a83fd98259a6a88a40acfb1dcaa6c6fc895a606",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C09",
+
+    "name": "gemma4:12b-it-q8_0",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-047dae1d7894b9de8f08141e841544e007243290c02df8b39872991d1940c795",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C10",
+
+    "name": "gpt-oss:20b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-e7b273f9636059a689e3ddcab3716e4f65abe0143ac978e46673ad0e52d09efb",
+
+    "context": 131072
+
+  },
+
+  {
+
+    "id": "C11",
+
+    "name": "qwen3.6:27b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-415aad607fc297a2ad84cda238febbde295f49f17c17ad7784e2246060fb06d0",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C12",
+
+    "name": "qwen3.8:27b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-f5f1dd8920d417aac2718b0bda3403da274301efdd6760b4f0f4b864ff2ad57d",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C13",
+
+    "name": "qwen3-coder:30b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C14",
+
+    "name": "qwen3.6:35b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-d372de8e934898a59e6ccfabc3368474711384d8f1fd4d22d87a3f0a45400cdc",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C15",
+
+    "name": "laguna-xs-2.1:latest",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-1ac7079101fca5a6df8c5a7523a3c30ea7d1c0e4b1258090e7d6d4039287f6cb",
+
+    "context": 262144
+
+  },
+
+  {
+
+    "id": "C16",
+
+    "name": "muse-glimmer:latest",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-71b5c9c9abbc2a9e7c13550b6f9fe1f062650117a24490b15a310cbd7de03f8b",
+
+    "context": 131072
+
+  },
+
+  {
+
+    "id": "C17",
+
+    "name": "granite4.2:30b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-f299dace85d77ee0e24ca0b6720bd211b1f4cd1f65b9c0a2111e79692e29c9be",
+
+    "context": 131072
+
+  },
+
+  {
+
+    "id": "C18",
+
+    "name": "nemotron-3.5-lightning:30b",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-5c19f6282f4fc51cb114cb6c876d70ca2fc3b9cf0fbd0a018d9908f4fe1f63b3",
+
+    "context": 1048576
+
+  },
+
+  {
+
+    "id": "C19",
+
+    "name": "north-mini-code-1.0:latest",
+
+    "runtime": "normal",
+
+    "model_file": "C:\\AI\\Models\\Ollama\\blobs\\sha256-2e6b0d32b7ff9d61f77d6808307db4791f487a72b22da0b28f5d4293b5729282",
+
+    "context": 500000
+
+  }
+
+]
+

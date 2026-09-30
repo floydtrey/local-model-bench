@@ -1,0 +1,13 @@
+{
+  "fork": "https://github.com/thecodacus/llama.cpp",
+  "revision": "27c54b4bbcefadedcec6397477cc2e866c1db716",
+  "source_tree_clean_at_capture": true,
+  "binary": "C:/AI/FlashNext-Lab/build/cuda-13.3/bin/llama-server.exe",
+  "cuda_toolkit": "C:/AI/FlashNext-Lab/tools/cuda-13.3",
+  "model_repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+  "model_revision": "2c41bd2a0b3f51c503c11f1c7ed2e6bb34036beb",
+  "quantization": "UD-IQ3_XXS",
+  "shards": 3,
+  "context_verified_in_inspect": 262144,
+  "dsh_end_to_end_verified": false
+}

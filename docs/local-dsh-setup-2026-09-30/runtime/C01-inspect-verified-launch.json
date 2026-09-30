@@ -1,0 +1,114 @@
+{
+
+  "command": [
+
+    "C:\\AI\\FlashNext-Lab\\build\\cuda-13.3\\bin\\llama-server.exe",
+
+    "-m",
+
+    "C:\\AI\\FlashNext-Lab\\models\\Qwen3.8-Flash-Next\\UD-IQ3_XXS\\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf",
+
+    "--alias",
+
+    "C01",
+
+    "--host",
+
+    "127.0.0.1",
+
+    "--port",
+
+    "8080",
+
+    "--ctx-size",
+
+    "262144",
+
+    "--parallel",
+
+    "1",
+
+    "--offline",
+
+    "--load-mode",
+
+    "mmap",
+
+    "--lazy-mode",
+
+    "on",
+
+    "-ngl",
+
+    "99",
+
+    "-ncmoe",
+
+    "99",
+
+    "-fa",
+
+    "on",
+
+    "-ctk",
+
+    "f16",
+
+    "-ctv",
+
+    "f16",
+
+    "-t",
+
+    "8",
+
+    "-b",
+
+    "256",
+
+    "-ub",
+
+    "128",
+
+    "--no-sched-async-cpu",
+
+    "--no-context-shift",
+
+    "--predict",
+
+    "-1",
+
+    "--reasoning-budget",
+
+    "-1",
+
+    "--timeout",
+
+    "-1",
+
+    "--jinja",
+
+    "--reasoning",
+
+    "auto",
+
+    "--reasoning-format",
+
+    "deepseek",
+
+    "--metrics"
+
+  ],
+
+  "environment": {
+
+    "GGML_CUDA_REGISTER_HOST": "1",
+
+    "HF_HUB_OFFLINE": "1"
+
+  },
+
+  "path_prefix": "C:\\AI\\FlashNext-Lab\\build\\cuda-13.3\\bin;C:\\AI\\FlashNext-Lab\\tools\\cuda-13.3\\bin;C:\\AI\\FlashNext-Lab\\tools\\cuda-13.3\\bin\\x64"
+
+}
+

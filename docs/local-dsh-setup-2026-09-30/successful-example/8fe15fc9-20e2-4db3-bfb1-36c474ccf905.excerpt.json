@@ -1,0 +1,120 @@
+[
+  {
+    "type": "session",
+    "version": 3,
+    "id": "8fe15fc9-20e2-4db3-bfb1-36c474ccf905",
+    "createdAt": 1790059521404,
+    "cwd": "${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground",
+    "parentSession": "session-c3ca20ec-1ba4-4be1-b902-5065a5f3f669",
+    "isSeeded": false,
+    "origin": "subagent",
+    "delegationDepth": 1
+  },
+  {
+    "type": "assistant/message",
+    "seq": 14,
+    "time": 1790059522826,
+    "data": {
+      "message": {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool-call",
+            "id": "call_ux3kgiqy",
+            "name": "read",
+            "arguments": "{\"file_path\":\"C:\\\\Users\\\\LOCAL_USER\\\\Documents\\\\Codex\\\\2026-09-21\\\\do\\\\work\\\\qwen35-tests\\\\cases\\\\two-subagents-foreground\\\\temperature.json\"}"
+          }
+        ],
+        "id": "e566871d-07c2-4c89-8f7e-eaecc1d58f86"
+      }
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "tool/call",
+    "seq": 15,
+    "time": 1790059522826,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "callId": "call_ux3kgiqy",
+      "name": "read",
+      "arguments": "{\"file_path\":\"C:\\\\Users\\\\LOCAL_USER\\\\Documents\\\\Codex\\\\2026-09-21\\\\do\\\\work\\\\qwen35-tests\\\\cases\\\\two-subagents-foreground\\\\temperature.json\"}"
+    }
+  },
+  {
+    "type": "tool/result",
+    "seq": 16,
+    "time": 1790059522830,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "message": {
+        "source": {
+          "kind": "tool",
+          "callId": "call_ux3kgiqy"
+        },
+        "content": [
+          {
+            "type": "tool-result",
+            "toolCallId": "call_ux3kgiqy",
+            "content": [
+              {
+                "type": "text",
+                "text": "<path>${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground\\temperature.json</path>\n<type>file</type>\n<content>\n1: {\"value\":88}\n\n(End of file - total 1 lines)\n</content>"
+              }
+            ],
+            "isError": false
+          }
+        ],
+        "role": "user",
+        "id": "15ed865a-c872-45be-8549-db644556ba34"
+      },
+      "meta": {
+        "path": "${USERPROFILE}\\Documents\\Codex\\2026-09-21\\do\\work\\qwen35-tests\\cases\\two-subagents-foreground\\temperature.json",
+        "offset": 1,
+        "lines": [
+          {
+            "number": 1,
+            "text": "{\"value\":88}"
+          }
+        ],
+        "totalLines": 1,
+        "lang": "json"
+      }
+    },
+    "sourceEventSeqs": [
+      15
+    ],
+    "surfaceOp": "append"
+  },
+  {
+    "type": "assistant/message",
+    "seq": 19,
+    "time": 1790059524957,
+    "data": {
+      "message": {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "The temperature value is 88, which is >=85. Answer: **HOT**"
+          }
+        ],
+        "id": "74a8640d-5c7a-4450-8377-31e26a400cb1"
+      }
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "turn/end",
+    "seq": 21,
+    "time": 1790059524957,
+    "data": {
+      "turn": 1,
+      "reason": {
+        "kind": "completed"
+      }
+    }
+  }
+]
