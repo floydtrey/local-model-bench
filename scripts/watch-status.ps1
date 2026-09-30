@@ -23,7 +23,7 @@ if ($Run) {
 
 $ManifestPath = Join-Path $RunPath "manifest.json"
 $CheckpointPath = Join-Path $RunPath "checkpoint.json"
-$TerminalStates = @("completed", "completed_with_errors", "interrupted", "failed")
+$TerminalStates = @("completed", "completed_with_errors", "wall_clock_exhausted", "interrupted", "failed")
 
 while (-not (Test-Path -LiteralPath $ManifestPath)) {
     Clear-Host
@@ -51,27 +51,34 @@ do {
     } else { $Elapsed }
 
     $CurrentText = "initializing"
-    $CaseTiming = "n/a"
     if ($Checkpoint -and $Checkpoint.current) {
         $CurrentText = "$($Checkpoint.current.model_id) | $($Checkpoint.current.suite_id)/$($Checkpoint.current.case_id)"
-        if ($Checkpoint.current.deadline_at) {
-            $Remaining = [DateTimeOffset]::Parse([string]$Checkpoint.current.deadline_at) - $Now
-            if ($Remaining.TotalSeconds -gt 0) {
-                $CaseTiming = "case timeout in {0:hh\:mm\:ss}" -f $Remaining
-            } else {
-                $CaseTiming = "case timeout reached {0:hh\:mm\:ss} ago" -f $Remaining.Negate()
-            }
-        }
     } elseif ($TerminalStates -contains $Manifest.status) {
         $CurrentText = [string]$Manifest.status
+    }
+
+    $BoundaryText = "not configured"
+    $DeadlineAt = $null
+    if ($Checkpoint -and $Checkpoint.wall_clock -and $Checkpoint.wall_clock.deadline_at) {
+        $DeadlineAt = [DateTimeOffset]::Parse([string]$Checkpoint.wall_clock.deadline_at)
+    } elseif ($Manifest.wall_clock -and $Manifest.wall_clock.deadline_at) {
+        $DeadlineAt = [DateTimeOffset]::Parse([string]$Manifest.wall_clock.deadline_at)
+    }
+    if ($DeadlineAt) {
+        $BoundaryRemaining = $DeadlineAt - $Now
+        if ($BoundaryRemaining.TotalSeconds -gt 0) {
+            $BoundaryText = "{0:hh\:mm\:ss} remaining" -f $BoundaryRemaining
+        } else {
+            $BoundaryText = "reached {0:hh\:mm\:ss} ago" -f $BoundaryRemaining.Negate()
+        }
     }
 
     $Activity = if ($TerminalStates -contains $Manifest.status) {
         "terminal"
     } elseif ($LastUpdateAge.TotalSeconds -ge $QuietWarningSeconds) {
-        "no observable checkpoint activity"
+        "quiet: no new checkpoint; execution state is unknown (not classified stalled)"
     } else {
-        "active/recent checkpoint"
+        "recent checkpoint"
     }
 
     Clear-Host
@@ -81,7 +88,7 @@ do {
     Write-Host ("Current:   {0}" -f $CurrentText)
     Write-Host ("Progress:  {0}/{1} ({2:N1}%)" -f $Completed, $Total, $Percent)
     Write-Host ("Elapsed:   {0:hh\:mm\:ss}" -f $Elapsed)
-    Write-Host ("Timeout:   {0}" -f $CaseTiming)
+    Write-Host ("Boundary:  {0}" -f $BoundaryText)
     Write-Host ("Activity:  {0}; checkpoint age {1:N0}s" -f $Activity, $LastUpdateAge.TotalSeconds)
     Write-Host ("Evidence:  {0}" -f $RunPath)
 
