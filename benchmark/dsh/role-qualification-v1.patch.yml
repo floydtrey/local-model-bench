@@ -91,3 +91,11 @@
 - id: approval
   config:
     policy: never
+
+- id: permission
+  config:
+    presets:
+      benchmark-read-only:
+        sandbox: read-only
+        approval: never
+    defaultPreset: benchmark-read-only
