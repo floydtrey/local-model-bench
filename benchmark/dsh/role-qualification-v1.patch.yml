@@ -1,0 +1,97 @@
+# Role Qualification v1 — isolated headless benchmark overlay
+#
+# Applied after the shipped dsh-base + dsh-headless bundle patches.
+# Purpose: one fresh headless model session with no inherited Lab behavior.
+# Model/provider settings are supplied separately per candidate.
+
+- id: system-prompt
+  config:
+    personaPrefix: ''
+    personaSuffix: ''
+
+- id: session-title-llm
+  disabled: true
+
+- id: session-telemetry-otel
+  disabled: true
+
+- id: llm-retry
+  disabled: true
+
+- id: agent-instructions
+  disabled: true
+
+- id: plan-mode
+  disabled: true
+- id: goal
+  disabled: true
+- id: goal-round-driver
+  disabled: true
+- id: command-goal
+  disabled: true
+- id: tool-goal
+  disabled: true
+
+- id: compaction-basic
+  disabled: true
+- id: command-compact
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+
+- id: tool-pwsh
+  disabled: true
+- id: tool-bash
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+- id: tool-ask-user
+  disabled: true
+- id: tool-todo
+  disabled: true
+
+- id: subagent
+  disabled: true
+- id: subagent-spawn-in-process
+  disabled: true
+- id: subagent-fork-in-process
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: workflow-worker-thread
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-ralph
+  disabled: true
+
+- id: repeat-tool-reminder
+  disabled: true
+
+- id: sandbox-policy
+  config:
+    mode: read-only
+
+- id: approval
+  config:
+    policy: never
