@@ -58,8 +58,10 @@ def validate_config(config: dict[str, Any]) -> None:
     run = config.get("run", {})
     if not isinstance(run, dict):
         raise ValueError("run settings must be an object")
-    if int(run.get("timeout_seconds", 600)) <= 0:
+    if float(run.get("timeout_seconds", 600)) <= 0:
         raise ValueError("run.timeout_seconds must be positive")
+    if "wall_clock_seconds" in run and float(run["wall_clock_seconds"]) <= 0:
+        raise ValueError("run.wall_clock_seconds must be positive")
     if int(run.get("retries", 1)) < 0:
         raise ValueError("run.retries cannot be negative")
     evaluation = config.get("evaluation", {})
