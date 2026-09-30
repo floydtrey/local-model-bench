@@ -354,6 +354,7 @@ class BenchmarkRunner:
                     _restore_conversation(result, case, suite.id, conversations)
                     self._checkpoint(sequence, model, suite, case, result["status"])
                     self.progress(f"  {suite.id}/{case.id}: {result['status']}")
+                    self._require_wall_clock()
         finally:
             should_unload = run_settings.get("unload_after_model", True) or (
                 provider_settings["type"] == "llama_cpp"
@@ -448,7 +449,7 @@ class BenchmarkRunner:
                 if attempt_number <= retries:
                     remaining = self._remaining_wall_seconds()
                     if remaining is not None and remaining <= 0:
-                        raise WallClockLimitReached("whole-run wall-clock boundary reached")
+                        break
                     sleep_seconds = retry_delay if remaining is None else min(retry_delay, max(0.0, remaining))
                     time.sleep(sleep_seconds)
         return {
