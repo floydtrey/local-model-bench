@@ -3,42 +3,42 @@
 # Applied after the shipped dsh-base + dsh-headless bundle patches.
 # Purpose: one fresh headless model session with no inherited Lab behavior.
 # Model/provider settings are supplied separately per candidate.
+#
+# This overlay removes model-facing behavior only where possible. Core DSH
+# services are left intact unless they themselves alter model behavior.
 
 - id: system-prompt
   config:
     personaPrefix: ''
     personaSuffix: ''
 
+# Avoid an unrelated model call for session titles.
 - id: session-title-llm
   disabled: true
 
+# No external telemetry export during benchmark runs.
 - id: session-telemetry-otel
   disabled: true
 
-- id: llm-retry
-  disabled: true
-
+# Do not inject user/project instruction files into the benchmark prompt.
 - id: agent-instructions
   disabled: true
 
+# No formal plan mode.
 - id: plan-mode
   disabled: true
-- id: goal
-  disabled: true
-- id: goal-round-driver
-  disabled: true
-- id: command-goal
-  disabled: true
+
+# No model-facing goal workflow.
 - id: tool-goal
   disabled: true
 
+# No automatic context compaction or tool-result rewriting.
 - id: compaction-basic
-  disabled: true
-- id: command-compact
   disabled: true
 - id: tool-result-pruner
   disabled: true
 
+# Planner role exposes no execution or retrieval tools.
 - id: tool-pwsh
   disabled: true
 - id: tool-bash
@@ -59,17 +59,10 @@
   disabled: true
 - id: web-fetch-http
   disabled: true
-- id: tool-ask-user
-  disabled: true
 - id: tool-todo
   disabled: true
 
-- id: subagent
-  disabled: true
-- id: subagent-spawn-in-process
-  disabled: true
-- id: subagent-fork-in-process
-  disabled: true
+# No model-facing delegation/workflow tools.
 - id: tool-subagent-control
   disabled: true
 - id: tool-subagent-list-agents
@@ -78,16 +71,17 @@
   disabled: true
 - id: tool-subagent-fork
   disabled: true
-- id: workflow-worker-thread
-  disabled: true
 - id: tool-workflow
   disabled: true
 - id: tool-ralph
   disabled: true
 
+# Do not inject tool-repeat reminders/interventions.
 - id: repeat-tool-reminder
   disabled: true
 
+# Containment backstop. Planner should have no model-facing tools, so this
+# should never affect a valid Planner run.
 - id: sandbox-policy
   config:
     mode: read-only
