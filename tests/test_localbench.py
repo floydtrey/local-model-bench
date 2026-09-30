@@ -421,6 +421,14 @@ class RunnerTests(unittest.TestCase):
             self.assertIsNone(checkpoint["current"])
             self.assertTrue((run_dir / "summary.csv").exists())
 
+            # A running case checkpoint exposes the authoritative provider-call
+            # timeout window for read-only terminal monitoring.
+            runner._checkpoint(1, config["models"][0], suites[0], suites[0].cases[0], "running")
+            active = json.loads((run_dir / "checkpoint.json").read_text())
+            self.assertEqual(active["current"]["timeout_seconds"], 2.0)
+            self.assertIn("started_at", active["current"])
+            self.assertIn("deadline_at", active["current"])
+
             before = len(case_requests)
             resumed = BenchmarkRunner(
                 config, config_path, config_hash, suites, resume_dir=run_dir
