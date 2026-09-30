@@ -1,6 +1,6 @@
 # Role Qualification v1 — isolated headless benchmark overlay
 #
-# Applied after the shipped dsh-base + dsh-headless bundle patches.
+# Applied after the current shipped dsh-base + dsh-headless bundle patches.
 # Purpose: one fresh headless model session with no inherited Lab behavior.
 # Model/provider settings are supplied separately per candidate.
 #
@@ -32,10 +32,12 @@
 - id: tool-goal
   disabled: true
 
-# No automatic context compaction or tool-result rewriting.
+# No automatic context compaction or model-visible context rewriting.
 - id: compaction-basic
   disabled: true
 - id: tool-result-pruner
+  disabled: true
+- id: image-offload
   disabled: true
 
 # Planner role exposes no execution or retrieval tools.
