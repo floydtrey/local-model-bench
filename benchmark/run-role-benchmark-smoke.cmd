@@ -4,7 +4,7 @@ setlocal
 rem Role Qualification v1 smoke launcher.
 rem This proves the isolated DSH path only. It does not produce benchmark evidence.
 
-set "REPO=%~dp0..\.."
+set "REPO=%~dp0.."
 for %%I in ("%REPO%") do set "REPO=%%~fI"
 
 set "DSH=%APPDATA%\npm\dsh.cmd"
