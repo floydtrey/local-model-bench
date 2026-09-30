@@ -1,0 +1,4 @@
+This is an execution-path smoke test, not a benchmark evaluation.
+
+Respond with exactly:
+ROLE_BENCHMARK_SMOKE_OK
