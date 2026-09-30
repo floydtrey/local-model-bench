@@ -9,7 +9,7 @@ import sys
 import time
 import traceback
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
@@ -417,15 +417,19 @@ class BenchmarkRunner:
         case: BenchmarkCase,
         status: str,
     ) -> None:
-        self._write_checkpoint(
-            status,
-            {
-                "model_sequence": model_sequence,
-                "model_id": model["id"],
-                "suite_id": suite.id,
-                "case_id": case.id,
-            },
-        )
+        current = {
+            "model_sequence": model_sequence,
+            "model_id": model["id"],
+            "suite_id": suite.id,
+            "case_id": case.id,
+        }
+        if status == "running":
+            timeout = float(self.config.get("run", {}).get("timeout_seconds", 600))
+            started = datetime.now(timezone.utc)
+            current["started_at"] = started.isoformat().replace("+00:00", "Z")
+            current["timeout_seconds"] = timeout
+            current["deadline_at"] = (started + timedelta(seconds=timeout)).isoformat().replace("+00:00", "Z")
+        self._write_checkpoint(status, current)
 
     def _write_checkpoint(
         self, status: str, current: dict[str, Any] | None
