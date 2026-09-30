@@ -97,6 +97,8 @@ def _run(args: argparse.Namespace) -> int:
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
     if config.get("evaluation", {}).get("enabled"):
         evaluate_run(run_dir)
+    if manifest.get("status") == "wall_clock_exhausted":
+        return 124
     return 1 if manifest.get("status") == "completed_with_errors" else 0
 
 
