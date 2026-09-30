@@ -42,6 +42,7 @@
       "type": "object",
       "properties": {
         "timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "wall_clock_seconds": {"type": "number", "exclusiveMinimum": 0},
         "retries": {"type": "integer", "minimum": 0},
         "retry_delay_seconds": {"type": "number", "minimum": 0},
         "unload_after_model": {"type": "boolean"}
