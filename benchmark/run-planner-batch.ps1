@@ -74,12 +74,17 @@ function Get-ExistingSummaryModels([string]$SummaryPath) {
   try { return @((Import-Csv -LiteralPath $SummaryPath).model_id) } catch { return @() }
 }
 
-function Add-SummaryRow([string]$SummaryPath, $Row) {
+function Set-SummaryRow([string]$SummaryPath, $Row) {
+  $rows = @()
   if (Test-Path -LiteralPath $SummaryPath) {
-    $Row | Export-Csv -LiteralPath $SummaryPath -NoTypeInformation -Append -Encoding UTF8
-  } else {
-    $Row | Export-Csv -LiteralPath $SummaryPath -NoTypeInformation -Encoding UTF8
+    try {
+      $rows = @(Import-Csv -LiteralPath $SummaryPath | Where-Object { $_.model_id -ne $Row.model_id })
+    } catch {
+      $rows = @()
+    }
   }
+  $rows += $Row
+  $rows | Export-Csv -LiteralPath $SummaryPath -NoTypeInformation -Encoding UTF8
 }
 
 function New-CandidatePatch($Candidate, [string]$PatchPath, [bool]$ThinkingCapable) {
@@ -206,7 +211,7 @@ try {
       Write-Warning "Skipping $modelId: not installed in Ollama."
       foreach ($intent in $intents) {
         $summaryPath = Join-Path (Join-Path $OutputRoot $intent.id) 'summary.csv'
-        Add-SummaryRow $summaryPath ([pscustomobject][ordered]@{
+        Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
           model_id = $modelId
           runtime = 'ollama-native'
           reasoning = $reasoning
@@ -297,7 +302,7 @@ try {
       Write-Utf8 $markdownPath $md
 
       if ($reasoning) { $reasoningSummary = $reasoning } else { $reasoningSummary = 'default' }
-      Add-SummaryRow $summaryPath ([pscustomobject][ordered]@{
+      Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id = $modelId
         runtime = 'ollama-native'
         reasoning = $reasoningSummary
