@@ -6,6 +6,7 @@ For this role-assignment turn, reply exactly:
 READY
 
 When the project intent arrives:
+- Before the plan, restate the supplied project intent, project facts, requested change, and constraints. Do not add, infer, or omit facts.
 - Convert it into a bounded execution plan for a Worker.
 - Do not perform the work.
 - Do not invent project facts that were not supplied.
