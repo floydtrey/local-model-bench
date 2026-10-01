@@ -33,21 +33,20 @@ function parseLineJson(file) {
   return events;
 }
 
-function extractText(value, bucket) {
-  if (value == null) return;
-  if (typeof value === 'string') return;
-  if (Array.isArray(value)) {
-    for (const x of value) extractText(x, bucket);
-    return;
+function extractAssistantContent(events) {
+  const bucket = { reasoning: [], text: [] };
+  for (const event of events) {
+    if (event?.type !== 'assistant/message') continue;
+    const message = event?.data?.message;
+    if (!message || message.role !== 'assistant' || !Array.isArray(message.content)) continue;
+    for (const block of message.content) {
+      if (!block || typeof block !== 'object' || typeof block.text !== 'string') continue;
+      const t = String(block.type ?? '').toLowerCase();
+      if (t.includes('reason')) bucket.reasoning.push(block.text);
+      else if (t === 'text' || t.includes('text')) bucket.text.push(block.text);
+    }
   }
-  if (typeof value !== 'object') return;
-
-  if (typeof value.type === 'string' && typeof value.text === 'string') {
-    const t = value.type.toLowerCase();
-    if (t.includes('reason')) bucket.reasoning.push(value.text);
-    else if (t === 'text' || t.includes('text')) bucket.text.push(value.text);
-  }
-  for (const v of Object.values(value)) extractText(v, bucket);
+  return bucket;
 }
 
 function inspectFile(file) {
@@ -56,8 +55,7 @@ function inspectFile(file) {
   const session = events.find(e => e.type === 'session') ?? null;
   if (!session) return null;
   const turnEnd = [...events].reverse().find(e => e.type === 'turn/end') ?? null;
-  const bucket = { reasoning: [], text: [] };
-  for (const e of events) extractText(e, bucket);
+  const bucket = extractAssistantContent(events);
   return {
     file,
     id: session.id ?? null,
@@ -151,6 +149,17 @@ const primary = fresh.length === 1 ? fresh[0] : null;
 const reasoning = primary?.reasoningText ?? '';
 const text = primary?.assistantText ?? '';
 
+const evidenceDir = path.dirname(outputPath);
+let nativeSessionEvidence = null;
+if (primary) {
+  const sessionDir = path.join(evidenceDir, 'session');
+  fs.mkdirSync(sessionDir, { recursive: true });
+  nativeSessionEvidence = path.join(sessionDir, path.basename(primary.file));
+  fs.copyFileSync(primary.file, nativeSessionEvidence);
+}
+fs.writeFileSync(path.join(evidenceDir, 'reasoning.txt'), reasoning);
+fs.writeFileSync(path.join(evidenceDir, 'final.txt'), text);
+
 const result = {
   observerMode: 'post-run-only',
   observerCanIntervene: false,
@@ -175,6 +184,11 @@ const result = {
     basis: 'new native session created after launch with isSeeded=false and delegationDepth=0'
   },
   reasoningCapturedInSession: reasoning.length > 0,
+  evidence: {
+    nativeSession: nativeSessionEvidence,
+    reasoning: path.join(evidenceDir, 'reasoning.txt'),
+    final: path.join(evidenceDir, 'final.txt')
+  },
   repetitionObservation: {
     reasoning: detectRepetition(reasoning, 'reasoning'),
     text: detectRepetition(text, 'text')
