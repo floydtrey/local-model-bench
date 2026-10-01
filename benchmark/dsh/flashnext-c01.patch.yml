@@ -1,0 +1,11 @@
+# Flash-Next special Planner candidate.
+# Provider/model endpoint settings live temporarily in ~/.dsh/settings.yaml
+# because the pinned DSH 0.1.6-alpha.2 settings architecture owns llm-pi-ai config.
+
+- id: agent-default-model
+  config:
+    provider: flashnext-local
+    model: C01
+
+- id: llm-ollama
+  disabled: true
