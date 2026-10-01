@@ -208,7 +208,7 @@ try {
     $reasoning = ([string]$candidate.reasoning_effort).Trim()
 
     if (-not $installed.ContainsKey($modelId)) {
-      Write-Warning "Skipping $modelId: not installed in Ollama."
+      Write-Warning "Skipping ${modelId}: not installed in Ollama."
       foreach ($intent in $intents) {
         $summaryPath = Join-Path (Join-Path $OutputRoot $intent.id) 'summary.csv'
         Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
