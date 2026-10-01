@@ -80,20 +80,18 @@
 - id: repeat-tool-reminder
   disabled: true
 
-# Containment backstop. Planner should have no model-facing tools, so this
-# should never affect a valid Planner run.
+# Planner exposes no effectful tools. Disable the DSH permission/sandbox policy
+# services themselves so they cannot inject runtime policy narration into the
+# model context. Dependent sandbox-backed providers are disabled with them.
 - id: sandbox-policy
-  config:
-    mode: read-only
-
+  disabled: true
 - id: approval
-  config:
-    policy: never
-
+  disabled: true
 - id: permission
-  config:
-    presets:
-      benchmark-read-only:
-        sandbox: read-only
-        approval: never
-    defaultPreset: benchmark-read-only
+  disabled: true
+- id: fs-sandbox
+  disabled: true
+- id: bash-sandbox
+  disabled: true
+- id: pwsh-sandbox
+  disabled: true
