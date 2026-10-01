@@ -1,11 +1,17 @@
 # Planner Screening Batch v1
 
-This batch is the first-pass Planner candidate screen.
+This batch supports staged Planner candidate screening. Round 1 used intents 01-02. The current runner default is Round 2: intents 03-05 (simple, medium, hard plan-quality cases).
 
 Frozen inputs:
 - `benchmark/planner/ROLE_PROMPT.txt`
+Round 1 inputs:
 - `benchmark/planner/intent-01-cli-time-filter.md`
 - `benchmark/planner/intent-02-webhook-retry-policy.md`
+
+Round 2 inputs:
+- `benchmark/planner/intent-03-config-default.md`
+- `benchmark/planner/intent-04-batch-export.md`
+- `benchmark/planner/intent-05-job-cancellation.md`
 
 Candidate roster:
 - `benchmark/planner/candidates.csv`
@@ -20,10 +26,15 @@ The normal result surface is intentionally small:
 
 ```text
 local-state/role-qualification-v1/planner-screen-v1/
-  intent-01/
+  intent-01/ ... existing Round 1 results
+  intent-02/ ... existing Round 1 results
+  intent-03/
     <model>.md
     summary.csv
-  intent-02/
+  intent-04/
+    <model>.md
+    summary.csv
+  intent-05/
     <model>.md
     summary.csv
 ```
