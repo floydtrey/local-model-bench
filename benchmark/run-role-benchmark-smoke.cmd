@@ -13,6 +13,10 @@ set "MODEL_PATCH=%REPO%\benchmark\dsh\smoke-qwen35-9b.patch.yml"
 set "TASK_FILE=%REPO%\benchmark\smoke\planner-path-smoke.txt"
 set "DSH_HOME=%REPO%\local-state\role-qualification-v1\dsh-home"
 set "OLLAMA_PID_FILE=%REPO%\local-state\role-qualification-v1\ollama-smoke.pid"
+set "OBSERVER=%REPO%\benchmark\dsh\passive-observer.mjs"
+set "OBS_STATE=%REPO%\local-state\role-qualification-v1\smoke-observer-state.json"
+set "OBS_JSON=%REPO%\local-state\role-qualification-v1\smoke-observations.json"
+set "CONSOLE_LOG=%REPO%\local-state\role-qualification-v1\smoke-console.log"
 set "DSH_TELEMETRY_DISABLED=1"
 set "ROLE_BENCHMARK_LOCAL_KEY=local-smoke-placeholder"
 set "STARTED_OLLAMA=0"
@@ -31,6 +35,16 @@ if not exist "%MODEL_PATCH%" (
 )
 if not exist "%TASK_FILE%" (
   echo ERROR: Missing "%TASK_FILE%"
+  exit /b 2
+)
+if not exist "%OBSERVER%" (
+  echo ERROR: Missing "%OBSERVER%"
+  exit /b 2
+)
+
+where node.exe >nul 2>&1
+if errorlevel 1 (
+  echo ERROR: node.exe is not available on PATH.
   exit /b 2
 )
 
@@ -86,10 +100,19 @@ if errorlevel 1 (
 echo Ollama is ready and qwen3.5:9b is installed.
 echo Starting DSH smoke...
 
+node "%OBSERVER%" before "%OBS_STATE%" "%DSH_HOME%"
+if errorlevel 1 (
+  echo ERROR: Failed to snapshot pre-run DSH sessions.
+  goto :cleanup_fail
+)
+
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$task = Get-Content -LiteralPath $env:TASK_FILE -Raw; & $env:DSH --profile headless --patch $env:BASE_PATCH --patch $env:MODEL_PATCH $task; exit $LASTEXITCODE"
+  "$task = Get-Content -LiteralPath $env:TASK_FILE -Raw; & $env:DSH --profile headless --patch $env:BASE_PATCH --patch $env:MODEL_PATCH $task 2>&1 | Tee-Object -LiteralPath $env:CONSOLE_LOG; exit $LASTEXITCODE"
 
 set "RC=%ERRORLEVEL%"
+
+node "%OBSERVER%" after "%OBS_STATE%" "%DSH_HOME%" "%CONSOLE_LOG%" "%OBS_JSON%" "%RC%"
+if errorlevel 1 echo WARNING: Passive post-run observation failed.
 
 if "%STARTED_OLLAMA%"=="1" (
   echo Stopping temporary Ollama server started by this launcher...
