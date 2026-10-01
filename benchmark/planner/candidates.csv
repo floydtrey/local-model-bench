@@ -1,2 +1,7 @@
 model_id,file_name,context_window,max_tokens,thinking_capable,reasoning_effort
 qwen3.5:9b,qwen3.5-9b,32768,8192,true,off
+qwen3.8:27b-32k-compare,qwen3.8-27b,32768,8192,true,off
+qwen3.6:35b-32k-compare,qwen3.6-35b,32768,8192,true,off
+qwen3-coder:30b-32k-dsh-test,qwen3-coder-30b,32768,8192,false,
+gpt-oss:20b-32k,gpt-oss-20b,32768,8192,true,off
+gemma4:12b-it-q8_0,gemma4-12b,32768,8192,false,
