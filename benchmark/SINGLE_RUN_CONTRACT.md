@@ -7,8 +7,9 @@ One invocation runs exactly one fresh DSH session.
 Required:
 
 - `candidate_patch` — DSH model/provider configuration for one candidate.
-- `runtime_kind` — runtime ownership for this invocation. v1 initially supports `ollama`; alternate managed runtimes such as Flash-Next are added only when their candidate is qualified.
+- `runtime_kind` — provider/runtime family. v1 uses persistent native `ollama`; alternate providers such as Flash-Next are added only when qualified.
 - `model_id` — exact runtime model ID/tag used for prerequisite verification.
+- `expected_context_window` — expected effective Ollama context for verification; it does not control the request.
 - `role_prompt` — exact role prompt text file.
 - `package` — exact intent/package text file.
 - `output_dir` — empty or new directory for this run.
@@ -24,11 +25,12 @@ The runner must:
 - use the isolated Role Qualification v1 DSH overlay;
 - create a fresh DSH session;
 - send exactly the role prompt followed by the package content as the user task input;
-- start or verify the candidate runtime named by `runtime_kind` and verify `model_id` is available;
+- require the persistent candidate runtime named by `runtime_kind` to be reachable and verify `model_id` is available;
 - enforce one outer wall-clock deadline covering runtime startup plus DSH execution;
 - never retry the model request automatically;
 - never score, rewrite, summarize, warn, or otherwise alter the model run;
-- clean up only processes the runner itself started.
+- never start, stop, or reconfigure the persistent Ollama service;
+- verify the effective Ollama context after the run and reject a mismatch as runtime configuration error.
 
 ## Outputs
 
@@ -51,7 +53,6 @@ The output directory must preserve:
 - DSH exit code when available;
 - terminal condition: `completed`, `wall_clock`, or `runtime_error`;
 - native DSH stop reason when available;
-- whether the runner started the model server;
 - candidate model/provider identity.
 
 ## Boundary
