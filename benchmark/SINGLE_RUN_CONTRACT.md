@@ -23,8 +23,10 @@ Optional test-only input:
 The runner must:
 
 - use the isolated Role Qualification v1 DSH overlay;
-- create a fresh DSH session;
-- send exactly the role prompt followed by the package content as the user task input;
+- create one fresh durable DSH session;
+- send the role prompt as turn 1;
+- capture that session's native DSH id;
+- resume that exact session and send the package as turn 2;
 - require the persistent candidate runtime named by `runtime_kind` to be reachable and verify `model_id` is available;
 - enforce one outer wall-clock deadline covering runtime startup plus DSH execution;
 - never retry the model request automatically;
@@ -39,7 +41,9 @@ The output directory must preserve:
 - `role-prompt.txt` — exact bytes used for the role prompt;
 - `package.txt` — exact bytes used for the intent/package;
 - `candidate-patch.yml` — exact candidate configuration used;
-- `session` — native DSH session evidence for this run;
+- `session` — native DSH session evidence containing both turns;
+- `role-turn.jsonl` / `role-turn.stderr.txt` — headless evidence for role assignment;
+- `intent-turn.jsonl` / `intent-turn.stderr.txt` — headless evidence for the resumed intent turn;
 - `reasoning.txt` — reasoning extracted after the run when present;
 - `final.txt` — final assistant text extracted after the run when present;
 - `observations.json` — passive post-run observations only;
