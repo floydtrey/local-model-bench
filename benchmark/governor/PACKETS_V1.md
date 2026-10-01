@@ -5,10 +5,12 @@ This round keeps every normal Ollama Planner candidate in contention as a Govern
 The Governor sees no Planner-model identity. Each fixed packet contains:
 - the original project intent;
 - one selected Planner output;
-- the frozen Law snapshot;
-- the frozen State snapshot;
-- the frozen General Intent snapshot;
+- the current canonical `docs/LAW.md` from the Governor repository;
+- the current canonical `docs/STATE.md` from the Governor repository;
+- the current canonical `docs/GENERAL_INTENT.md` from the Governor repository;
 - the benchmark fixture Project Intent.
+
+The runner reads the canonical Governor documents from the local Governor repository at run time. It does not maintain copied governance snapshots in the benchmark repository.
 
 ## Packet A — simple
 
