@@ -1,0 +1,59 @@
+# Role Qualification v1 — single-run contract
+
+One invocation runs exactly one fresh DSH session.
+
+## Inputs
+
+Required:
+
+- `candidate_patch` — DSH model/provider configuration for one candidate.
+- `role_prompt` — exact role prompt text file.
+- `package` — exact intent/package text file.
+- `output_dir` — empty or new directory for this run.
+
+Optional test-only input:
+
+- `wall_clock_seconds` — defaults to 600. May be lowered only for launcher qualification tests.
+
+## Execution
+
+The runner must:
+
+- use the isolated Role Qualification v1 DSH overlay;
+- create a fresh DSH session;
+- send exactly the role prompt followed by the package content as the user task input;
+- start or verify the candidate runtime required by the candidate configuration;
+- enforce one outer wall-clock deadline covering runtime startup plus DSH execution;
+- never retry the model request automatically;
+- never score, rewrite, summarize, warn, or otherwise alter the model run;
+- clean up only processes the runner itself started.
+
+## Outputs
+
+The output directory must preserve:
+
+- `role-prompt.txt` — exact bytes used for the role prompt;
+- `package.txt` — exact bytes used for the intent/package;
+- `candidate-patch.yml` — exact candidate configuration used;
+- `session` — native DSH session evidence for this run;
+- `reasoning.txt` — reasoning extracted after the run when present;
+- `final.txt` — final assistant text extracted after the run when present;
+- `observations.json` — passive post-run observations only;
+- `run.json` — factual run metadata.
+
+`run.json` records at minimum:
+
+- start time;
+- end time;
+- total wall-clock seconds;
+- DSH exit code when available;
+- terminal condition: `completed`, `wall_clock`, or `runtime_error`;
+- native DSH stop reason when available;
+- whether the runner started the model server;
+- candidate model/provider identity.
+
+## Boundary
+
+The only run-time benchmark guard in v1 is the outer wall clock.
+
+All other guardrail logic is observational and runs only after model execution has ended.
