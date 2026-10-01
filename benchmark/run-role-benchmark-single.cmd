@@ -12,6 +12,8 @@ if "%~6"=="" (
 )
 
 set "SCRIPT=%~dp0run-role-benchmark-single.ps1"
+set "WALL_SECONDS=%~7"
+if "%WALL_SECONDS%"=="" set "WALL_SECONDS=600"
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" ^
   -CandidatePatch "%~1" ^
@@ -20,6 +22,6 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" ^
   -RolePrompt "%~4" ^
   -PackageFile "%~5" ^
   -OutputDir "%~6" ^
-  -WallSeconds "%~7"
+  -WallSeconds "%WALL_SECONDS%"
 
 exit /b %ERRORLEVEL%
