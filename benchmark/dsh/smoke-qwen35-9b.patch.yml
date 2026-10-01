@@ -1,38 +1,13 @@
-# Smoke-only candidate configuration.
-# This is NOT a scored/qualified Planner configuration.
-# It exists only to prove the isolated DSH execution path.
+# Smoke-only candidate selection.
+# Native Ollama runtime settings come from DSH's llm-ollama settings namespace.
 
 - id: agent-default-model
   config:
-    provider: role-benchmark-smoke
+    provider: ollama
     model: qwen3.5:9b
 
-- id: llm-pi-ai
-  config:
-    providers:
-      role-benchmark-smoke:
-        api: openai-completions
-        baseURL: http://127.0.0.1:11434/v1
-        apiKeyEnv: ROLE_BENCHMARK_LOCAL_KEY
-        reasoning: high
-        timeoutMs: 600000
-        retryPolicy:
-          mode: normal
-          maxRetries: 0
-        compat:
-          supportsStore: false
-          supportsDeveloperRole: false
-          supportsReasoningEffort: true
-          maxTokensField: max_tokens
-        models:
-          - id: qwen3.5:9b
-            name: Qwen3.5 9B
-            contextWindow: 32768
-            maxTokens: 8192
-            input: [text]
-            reasoningEfforts:
-              off: none
-              high: high
-
 - id: llm-deepseek
+  disabled: true
+
+- id: llm-pi-ai
   disabled: true
