@@ -147,7 +147,22 @@ try {
   }
 
   & node.exe $observer after $obsState $dshHome $obsJson $exitCode
-  if ($LASTEXITCODE -ne 0) { Write-Warning 'Passive post-run observation failed.' }
+  if ($LASTEXITCODE -ne 0) {
+    Write-Warning 'Passive post-run observation failed.'
+  } elseif ((Test-Path -LiteralPath $obsJson) -and (Test-Path -LiteralPath $runJson)) {
+    $obs = Get-Content -LiteralPath $obsJson -Raw | ConvertFrom-Json
+    $record = Get-Content -LiteralPath $runJson -Raw | ConvertFrom-Json
+    $nativeStop = $null
+    if ($obs.sessions -and $obs.sessions.Count -eq 1) {
+      $nativeStop = $obs.sessions[0].turnEndReason
+    }
+    $record | Add-Member -NotePropertyName nativeDshStopReason -NotePropertyValue $nativeStop -Force
+    $record | Add-Member -NotePropertyName reasoningCaptured -NotePropertyValue ([bool]$obs.reasoningCapturedInSession) -Force
+    $record | Add-Member -NotePropertyName nativeSessionEvidence -NotePropertyValue $obs.evidence.nativeSession -Force
+    $record | Add-Member -NotePropertyName reasoningFile -NotePropertyValue $obs.evidence.reasoning -Force
+    $record | Add-Member -NotePropertyName finalFile -NotePropertyValue $obs.evidence.final -Force
+    $record | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $runJson -Encoding UTF8
+  }
 
   exit $exitCode
 }
