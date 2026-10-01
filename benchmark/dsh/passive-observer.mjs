@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-function walkJsonl(root) {
+function walkFiles(root) {
   if (!fs.existsSync(root)) return [];
   const out = [];
   const stack = [root];
@@ -10,24 +10,70 @@ function walkJsonl(root) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) stack.push(full);
-      else if (entry.isFile() && entry.name.endsWith('.jsonl')) out.push(full);
+      else if (entry.isFile()) {
+        const st = fs.statSync(full);
+        out.push({ path: full, size: st.size, mtimeMs: st.mtimeMs });
+      }
     }
   }
-  return out.sort();
+  return out.sort((a,b) => a.path.localeCompare(b.path));
 }
 
-function parseJsonl(file) {
+function parseLineJson(file) {
   const events = [];
-  for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+  let text;
+  try { text = fs.readFileSync(file, 'utf8'); } catch { return events; }
+  for (const line of text.split(/\r?\n/)) {
     if (!line.trim()) continue;
-    try { events.push(JSON.parse(line)); } catch {}
+    try {
+      const value = JSON.parse(line);
+      if (value && typeof value === 'object') events.push(value);
+    } catch {}
   }
   return events;
 }
 
-// Offline copy of the prior streaming repetition heuristic.
-// It observes completed output only and cannot cancel or message the model.
-function detectRepetition(text, channel = 'combined') {
+function extractText(value, bucket) {
+  if (value == null) return;
+  if (typeof value === 'string') return;
+  if (Array.isArray(value)) {
+    for (const x of value) extractText(x, bucket);
+    return;
+  }
+  if (typeof value !== 'object') return;
+
+  if (typeof value.type === 'string' && typeof value.text === 'string') {
+    const t = value.type.toLowerCase();
+    if (t.includes('reason')) bucket.reasoning.push(value.text);
+    else if (t === 'text' || t.includes('text')) bucket.text.push(value.text);
+  }
+  for (const v of Object.values(value)) extractText(v, bucket);
+}
+
+function inspectFile(file) {
+  const events = parseLineJson(file);
+  if (!events.length) return null;
+  const session = events.find(e => e.type === 'session') ?? null;
+  if (!session) return null;
+  const turnEnd = [...events].reverse().find(e => e.type === 'turn/end') ?? null;
+  const bucket = { reasoning: [], text: [] };
+  for (const e of events) extractText(e, bucket);
+  return {
+    file,
+    id: session.id ?? null,
+    createdAt: session.createdAt ?? null,
+    isSeeded: session.isSeeded ?? null,
+    delegationDepth: session.delegationDepth ?? null,
+    turnEndReason: turnEnd?.data?.reason?.kind ?? null,
+    eventTypes: [...new Set(events.map(e => e.type).filter(Boolean))].sort(),
+    reasoningText: bucket.reasoning.join('\n'),
+    assistantText: bucket.text.join('\n')
+  };
+}
+
+// Passive, post-run approximation of the previous repetition heuristic.
+// It cannot stop, retry, warn, or message the model.
+function detectRepetition(text, channel) {
   let raw = '';
   let count = 0;
   for (let offset = 0; offset < text.length; offset += 32) {
@@ -57,71 +103,94 @@ function detectRepetition(text, channel = 'combined') {
   return { detected: false };
 }
 
-const [mode, statePath, dshHome, consoleLog, outputPath, exitCodeRaw] = process.argv.slice(2);
+const [mode, statePath, dshHome, outputPath, exitCodeRaw] = process.argv.slice(2);
 if (!mode || !statePath || !dshHome) {
-  console.error('usage: passive-observer.mjs before|after <state> <dshHome> [consoleLog] [outputJson] [exitCode]');
+  console.error('usage: passive-observer.mjs before|after <state> <dshHome> [outputJson] [exitCode]');
   process.exit(2);
 }
 
-const sessionRoot = path.join(dshHome, 'sessions');
-
 if (mode === 'before') {
+  const files = walkFiles(dshHome);
+  const sessions = [];
+  for (const f of files) {
+    const s = inspectFile(f.path);
+    if (s) sessions.push({ file: s.file, id: s.id, createdAt: s.createdAt });
+  }
   const state = {
     startedAt: new Date().toISOString(),
-    existingSessions: walkJsonl(sessionRoot)
+    startedAtMs: Date.now(),
+    files,
+    sessionIds: sessions.map(s => s.id).filter(Boolean)
   };
   fs.mkdirSync(path.dirname(statePath), { recursive: true });
   fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
   process.exit(0);
 }
 
-if (mode !== 'after' || !consoleLog || !outputPath) process.exit(2);
+if (mode !== 'after' || !outputPath) process.exit(2);
 
 const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-const before = new Set(state.existingSessions);
-const current = walkJsonl(sessionRoot);
-const newFiles = current.filter(f => !before.has(f));
-
-const sessions = newFiles.map(file => {
-  const events = parseJsonl(file);
-  const session = events.find(e => e.type === 'session') ?? null;
-  const turnEnd = [...events].reverse().find(e => e.type === 'turn/end') ?? null;
-  return {
-    file,
-    id: session?.id ?? null,
-    isSeeded: session?.isSeeded ?? null,
-    delegationDepth: session?.delegationDepth ?? null,
-    turnEndReason: turnEnd?.data?.reason?.kind ?? null,
-    eventTypes: [...new Set(events.map(e => e.type).filter(Boolean))].sort()
-  };
+const oldFiles = new Map(state.files.map(f => [f.path, f]));
+const oldIds = new Set(state.sessionIds);
+const current = walkFiles(dshHome);
+const changed = current.filter(f => {
+  const old = oldFiles.get(f.path);
+  return !old || old.size !== f.size || old.mtimeMs !== f.mtimeMs;
 });
 
-const consoleText = fs.existsSync(consoleLog) ? fs.readFileSync(consoleLog, 'utf8') : '';
+const candidateSessions = [];
+for (const f of changed) {
+  const s = inspectFile(f.path);
+  if (s && !oldIds.has(s.id)) candidateSessions.push(s);
+}
+
+const fresh = candidateSessions.filter(s =>
+  (s.createdAt == null || s.createdAt >= state.startedAtMs - 5000));
+
+const primary = fresh.length === 1 ? fresh[0] : null;
+const reasoning = primary?.reasoningText ?? '';
+const text = primary?.assistantText ?? '';
+
 const result = {
   observerMode: 'post-run-only',
   observerCanIntervene: false,
   runStartedAt: state.startedAt,
   runObservedAt: new Date().toISOString(),
   dshExitCode: Number(exitCodeRaw),
-  newSessionCount: sessions.length,
-  sessions,
+  changedFileCount: changed.length,
+  newSessionCount: fresh.length,
+  sessions: fresh.map(s => ({
+    file: s.file,
+    id: s.id,
+    createdAt: s.createdAt,
+    isSeeded: s.isSeeded,
+    delegationDepth: s.delegationDepth,
+    turnEndReason: s.turnEndReason,
+    eventTypes: s.eventTypes,
+    reasoningChars: s.reasoningText.length,
+    assistantTextChars: s.assistantText.length
+  })),
   freshSessionIsolation: {
-    passed: sessions.length === 1 &&
-      sessions[0].isSeeded === false &&
-      sessions[0].delegationDepth === 0,
-    basis: 'new session JSONL created after launch with isSeeded=false and delegationDepth=0'
+    passed: !!primary && primary.isSeeded === false && primary.delegationDepth === 0,
+    basis: 'new native session created after launch with isSeeded=false and delegationDepth=0'
   },
-  reasoningVisibleInConsole: consoleText.includes('dsh: reasoning:'),
-  legacyRepetitionHeuristic: detectRepetition(consoleText)
+  reasoningCapturedInSession: reasoning.length > 0,
+  repetitionObservation: {
+    reasoning: detectRepetition(reasoning, 'reasoning'),
+    text: detectRepetition(text, 'text')
+  }
 };
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
+
 console.log('');
 console.log('Passive observation:');
-console.log('  new session files: ' + result.newSessionCount);
+console.log('  changed files under DSH_HOME: ' + result.changedFileCount);
+console.log('  new native sessions: ' + result.newSessionCount);
 console.log('  fresh-session isolation: ' + (result.freshSessionIsolation.passed ? 'PASS' : 'NOT PROVEN'));
-console.log('  reasoning captured: ' + (result.reasoningVisibleInConsole ? 'YES' : 'NO'));
-console.log('  legacy repetition heuristic: ' + (result.legacyRepetitionHeuristic.detected ? 'WOULD TRIGGER' : 'no trigger'));
-if (sessions.length === 1) console.log('  terminal stop: ' + (sessions[0].turnEndReason ?? 'unknown'));
+console.log('  reasoning preserved in session: ' + (result.reasoningCapturedInSession ? 'YES' : 'NO'));
+if (primary) console.log('  terminal stop: ' + (primary.turnEndReason ?? 'unknown'));
+console.log('  repetition observer (reasoning): ' + (result.repetitionObservation.reasoning.detected ? 'WOULD TRIGGER' : 'no trigger'));
+console.log('  repetition observer (text): ' + (result.repetitionObservation.text.detected ? 'WOULD TRIGGER' : 'no trigger'));
 console.log('  observations: ' + outputPath);
