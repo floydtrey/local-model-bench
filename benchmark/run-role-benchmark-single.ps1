@@ -159,7 +159,7 @@ catch {
 finally {
   if ($startedOllama -and $ollamaProcess) {
     Write-Host 'Stopping temporary Ollama server started by this launcher...'
-    Stop-Process -Id $ollamaProcess.Id -Force -ErrorAction SilentlyContinue
+    & taskkill.exe /PID $ollamaProcess.Id /T /F 2>$null | Out-Null
     Remove-Item -LiteralPath $ollamaPidFile -Force -ErrorAction SilentlyContinue
   }
 }
