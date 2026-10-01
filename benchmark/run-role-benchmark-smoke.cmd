@@ -14,7 +14,6 @@ set "TASK_FILE=%REPO%\benchmark\smoke\planner-path-smoke.txt"
 set "DSH_HOME=%REPO%\local-state\role-qualification-v1\dsh-home"
 set "OLLAMA_PID_FILE=%REPO%\local-state\role-qualification-v1\ollama-smoke.pid"
 set "DSH_TELEMETRY_DISABLED=1"
-set "DSH_PERMISSION_MODE=read-only"
 set "ROLE_BENCHMARK_LOCAL_KEY=local-smoke-placeholder"
 set "STARTED_OLLAMA=0"
 
