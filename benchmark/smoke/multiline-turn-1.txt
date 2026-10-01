@@ -1,0 +1,4 @@
+TRANSPORT SMOKE TURN 1
+line 2: alpha
+line 3: symbols — beta
+Reply exactly: TURN ONE OK
