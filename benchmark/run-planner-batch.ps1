@@ -16,12 +16,16 @@ $nl = [Environment]::NewLine
 
 $intents = @(
   [pscustomobject]@{
-    id = 'intent-01'
-    path = (Join-Path $PSScriptRoot 'planner\intent-01-cli-time-filter.md')
+    id = 'intent-03'
+    path = (Join-Path $PSScriptRoot 'planner\intent-03-config-default.md')
   },
   [pscustomobject]@{
-    id = 'intent-02'
-    path = (Join-Path $PSScriptRoot 'planner\intent-02-webhook-retry-policy.md')
+    id = 'intent-04'
+    path = (Join-Path $PSScriptRoot 'planner\intent-04-batch-export.md')
+  },
+  [pscustomobject]@{
+    id = 'intent-05'
+    path = (Join-Path $PSScriptRoot 'planner\intent-05-job-cancellation.md')
   }
 )
 
