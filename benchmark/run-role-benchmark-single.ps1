@@ -38,6 +38,8 @@ $obsState = Join-Path $output 'observer-state.json'
 $obsJson = Join-Path $output 'observations.json'
 $runJson = Join-Path $output 'run.json'
 $ollamaPidFile = Join-Path $output 'ollama.pid'
+$ollamaStdout = Join-Path $output 'ollama-stdout.log'
+$ollamaStderr = Join-Path $output 'ollama-stderr.log'
 
 $env:DSH_HOME = $dshHome
 $env:DSH_TELEMETRY_DISABLED = '1'
@@ -82,7 +84,7 @@ try {
 
   if (-not $apiReady) {
     Write-Host 'Ollama API is offline. Starting a temporary Ollama server...'
-    $ollamaProcess = Start-Process -FilePath $ollama -ArgumentList 'serve' -WindowStyle Hidden -PassThru
+    $ollamaProcess = Start-Process -FilePath $ollama -ArgumentList 'serve' -WindowStyle Hidden -RedirectStandardOutput $ollamaStdout -RedirectStandardError $ollamaStderr -PassThru
     $ollamaProcess.Id | Set-Content -LiteralPath $ollamaPidFile -NoNewline
     $startedOllama = $true
 
@@ -174,7 +176,11 @@ catch {
 finally {
   if ($startedOllama -and $ollamaProcess) {
     Write-Host 'Stopping temporary Ollama server started by this launcher...'
-    & taskkill.exe /PID $ollamaProcess.Id /T /F 2>$null | Out-Null
+    try {
+      if (-not $ollamaProcess.HasExited) {
+        & taskkill.exe /PID $ollamaProcess.Id /T /F *> $null
+      }
+    } catch {}
     Remove-Item -LiteralPath $ollamaPidFile -Force -ErrorAction SilentlyContinue
   }
 }
