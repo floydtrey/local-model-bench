@@ -1,4 +1,5 @@
 param(
+  [string]$GovernorRepo = (Join-Path (Split-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path -Parent) 'governor'),
   [string]$CandidatesFile = (Join-Path $PSScriptRoot 'planner\candidates.csv'),
   [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\role-qualification-v1\governor-screen-v1'),
   [int]$WallSeconds = 600,
@@ -10,9 +11,10 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $singleRunner = Join-Path $PSScriptRoot 'run-role-benchmark-single.ps1'
 $extractor = Join-Path $PSScriptRoot 'dsh\extract-planner-batch-result.mjs'
 $rolePrompt = Join-Path $PSScriptRoot 'governor\ROLE_PROMPT.txt'
-$law = Join-Path $PSScriptRoot 'governor\reference\LAW.md'
-$state = Join-Path $PSScriptRoot 'governor\reference\STATE.md'
-$generalIntent = Join-Path $PSScriptRoot 'governor\reference\GENERAL_INTENT.md'
+$governorRoot = [IO.Path]::GetFullPath($GovernorRepo)
+$law = Join-Path $governorRoot 'docs\LAW.md'
+$state = Join-Path $governorRoot 'docs\STATE.md'
+$generalIntent = Join-Path $governorRoot 'docs\GENERAL_INTENT.md'
 $projectIntent = Join-Path $PSScriptRoot 'governor\reference\PROJECT_INTENT.md'
 $settingsFile = Join-Path $env:USERPROFILE '.dsh\settings.yaml'
 $utf8 = [Text.UTF8Encoding]::new($false)
