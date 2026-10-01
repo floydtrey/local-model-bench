@@ -12,6 +12,13 @@
     personaPrefix: ''
     personaSuffix: ''
 
+# Store benchmark session logs as plain JSONL so post-run observers can inspect
+# native evidence without intercepting or transforming the live model stream.
+- id: session-persistence-jsonl
+  config:
+    root: !!js dshHomePath('sessions')
+    compression: none
+
 # Avoid an unrelated model call for session titles.
 - id: session-title-llm
   disabled: true
