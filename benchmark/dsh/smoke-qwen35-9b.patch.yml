@@ -1,10 +1,29 @@
-# Smoke-only candidate selection.
-# Native Ollama runtime settings come from DSH's llm-ollama settings namespace.
+# Smoke-only candidate configuration.
+# Native Ollama protocol is provided by @zhangyi/dsh-llm-ollama.
+# This benchmark-owned route makes context/output/reasoning deterministic and
+# independent of the user's interactive DSH model settings.
 
 - id: agent-default-model
   config:
-    provider: ollama
+    provider: role-benchmark-native
     model: qwen3.5:9b
+    reasoningEffort: off
+
+- id: llm-ollama
+  config:
+    providers:
+      role-benchmark-native:
+        displayName: Role Benchmark Native Ollama
+        api: ollama-chat
+        baseURL: http://127.0.0.1:11434
+        keepAlive: 30m
+        models:
+          - id: qwen3.5:9b
+            name: Qwen3.5 9B
+            contextWindow: 32768
+            maxTokens: 8192
+            thinkingCapable: true
+            reasoningEffort: off
 
 - id: llm-deepseek
   disabled: true
