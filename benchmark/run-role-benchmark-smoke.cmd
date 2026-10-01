@@ -107,11 +107,11 @@ if errorlevel 1 (
 )
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$task = Get-Content -LiteralPath $env:TASK_FILE -Raw; & $env:DSH --profile headless --patch $env:BASE_PATCH --patch $env:MODEL_PATCH $task 2>&1 | Tee-Object -LiteralPath $env:CONSOLE_LOG; exit $LASTEXITCODE"
+  "$task = Get-Content -LiteralPath $env:TASK_FILE -Raw; & $env:DSH --profile headless --patch $env:BASE_PATCH --patch $env:MODEL_PATCH $task; exit $LASTEXITCODE"
 
 set "RC=%ERRORLEVEL%"
 
-node "%OBSERVER%" after "%OBS_STATE%" "%DSH_HOME%" "%CONSOLE_LOG%" "%OBS_JSON%" "%RC%"
+node "%OBSERVER%" after "%OBS_STATE%" "%DSH_HOME%" "%OBS_JSON%" "%RC%"
 if errorlevel 1 echo WARNING: Passive post-run observation failed.
 
 if "%STARTED_OLLAMA%"=="1" (
