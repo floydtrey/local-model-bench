@@ -1,0 +1,4 @@
+TRANSPORT SMOKE TURN 2
+line 2: bravo
+line 3: symbols — gamma
+Reply exactly: TURN TWO OK
