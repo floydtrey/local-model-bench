@@ -16,7 +16,7 @@
 # native evidence without intercepting or transforming the live model stream.
 - id: session-persistence-jsonl
   config:
-    root: !!js dshHomePath('sessions')
+    root: !!js dshHomePath('benchmark-sessions')
     compression: none
 
 # Avoid an unrelated model call for session titles.
