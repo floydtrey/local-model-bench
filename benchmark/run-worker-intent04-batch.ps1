@@ -73,10 +73,18 @@ function Set-SummaryRow([string]$Path,$Row) {
   $rows | Export-Csv -LiteralPath $Path -NoTypeInformation -Encoding UTF8
 }
 
-function Get-TaskPass($Result,[int]$TaskId) {
+function Get-Task($Result,[int]$TaskId) {
   $task = @($Result.tasks | Where-Object { [int]$_.taskId -eq $TaskId } | Select-Object -First 1)
-  if ($task.Count -eq 0) { return '' }
-  return [bool]$task[0].passed
+  if ($task.Count -eq 0) { return $null }
+  return $task[0]
+}
+
+function Get-TaskField($Result,[int]$TaskId,[string]$Field) {
+  $task = Get-Task $Result $TaskId
+  if ($null -eq $task) { return '' }
+  $property = $task.PSObject.Properties[$Field]
+  if ($null -eq $property) { return '' }
+  return $property.Value
 }
 
 $candidates = @(Import-Csv -LiteralPath $CandidatesFile)
@@ -119,8 +127,10 @@ try {
       Write-Warning ("Skipping " + $modelId + ": not installed.")
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='not_installed';
-        overall_pass='';completed_tasks='';stopped_after_task='';
-        task1_pass='';task2_pass='';task3_pass='';
+        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';failed_task_ids='';recoveries='';
+        task1_first='';task1_final='';task1_repair='';task1_terminal='';
+        task2_first='';task2_final='';task2_repair='';task2_terminal='';
+        task3_first='';task3_final='';task3_repair='';task3_terminal='';
         final_changed_files='';final_created_files='';final_deleted_files='';exit_code=''
       })
       continue
@@ -149,8 +159,10 @@ try {
     if (-not (Test-Path -LiteralPath $resultPath)) {
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='harness_error';
-        overall_pass='';completed_tasks='';stopped_after_task='';
-        task1_pass='';task2_pass='';task3_pass='';
+        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';failed_task_ids='';recoveries='';
+        task1_first='';task1_final='';task1_repair='';task1_terminal='';
+        task2_first='';task2_final='';task2_repair='';task2_terminal='';
+        task3_first='';task3_final='';task3_repair='';task3_terminal='';
         final_changed_files='';final_created_files='';final_deleted_files='';exit_code=$runnerExit
       })
     } else {
@@ -163,17 +175,29 @@ try {
         terminal_condition = $terminal
         overall_pass = [bool]$result.passed
         completed_tasks = $result.completedTaskCount
-        stopped_after_task = $result.stoppedAfterTask
-        task1_pass = Get-TaskPass $result 1
-        task2_pass = Get-TaskPass $result 2
-        task3_pass = Get-TaskPass $result 3
+        first_pass_tasks = $result.firstPassTaskCount
+        repaired_tasks = $result.repairedTaskCount
+        failed_task_ids = (@($result.failedTaskIds) -join ';')
+        recoveries = $result.qualificationRecoveryCount
+        task1_first = Get-TaskField $result 1 'firstPassPassed'
+        task1_final = Get-TaskField $result 1 'passed'
+        task1_repair = Get-TaskField $result 1 'repairPassed'
+        task1_terminal = Get-TaskField $result 1 'terminalCondition'
+        task2_first = Get-TaskField $result 2 'firstPassPassed'
+        task2_final = Get-TaskField $result 2 'passed'
+        task2_repair = Get-TaskField $result 2 'repairPassed'
+        task2_terminal = Get-TaskField $result 2 'terminalCondition'
+        task3_first = Get-TaskField $result 3 'firstPassPassed'
+        task3_final = Get-TaskField $result 3 'passed'
+        task3_repair = Get-TaskField $result 3 'repairPassed'
+        task3_terminal = Get-TaskField $result 3 'terminalCondition'
         final_changed_files = (@($result.changedFilesFromInitial) -join ';')
         final_created_files = (@($result.createdFilesFromInitial) -join ';')
         final_deleted_files = (@($result.deletedFilesFromInitial) -join ';')
         exit_code = $runnerExit
       })
 
-      Write-Host ("  Worker pipeline: pass={0}; completed={1}/3; stoppedAfter={2}" -f $result.passed,$result.completedTaskCount,$result.stoppedAfterTask)
+      Write-Host ("  Worker qualification: pass={0}; firstPass={1}/3; repaired={2}; failed={3}" -f $result.passed,$result.firstPassTaskCount,$result.repairedTaskCount,(@($result.failedTaskIds) -join ','))
     }
 
     try {
