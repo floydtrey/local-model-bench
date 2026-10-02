@@ -1,0 +1,57 @@
+# Native Ollama multi-tool transport preflight.
+# Apply after role-qualification-v1.patch.yml.
+# This intentionally exposes only the filesystem read tool.
+
+- id: sandbox-policy
+  disabled: false
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.cwd()
+
+- id: approval
+  disabled: false
+  config:
+    policy: never
+
+- id: permission
+  disabled: false
+  config:
+    presets:
+      benchmark-workspace:
+        sandbox: workspace-write
+        approval: never
+    defaultPreset: benchmark-workspace
+
+- id: fs-sandbox
+  disabled: false
+
+- id: tools
+  config:
+    mode: native
+
+- id: tool-fs
+  disabled: false
+
+- id: tool-fs-search
+  disabled: true
+
+- id: tool-pwsh
+  disabled: true
+
+- id: tool-bash
+  disabled: true
+
+- id: tool-jobs
+  disabled: true
+
+- id: tool-web
+  disabled: true
+
+- id: tool-todo
+  disabled: true
+
+- id: tool-subagent
+  disabled: true
+
+- id: tool-subagent-fork
+  disabled: true
