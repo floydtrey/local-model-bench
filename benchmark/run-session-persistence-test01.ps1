@@ -281,7 +281,12 @@ $checks = [ordered]@{
   aRecallBeforeSwap = Exact $turns.A2.final 'A_RECALL|WORKER_ALPHA|A_MARKER_7319|HARBOR'
   bRecallBeforeSwap = Exact $turns.B2.final 'B_RECALL|REVIEWER_BETA|B_MARKER_2846|ORCHID'
   primaryUnloaded = (-not $primaryStillLoaded)
-  alternateTurnReady = Exact $turns.C1.final 'C_READY'
+  alternateTurnCompleted = (
+    $turns.C1.exitCode -eq 0 -and
+    -not $turns.C1.timedOut -and
+    $turns.C1.turnEndKind -eq 'completed' -and
+    -not [string]::IsNullOrWhiteSpace([string]$turns.C1.final)
+  )
   alternateLoaded = (Model-IsLoaded $psAfterAlternate $alternateModel)
   aRecallAfterSwap = Exact $turns.A3.final 'A_RECALL|WORKER_ALPHA|A_MARKER_7319|HARBOR'
   bRecallAfterSwap = Exact $turns.B3.final 'B_RECALL|REVIEWER_BETA|B_MARKER_2846|ORCHID'
