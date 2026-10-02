@@ -1,1 +1,2 @@
-@echo off\r\npython.exe "%~dp0worker\\intent04\\validate_assessor.py"\r\n
+@echo off
+python.exe "%~dp0worker\intent04\validate_assessor.py"
