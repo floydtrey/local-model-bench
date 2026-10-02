@@ -78,6 +78,10 @@ function Invoke-ProcessCapture {
   $psi.FileName = $FileName
   $psi.Arguments = $Arguments
   $psi.WorkingDirectory = $WorkingDirectory
+  # When Python executes a script by absolute path, sys.path[0] is the
+  # script's directory rather than WorkingDirectory. Explicitly expose the
+  # disposable workspace so verification scripts can import the fixture package.
+  $psi.EnvironmentVariables['PYTHONPATH'] = $WorkingDirectory
   $psi.UseShellExecute = $false
   $psi.CreateNoWindow = $true
   $psi.RedirectStandardOutput = $true
