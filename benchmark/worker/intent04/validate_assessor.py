@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import shutil
 import subprocess
@@ -46,9 +47,15 @@ REQUIRED_CRITERIA = {
 
 
 def run(cmd: list[str], cwd: pathlib.Path) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        str(cwd) if not existing else str(cwd) + os.pathsep + existing
+    )
     return subprocess.run(
         cmd,
         cwd=cwd,
+        env=env,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
