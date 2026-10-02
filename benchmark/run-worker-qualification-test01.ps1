@@ -125,7 +125,8 @@ function Invoke-DshTurn {
   param(
     [Parameter(Mandatory=$true)][string]$Name,
     [Parameter(Mandatory=$true)][string]$Prompt,
-    [string]$SessionId = ''
+    [string]$SessionId = '',
+    [switch]$EnableWorkerTools
   )
 
   $turnDir = Join-Path $turnRoot $Name
@@ -143,7 +144,17 @@ function Invoke-DshTurn {
   $resume = ''
   if ($SessionId) { $resume = ' --session-id "' + $SessionId + '"' }
 
-  $nativeCommand = '"' + $dsh + '" --profile headless --patch "' + $basePatch + '" --patch "' + $workerPatch + '" --patch "' + $modelPatch + '" --json' + $resume + ' -'
+  # Role establishment is intentionally tool-free. The base qualification
+  # overlay disables execution tools; the Worker overlay is added only on the
+  # actual dispatch turn. This prevents a model from starting project work
+  # before it has received its bounded task.
+  $patchArgs = ' --patch "' + $basePatch + '"'
+  if ($EnableWorkerTools) {
+    $patchArgs += ' --patch "' + $workerPatch + '"'
+  }
+  $patchArgs += ' --patch "' + $modelPatch + '"'
+
+  $nativeCommand = '"' + $dsh + '" --profile headless' + $patchArgs + ' --json' + $resume + ' -'
 
   $psi = [Diagnostics.ProcessStartInfo]::new()
   $psi.FileName = 'cmd.exe'
@@ -258,12 +269,21 @@ if ($preflight.timedOut -or $preflight.exitCode -ne 0) { throw "Fixture prefligh
 $before = Snapshot-Workspace
 Write-Json -Path (Join-Path $output 'workspace-before.json') -Value $before
 
-$roleTurn = Invoke-DshTurn -Name 'role' -Prompt $rolePrompt
+$roleInitPrompt = $rolePrompt + [Environment]::NewLine + [Environment]::NewLine + @'
+This turn establishes your Worker role only. Do not inspect the workspace, call tools, or begin project work yet. The bounded dispatch will arrive in the next user message. Reply exactly: WORKER_READY
+'@
+
+$roleTurn = Invoke-DshTurn -Name 'role' -Prompt $roleInitPrompt
 $sessionId = $roleTurn.emittedSessionId
 if (-not $sessionId) { throw 'Worker role turn did not emit a DSH session id.' }
-if ($roleTurn.exitCode -ne 0 -or $roleTurn.timedOut) { throw 'Worker role turn failed.' }
+if ($roleTurn.exitCode -ne 0 -or $roleTurn.timedOut -or $roleTurn.turnEndKind -ne 'completed') {
+  throw 'Worker role-establishment turn failed before dispatch.'
+}
+if (-not [string]::Equals(([string]$roleTurn.final).Trim(),'WORKER_READY',[StringComparison]::Ordinal)) {
+  throw "Worker role-establishment turn did not return WORKER_READY. Final: $($roleTurn.final)"
+}
 
-$dispatchTurn = Invoke-DshTurn -Name 'dispatch-task-01' -Prompt $dispatch -SessionId $sessionId
+$dispatchTurn = Invoke-DshTurn -Name 'dispatch-task-01' -Prompt $dispatch -SessionId $sessionId -EnableWorkerTools
 
 $after = Snapshot-Workspace
 Write-Json -Path (Join-Path $output 'workspace-after.json') -Value $after
