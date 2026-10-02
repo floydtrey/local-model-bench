@@ -1,6 +1,6 @@
 param(
   [string]$CandidatesFile = (Join-Path $PSScriptRoot 'worker\candidates-test02.csv'),
-  [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\worker-qualification-v1\test-02-intent04-batch-v1'),
+  [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\worker-qualification-v1\test-02-intent04-batch-v2'),
   [int]$WallSecondsPerTurn = 300,
   [switch]$Resume
 )
@@ -179,18 +179,18 @@ try {
         repaired_tasks = $result.repairedTaskCount
         failed_task_ids = (@($result.failedTaskIds) -join ';')
         recoveries = $result.qualificationRecoveryCount
-        task1_first = Get-TaskField $result 1 'firstPassPassed'
-        task1_final = Get-TaskField $result 1 'passed'
-        task1_repair = Get-TaskField $result 1 'repairPassed'
-        task1_terminal = Get-TaskField $result 1 'terminalCondition'
-        task2_first = Get-TaskField $result 2 'firstPassPassed'
-        task2_final = Get-TaskField $result 2 'passed'
-        task2_repair = Get-TaskField $result 2 'repairPassed'
-        task2_terminal = Get-TaskField $result 2 'terminalCondition'
-        task3_first = Get-TaskField $result 3 'firstPassPassed'
-        task3_final = Get-TaskField $result 3 'passed'
-        task3_repair = Get-TaskField $result 3 'repairPassed'
-        task3_terminal = Get-TaskField $result 3 'terminalCondition'
+        task1_first = (Get-TaskField $result 1 'firstPassPassed')
+        task1_final = (Get-TaskField $result 1 'passed')
+        task1_repair = (Get-TaskField $result 1 'repairPassed')
+        task1_terminal = (Get-TaskField $result 1 'terminalCondition')
+        task2_first = (Get-TaskField $result 2 'firstPassPassed')
+        task2_final = (Get-TaskField $result 2 'passed')
+        task2_repair = (Get-TaskField $result 2 'repairPassed')
+        task2_terminal = (Get-TaskField $result 2 'terminalCondition')
+        task3_first = (Get-TaskField $result 3 'firstPassPassed')
+        task3_final = (Get-TaskField $result 3 'passed')
+        task3_repair = (Get-TaskField $result 3 'repairPassed')
+        task3_terminal = (Get-TaskField $result 3 'terminalCondition')
         final_changed_files = (@($result.changedFilesFromInitial) -join ';')
         final_created_files = (@($result.createdFilesFromInitial) -join ';')
         final_deleted_files = (@($result.deletedFilesFromInitial) -join ';')
