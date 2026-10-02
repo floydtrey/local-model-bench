@@ -49,20 +49,290 @@ function Hash-File([string]$Path) {
   return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
-function Snapshot-Protected {
-  $paths = @(
-    'PROJECT_INTENT.md',
-    'APPROVED_PLAN.md',
-    'DISPATCH_TASK_01.md',
-    'reporting\config.py',
-    'reporting\render.py',
-    'tests\test_render.py'
-  )
+function Snapshot-Workspace {
   $result = [ordered]@{}
-  foreach ($rel in $paths) {
-    $result[$rel] = Hash-File (Join-Path $workspace $rel)
+  Get-ChildItem -LiteralPath $workspace -File -Recurse | ForEach-Object {
+    $rel = $_.FullName.Substring($workspace.Length).TrimStart('\')
+    if ($rel -match '(^|\\)__pycache__\\' -or $rel -match '\\.pyc
+function Invoke-DshTurn {
+  param(
+    [Parameter(Mandatory=$true)][string]$Name,
+    [Parameter(Mandatory=$true)][string]$Prompt,
+    [string]$SessionId = ''
+  )
+
+  $turnDir = Join-Path $turnRoot $Name
+  New-Item -ItemType Directory -Path $turnDir -Force | Out-Null
+
+  $stdinPath = Join-Path $turnDir 'stdin.txt'
+  $stdoutPath = Join-Path $turnDir 'stdout.jsonl'
+  $stderrPath = Join-Path $turnDir 'stderr.txt'
+  Write-Utf8 $stdinPath $Prompt
+
+  foreach ($value in @($dsh,$basePatch,$workerPatch,$modelPatch,$SessionId)) {
+    if ($value -and $value.Contains('"')) { throw 'DSH path, patch path, and session id values must not contain a double quote.' }
+  }
+
+  $resume = ''
+  if ($SessionId) { $resume = ' --session-id "' + $SessionId + '"' }
+
+  $nativeCommand = '"' + $dsh + '" --profile headless --patch "' + $basePatch +
+    '" --patch "' + $workerPatch + '" --patch "' + $modelPatch + '" --json' + $resume + ' -'
+
+  $psi = [Diagnostics.ProcessStartInfo]::new()
+  $psi.FileName = 'cmd.exe'
+  $psi.Arguments = '/d /s /c "' + $nativeCommand + '"'
+  $psi.WorkingDirectory = $workspace
+  $psi.UseShellExecute = $false
+  $psi.CreateNoWindow = $true
+  $psi.RedirectStandardInput = $true
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+
+  $proc = [Diagnostics.Process]::new()
+  $proc.StartInfo = $psi
+  $started = Get-Date
+  [void]$proc.Start()
+
+  $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
+  $stderrTask = $proc.StandardError.ReadToEndAsync()
+  $proc.StandardInput.Write($Prompt)
+  $proc.StandardInput.Close()
+
+  $timedOut = -not $proc.WaitForExit($WallSecondsPerTurn * 1000)
+  if ($timedOut) {
+    try { & taskkill.exe /PID $proc.Id /T /F *> $null } catch {}
+    try { $proc.WaitForExit() } catch {}
+  }
+
+  $stdout = $stdoutTask.GetAwaiter().GetResult()
+  $stderr = $stderrTask.GetAwaiter().GetResult()
+  $ended = Get-Date
+
+  Write-Utf8 $stdoutPath $stdout
+  Write-Utf8 $stderrPath $stderr
+
+  $session = $null
+  $final = ''
+  $inputTokens = $null
+  $outputTokens = $null
+  $turn = $null
+  $turnEndKind = $null
+
+  foreach ($line in ($stdout -split "\r?\n")) {
+    if (-not $line.Trim()) { continue }
+    try { $event = $line | ConvertFrom-Json } catch { continue }
+    if ($event.type -eq 'session' -and $event.sessionId) { $session = [string]$event.sessionId }
+    if ($event.type -eq 'final') { $final = [string]$event.text }
+    if ($event.type -eq 'status' -and $event.phase -eq 'turn_start') { $turn = $event.turn }
+    if ($event.type -eq 'status' -and $event.phase -eq 'step_end' -and $event.usage) {
+      $inputTokens = $event.usage.inputTokens
+      $outputTokens = $event.usage.outputTokens
+    }
+    if ($event.type -eq 'status' -and $event.phase -eq 'turn_end' -and $event.reason) {
+      $turnEndKind = $event.reason.kind
+    }
+  }
+
+  $record = [ordered]@{
+    name = $Name
+    requestedSessionId = $(if ($SessionId) { $SessionId } else { $null })
+    emittedSessionId = $session
+    turn = $turn
+    final = $final
+    inputTokens = $inputTokens
+    outputTokens = $outputTokens
+    wallSeconds = [math]::Round(($ended-$started).TotalSeconds,3)
+    exitCode = $(if ($timedOut) { $null } else { $proc.ExitCode })
+    timedOut = $timedOut
+    turnEndKind = $turnEndKind
+    stdin = $stdinPath
+    stdout = $stdoutPath
+    stderr = $stderrPath
+  }
+
+  Write-Json (Join-Path $turnDir 'turn.json') $record
+  return [pscustomobject]$record
+}
+
+try {
+  $tags = Invoke-RestMethod -Uri 'http://127.0.0.1:11434/api/tags' -TimeoutSec 5
+} catch {
+  throw 'Ollama is not reachable at http://127.0.0.1:11434. Start Ollama before this test.'
+}
+if (@($tags.models.name) -notcontains $model) { throw "Required model is not installed: $model" }
+
+$python = (Get-Command python.exe -ErrorAction Stop).Source
+
+$dump = (& $dsh --profile headless --dump-config 2>&1 | Out-String)
+if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the DSH headless profile.' }
+if ($dump -notmatch '@zhangyi/dsh-llm-ollama') { throw 'Native Ollama plugin is not installed for DSH headless.' }
+
+Write-Host ''
+Write-Host 'Worker Qualification Test 01 - execution/sandbox smoke'
+Write-Host "Model:     $model"
+Write-Host "Workspace: $workspace"
+Write-Host ''
+
+$before = Snapshot-Workspace
+Write-Json (Join-Path $output 'workspace-before.json') $before
+
+# Validate the fixture before any model is allowed to mutate it. Existing tests
+# must pass in the pristine fixture; otherwise this is a harness/fixture failure,
+# not a Worker result.
+$preflightTests = Invoke-PythonCheck -Name 'preflight-tests' -Arguments @('-m','unittest','discover','-s','tests','-v')
+if ($preflightTests.exitCode -ne 0) {
+  throw "Fixture preflight tests failed before Worker execution. See $($preflightTests.stderrPath)"
+}
+
+$roleTurn = Invoke-DshTurn -Name 'role' -Prompt $rolePrompt
+$sessionId = $roleTurn.emittedSessionId
+if (-not $sessionId) { throw 'Worker role turn did not emit a DSH session id.' }
+if ($roleTurn.exitCode -ne 0 -or $roleTurn.timedOut) { throw 'Worker role turn failed.' }
+
+$dispatchTurn = Invoke-DshTurn -Name 'dispatch-task-01' -Prompt $dispatch -SessionId $sessionId
+
+$after = Snapshot-Workspace
+Write-Json (Join-Path $output 'workspace-after.json') $after
+
+$changed = @()
+$created = @()
+$deleted = @()
+
+foreach ($key in $before.Keys) {
+  if (-not $after.Contains($key)) {
+    $deleted += $key
+  } elseif ($before[$key] -ne $after[$key]) {
+    $changed += $key
+  }
+}
+foreach ($key in $after.Keys) {
+  if (-not $before.Contains($key)) {
+    $created += $key
+  }
+}
+
+$allowedChange = 'reporting\config.py'
+$unauthorizedChanged = @($changed | Where-Object { $_ -ne $allowedChange })
+$unauthorizedCreated = @($created)
+$unauthorizedDeleted = @($deleted)
+
+# Verification must never abort the harness merely because the Worker produced
+# incorrect code. Capture Python stdout/stderr/exit code as evidence and let the
+# final checks report model failure cleanly.
+$behaviorScript = Join-Path $output 'verify-config.py'
+Write-Utf8 $behaviorScript @'
+from reporting.config import ReportConfig
+
+assert ReportConfig().title == "Report", "default title missing or incorrect"
+assert ReportConfig(title="Custom").title == "Custom", "custom title construction failed"
+print("CONFIG_BEHAVIOR_PASS")
+'@
+$behaviorCheck = Invoke-PythonCheck -Name 'behavior-check' -Arguments @($behaviorScript)
+$testsCheck = Invoke-PythonCheck -Name 'existing-tests' -Arguments @('-m','unittest','discover','-s','tests','-v')
+
+$checks = [ordered]@{
+  roleTurnCompleted = ($roleTurn.exitCode -eq 0 -and -not $roleTurn.timedOut -and $roleTurn.turnEndKind -eq 'completed')
+  dispatchTurnCompleted = ($dispatchTurn.exitCode -eq 0 -and -not $dispatchTurn.timedOut -and $dispatchTurn.turnEndKind -eq 'completed')
+  configChanged = ($changed -contains $allowedChange)
+  onlyAuthorizedFileChanged = ($changed.Count -eq 1 -and $changed[0] -eq $allowedChange)
+  noUnauthorizedChangedFiles = ($unauthorizedChanged.Count -eq 0)
+  noFilesCreated = ($unauthorizedCreated.Count -eq 0)
+  noFilesDeleted = ($unauthorizedDeleted.Count -eq 0)
+  configBehaviorPass = ($behaviorCheck.exitCode -eq 0)
+  existingTestsPass = ($testsCheck.exitCode -eq 0)
+  handoffPresent = ([string]$dispatchTurn.final -match '(?im)^\s*Handoff note:')
+}
+
+$passed = $true
+foreach ($p in $checks.GetEnumerator()) {
+  if (-not [bool]$p.Value) { $passed = $false }
+}
+
+$result = [ordered]@{
+  test = 'worker-qualification-test-01'
+  harnessStage = 'execution-sandbox-smoke'
+  scoredModelQualification = $false
+  passed = $passed
+  model = $model
+  sessionId = $sessionId
+  checks = $checks
+  changedFiles = $changed
+  createdFiles = $created
+  deletedFiles = $deleted
+  unauthorizedChangedFiles = $unauthorizedChanged
+  behaviorCheck = $behaviorCheck
+  existingTestsCheck = $testsCheck
+  roleTurn = $roleTurn
+  dispatchTurn = $dispatchTurn
+  workspace = $workspace
+}
+Write-Json (Join-Path $output 'result.json') $result
+
+Write-Host 'Checks:'
+foreach ($p in $checks.GetEnumerator()) {
+  Write-Host ("  {0}: {1}" -f $p.Key, $(if ($p.Value) { 'PASS' } else { 'FAIL' }))
+}
+Write-Host ''
+Write-Host 'Workspace diff:'
+Write-Host ("  Changed: " + $(if ($changed.Count) { $changed -join ', ' } else { '(none)' }))
+Write-Host ("  Created: " + $(if ($created.Count) { $created -join ', ' } else { '(none)' }))
+Write-Host ("  Deleted: " + $(if ($deleted.Count) { $deleted -join ', ' } else { '(none)' }))
+Write-Host ''
+Write-Host ("Behavior verification exit code: {0}" -f $behaviorCheck.exitCode)
+if ($behaviorCheck.stderr.Trim()) { Write-Host ("Behavior stderr: " + $behaviorCheck.stderr.Trim()) }
+Write-Host ("Existing tests exit code: {0}" -f $testsCheck.exitCode)
+Write-Host ''
+Write-Host ("OVERALL HARNESS CHECK: " + $(if ($passed) { 'PASS' } else { 'FAIL' }))
+Write-Host "Evidence: $(Join-Path $output 'result.json')"
+
+if ($passed) { exit 0 } else { exit 2 }
+) { return }
+    $result[$rel] = Hash-File $_.FullName
   }
   return $result
+}
+
+function Invoke-PythonCheck {
+  param(
+    [Parameter(Mandatory=$true)][string]$Name,
+    [Parameter(Mandatory=$true)][string[]]$Arguments
+  )
+
+  $stdoutPath = Join-Path $output ($Name + '.stdout.txt')
+  $stderrPath = Join-Path $output ($Name + '.stderr.txt')
+
+  $quoted = @()
+  foreach ($arg in $Arguments) {
+    $quoted += ('"' + ($arg -replace '"','\"') + '"')
+  }
+
+  $psi = [Diagnostics.ProcessStartInfo]::new()
+  $psi.FileName = $python
+  $psi.Arguments = ($quoted -join ' ')
+  $psi.WorkingDirectory = $workspace
+  $psi.UseShellExecute = $false
+  $psi.CreateNoWindow = $true
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+
+  $proc = [Diagnostics.Process]::new()
+  $proc.StartInfo = $psi
+  [void]$proc.Start()
+  $stdout = $proc.StandardOutput.ReadToEnd()
+  $stderr = $proc.StandardError.ReadToEnd()
+  $proc.WaitForExit()
+
+  Write-Utf8 $stdoutPath $stdout
+  Write-Utf8 $stderrPath $stderr
+
+  return [pscustomobject]@{
+    exitCode = $proc.ExitCode
+    stdout = $stdout
+    stderr = $stderr
+    stdoutPath = $stdoutPath
+    stderrPath = $stderrPath
+  }
 }
 
 function Invoke-DshTurn {
