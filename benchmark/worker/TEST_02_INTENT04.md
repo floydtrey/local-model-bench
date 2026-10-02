@@ -14,6 +14,18 @@ Canonical sources:
 
 The fixture is a disposable implementation of the project facts described by Intent 04.
 
+## Role boundary correction
+
+Governor Plan B contains four plan tasks, but not every plan task belongs to the Worker role.
+
+Plan B Task 4 is regression-test creation. Under the current pipeline architecture, determining whether adequate tests exist, creating tests when needed, running them, diagnosing bad tests versus real implementation failures, and reporting Pass/Fail belongs to the **Tester** role.
+
+Therefore Worker Test 02 scores only implementation Tasks 1–3.
+
+The first Qwen3.8 smoke executed Task 4 under the Worker role before this routing distinction was corrected. That Task 4 result is role-mismatched evidence and must not invalidate the Worker. Qwen3.8 passed Worker Tasks 1–3 cleanly in that smoke.
+
+The Task 4 specification remains in the repository for future Tester-role qualification, but the Worker runner does not execute it.
+
 ## Promotion from Test 01
 
 Only clean Test 01 passers are in the default Test 02 roster:
@@ -29,14 +41,13 @@ Only clean Test 01 passers are in the default Test 02 roster:
 
 Qwen3.5, GPT-OSS, Granite, and Laguna XS remain documented Test 01 failures/conditional results and are not in the default promotion roster.
 
-## Pipeline
+## Worker pipeline
 
-Intent 04 is executed as four bounded Worker assignments matching Plan B:
+Intent 04 is executed as three bounded Worker assignments matching the implementation portion of Plan B:
 
 1. register `export-csv` parser surface;
 2. implement service-backed stdout CSV formatting;
-3. implement `--output` file/error behavior;
-4. add CLI regression tests.
+3. implement `--output` file/error behavior.
 
 Each task uses a new DSH Worker session. Model weights may remain resident, but conversational role state is not shared between task sessions.
 
@@ -50,54 +61,53 @@ Every dispatch injects:
 - explicit Windows/current-working-directory runtime context;
 - the task authority boundary.
 
+The complete approved plan remains visible, including the later Tester-owned task, so the Worker must still respect role/task authority and stop after its bounded implementation task.
+
 The same disposable project workspace persists across tasks, so later Workers see the real files produced by prerequisite Workers.
 
 ## Handoff
 
 A task must end with `Handoff note:`.
 
-The runner extracts that note and injects it verbatim into the next dependent task. The next dispatch is saved as evidence, as is the exact prerequisite handoff.
+The runner extracts that note and injects it verbatim into the next dependent Worker task. The next dispatch is saved as evidence, as is the exact prerequisite handoff.
 
-A missing handoff fails the task and stops that candidate's pipeline.
+A missing handoff fails the task and stops that candidate's dependent Worker pipeline.
 
 ## Scope and later-task restraint
 
-Tasks 1–3 may modify only `inventory/cli.py`.
+Worker Tasks 1–3 may modify only `inventory/cli.py`.
 
-Task 4 may modify only `tests/test_cli.py`.
+No Worker task authorizes helper files.
 
-No task authorizes helper files.
+The deterministic stage verifier checks selected later-task boundaries:
 
-The deterministic stage verifier also checks selected later-task boundaries:
-
-- Task 1 must not perform CSV-formatting work early;
+- Task 1 must not perform Task 2 CSV-formatting work early;
 - Task 2 must not successfully perform Task 3 file-output behavior early.
 
-Any task failure stops that candidate's dependent pipeline.
+Plan B Task 4 remains visible as context but is not Worker authority.
 
-## Verification
+## Verification versus Tester role
 
-Before model execution:
+The benchmark harness still runs deterministic external verification after each Worker task. This is **assessor infrastructure**, not a test of the Worker's ability to author tests.
 
-- the fixture's existing unittest suite must pass;
-- the previously qualified DSH 0.1.6-alpha.2 / dsh-llm-ollama 0.1.17 patched runtime is checked fail-closed.
-
-After every task:
+After every Worker task:
 
 - exact workspace before/after snapshots are compared;
 - unauthorized changes/creations/deletions fail;
-- task-specific deterministic acceptance verification runs outside the model workspace;
-- the full current unittest suite runs;
+- task-specific deterministic acceptance verification runs outside the model;
+- the fixture's existing regression suite runs;
 - handoff presence is checked.
 
-Task 4 additionally requires five recognizable new CLI regression scenarios matching the original intent.
+These external checks determine whether the Worker implementation is correct. They do not require the Worker candidate to create test code.
+
+A later Tester-role benchmark should separately evaluate Plan B Task 4 and the Tester contract.
 
 ## Smoke before batch
 
-Run the Qwen3.8-only smoke first:
+Run the corrected Qwen3.8-only smoke first:
 
 `benchmark/run-worker-intent04-smoke.cmd`
 
-Only after the complete four-task pipeline and harness behavior are validated should the promoted eight-model batch run:
+Only after the three-task Worker pipeline and harness behavior are validated should the promoted eight-model batch run:
 
 `benchmark/run-worker-intent04-batch.cmd`
