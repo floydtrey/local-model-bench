@@ -493,14 +493,10 @@ function New-RepairPacket {
       [void]$lines.Add('Required repair: ' + [string]$criteria.generic.scope_deleted)
       [void]$lines.Add('')
     }
-    if (
-      $Assessment.changedFiles.Count -eq 0 -and
-      $Assessment.createdFiles.Count -eq 0 -and
-      $Assessment.deletedFiles.Count -eq 0
-    ) {
-      [void]$lines.Add('## Required implementation change missing')
-      [void]$lines.Add("Observed: no project file changed for Task $($Task.id).")
-      [void]$lines.Add("Required repair: complete the assigned task in $($Task.allowed) without changing any other path.")
+    if ($Assessment.changedFiles -notcontains $Task.allowed) {
+      [void]$lines.Add('## Required authorized implementation change missing')
+      [void]$lines.Add("Observed: $($Task.allowed) is not present in the final changed-file set for Task $($Task.id).")
+      [void]$lines.Add("Required repair: place the assigned implementation in $($Task.allowed) and keep every other path at its pre-task state.")
       [void]$lines.Add('')
     }
   }
