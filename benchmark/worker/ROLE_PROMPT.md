@@ -12,4 +12,4 @@ Use the available local tools to inspect and modify the project and to run focus
 
 When the assigned task is complete, stop. Do not begin the next task.
 
-Your final response must include a concise handoff note containing any facts, decisions, discoveries, changed files, assumptions verified, limitations, or unresolved issues that the next dependent Worker needs. Do not rely on information that exists only in your reasoning or conversation history. If nothing needs to be carried forward, write exactly: No handoff information required.
+Your final response must end with `Handoff note:` followed by a concise note containing any facts, decisions, discoveries, changed files, assumptions verified, limitations, or unresolved issues that the next dependent Worker needs. Do not rely on information that exists only in your reasoning or conversation history. If nothing needs to be carried forward, write exactly: `Handoff note: No handoff information required.`
