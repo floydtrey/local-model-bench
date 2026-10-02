@@ -35,6 +35,11 @@ $packets = @(
     id = 'packet-c-hard'
     intent = (Join-Path $PSScriptRoot 'planner\intent-05-job-cancellation.md')
     plan = (Join-Path $PSScriptRoot 'governor\plans\plan-c-hard.md')
+  },
+  [pscustomobject]@{
+    id = 'packet-d-contextual-storage'
+    intent = (Join-Path $PSScriptRoot 'planner\intent-06-contextual-storage-backend.md')
+    plan = (Join-Path $PSScriptRoot 'governor\plans\plan-d-contextual-storage.md')
   }
 )
 
