@@ -17,6 +17,7 @@ $fixtureSource = Join-Path $repo 'benchmark\worker\fixture-02'
 $intentPath = Join-Path $repo 'benchmark\planner\intent-04-batch-export.md'
 $planPath = Join-Path $repo 'benchmark\governor\plans\plan-b-medium.md'
 $verifierPath = Join-Path $repo 'benchmark\worker\intent04\verify_stage.py'
+$criteriaPath = Join-Path $repo 'benchmark\worker\intent04\ASSESSOR_CRITERIA.json'
 $dshHome = Join-Path $env:USERPROFILE '.dsh'
 $utf8 = [Text.UTF8Encoding]::new($false)
 
@@ -26,26 +27,33 @@ $tasks = @(
     name = 'register-export-csv'
     spec = (Join-Path $repo 'benchmark\worker\intent04\TASK_01.md')
     allowed = 'inventory\cli.py'
+    gold = (Join-Path $repo 'benchmark\worker\intent04\gold\task-01\inventory\cli.py')
+    goldHandoff = 'Handoff note: Qualification recovery checkpoint. Task 1 parser surface is in the accepted state: export-csv is registered with --include-inactive defaulting false and optional --output parsing. CSV behavior is not implemented yet.'
   },
   [pscustomobject]@{
     id = 2
     name = 'csv-retrieval-formatting'
     spec = (Join-Path $repo 'benchmark\worker\intent04\TASK_02.md')
     allowed = 'inventory\cli.py'
+    gold = (Join-Path $repo 'benchmark\worker\intent04\gold\task-02\inventory\cli.py')
+    goldHandoff = 'Handoff note: Qualification recovery checkpoint. Task 2 accepted state uses list_items(include_inactive=...) and the standard-library csv module to emit exact CSV to stdout with lowercase booleans and correct escaping. --output file writing is not implemented yet.'
   },
   [pscustomobject]@{
     id = 3
     name = 'file-output-errors'
     spec = (Join-Path $repo 'benchmark\worker\intent04\TASK_03.md')
     allowed = 'inventory\cli.py'
+    gold = (Join-Path $repo 'benchmark\worker\intent04\gold\task-03\inventory\cli.py')
+    goldHandoff = 'Handoff note: Qualification recovery checkpoint. Task 3 accepted state preserves stdout export and existing list behavior, writes --output CSV to file without stdout leakage, and reports file-write failures to stderr with non-zero status.'
   }
 )
 
 $required = @(
   $dsh,$basePatch,$workerPatch,$modelPatch,$rolePromptPath,$fixtureSource,
-  $intentPath,$planPath,$verifierPath
+  $intentPath,$planPath,$verifierPath,$criteriaPath
 )
 $required += @($tasks | ForEach-Object { $_.spec })
+$required += @($tasks | ForEach-Object { $_.gold })
 
 foreach ($path in $required) {
   if (-not (Test-Path -LiteralPath $path)) { throw "Missing required path: $path" }
@@ -67,6 +75,7 @@ Get-ChildItem -LiteralPath $fixtureSource -Force | Copy-Item -Destination $works
 $intentText = [IO.File]::ReadAllText($intentPath,$utf8)
 $planText = [IO.File]::ReadAllText($planPath,$utf8)
 $rolePrompt = [IO.File]::ReadAllText($rolePromptPath,$utf8)
+$criteria = Get-Content -LiteralPath $criteriaPath -Raw | ConvertFrom-Json
 [IO.File]::WriteAllText((Join-Path $workspace 'PROJECT_INTENT.md'),$intentText,$utf8)
 [IO.File]::WriteAllText((Join-Path $workspace 'APPROVED_PLAN.md'),$planText,$utf8)
 
@@ -80,7 +89,7 @@ function Write-Utf8 {
 
 function Write-Json {
   param([Parameter(Mandatory=$true)][string]$Path,[Parameter(Mandatory=$true)]$Value)
-  Write-Utf8 -Path $Path -Text ($Value | ConvertTo-Json -Depth 20)
+  Write-Utf8 -Path $Path -Text ($Value | ConvertTo-Json -Depth 24)
 }
 
 function Hash-File {
@@ -104,6 +113,7 @@ function Compare-Snapshots {
   $changed = @()
   $created = @()
   $deleted = @()
+
   foreach ($key in $Before.Keys) {
     if (-not $After.Contains($key)) {
       $deleted += $key
@@ -114,11 +124,42 @@ function Compare-Snapshots {
   foreach ($key in $After.Keys) {
     if (-not $Before.Contains($key)) { $created += $key }
   }
+
   return [pscustomobject]@{
     changed = @($changed)
     created = @($created)
     deleted = @($deleted)
   }
+}
+
+function Backup-Workspace {
+  param([Parameter(Mandatory=$true)][string]$Destination)
+  New-Item -ItemType Directory -Path $Destination -Force | Out-Null
+  Get-ChildItem -LiteralPath $workspace -Force | Copy-Item -Destination $Destination -Recurse -Force
+}
+
+function Remove-PythonCache {
+  Get-ChildItem -LiteralPath $workspace -Directory -Recurse -Force |
+    Where-Object { $_.Name -eq '__pycache__' } |
+    Sort-Object FullName -Descending |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+  Get-ChildItem -LiteralPath $workspace -File -Recurse -Force |
+    Where-Object { $_.Extension -eq '.pyc' } |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+}
+
+function Restore-QualificationCheckpoint {
+  param(
+    [Parameter(Mandatory=$true)][string]$BaselineDirectory,
+    [Parameter(Mandatory=$true)]$Task
+  )
+
+  Get-ChildItem -LiteralPath $workspace -Force | Remove-Item -Recurse -Force
+  Get-ChildItem -LiteralPath $BaselineDirectory -Force | Copy-Item -Destination $workspace -Recurse -Force
+
+  $goldDestination = Join-Path $workspace $Task.allowed
+  Copy-Item -LiteralPath $Task.gold -Destination $goldDestination -Force
+  Remove-PythonCache
 }
 
 function Invoke-ProcessCapture {
@@ -130,6 +171,7 @@ function Invoke-ProcessCapture {
     [Parameter(Mandatory=$true)][string]$StderrPath,
     [int]$TimeoutSeconds = 120
   )
+
   $psi = [Diagnostics.ProcessStartInfo]::new()
   $psi.FileName = $FileName
   $psi.Arguments = $Arguments
@@ -182,6 +224,7 @@ function Invoke-DshTurn {
 
   $turnDir = Join-Path $turnRoot $Name
   New-Item -ItemType Directory -Path $turnDir -Force | Out-Null
+
   $stdinPath = Join-Path $turnDir 'stdin.txt'
   $stdoutPath = Join-Path $turnDir 'stdout.jsonl'
   $stderrPath = Join-Path $turnDir 'stderr.txt'
@@ -272,6 +315,7 @@ function Invoke-DshTurn {
     stdout = $stdoutPath
     stderr = $stderrPath
   }
+
   Write-Json -Path (Join-Path $turnDir 'turn.json') -Value $record
   return [pscustomobject]$record
 }
@@ -283,12 +327,232 @@ function Get-Handoff {
   return ('Handoff note: ' + $match.Groups[1].Value.Trim())
 }
 
+function Invoke-StageVerifier {
+  param(
+    [Parameter(Mandatory=$true)][int]$TaskId,
+    [Parameter(Mandatory=$true)][string]$EvidenceDirectory,
+    [Parameter(Mandatory=$true)][string]$Label
+  )
+
+  $stdoutPath = Join-Path $EvidenceDirectory ($Label + '-verifier.stdout.txt')
+  $stderrPath = Join-Path $EvidenceDirectory ($Label + '-verifier.stderr.txt')
+  $run = Invoke-ProcessCapture -FileName $python -Arguments ('"' + $verifierPath + '" ' + $TaskId + ' --json') -WorkingDirectory $workspace -StdoutPath $stdoutPath -StderrPath $stderrPath -TimeoutSeconds 120
+
+  if ($run.timedOut) { throw "Deterministic verifier timed out for Task $TaskId." }
+
+  $parsed = $null
+  try {
+    $parsed = $run.stdout.Trim() | ConvertFrom-Json
+  } catch {
+    throw "Deterministic verifier did not emit parseable JSON for Task $TaskId. See $stdoutPath and $stderrPath"
+  }
+
+  return [pscustomobject]@{
+    process = $run
+    result = $parsed
+  }
+}
+
+function Invoke-RegressionSuite {
+  param(
+    [Parameter(Mandatory=$true)][string]$EvidenceDirectory,
+    [Parameter(Mandatory=$true)][string]$Label
+  )
+
+  return Invoke-ProcessCapture -FileName $python -Arguments '-m unittest discover -s tests -v' -WorkingDirectory $workspace -StdoutPath (Join-Path $EvidenceDirectory ($Label + '-regression.stdout.txt')) -StderrPath (Join-Path $EvidenceDirectory ($Label + '-regression.stderr.txt')) -TimeoutSeconds 120
+}
+
+function Assess-WorkerAttempt {
+  param(
+    [Parameter(Mandatory=$true)]$Task,
+    [Parameter(Mandatory=$true)]$Before,
+    [Parameter(Mandatory=$true)]$Turn,
+    [Parameter(Mandatory=$true)][string]$EvidenceDirectory,
+    [Parameter(Mandatory=$true)][string]$Label,
+    [Parameter(Mandatory=$true)][bool]$HandoffInjected
+  )
+
+  $after = Snapshot-Workspace
+  Write-Json -Path (Join-Path $EvidenceDirectory ($Label + '-workspace-after.json')) -Value $after
+  $diff = Compare-Snapshots -Before $Before -After $after
+
+  $unauthorizedChanged = @($diff.changed | Where-Object { $_ -ne $Task.allowed })
+  $scopePass = (
+    $diff.changed.Count -eq 1 -and
+    $diff.changed[0] -eq $Task.allowed -and
+    $unauthorizedChanged.Count -eq 0 -and
+    $diff.created.Count -eq 0 -and
+    $diff.deleted.Count -eq 0
+  )
+
+  $verify = Invoke-StageVerifier -TaskId $Task.id -EvidenceDirectory $EvidenceDirectory -Label $Label
+  $tests = Invoke-RegressionSuite -EvidenceDirectory $EvidenceDirectory -Label $Label
+  $handoff = Get-Handoff -FinalText ([string]$Turn.final)
+  $handoffPresent = ($null -ne $handoff)
+
+  $dispatchCompleted = (
+    $Turn.exitCode -eq 0 -and
+    -not $Turn.timedOut -and
+    $Turn.turnEndKind -eq 'completed'
+  )
+
+  $checks = [ordered]@{
+    dispatchCompleted = $dispatchCompleted
+    prerequisiteHandoffInjected = $HandoffInjected
+    onlyAuthorizedFileChanged = $scopePass
+    noUnauthorizedChangedFiles = ($unauthorizedChanged.Count -eq 0)
+    noFilesCreated = ($diff.created.Count -eq 0)
+    noFilesDeleted = ($diff.deleted.Count -eq 0)
+    stageAcceptancePass = ([bool]$verify.result.passed -and $verify.process.exitCode -eq 0)
+    regressionTestsPass = (-not $tests.timedOut -and $tests.exitCode -eq 0)
+    handoffPresent = $handoffPresent
+  }
+
+  $passed = $true
+  foreach ($entry in $checks.GetEnumerator()) {
+    if (-not [bool]$entry.Value) { $passed = $false }
+  }
+
+  return [pscustomobject][ordered]@{
+    passed = $passed
+    checks = $checks
+    changedFiles = @($diff.changed)
+    createdFiles = @($diff.created)
+    deletedFiles = @($diff.deleted)
+    unauthorizedChangedFiles = $unauthorizedChanged
+    verifier = $verify
+    regressionTests = $tests
+    emittedHandoff = $handoff
+  }
+}
+
+function Get-TrimmedEvidence {
+  param(
+    [AllowEmptyString()][string]$Text,
+    [int]$MaxChars = 3000
+  )
+  if ([string]::IsNullOrWhiteSpace($Text)) { return '(no diagnostic text)' }
+  $trimmed = $Text.Trim()
+  if ($trimmed.Length -le $MaxChars) { return $trimmed }
+  return $trimmed.Substring(0,$MaxChars) + [Environment]::NewLine + '[diagnostic truncated]'
+}
+
+function Get-Criterion {
+  param([Parameter(Mandatory=$true)][string]$CheckId)
+  $property = $criteria.checks.PSObject.Properties[$CheckId]
+  if ($null -eq $property) { return $null }
+  return $property.Value
+}
+
+function New-RepairPacket {
+  param(
+    [Parameter(Mandatory=$true)]$Task,
+    [Parameter(Mandatory=$true)]$Assessment
+  )
+
+  $lines = New-Object System.Collections.Generic.List[string]
+  [void]$lines.Add('# REPAIR_REQUIRED')
+  [void]$lines.Add('')
+  [void]$lines.Add("Assigned task: Intent 04 / Task $($Task.id) - $($Task.name)")
+  [void]$lines.Add('')
+  [void]$lines.Add('The deterministic assessor found the following acceptance problems. Repair only these failures while preserving requirements that are already satisfied.')
+  [void]$lines.Add('')
+
+  foreach ($failure in @($Assessment.verifier.result.failures)) {
+    $checkId = [string]$failure.check_id
+    $criterion = Get-Criterion -CheckId $checkId
+    [void]$lines.Add("## $checkId")
+    if ($null -ne $criterion) {
+      [void]$lines.Add("Requirement: $($criterion.requirement_reference)")
+    }
+    [void]$lines.Add("Observed: $([string]$failure.observed)")
+    if ($null -ne $criterion) {
+      [void]$lines.Add("Required repair: $($criterion.repair_criterion)")
+    } else {
+      [void]$lines.Add('Required repair: Restore the assigned task acceptance behavior without expanding scope.')
+    }
+    [void]$lines.Add('')
+  }
+
+  if (-not [bool]$Assessment.checks.onlyAuthorizedFileChanged) {
+    if ($Assessment.unauthorizedChangedFiles.Count -gt 0) {
+      [void]$lines.Add('## Unauthorized changed paths')
+      [void]$lines.Add('Observed: ' + ($Assessment.unauthorizedChangedFiles -join ', '))
+      [void]$lines.Add('Required repair: ' + [string]$criteria.generic.scope_changed)
+      [void]$lines.Add('')
+    }
+    if ($Assessment.createdFiles.Count -gt 0) {
+      [void]$lines.Add('## Unauthorized created paths')
+      [void]$lines.Add('Observed: ' + ($Assessment.createdFiles -join ', '))
+      [void]$lines.Add('Required repair: ' + [string]$criteria.generic.scope_created)
+      [void]$lines.Add('')
+    }
+    if ($Assessment.deletedFiles.Count -gt 0) {
+      [void]$lines.Add('## Unauthorized deleted paths')
+      [void]$lines.Add('Observed: ' + ($Assessment.deletedFiles -join ', '))
+      [void]$lines.Add('Required repair: ' + [string]$criteria.generic.scope_deleted)
+      [void]$lines.Add('')
+    }
+    if (
+      $Assessment.changedFiles.Count -eq 0 -and
+      $Assessment.createdFiles.Count -eq 0 -and
+      $Assessment.deletedFiles.Count -eq 0
+    ) {
+      [void]$lines.Add('## Required implementation change missing')
+      [void]$lines.Add("Observed: no project file changed for Task $($Task.id).")
+      [void]$lines.Add("Required repair: complete the assigned task in $($Task.allowed) without changing any other path.")
+      [void]$lines.Add('')
+    }
+  }
+
+  if (-not [bool]$Assessment.checks.regressionTestsPass) {
+    [void]$lines.Add('## Existing regression suite failed')
+    [void]$lines.Add('Observed test evidence:')
+    [void]$lines.Add('BEGIN_TEST_EVIDENCE')
+    [void]$lines.Add((Get-TrimmedEvidence -Text ([string]$Assessment.regressionTests.stderr)))
+    [void]$lines.Add('END_TEST_EVIDENCE')
+    [void]$lines.Add('Required repair: ' + [string]$criteria.generic.regression)
+    [void]$lines.Add('')
+  }
+
+  if (-not [bool]$Assessment.checks.handoffPresent) {
+    [void]$lines.Add('## Completion handoff missing')
+    [void]$lines.Add('Required repair: ' + [string]$criteria.generic.handoff)
+    [void]$lines.Add('')
+  }
+
+  [void]$lines.Add('## Authority boundary')
+  [void]$lines.Add("You remain authorized to modify only: $($Task.allowed)")
+  [void]$lines.Add('Do not modify tests. Do not begin a later plan task. Do not create helper files.')
+  [void]$lines.Add('')
+  [void]$lines.Add('This is the single repair attempt for this qualification task. Use the current workspace state, make the smallest repair that satisfies the criteria above, run focused checks if useful, then stop.')
+  [void]$lines.Add('Your final response must end with Handoff note: followed by the concise information needed by the next dependent Worker.')
+
+  return ($lines -join [Environment]::NewLine)
+}
+
+function Get-TerminalCondition {
+  param(
+    [Parameter(Mandatory=$true)]$Turn,
+    [Parameter(Mandatory=$true)][bool]$RoleReady
+  )
+
+  if (-not $RoleReady) { return 'role_init_failure' }
+  if ($Turn.timedOut) { return 'worker_timeout' }
+  if ($Turn.exitCode -ne 0 -or $Turn.turnEndKind -ne 'completed') {
+    return 'runtime_or_interface_failure'
+  }
+  return 'completed'
+}
+
 try {
   $tags = Invoke-RestMethod -Uri 'http://127.0.0.1:11434/api/tags' -TimeoutSec 5
 } catch {
   throw 'Ollama is not reachable at http://127.0.0.1:11434.'
 }
-if (@($tags.models.name) -notcontains $ModelId) { throw "Required model is not installed: $ModelId" }
+if (@($tags.models.name) -notcontains $ModelId) {
+  throw "Required model is not installed: $ModelId"
+}
 
 $python = (Get-Command python.exe -ErrorAction Stop).Source
 $dshVersion = (& $dsh --version 2>&1 | Out-String).Trim()
@@ -328,9 +592,10 @@ foreach ($relative in $requiredFixtureFiles) {
 }
 
 Write-Host ''
-Write-Host 'Worker Qualification Test 02 - Intent 04 injected pipeline'
+Write-Host 'Worker Qualification Test 02 - Intent 04 deterministic-assessor pipeline'
 Write-Host "Model:     $ModelId"
 Write-Host "Workspace: $workspace"
+Write-Host 'Repair cap: one deterministic repair attempt per task'
 Write-Host ''
 
 $preflight = Invoke-ProcessCapture -FileName $python -Arguments '-m unittest discover -s tests -v' -WorkingDirectory $workspace -StdoutPath (Join-Path $output 'preflight-tests.stdout.txt') -StderrPath (Join-Path $output 'preflight-tests.stderr.txt') -TimeoutSeconds 120
@@ -343,15 +608,20 @@ Write-Json -Path (Join-Path $output 'workspace-initial.json') -Value $pipelineSt
 
 $taskResults = @()
 $previousHandoff = $null
-$pipelineStoppedAfter = $null
+$failedTaskIds = @()
+$repairedTaskCount = 0
+$firstPassTaskCount = 0
+$qualificationRecoveryCount = 0
 
 foreach ($task in $tasks) {
   $taskLabel = ('task-{0:D2}-{1}' -f $task.id,$task.name)
   $stageDir = Join-Path $taskRoot $taskLabel
+  $baselineDir = Join-Path $stageDir 'baseline-workspace'
   New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
 
   $before = Snapshot-Workspace
   Write-Json -Path (Join-Path $stageDir 'workspace-before.json') -Value $before
+  Backup-Workspace -Destination $baselineDir
 
   $taskSpec = [IO.File]::ReadAllText($task.spec,$utf8)
   $handoffText = if ($task.id -eq 1) {
@@ -359,11 +629,11 @@ foreach ($task in $tasks) {
   } elseif ($null -ne $previousHandoff) {
     $previousHandoff
   } else {
-    'Prerequisite handoff missing.'
+    throw "Harness error: Task $($task.id) has no prerequisite handoff."
   }
 
   $dispatch = @"
-# Worker Dispatch — Intent 04 / Task $($task.id)
+# Worker Dispatch - Intent 04 / Task $($task.id)
 
 ## Original project intent
 
@@ -434,113 +704,130 @@ This turn establishes your Worker role only. Do not inspect the workspace, call 
     }
   }
 
-  $after = Snapshot-Workspace
-  Write-Json -Path (Join-Path $stageDir 'workspace-after.json') -Value $after
-  $diff = Compare-Snapshots -Before $before -After $after
-  $unauthorizedChanged = @($diff.changed | Where-Object { $_ -ne $task.allowed })
-  $scopePass = (
-    $diff.changed.Count -eq 1 -and
-    $diff.changed[0] -eq $task.allowed -and
-    $unauthorizedChanged.Count -eq 0 -and
-    $diff.created.Count -eq 0 -and
-    $diff.deleted.Count -eq 0
-  )
+  $handoffInjected = if ($task.id -eq 1) { $true } else { $dispatch.Contains($handoffText) }
+  $first = Assess-WorkerAttempt -Task $task -Before $before -Turn $dispatchTurn -EvidenceDirectory $stageDir -Label 'first-pass' -HandoffInjected $handoffInjected
 
-  $verify = Invoke-ProcessCapture -FileName $python -Arguments ('"' + $verifierPath + '" ' + $task.id) -WorkingDirectory $workspace -StdoutPath (Join-Path $stageDir 'stage-verifier.stdout.txt') -StderrPath (Join-Path $stageDir 'stage-verifier.stderr.txt') -TimeoutSeconds 120
-  $tests = Invoke-ProcessCapture -FileName $python -Arguments '-m unittest discover -s tests -v' -WorkingDirectory $workspace -StdoutPath (Join-Path $stageDir 'regression-tests.stdout.txt') -StderrPath (Join-Path $stageDir 'regression-tests.stderr.txt') -TimeoutSeconds 120
+  $repairAttempted = $false
+  $repairPacket = $null
+  $repairTurn = $null
+  $repair = $null
+  $finalAssessment = $first
+  $terminalCondition = Get-TerminalCondition -Turn $dispatchTurn -RoleReady $roleReady
 
-  $handoff = Get-Handoff -FinalText ([string]$dispatchTurn.final)
-  $handoffPresent = ($null -ne $handoff)
-  if ($handoffPresent) { Write-Utf8 -Path (Join-Path $stageDir 'handoff.txt') -Text $handoff }
+  if ($first.passed) {
+    $firstPassTaskCount++
+  } elseif ($roleReady -and [bool]$first.checks.dispatchCompleted -and [bool]$first.checks.prerequisiteHandoffInjected) {
+    $repairAttempted = $true
+    $repairPacket = New-RepairPacket -Task $task -Assessment $first
+    Write-Utf8 -Path (Join-Path $stageDir 'repair-packet.md') -Text $repairPacket
 
-  $handoffInjected = if ($task.id -eq 1) {
-    $true
-  } else {
-    $null -ne $previousHandoff -and $dispatch.Contains($previousHandoff)
+    $repairTurn = Invoke-DshTurn -Name ($taskLabel + '-repair') -Prompt $repairPacket -SessionId $sessionId -EnableWorkerTools
+    $repair = Assess-WorkerAttempt -Task $task -Before $before -Turn $repairTurn -EvidenceDirectory $stageDir -Label 'repair-pass' -HandoffInjected $handoffInjected
+    $finalAssessment = $repair
+
+    if ($repair.passed) {
+      $repairedTaskCount++
+      $terminalCondition = 'repaired'
+    } else {
+      $repairTerminal = Get-TerminalCondition -Turn $repairTurn -RoleReady $roleReady
+      $terminalCondition = if ($repairTerminal -eq 'completed') { 'failed_after_repair' } else { $repairTerminal }
+    }
   }
 
-  $checks = [ordered]@{
-    roleReady = $roleReady
-    dispatchCompleted = (
-      $dispatchTurn.exitCode -eq 0 -and
-      -not $dispatchTurn.timedOut -and
-      $dispatchTurn.turnEndKind -eq 'completed'
-    )
-    prerequisiteHandoffInjected = $handoffInjected
-    onlyAuthorizedFileChanged = $scopePass
-    noUnauthorizedChangedFiles = ($unauthorizedChanged.Count -eq 0)
-    noFilesCreated = ($diff.created.Count -eq 0)
-    noFilesDeleted = ($diff.deleted.Count -eq 0)
-    stageAcceptancePass = (-not $verify.timedOut -and $verify.exitCode -eq 0)
-    regressionTestsPass = (-not $tests.timedOut -and $tests.exitCode -eq 0)
-    handoffPresent = $handoffPresent
+  $taskPassed = [bool]$finalAssessment.passed
+  $acceptedHandoff = if ($taskPassed) { $finalAssessment.emittedHandoff } else { $null }
+  $recoveryUsed = $false
+  $nextTaskHandoff = $acceptedHandoff
+  $goldVerification = $null
+  $goldRegression = $null
+
+  if (-not $taskPassed) {
+    $failedTaskIds += $task.id
+
+    if ($task.id -lt 3) {
+      Restore-QualificationCheckpoint -BaselineDirectory $baselineDir -Task $task
+      $goldVerification = Invoke-StageVerifier -TaskId $task.id -EvidenceDirectory $stageDir -Label 'gold-recovery'
+      $goldRegression = Invoke-RegressionSuite -EvidenceDirectory $stageDir -Label 'gold-recovery'
+
+      if (-not [bool]$goldVerification.result.passed -or $goldVerification.process.exitCode -ne 0 -or $goldRegression.timedOut -or $goldRegression.exitCode -ne 0) {
+        throw "Gold qualification checkpoint failed validation for Task $($task.id)."
+      }
+
+      $recoveryUsed = $true
+      $qualificationRecoveryCount++
+      $nextTaskHandoff = [string]$task.goldHandoff
+      Write-Utf8 -Path (Join-Path $stageDir 'qualification-recovery-handoff.txt') -Text $nextTaskHandoff
+    }
   }
 
-  $taskPassed = $true
-  foreach ($entry in $checks.GetEnumerator()) {
-    if (-not [bool]$entry.Value) { $taskPassed = $false }
+  if ($task.id -lt 3) {
+    if ([string]::IsNullOrWhiteSpace([string]$nextTaskHandoff)) {
+      throw "Harness error: no accepted or recovery handoff available after Task $($task.id)."
+    }
+    $previousHandoff = $nextTaskHandoff
   }
 
   $taskResult = [ordered]@{
     taskId = $task.id
     taskName = $task.name
     passed = $taskPassed
+    firstPassPassed = [bool]$first.passed
+    repairAttempted = $repairAttempted
+    repairPassed = $(if ($repairAttempted) { [bool]$repair.passed } else { $null })
+    terminalCondition = $terminalCondition
+    qualificationRecoveryUsed = $recoveryUsed
     allowedChange = $task.allowed
-    checks = $checks
-    changedFiles = @($diff.changed)
-    createdFiles = @($diff.created)
-    deletedFiles = @($diff.deleted)
-    unauthorizedChangedFiles = $unauthorizedChanged
     roleTurn = $roleTurn
     dispatchTurn = $dispatchTurn
-    verifier = $verify
-    regressionTests = $tests
-    prerequisiteHandoff = $handoffText
-    emittedHandoff = $handoff
+    firstPass = $first
+    repairPacket = $repairPacket
+    repairTurn = $repairTurn
+    repairPass = $repair
+    acceptedHandoff = $acceptedHandoff
+    nextTaskHandoff = $nextTaskHandoff
+    goldVerification = $goldVerification
+    goldRegression = $goldRegression
   }
 
   Write-Json -Path (Join-Path $stageDir 'result.json') -Value $taskResult
   $taskResults += [pscustomobject]$taskResult
 
   Write-Host ("Task {0}: {1}" -f $task.id,$task.name)
-  foreach ($entry in $checks.GetEnumerator()) {
-    Write-Host ("  {0}: {1}" -f $entry.Key,$(if ($entry.Value) { 'PASS' } else { 'FAIL' }))
+  Write-Host ("  First pass: {0}" -f $(if ($first.passed) { 'PASS' } else { 'FAIL' }))
+  if ($repairAttempted) {
+    Write-Host ("  Repair attempt: {0}" -f $(if ($repair.passed) { 'PASS' } else { 'FAIL' }))
+  } else {
+    Write-Host '  Repair attempt: (not used)'
   }
-  Write-Host ("  Changed: " + $(if ($diff.changed.Count) { $diff.changed -join ', ' } else { '(none)' }))
-  Write-Host ("  Created: " + $(if ($diff.created.Count) { $diff.created -join ', ' } else { '(none)' }))
-  Write-Host ("  Deleted: " + $(if ($diff.deleted.Count) { $diff.deleted -join ', ' } else { '(none)' }))
-  Write-Host ("  TASK RESULT: " + $(if ($taskPassed) { 'PASS' } else { 'FAIL' }))
+  Write-Host ("  Final task result: {0}" -f $(if ($taskPassed) { 'PASS' } else { 'FAIL' }))
+  Write-Host ("  Terminal condition: {0}" -f $terminalCondition)
+  Write-Host ("  Qualification recovery for next task: {0}" -f $(if ($recoveryUsed) { 'YES' } else { 'NO' }))
+  Write-Host ("  Final changed: " + $(if ($finalAssessment.changedFiles.Count) { $finalAssessment.changedFiles -join ', ' } else { '(none)' }))
+  Write-Host ("  Final created: " + $(if ($finalAssessment.createdFiles.Count) { $finalAssessment.createdFiles -join ', ' } else { '(none)' }))
+  Write-Host ("  Final deleted: " + $(if ($finalAssessment.deletedFiles.Count) { $finalAssessment.deletedFiles -join ', ' } else { '(none)' }))
   Write-Host ''
-
-  if (-not $taskPassed) {
-    $pipelineStoppedAfter = $task.id
-    break
-  }
-
-  $previousHandoff = $handoff
 }
 
 $pipelineEnd = Snapshot-Workspace
 Write-Json -Path (Join-Path $output 'workspace-final.json') -Value $pipelineEnd
 $pipelineDiff = Compare-Snapshots -Before $pipelineStart -After $pipelineEnd
 
-$pipelinePassed = ($taskResults.Count -eq 3)
-if ($pipelinePassed) {
-  foreach ($taskResult in $taskResults) {
-    if (-not [bool]$taskResult.passed) { $pipelinePassed = $false }
-  }
-}
+$pipelinePassed = ($failedTaskIds.Count -eq 0 -and $taskResults.Count -eq 3)
 
 $result = [ordered]@{
   test = 'worker-qualification-test-02-intent04'
+  architecture = 'deterministic-assessor-with-one-repair-v1'
   originalIntent = 'benchmark/planner/intent-04-batch-export.md'
   approvedPlan = 'benchmark/governor/plans/plan-b-medium.md'
   model = $ModelId
   passed = $pipelinePassed
   completedTaskCount = $taskResults.Count
-  stoppedAfterTask = $pipelineStoppedAfter
+  firstPassTaskCount = $firstPassTaskCount
+  repairedTaskCount = $repairedTaskCount
+  failedTaskIds = @($failedTaskIds)
+  qualificationRecoveryCount = $qualificationRecoveryCount
   tasks = @($taskResults)
-  testerTaskReserved = 'Approved Plan B Task 4 (regression-test creation) is reserved for the Tester role and is not part of Worker qualification.'
+  testerTaskReserved = 'Approved Plan B Task 4 is reserved for the Tester role and is not part of Worker qualification.'
   changedFilesFromInitial = @($pipelineDiff.changed)
   createdFilesFromInitial = @($pipelineDiff.created)
   deletedFilesFromInitial = @($pipelineDiff.deleted)
@@ -550,9 +837,13 @@ $result = [ordered]@{
 
 Write-Json -Path (Join-Path $output 'result.json') -Value $result
 
-Write-Host 'Intent 04 pipeline summary:'
-Write-Host ("  Completed Worker tasks: {0}/3" -f $taskResults.Count)
-Write-Host ("  OVERALL: " + $(if ($pipelinePassed) { 'PASS' } else { 'FAIL' }))
+Write-Host 'Intent 04 Worker qualification summary:'
+Write-Host ("  Tasks attempted: {0}/3" -f $taskResults.Count)
+Write-Host ("  First-pass tasks: {0}/3" -f $firstPassTaskCount)
+Write-Host ("  Repaired tasks: {0}" -f $repairedTaskCount)
+Write-Host ("  Failed tasks: " + $(if ($failedTaskIds.Count) { $failedTaskIds -join ', ' } else { '(none)' }))
+Write-Host ("  Gold recoveries used only to continue qualification: {0}" -f $qualificationRecoveryCount)
+Write-Host ("  OVERALL WORKER RESULT: " + $(if ($pipelinePassed) { 'PASS' } else { 'FAIL' }))
 Write-Host "  Evidence: $(Join-Path $output 'result.json')"
 
 if ($pipelinePassed) { exit 0 }
