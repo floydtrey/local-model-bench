@@ -49,7 +49,7 @@ Marker: `C_MARKER_9052`
 - B output never contains A's marker.
 - Session A and Session B retain distinct DSH session IDs.
 - The primary model is confirmed absent from Ollama's loaded-model list after the explicit stop.
-- The alternate model is confirmed loaded/used before the original model is resumed.
+- The alternate model is confirmed loaded and completes a turn before the original model is resumed. Exact wording of the alternate model's response is not part of the correctness criterion.
 - DSH can resume A and B after the primary model has been unloaded.
 
 Prompt/KV cache reuse is recorded when observable but is not required for correctness. A rebuilt inference context is acceptable as long as the durable DSH session reconstructs the correct logical history.
