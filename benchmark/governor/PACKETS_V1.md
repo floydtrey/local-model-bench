@@ -30,6 +30,12 @@ The runner reads the canonical Governor documents from the local Governor reposi
 - Proposed plan: `benchmark/governor/plans/plan-c-hard.md`
 - Planner provenance (not injected into Governor packet): Qwen3.6 35B
 
+## Packet D — contextual storage
+
+- Original intent: `benchmark/planner/intent-06-contextual-storage-backend.md`
+- Proposed plan: `benchmark/governor/plans/plan-d-contextual-storage.md`
+- Planner provenance (not injected into Governor packet): Qwen3.6 35B, reasoning on
+
 ## Qualification condition
 
 This is an isolated review simulation. The Governor is not executing a live governed action and is not being asked to establish or modify a protected role-to-model assignment.
