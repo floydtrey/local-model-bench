@@ -80,6 +80,10 @@
     "I04-IMPORT": {
       "requirement_reference": "Assigned task must leave the project importable and executable",
       "repair_criterion": "Repair the assigned production file so inventory.cli imports successfully and the bounded task can be exercised."
+    },
+    "I04-T1-NO-EARLY-EXPORT": {
+      "requirement_reference": "Task 1 authority boundary / Approved Plan B task ordering",
+      "repair_criterion": "Remove inventory retrieval or export behavior performed early. Task 1 is parser registration only; service retrieval and CSV output belong to Task 2."
     }
   },
   "generic": {
