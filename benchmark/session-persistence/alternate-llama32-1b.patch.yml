@@ -1,0 +1,26 @@
+# Session Persistence Test 01 — alternate model.
+- id: agent-default-model
+  config:
+    provider: session-proof-native
+    model: llama3.2:1b
+
+- id: llm-ollama
+  config:
+    providers:
+      session-proof-native:
+        displayName: Session Proof Native Ollama
+        api: ollama-chat
+        baseURL: http://127.0.0.1:11434
+        keepAlive: 30m
+        models:
+          - id: llama3.2:1b
+            name: Llama 3.2 1B
+            contextWindow: 32768
+            maxTokens: 2048
+            thinkingCapable: false
+
+- id: llm-deepseek
+  disabled: true
+
+- id: llm-pi-ai
+  disabled: true
