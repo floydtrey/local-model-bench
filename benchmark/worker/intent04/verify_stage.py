@@ -7,6 +7,7 @@ import csv
 import io
 import json
 import pathlib
+import sys
 import tempfile
 from unittest.mock import patch
 
@@ -22,7 +23,13 @@ def invoke(cli, argv: list[str]) -> tuple[int | None, str, str, BaseException | 
             result = cli.main(argv)
             code = 0 if result is None else int(result)
         except SystemExit as exc:
-            code = 0 if exc.code is None else int(exc.code)
+            if exc.code is None:
+                code = 0
+            elif isinstance(exc.code, int):
+                code = exc.code
+            else:
+                print(str(exc.code), file=sys.stderr)
+                code = 1
         except BaseException as exc:
             error = exc
 
@@ -135,6 +142,19 @@ def check_stdout_default(cli) -> None:
 def check_no_early_csv() -> None:
     source = pathlib.Path("inventory/cli.py").read_text(encoding="utf-8")
     assert not imports_csv_module(source), "standard-library csv imported during Task 1"
+
+
+def check_no_early_export_behavior(cli) -> None:
+    calls: list[bool] = []
+
+    def side_effect(include_inactive: bool = False):
+        calls.append(include_inactive)
+        return fake_items(include_inactive)
+
+    with patch("inventory.cli.list_items", side_effect=side_effect):
+        invoke(cli, ["export-csv"])
+
+    assert calls == [], f"Task 1 performed inventory retrieval early: {calls!r}"
 
 
 def check_uses_csv() -> None:
@@ -301,6 +321,11 @@ def verify(stage: int) -> dict:
         run_check(failures, "I04-T1-PARSER-SURFACE", lambda: parser_surface(cli))
         run_check(failures, "I04-T1-LIST-REGRESSION", lambda: existing_list_behavior(cli))
         run_check(failures, "I04-T1-NO-EARLY-CSV", check_no_early_csv)
+        run_check(
+            failures,
+            "I04-T1-NO-EARLY-EXPORT",
+            lambda: check_no_early_export_behavior(cli),
+        )
 
     elif stage == 2:
         run_check(failures, "I04-T2-PARSER-SURFACE", lambda: parser_surface(cli))
