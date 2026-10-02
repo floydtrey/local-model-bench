@@ -38,12 +38,6 @@ $tasks = @(
     name = 'file-output-errors'
     spec = (Join-Path $repo 'benchmark\worker\intent04\TASK_03.md')
     allowed = 'inventory\cli.py'
-  },
-  [pscustomobject]@{
-    id = 4
-    name = 'regression-tests'
-    spec = (Join-Path $repo 'benchmark\worker\intent04\TASK_04.md')
-    allowed = 'tests\test_cli.py'
   }
 )
 
@@ -530,7 +524,7 @@ $pipelineEnd = Snapshot-Workspace
 Write-Json -Path (Join-Path $output 'workspace-final.json') -Value $pipelineEnd
 $pipelineDiff = Compare-Snapshots -Before $pipelineStart -After $pipelineEnd
 
-$pipelinePassed = ($taskResults.Count -eq 4)
+$pipelinePassed = ($taskResults.Count -eq 3)
 if ($pipelinePassed) {
   foreach ($taskResult in $taskResults) {
     if (-not [bool]$taskResult.passed) { $pipelinePassed = $false }
@@ -546,6 +540,7 @@ $result = [ordered]@{
   completedTaskCount = $taskResults.Count
   stoppedAfterTask = $pipelineStoppedAfter
   tasks = @($taskResults)
+  testerTaskReserved = 'Approved Plan B Task 4 (regression-test creation) is reserved for the Tester role and is not part of Worker qualification.'
   changedFilesFromInitial = @($pipelineDiff.changed)
   createdFilesFromInitial = @($pipelineDiff.created)
   deletedFilesFromInitial = @($pipelineDiff.deleted)
@@ -556,7 +551,7 @@ $result = [ordered]@{
 Write-Json -Path (Join-Path $output 'result.json') -Value $result
 
 Write-Host 'Intent 04 pipeline summary:'
-Write-Host ("  Completed tasks: {0}/4" -f $taskResults.Count)
+Write-Host ("  Completed Worker tasks: {0}/3" -f $taskResults.Count)
 Write-Host ("  OVERALL: " + $(if ($pipelinePassed) { 'PASS' } else { 'FAIL' }))
 Write-Host "  Evidence: $(Join-Path $output 'result.json')"
 
