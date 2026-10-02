@@ -28,7 +28,7 @@ $workspace = Join-Path $output 'workspace'
 $turnRoot = Join-Path $output 'turns'
 New-Item -ItemType Directory -Path $workspace -Force | Out-Null
 New-Item -ItemType Directory -Path $turnRoot -Force | Out-Null
-Copy-Item -LiteralPath (Join-Path $fixtureSource '*') -Destination $workspace -Recurse -Force
+Copy-Item -Path (Join-Path $fixtureSource '*') -Destination $workspace -Recurse -Force
 
 $env:DSH_HOME = $dshHome
 $env:DSH_TELEMETRY_DISABLED = '1'
