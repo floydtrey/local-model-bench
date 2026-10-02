@@ -68,13 +68,26 @@ function Invoke-DshTurn {
   $stderrPath = Join-Path $turnDir 'stderr.txt'
   Write-Utf8 $stdinPath $Prompt
 
-  $args = @('--profile','headless','--patch',$basePatch,'--patch',$Patch,'--json')
-  if ($SessionId) { $args += @('--session-id',$SessionId) }
-  $args += '-'
+  foreach ($value in @($dsh,$basePatch,$Patch,$SessionId)) {
+    if ($value -and $value.Contains('"')) {
+      throw 'DSH path, patch path, and session id values must not contain a double quote.'
+    }
+  }
+
+  $resume = ''
+  if ($SessionId) {
+    $resume = ' --session-id "' + $SessionId + '"'
+  }
+
+  # Windows PowerShell 5.1 runs on .NET Framework, where
+  # ProcessStartInfo.ArgumentList is unavailable. Use the same cmd.exe
+  # launch path already proven by run-single-dsh.ps1.
+  $nativeCommand = '"' + $dsh + '" --profile headless --patch "' + $basePatch +
+    '" --patch "' + $Patch + '" --json' + $resume + ' -'
 
   $psi = [Diagnostics.ProcessStartInfo]::new()
-  $psi.FileName = $dsh
-  foreach ($arg in $args) { [void]$psi.ArgumentList.Add($arg) }
+  $psi.FileName = 'cmd.exe'
+  $psi.Arguments = '/d /s /c "' + $nativeCommand + '"'
   $psi.UseShellExecute = $false
   $psi.CreateNoWindow = $true
   $psi.RedirectStandardInput = $true
