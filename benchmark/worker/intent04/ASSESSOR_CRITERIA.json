@@ -1,0 +1,92 @@
+{
+  "schema_version": "worker-assessor-criteria:intent04-v1",
+  "checks": {
+    "I04-T1-PARSER-SURFACE": {
+      "requirement_reference": "Approved Plan B Task 1 / original Intent 04 CLI surface",
+      "repair_criterion": "The parser must recognize export-csv, default --include-inactive to false, set it true when present, and preserve the supplied --output path."
+    },
+    "I04-T1-LIST-REGRESSION": {
+      "requirement_reference": "Original Intent 04 constraint: do not change the existing list subcommand behavior",
+      "repair_criterion": "Restore the existing list command output and exit behavior while retaining the assigned export-csv parser change."
+    },
+    "I04-T1-NO-EARLY-CSV": {
+      "requirement_reference": "Task 1 authority boundary / Approved Plan B task ordering",
+      "repair_criterion": "Remove CSV-formatting implementation performed early. Task 1 is limited to registering the parser surface; CSV retrieval/formatting belongs to Task 2."
+    },
+    "I04-T2-PARSER-SURFACE": {
+      "requirement_reference": "Prerequisite Task 1 behavior",
+      "repair_criterion": "Preserve the export-csv parser surface from Task 1, including --include-inactive and --output."
+    },
+    "I04-T2-DEFAULT-FILTER": {
+      "requirement_reference": "Original Intent 04: default export must call list_items(include_inactive=False)",
+      "repair_criterion": "Default export-csv must retrieve inventory through list_items(include_inactive=False); do not duplicate filtering logic in the CLI."
+    },
+    "I04-T2-INACTIVE-FILTER": {
+      "requirement_reference": "Original Intent 04: --include-inactive must call list_items(include_inactive=True)",
+      "repair_criterion": "When --include-inactive is present, retrieve inventory through list_items(include_inactive=True)."
+    },
+    "I04-T2-CSV-SCHEMA": {
+      "requirement_reference": "Original Intent 04 CSV format requirements",
+      "repair_criterion": "Write one header row with columns sku,name,quantity,active in that exact order; encode active as lowercase true/false; use the standard-library csv module so commas and quotes are escaped correctly."
+    },
+    "I04-T2-STDOUT": {
+      "requirement_reference": "Approved Plan B Task 2 stdout acceptance",
+      "repair_criterion": "When --output is omitted, export the CSV to stdout and return success without writing errors to stderr."
+    },
+    "I04-T2-USES-CSV-MODULE": {
+      "requirement_reference": "Original Intent 04: use the standard-library csv module",
+      "repair_criterion": "Use Python's standard-library csv module for CSV generation rather than manual string joining."
+    },
+    "I04-T2-NO-EARLY-FILE-OUTPUT": {
+      "requirement_reference": "Task 2 authority boundary / Approved Plan B task ordering",
+      "repair_criterion": "Do not implement successful --output file writing during Task 2. File-output and write-error behavior belong to Task 3."
+    },
+    "I04-T2-LIST-REGRESSION": {
+      "requirement_reference": "Original Intent 04 constraint: do not change the existing list subcommand behavior",
+      "repair_criterion": "Restore the existing list command output and exit behavior while preserving the assigned CSV stdout behavior."
+    },
+    "I04-T3-PARSER-SURFACE": {
+      "requirement_reference": "Prerequisite Task 1 behavior",
+      "repair_criterion": "Preserve the export-csv parser surface, including --include-inactive and --output."
+    },
+    "I04-T3-STDOUT-PRESERVED": {
+      "requirement_reference": "Original Intent 04: stdout export remains the default when --output is omitted",
+      "repair_criterion": "Preserve the Task 2 stdout CSV behavior when --output is omitted."
+    },
+    "I04-T3-FILE-OUTPUT": {
+      "requirement_reference": "Original Intent 04: --output <path> writes CSV to that file",
+      "repair_criterion": "When --output is supplied, write the complete CSV to the requested file path."
+    },
+    "I04-T3-NO-STDOUT-ON-FILE": {
+      "requirement_reference": "Original Intent 04: file export must not write CSV data to stdout",
+      "repair_criterion": "On successful --output export, emit no CSV data to stdout."
+    },
+    "I04-T3-FILE-ERROR": {
+      "requirement_reference": "Original Intent 04 output-file failure contract",
+      "repair_criterion": "If the output file cannot be opened or written, emit a clear error to stderr and return/exit non-zero without producing CSV on stdout."
+    },
+    "I04-T3-CSV-SCHEMA": {
+      "requirement_reference": "Original Intent 04 CSV format requirements",
+      "repair_criterion": "Preserve exact CSV column order, one header row, lowercase boolean encoding, and correct csv-module escaping for file and stdout exports."
+    },
+    "I04-T3-FILTERING": {
+      "requirement_reference": "Original Intent 04 service reuse and --include-inactive requirements",
+      "repair_criterion": "Preserve service-backed filtering: default false, --include-inactive true, without duplicating inventory filtering in the CLI."
+    },
+    "I04-T3-LIST-REGRESSION": {
+      "requirement_reference": "Original Intent 04 constraint: do not change the existing list subcommand behavior",
+      "repair_criterion": "Restore the existing list command behavior while retaining the assigned file-output/error handling."
+    },
+    "I04-IMPORT": {
+      "requirement_reference": "Assigned task must leave the project importable and executable",
+      "repair_criterion": "Repair the assigned production file so inventory.cli imports successfully and the bounded task can be exercised."
+    }
+  },
+  "generic": {
+    "scope_changed": "Restore every unauthorized changed path to its pre-task state. The final task diff may contain only the file explicitly authorized by the assigned task.",
+    "scope_created": "Remove unauthorized helper or artifact files created during the task. No helper files are authorized in Worker Test 02.",
+    "scope_deleted": "Restore unauthorized deleted files to their pre-task state.",
+    "regression": "Restore the project's pre-existing tested behavior while preserving the assigned task requirements. Do not modify the existing tests to make them pass.",
+    "handoff": "After the implementation is correct, end the final response with Handoff note: followed by the concise information needed by the next dependent Worker."
+  }
+}
