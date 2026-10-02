@@ -1,4 +1,6 @@
 param(
+  [string]$CandidatePatch = (Join-Path $PSScriptRoot 'dsh\smoke-qwen35-9b.patch.yml'),
+  [string]$ModelId = 'qwen3.5:9b',
   [string]$OutputDir = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\worker-qualification-v1\test-01-qwen35-9b'),
   [int]$WallSecondsPerTurn = 300
 )
@@ -9,11 +11,11 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $dsh = Join-Path $env:APPDATA 'npm\dsh.cmd'
 $basePatch = Join-Path $repo 'benchmark\dsh\role-qualification-v1.patch.yml'
 $workerPatch = Join-Path $repo 'benchmark\dsh\worker-qualification-v1.patch.yml'
-$modelPatch = Join-Path $repo 'benchmark\dsh\smoke-qwen35-9b.patch.yml'
+$modelPatch = (Resolve-Path $CandidatePatch).Path
 $rolePromptPath = Join-Path $repo 'benchmark\worker\ROLE_PROMPT.md'
 $fixtureSource = Join-Path $repo 'benchmark\worker\fixture-01'
 $dshHome = Join-Path $env:USERPROFILE '.dsh'
-$model = 'qwen3.5:9b'
+$model = $ModelId
 $utf8 = [Text.UTF8Encoding]::new($false)
 
 foreach ($required in @($dsh,$basePatch,$workerPatch,$modelPatch,$rolePromptPath,$fixtureSource)) {
