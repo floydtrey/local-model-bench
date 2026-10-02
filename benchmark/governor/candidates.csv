@@ -1,0 +1,13 @@
+model_id,file_name,context_window,max_tokens,thinking_capable,reasoning_effort
+qwen3.5:9b,qwen3.5-9b,32768,8192,true,off
+qwen3.8:27b-32k-compare,qwen3.8-27b,32768,8192,true,off
+qwen3.6:35b-32k-compare,qwen3.6-35b,32768,8192,true,off
+qwen3-coder:30b-32k-dsh-test,qwen3-coder-30b,32768,8192,false,
+gpt-oss:20b-32k,gpt-oss-20b,32768,8192,true,off
+gemma4:12b-it-q8_0,gemma4-12b,32768,8192,false,
+qwen3.6:27b,qwen3.6-27b,32768,8192,false,
+granite4.2:30b,granite4.2-30b,32768,8192,false,
+nemotron-3.5-lightning:30b,nemotron-3.5-lightning-30b,32768,8192,false,
+north-mini-code-1.0:latest,north-mini-code-1.0,32768,8192,false,
+muse-glimmer:latest,muse-glimmer,32768,8192,false,
+laguna-xs-2.1:latest,laguna-xs-2.1,32768,8192,false,
