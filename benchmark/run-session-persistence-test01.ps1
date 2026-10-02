@@ -227,7 +227,25 @@ B_RECALL|<role>|<marker>|<project>
 
 $psBeforeStop = Save-OllamaPs 'ollama-ps-before-primary-stop.json'
 
-& $ollama stop $primaryModel *> (Join-Path $output 'ollama-stop-primary.txt')
+$stopLog = Join-Path $output 'ollama-stop-primary.txt'
+$stopPsi = [Diagnostics.ProcessStartInfo]::new()
+$stopPsi.FileName = $ollama
+$stopPsi.Arguments = 'stop "' + $primaryModel + '"'
+$stopPsi.UseShellExecute = $false
+$stopPsi.CreateNoWindow = $true
+$stopPsi.RedirectStandardOutput = $true
+$stopPsi.RedirectStandardError = $true
+$stopProc = [Diagnostics.Process]::new()
+$stopProc.StartInfo = $stopPsi
+[void]$stopProc.Start()
+$stopStdout = $stopProc.StandardOutput.ReadToEnd()
+$stopStderr = $stopProc.StandardError.ReadToEnd()
+$stopProc.WaitForExit()
+Write-Utf8 $stopLog ($stopStdout + $stopStderr)
+if ($stopProc.ExitCode -ne 0) {
+  throw "ollama stop failed for $primaryModel with exit code $($stopProc.ExitCode). See $stopLog"
+}
+
 $deadline = (Get-Date).AddSeconds(30)
 do {
   Start-Sleep -Milliseconds 500
