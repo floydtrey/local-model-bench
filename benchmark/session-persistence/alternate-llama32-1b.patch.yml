@@ -1,13 +1,13 @@
 # Session Persistence Test 01 — alternate model.
 - id: agent-default-model
   config:
-    provider: session-proof-native
+    provider: role-benchmark-native
     model: llama3.2:1b
 
 - id: llm-ollama
   config:
     providers:
-      session-proof-native:
+      role-benchmark-native:
         displayName: Session Proof Native Ollama
         api: ollama-chat
         baseURL: http://127.0.0.1:11434
