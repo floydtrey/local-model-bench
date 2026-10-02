@@ -120,7 +120,7 @@ try {
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='not_installed';
         overall_pass='';completed_tasks='';stopped_after_task='';
-        task1_pass='';task2_pass='';task3_pass='';task4_pass='';
+        task1_pass='';task2_pass='';task3_pass='';
         final_changed_files='';final_created_files='';final_deleted_files='';exit_code=''
       })
       continue
@@ -150,7 +150,7 @@ try {
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='harness_error';
         overall_pass='';completed_tasks='';stopped_after_task='';
-        task1_pass='';task2_pass='';task3_pass='';task4_pass='';
+        task1_pass='';task2_pass='';task3_pass='';
         final_changed_files='';final_created_files='';final_deleted_files='';exit_code=$runnerExit
       })
     } else {
@@ -167,14 +167,13 @@ try {
         task1_pass = Get-TaskPass $result 1
         task2_pass = Get-TaskPass $result 2
         task3_pass = Get-TaskPass $result 3
-        task4_pass = Get-TaskPass $result 4
         final_changed_files = (@($result.changedFilesFromInitial) -join ';')
         final_created_files = (@($result.createdFilesFromInitial) -join ';')
         final_deleted_files = (@($result.deletedFilesFromInitial) -join ';')
         exit_code = $runnerExit
       })
 
-      Write-Host ("  Pipeline: pass={0}; completed={1}/4; stoppedAfter={2}" -f $result.passed,$result.completedTaskCount,$result.stoppedAfterTask)
+      Write-Host ("  Worker pipeline: pass={0}; completed={1}/3; stoppedAfter={2}" -f $result.passed,$result.completedTaskCount,$result.stoppedAfterTask)
     }
 
     try {
