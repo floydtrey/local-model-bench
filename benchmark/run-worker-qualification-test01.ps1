@@ -239,9 +239,33 @@ if (@($tags.models.name) -notcontains $model) { throw "Required model is not ins
 
 $python = (Get-Command python.exe -ErrorAction Stop).Source
 
+$dshVersion = (& $dsh --version 2>&1 | Out-String).Trim()
+if ($LASTEXITCODE -ne 0) { throw 'Could not read DSH version.' }
+if ($dshVersion -ne '0.1.6-alpha.2') {
+  throw "Worker qualification requires runtime-qualified DSH 0.1.6-alpha.2; found '$dshVersion'."
+}
+
 $dump = (& $dsh --profile headless --dump-config 2>&1 | Out-String)
 if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the DSH headless profile.' }
 if ($dump -notmatch '@zhangyi/dsh-llm-ollama') { throw 'Native Ollama plugin is not installed for DSH headless.' }
+
+$pluginRoot = Join-Path $dshHome 'profiles\headless\node_modules\@zhangyi\dsh-llm-ollama'
+$pluginPackagePath = Join-Path $pluginRoot 'package.json'
+$pluginIndexPath = Join-Path $pluginRoot 'lib\index.js'
+foreach ($requiredPluginPath in @($pluginPackagePath,$pluginIndexPath)) {
+  if (-not (Test-Path -LiteralPath $requiredPluginPath)) {
+    throw "Missing runtime-qualified Ollama plugin path: $requiredPluginPath"
+  }
+}
+$pluginPackage = Get-Content -LiteralPath $pluginPackagePath -Raw | ConvertFrom-Json
+if ([string]$pluginPackage.version -ne '0.1.17') {
+  throw "Worker qualification requires runtime-qualified dsh-llm-ollama 0.1.17; found '$($pluginPackage.version)'."
+}
+$pluginSource = [IO.File]::ReadAllText($pluginIndexPath,$utf8)
+if (-not $pluginSource.Contains("typeof fn.index === 'number'") -or
+    -not $pluginSource.Contains("typeof call.id === 'string' && call.id.length > 0")) {
+  throw 'Required native Ollama multi-tool compatibility patch is missing. Run benchmark\patch-dsh-ollama-multitool.ps1 and the multi-tool preflight before Worker qualification.'
+}
 
 $requiredFixtureFiles = @(
   'PROJECT_INTENT.md',
