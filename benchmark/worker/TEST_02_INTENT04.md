@@ -162,9 +162,13 @@ Per task, the runner records:
 
 The batch summary separates first-pass and repaired performance.
 
-## Smoke before batch
+## Validate assessor, then smoke
 
-Run the Qwen3.8-only smoke first:
+Before spending a model call, validate the fixture, assessor criteria, deterministic verifier, and all three gold checkpoints:
+
+`benchmark/validate-worker-intent04-assessor.cmd`
+
+Then run the Qwen3.8-only smoke:
 
 `benchmark/run-worker-intent04-smoke.cmd`
 
