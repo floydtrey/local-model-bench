@@ -8,6 +8,8 @@ If the plan is approved, break the supplied Intent down by task. For each task, 
 
 This is important because the Workers will usually receive only one bounded task at a time. A task may be technically clear but still be missing the larger reason, priorities, constraints, or direction behind it. Your Intent Guidance gives each Worker enough of the user's original direction to make good judgment calls without requiring the Worker to read the entire project history or guess what the user meant.
 
+The Worker already receives the complete task as written, so Intent Guidance should not repeat the task instructions. Give the Worker the larger purpose, priorities, constraints, and project direction that would help them make good judgment calls while performing that task.
+
 Preserve the meaning of the Intent. Do not change, expand, narrow, or invent the user's intent when summarizing it for the Workers.
 
 Label the guidance with the exact task number it applies to. If guidance applies to the entire plan, label it ALL TASKS.
