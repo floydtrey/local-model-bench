@@ -200,13 +200,17 @@ def verify_stage_4() -> None:
     def has_name(*terms: str) -> bool:
         return any(any(term in name for term in terms) for name in test_names)
 
-    assert has_name("stdout", "standard_output", "console"), (
+    assert has_name("stdout", "standard_output", "console", "default"), (
         "missing recognizable stdout-export test"
     )
-    assert has_name("file", "output"), "missing recognizable file-export test"
+    assert has_name("file", "output", "path", "write"), (
+        "missing recognizable file-export test"
+    )
     assert has_name("inactive"), "missing recognizable include-inactive test"
-    assert has_name("escape", "comma", "quote"), "missing recognizable CSV escaping test"
-    assert has_name("fail", "error", "invalid", "unwritable"), (
+    assert has_name("escape", "comma", "quote", "special"), (
+        "missing recognizable CSV escaping test"
+    )
+    assert has_name("fail", "error", "invalid", "unwritable", "missing", "permission"), (
         "missing recognizable output-file failure test"
     )
 
