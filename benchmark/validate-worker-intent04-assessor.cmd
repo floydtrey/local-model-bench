@@ -1,0 +1,1 @@
+@echo off\r\npython.exe "%~dp0worker\\intent04\\validate_assessor.py"\r\n
