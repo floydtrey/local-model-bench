@@ -1,6 +1,6 @@
 param(
   [string]$GovernorRepo = (Join-Path (Split-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path -Parent) 'governor'),
-  [string]$CandidatesFile = (Join-Path $PSScriptRoot 'planner\candidates.csv'),
+  [string]$CandidatesFile = (Join-Path $PSScriptRoot 'governor\candidates.csv'),
   [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\role-qualification-v1\governor-screen-v1'),
   [int]$WallSeconds = 600,
   [switch]$Resume
