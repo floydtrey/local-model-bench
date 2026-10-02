@@ -1,6 +1,7 @@
 param(
   [string]$CandidatesFile = (Join-Path $PSScriptRoot 'planner\candidates.csv'),
   [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\role-qualification-v1\planner-screen-v1'),
+  [string[]]$IntentIds = @('intent-03','intent-04','intent-05'),
   [int]$WallSeconds = 600,
   [switch]$Resume
 )
@@ -14,20 +15,23 @@ $settingsFile = Join-Path $env:USERPROFILE '.dsh\settings.yaml'
 $utf8 = [Text.UTF8Encoding]::new($false)
 $nl = [Environment]::NewLine
 
-$intents = @(
-  [pscustomobject]@{
-    id = 'intent-03'
-    path = (Join-Path $PSScriptRoot 'planner\intent-03-config-default.md')
-  },
-  [pscustomobject]@{
-    id = 'intent-04'
-    path = (Join-Path $PSScriptRoot 'planner\intent-04-batch-export.md')
-  },
-  [pscustomobject]@{
-    id = 'intent-05'
-    path = (Join-Path $PSScriptRoot 'planner\intent-05-job-cancellation.md')
+$intentCatalog = @{
+  'intent-03' = (Join-Path $PSScriptRoot 'planner\intent-03-config-default.md')
+  'intent-04' = (Join-Path $PSScriptRoot 'planner\intent-04-batch-export.md')
+  'intent-05' = (Join-Path $PSScriptRoot 'planner\intent-05-job-cancellation.md')
+  'intent-06' = (Join-Path $PSScriptRoot 'planner\intent-06-contextual-storage-backend.md')
+}
+
+$intents = @()
+foreach ($intentId in $IntentIds) {
+  if (-not $intentCatalog.ContainsKey($intentId)) {
+    throw "Unknown IntentId '$intentId'. Available: $($intentCatalog.Keys -join ', ')"
   }
-)
+  $intents += [pscustomobject]@{
+    id = $intentId
+    path = $intentCatalog[$intentId]
+  }
+}
 
 foreach ($required in @($CandidatesFile,$singleRunner,$extractor,$rolePrompt,$settingsFile)) {
   if (-not (Test-Path -LiteralPath $required)) { throw "Missing required file: $required" }
