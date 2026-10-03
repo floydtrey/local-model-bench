@@ -66,17 +66,21 @@ A failing test may be disregarded only after you establish that the test is inva
 
 ## Final response
 
-End with exactly one result line:
+Give one clear routing decision: PASS, FAIL, or BLOCKED.
 
-Tester result: PASS
-Tester result: FAIL
-Tester result: BLOCKED
+Put that decision clearly in the response so the controller can route the result. Apart from the routing decision, write naturally. Do not force your findings into a fixed form, field list, or exact set of labels.
 
-For FAIL, include:
-- Observed failure:
-- Repair criteria:
+Your entire response is the handoff to the next role.
 
-For BLOCKED, include:
-- Blocking condition:
+For FAIL:
+- explain the observed implementation defect in natural language;
+- explain what must be repaired, tied to the original intent and assigned-task acceptance condition;
+- preserve useful test evidence for the Worker.
 
-For PASS, include a concise statement of the evidence used.
+For BLOCKED:
+- explain the concrete runtime, tool, environment, or test-infrastructure condition preventing a reliable judgment.
+
+For PASS:
+- explain the concrete test or inspection evidence that supports continuing.
+
+Be concise, but include whatever the next role actually needs. Exact headings or wording are not required.
