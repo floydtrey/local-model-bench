@@ -1,5 +1,5 @@
 param(
-  [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\tester-qualification-v1\qwen35-quick-v1'),
+  [string]$OutputRoot = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'local-state\tester-qualification-v1\qwen35-quick-v2'),
   [int]$WallSecondsPerTurn = 300
 )
 
@@ -279,7 +279,7 @@ You may read any project file and run focused tests.
 You may create, modify, or remove files only under tests\ when needed to establish valid coverage.
 Do not modify production code or project requirements.
 Use actual deterministic test execution as evidence.
-Follow the Tester role contract exactly, including the required final result line.
+Return a clear PASS, FAIL, or BLOCKED routing decision, then write the rest of the response naturally as the handoff to the next role. Do not fit the findings into a fixed form or exact set of labels.
 "@
 
   Write-Utf8 (Join-Path $caseOut 'dispatch.txt') $dispatch
@@ -297,16 +297,22 @@ Follow the Tester role contract exactly, including the required final result lin
   $finalMatched=($finalTests.exitCode -eq $case.expectedFinal -and -not $finalTests.timedOut)
 
   $finalText=([string]$dispatchTurn.final).Trim()
-  $resultLineOk=$finalText.EndsWith("Tester result: $($case.expectedResult)")
+
+  # Only the routing decision is structured. The rest of the response is preserved
+  # verbatim as the Tester handoff and is reviewed for usefulness after the run.
+  $decisionSignal=$null
+  $decisionMatch=[regex]::Match($finalText,'(?im)^\s*(PASS|FAIL|BLOCKED)\b')
+  if($decisionMatch.Success){
+    $decisionSignal=$decisionMatch.Groups[1].Value.ToUpperInvariant()
+  }
+  $decisionOk=($decisionSignal -eq $case.expectedResult)
+  $handoffPresent=($finalText.Length -gt 20)
+
   $ranTestTool=(
     (Get-Content -LiteralPath $dispatchTurn.stdout -Raw) -match '"tool":"pwsh"' -and
     (Get-Content -LiteralPath $dispatchTurn.stdout -Raw) -match '(?i)unittest|pytest'
   )
   $testChangeOk=if($case.requireTestChange){$testChanges.Count -gt 0}else{$testChanges.Count -eq 0}
-  $failFieldsOk=$true
-  if($case.expectedResult -eq 'FAIL'){
-    $failFieldsOk=($finalText -match '(?im)^Observed failure:' -and $finalText -match '(?im)^Repair criteria:')
-  }
 
   $dispatchCompleted=($dispatchTurn.exitCode -eq 0 -and -not $dispatchTurn.timedOut -and $dispatchTurn.turnEndKind -eq 'completed')
   $passed=(
@@ -315,23 +321,26 @@ Follow the Tester role contract exactly, including the required final result lin
     $nonTestChanges.Count -eq 0 -and
     $testChangeOk -and
     $finalMatched -and
-    $resultLineOk -and
-    $ranTestTool -and
-    $failFieldsOk
+    $decisionOk -and
+    $handoffPresent -and
+    $ranTestTool
   )
 
   $caseResult=[ordered]@{
     case=$case.id
     passed=$passed
     expectedResult=$case.expectedResult
+    decisionSignal=$decisionSignal
+    decisionOk=$decisionOk
+    handoffPresent=$handoffPresent
+    handoff=$finalText
+    manualHandoffReviewRequired=$true
     preflightMatched=$preflightMatched
     dispatchCompleted=$dispatchCompleted
     ranTestTool=$ranTestTool
     nonTestChanges=@($nonTestChanges)
     testChanges=@($testChanges)
     finalTestsMatched=$finalMatched
-    resultLineOk=$resultLineOk
-    failFieldsOk=$failFieldsOk
     roleTurn=$roleTurn
     dispatchTurn=$dispatchTurn
     finalTests=$finalTests
@@ -344,13 +353,15 @@ Follow the Tester role contract exactly, including the required final result lin
   Write-Host ("  Result: " + $(if($passed){'PASS'}else{'FAIL'}))
   Write-Host ("  Test changes: " + $(if($testChanges.Count){$testChanges -join ', '}else{'(none)'}))
   Write-Host ("  Non-test changes: " + $(if($nonTestChanges.Count){$nonTestChanges -join ', '}else{'(none)'}))
+  Write-Host ("  Decision signal: " + $(if($decisionSignal){$decisionSignal}else{'(missing)'}))
+  Write-Host "  Handoff saved for manual review."
 }
 
 $overall=($results.Count -eq $cases.Count)
 foreach($r in $results){if(-not [bool]$r.passed){$overall=$false}}
 
 $summary=[ordered]@{
-  test='tester-qualification-quick-v1'
+  test='tester-qualification-quick-v2'
   model=$model
   passed=$overall
   cases=@($results)
@@ -358,10 +369,11 @@ $summary=[ordered]@{
 Write-Json (Join-Path $output 'result.json') $summary
 
 Write-Host ''
-Write-Host 'Tester Qualification Quick v1'
+Write-Host 'Tester Qualification Quick v2'
 Write-Host "Model: $model"
 Write-Host ("Cases passed: {0}/{1}" -f (@($results|Where-Object{$_.passed}).Count),$cases.Count)
-Write-Host ("OVERALL TESTER RESULT: " + $(if($overall){'PASS'}else{'FAIL'}))
+Write-Host ("AUTOMATED TESTER CHECK: " + $(if($overall){'PASS'}else{'FAIL'}))
+Write-Host 'Manual handoff review: REQUIRED'
 Write-Host "Evidence: $(Join-Path $output 'result.json')"
 
 if($overall){exit 0}
