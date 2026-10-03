@@ -1,0 +1,3 @@
+model_id,file_name,context_window,max_tokens,thinking_capable,reasoning_effort
+qwen3.5:9b,qwen3.5-9b,32768,8192,true,off
+deepseek-coder-v2:16b,deepseek-coder-v2-16b,32768,8192,false,
