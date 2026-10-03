@@ -127,11 +127,11 @@ try {
       Write-Warning ("Skipping " + $modelId + ": not installed.")
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='not_installed';
-        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';failed_task_ids='';recoveries='';
+        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';stopped_after_task='';
         task1_first='';task1_final='';task1_repair='';task1_terminal='';
         task2_first='';task2_final='';task2_repair='';task2_terminal='';
         task3_first='';task3_final='';task3_repair='';task3_terminal='';
-        final_changed_files='';final_created_files='';final_deleted_files='';exit_code=''
+        exit_code=''
       })
       continue
     }
@@ -159,11 +159,11 @@ try {
     if (-not (Test-Path -LiteralPath $resultPath)) {
       Set-SummaryRow $summaryPath ([pscustomobject][ordered]@{
         model_id=$modelId;reasoning=$reasoning;terminal_condition='harness_error';
-        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';failed_task_ids='';recoveries='';
+        overall_pass='';completed_tasks='';first_pass_tasks='';repaired_tasks='';stopped_after_task='';
         task1_first='';task1_final='';task1_repair='';task1_terminal='';
         task2_first='';task2_final='';task2_repair='';task2_terminal='';
         task3_first='';task3_final='';task3_repair='';task3_terminal='';
-        final_changed_files='';final_created_files='';final_deleted_files='';exit_code=$runnerExit
+        exit_code=$runnerExit
       })
     } else {
       $result = Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json
@@ -177,8 +177,7 @@ try {
         completed_tasks = $result.completedTaskCount
         first_pass_tasks = $result.firstPassTaskCount
         repaired_tasks = $result.repairedTaskCount
-        failed_task_ids = (@($result.failedTaskIds) -join ';')
-        recoveries = $result.qualificationRecoveryCount
+        stopped_after_task = $result.stoppedAfterTask
         task1_first = (Get-TaskField $result 1 'firstPassPassed')
         task1_final = (Get-TaskField $result 1 'passed')
         task1_repair = (Get-TaskField $result 1 'repairPassed')
@@ -191,13 +190,10 @@ try {
         task3_final = (Get-TaskField $result 3 'passed')
         task3_repair = (Get-TaskField $result 3 'repairPassed')
         task3_terminal = (Get-TaskField $result 3 'terminalCondition')
-        final_changed_files = (@($result.changedFilesFromInitial) -join ';')
-        final_created_files = (@($result.createdFilesFromInitial) -join ';')
-        final_deleted_files = (@($result.deletedFilesFromInitial) -join ';')
         exit_code = $runnerExit
       })
 
-      Write-Host ("  Worker qualification: pass={0}; firstPass={1}/3; repaired={2}; failed={3}" -f $result.passed,$result.firstPassTaskCount,$result.repairedTaskCount,(@($result.failedTaskIds) -join ','))
+      Write-Host ("  Worker qualification: pass={0}; firstPass={1}/3; repaired={2}; stoppedAfter={3}" -f $result.passed,$result.firstPassTaskCount,$result.repairedTaskCount,$result.stoppedAfterTask)
     }
 
     try {
