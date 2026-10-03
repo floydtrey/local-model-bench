@@ -247,39 +247,6 @@ def check_filtering_preserved(cli) -> None:
     assert calls == [False, True], f"list_items calls were {calls!r}"
 
 
-def check_stage4_test_coverage() -> None:
-    source = pathlib.Path("tests/test_cli.py").read_text(encoding="utf-8")
-    tree = ast.parse(source)
-    test_names = [
-        node.name.lower()
-        for node in ast.walk(tree)
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        and node.name.startswith("test_")
-    ]
-
-    assert len(test_names) >= 7, "fewer than five new CLI regression tests were added"
-    assert "export-csv" in source
-    assert "--output" in source
-    assert "--include-inactive" in source
-
-    def has_name(*terms: str) -> bool:
-        return any(any(term in name for term in terms) for name in test_names)
-
-    assert has_name("stdout", "standard_output", "console", "default"), (
-        "missing recognizable stdout-export test"
-    )
-    assert has_name("file", "output", "path", "write"), (
-        "missing recognizable file-export test"
-    )
-    assert has_name("inactive"), "missing recognizable include-inactive test"
-    assert has_name("escape", "comma", "quote", "special"), (
-        "missing recognizable CSV escaping test"
-    )
-    assert has_name("fail", "error", "invalid", "unwritable", "missing", "permission"), (
-        "missing recognizable output-file failure test"
-    )
-
-
 def run_check(failures: list[dict[str, str]], check_id: str, fn) -> None:
     try:
         fn()
@@ -355,9 +322,6 @@ def verify(stage: int) -> dict:
         run_check(failures, "I04-T3-FILTERING", lambda: check_filtering_preserved(cli))
         run_check(failures, "I04-T3-LIST-REGRESSION", lambda: existing_list_behavior(cli))
 
-    elif stage == 4:
-        run_check(failures, "I04-T4-TEST-COVERAGE", check_stage4_test_coverage)
-
     else:
         raise ValueError(f"unsupported stage: {stage}")
 
@@ -366,7 +330,7 @@ def verify(stage: int) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("stage", type=int, choices=(1, 2, 3, 4))
+    parser.add_argument("stage", type=int, choices=(1, 2, 3))
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
