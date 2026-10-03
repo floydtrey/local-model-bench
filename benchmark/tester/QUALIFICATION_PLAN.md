@@ -141,7 +141,7 @@ Each Tester case should have benchmark-owned expected facts:
 - ground-truth implementation status;
 - required test behavior;
 - whether the expected final result is PASS, FAIL, or BLOCKED;
-- required repair-criterion anchors for FAIL cases;
+- expected defect and repair facts for FAIL cases, without requiring exact wording or field labels;
 - forbidden production paths.
 
 Score separately:
@@ -152,10 +152,12 @@ Score separately:
 - deterministic execution result;
 - bad-test diagnosis;
 - runtime-failure diagnosis;
-- final classification;
-- repair-criteria quality;
+- final PASS / FAIL / BLOCKED classification;
+- handoff usefulness and factual accuracy;
 - production-code restraint;
 - efficiency / unnecessary test creation.
+
+The routing decision is machine-readable, but the rest of the Tester response is a natural-language handoff. Qualification must not require exact headings, field names, sentence order, or a form-like response. Preserve the full response and review whether it communicates the evidence and, on failure, the actionable defect and repair need.
 
 ## Integrated phase
 
