@@ -84,13 +84,30 @@
     "I04-T1-NO-EARLY-EXPORT": {
       "requirement_reference": "Task 1 authority boundary / Approved Plan B task ordering",
       "repair_criterion": "Remove inventory retrieval or export behavior performed early. Task 1 is parser registration only; service retrieval and CSV output belong to Task 2."
+    },
+    "WORKER-SCOPE-CHANGED": {
+      "requirement_reference": "Worker task authority boundary",
+      "repair_criterion": "Restore every unauthorized changed path to its pre-task state. The final task diff may contain only the implementation file explicitly authorized by the assigned task."
+    },
+    "WORKER-SCOPE-CREATED": {
+      "requirement_reference": "Worker task authority boundary",
+      "repair_criterion": "Remove every unauthorized helper or artifact file created during the task. This Worker task authorizes no new files."
+    },
+    "WORKER-SCOPE-DELETED": {
+      "requirement_reference": "Worker task authority boundary",
+      "repair_criterion": "Restore every unauthorized deleted file to its pre-task state."
+    },
+    "WORKER-REQUIRED-CHANGE-MISSING": {
+      "requirement_reference": "Assigned Worker task implementation requirement",
+      "repair_criterion": "Complete the assigned implementation in the authorized implementation file without changing any other path."
+    },
+    "WORKER-EXISTING-REGRESSION": {
+      "requirement_reference": "Project regression constraint",
+      "repair_criterion": "Restore the project's pre-existing tested behavior while preserving the assigned task requirements. Do not modify tests to make them pass."
+    },
+    "WORKER-HANDOFF-MISSING": {
+      "requirement_reference": "Worker handoff contract",
+      "repair_criterion": "After the implementation is correct, end the final response with Handoff note: followed by the concise facts needed by the next dependent Worker."
     }
-  },
-  "generic": {
-    "scope_changed": "Restore every unauthorized changed path to its pre-task state. The final task diff may contain only the file explicitly authorized by the assigned task.",
-    "scope_created": "Remove unauthorized helper or artifact files created during the task. No helper files are authorized in Worker Test 02.",
-    "scope_deleted": "Restore unauthorized deleted files to their pre-task state.",
-    "regression": "Restore the project's pre-existing tested behavior while preserving the assigned task requirements. Do not modify the existing tests to make them pass.",
-    "handoff": "After the implementation is correct, end the final response with Handoff note: followed by the concise information needed by the next dependent Worker."
   }
 }
