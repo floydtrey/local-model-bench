@@ -4,182 +4,125 @@ Date: 2026-10-02
 
 ## Purpose
 
-Test 02 uses the existing Planner Intent 04 and Governor Plan B to qualify the Worker role without requiring the Worker model to also perform the Tester role.
+Test 02 qualifies the Worker role against the existing Planner Intent 04 and Governor Plan B without requiring the Worker model to also act as Tester.
 
-Canonical sources:
+Canonical inputs:
 
 - original intent: `benchmark/planner/intent-04-batch-export.md`
 - approved plan: `benchmark/governor/plans/plan-b-medium.md`
 - Worker role: `benchmark/worker/ROLE_PROMPT.md`
 
-The fixture is a disposable implementation of the project facts described by Intent 04.
+Plan B Task 4 is test authoring and belongs to the future Tester role. Worker qualification executes only implementation Tasks 1–3.
 
-## Role boundary
+## Exact qualification loop
 
-Plan B contains four plan tasks, but not every plan task belongs to the Worker role.
+For each Worker task:
 
-Plan B Task 4 is regression-test creation. Under the intended Lab pipeline, determining whether adequate tests exist, creating missing tests, running tests, diagnosing bad tests versus real implementation failures, and returning repair criteria belongs to the **Tester** role.
+1. start a fresh Worker DSH session;
+2. inject the original intent, full approved plan, assigned bounded task, prerequisite handoff, runtime context, and authority boundary;
+3. let that Worker complete the assigned task;
+4. keep the Ollama model resident;
+5. run the benchmark-owned deterministic acceptance checks;
+6. run the fixture's existing regression suite;
+7. inspect deterministic scope and handoff checks;
+8. if everything passes, accept that Worker's handoff;
+9. send the next task to a fresh Worker session with the accepted handoff;
+10. if a deterministic check fails, map each failed check ID to a prewritten repair response and send one repair turn back to the **same Worker session**;
+11. rerun the same deterministic checks after the repair;
+12. if the repaired task still fails, stop that candidate's scenario.
 
-Worker Test 02 therefore scores only implementation Tasks 1–3:
+There is no model-generated testing in Worker qualification.
 
-1. register the `export-csv` parser surface;
-2. implement service-backed stdout CSV formatting;
-3. implement `--output` file/error behavior.
+There is no gold-state replacement or artificial continuation after a failed task.
 
-The full approved plan, including the later Tester-owned task, remains visible to every Worker as context. It is not authority to perform that task early.
+## Model residency and session behavior
 
-The original Qwen3.8 smoke that executed Plan B Task 4 under the Worker role is role-mismatched evidence. Qwen3.8 passed Worker Tasks 1–3 in that run; the later test-authoring failure must not invalidate its Worker qualification.
+The candidate model remains loaded in Ollama while deterministic tests run between Worker turns. The runner does not unload the model between:
 
-## Deterministic assessor
+- the Worker implementation turn;
+- deterministic test execution;
+- a repair turn.
 
-Until a Tester model is separately qualified, Worker qualification uses a benchmark-owned deterministic assessor.
+A repair resumes the same DSH Worker session because it is still the same task.
 
-After each Worker attempt the assessor independently evaluates:
+A passed task ends that Worker session's responsibility. The next task gets a fresh DSH Worker session, while the same model may remain resident in Ollama.
 
-- exact workspace scope;
-- task-specific acceptance behavior;
-- pre-existing regression tests;
-- required handoff;
-- runtime completion.
+The outer batch runner unloads the model only after that candidate's entire Intent 04 scenario has completed or failed.
 
-The assessor code is outside the disposable Worker workspace. The Worker does not author or edit the assessor.
+No additional context-cap management is implemented. If real runs show that context limits become a problem, evaluate that evidence before adding machinery.
 
-The assessor emits stable check IDs. Public repair criteria are mapped to those IDs in:
+## Deterministic checks
+
+The hidden acceptance script is:
+
+`benchmark/worker/intent04/verify_stage.py`
+
+It is outside the disposable Worker workspace.
+
+The script emits stable failed-check IDs. Repair wording is preselected in:
 
 `benchmark/worker/intent04/ASSESSOR_CRITERIA.json`
 
-Repair feedback contains:
+The runner does not ask another model to interpret the failure.
 
-- the failed acceptance criterion;
-- observed externally visible behavior;
-- the required repair criterion;
-- concrete scope violations when present;
-- existing regression-test failure evidence when present.
+A repair packet contains:
 
-The repair packet does **not** expose hidden verifier implementation code or hand the Worker an implementation.
+- the deterministic failed check ID;
+- the observed failure evidence;
+- the prewritten repair criterion;
+- the task's unchanged authority boundary.
 
-## One repair attempt
+The Worker never receives the hidden acceptance-test implementation.
 
-A normal completed Worker turn that fails deterministic assessment receives exactly one repair attempt.
+## Existing tests
 
-The repair is sent back into the **same Worker DSH session** because it is continuation of the same assigned task.
+The fixture's pre-existing tests run after every Worker pass in addition to the hidden acceptance checks.
 
-Scoring preserves both outcomes:
+A regression failure maps to a fixed repair response instructing the Worker to restore existing behavior without modifying tests.
 
-- first-pass correctness;
-- whether a repair was attempted;
-- repair success/failure;
-- final task state;
-- terminal condition.
-
-A task repaired successfully is not equivalent to a first-pass success.
-
-Runtime/interface failures and Worker timeouts do not receive code-repair feedback. They are recorded separately.
-
-## Qualification continuity after a failed task
-
-One early task failure must not prevent measuring the candidate on every later Worker task.
-
-Before each task, the runner preserves a private baseline copy of the workspace.
-
-If a task still fails after its allowed repair, or terminates through a runtime/interface failure:
-
-1. the task remains scored FAIL;
-2. the candidate's failed workspace is preserved in evidence;
-3. for the **next qualification task only**, the harness restores the pre-task baseline and overlays the benchmark's verified gold checkpoint for the failed prerequisite;
-4. the gold checkpoint is independently re-verified;
-5. a canonical qualification-recovery handoff is injected into the next fresh Worker session.
-
-Gold checkpoints are under:
-
-- `benchmark/worker/intent04/gold/task-01/`
-- `benchmark/worker/intent04/gold/task-02/`
-- `benchmark/worker/intent04/gold/task-03/`
-
-This recovery exists only so later tasks remain measurable. It never converts the failed prerequisite into a model PASS.
-
-A real integrated pipeline test will not use gold recovery; failures will propagate naturally there.
-
-## Worker session and handoff behavior
-
-Each implementation task uses a fresh Worker DSH session.
-
-Every dispatch injects:
-
-- the complete original Intent 04;
-- the complete approved Plan B;
-- the assigned bounded task;
-- Governor intent guidance;
-- prerequisite handoff;
-- explicit Windows/current-working-directory runtime context;
-- the task authority boundary.
-
-If the prerequisite Worker passed, its accepted handoff is injected verbatim.
-
-If qualification recovery was required, the next task receives an explicit canonical recovery handoff describing the gold state rather than pretending the failed Worker succeeded.
-
-## Scope
-
-Worker Tasks 1–3 may modify only:
+Worker Tasks 1–3 authorize changes only to:
 
 `inventory/cli.py`
 
-No helper files are authorized.
+The Worker may run existing tests for self-check, but it may not create, modify, or delete tests.
 
-The deterministic assessor also checks later-task restraint:
+## Handoffs
 
-- Task 1 must not perform Task 2 CSV implementation early;
-- Task 2 must not successfully perform Task 3 file-output behavior early.
+A task is not accepted until:
 
-## Promotion from Test 01
+- deterministic acceptance checks pass;
+- existing regressions pass;
+- scope checks pass;
+- the Worker final response contains `Handoff note:`.
 
-The default Test 02 roster contains the clean Test 01 passers:
+If the first Worker pass fails and the repair succeeds, the **repair turn's handoff** is the accepted handoff passed to the next fresh Worker.
 
-- qwen3.8 27B
-- qwen3.6 35B
-- qwen3-coder 30B
-- Gemma4 12B
-- qwen3.6 27B
-- Nemotron 3.5 Lightning 30B
-- North Mini Code
-- Muse Glimmer
+If the task still fails after the repair, the scenario stops.
 
-Qwen3.5, GPT-OSS, Granite, and Laguna XS remain documented Test 01 failures/conditional results and are not in the default promotion roster.
+## Scoring
 
-## Evidence
+Record separately:
 
-Per task, the runner records:
+- first-pass task result;
+- whether a repair was needed;
+- repair result;
+- final task result;
+- runtime/interface terminal condition.
 
-- role turn;
-- first Worker attempt;
-- deterministic verifier result with check IDs;
-- existing regression-suite result;
-- first-pass workspace diff;
-- generated repair packet, when applicable;
-- repair turn and second assessment, when applicable;
-- accepted handoff;
-- qualification-recovery evidence, when applicable.
+A repaired PASS remains distinguishable from a first-pass PASS.
 
-The batch summary separates first-pass and repaired performance.
+## Smoke before batch
 
-## Validate assessor, then smoke
-
-Before spending a model call, validate the fixture, assessor criteria, deterministic verifier, and all three gold checkpoints:
-
-`benchmark/validate-worker-intent04-assessor.cmd`
-
-Then run the Qwen3.8-only smoke:
+Run the Qwen3.8-only smoke first:
 
 `benchmark/run-worker-intent04-smoke.cmd`
 
-Only after the deterministic assessor, repair loop, and gold recovery behavior are validated should the promoted batch run:
+Only after that complete three-task flow behaves correctly should the promoted multi-model batch run:
 
 `benchmark/run-worker-intent04-batch.cmd`
 
-## Tester qualification
+## Tester role
 
-Tester selection is intentionally separate. See:
+Tester qualification remains a separate later phase. The future Tester model will eventually replace the benchmark-owned deterministic-test / fixed-repair layer with dynamic test selection, missing-test creation, bad-test diagnosis, and repair-criteria generation.
 
-`benchmark/tester/QUALIFICATION_PLAN.md`
-
-The later integrated benchmark should combine qualified Worker and Tester candidates only after each role has been measured independently.
+Until then, Worker qualification uses only the deterministic layer described above.
