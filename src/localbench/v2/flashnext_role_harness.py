@@ -547,6 +547,8 @@ class RoleConversation:
                     "call_id": call.call_id, "tool": call.name, "allowed": allowed,
                     "reason": reason, "path": relative,
                 })
+                if allowed:
+                    self._validation_chain_failures = 0
                 if not allowed:
                     self.denied_calls += 1
                     if reason == "invalid_arguments":
