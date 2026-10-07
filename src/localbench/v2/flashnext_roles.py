@@ -396,6 +396,9 @@ def run_role_case(
         "setup_prompt_sha256": hashlib.sha256(spec["setup_prompt"].encode("utf-8")).hexdigest(),
         "dispatch_prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
         "max_model_turns": 48, "max_tool_calls": maximum_calls if tool_case else 0,
+        "max_validation_retries": 2,
+        "structured_recovery_policy": "schema-derived-lossless-json-literal:v1",
+        "repetition_guard": "stop-after-initial-plus-two-identical-or-invalid-failures:v1",
         "max_repairs": spec.get("max_repairs", 0), "source_refs": spec.get("source_refs", []),
         "controls": {"scope": "exact-file-neutral-tools", "shell_access": False, "model_selects_process_arguments": False, "test_command": "python -B -m unittest discover -s tests -v", "test_source_inspection": "pricing-unittest-static-v1" if spec["role"] == "tester" else None, "os_isolation": False, "network_isolation": False, "case_watchdog": case_context_factory is not None},
     }
@@ -420,7 +423,8 @@ def run_role_case(
     session = RoleConversation(
         case_id=spec["case_id"], setup_driver=drivers["setup"], driver=drivers["dispatch"],
         evidence_dir=folder, workspace=workspace, timeout_seconds=timeout,
-        max_tool_calls=maximum_calls, inspect_tester_tests=spec["role"] == "tester",
+        max_tool_calls=maximum_calls, max_validation_retries=2,
+        inspect_tester_tests=spec["role"] == "tester",
     )
     started_at = datetime.now(timezone.utc).isoformat()
     started = time.monotonic()

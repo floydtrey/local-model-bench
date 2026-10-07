@@ -465,13 +465,13 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
         for case_id in pack.case_ids:
             case, source_case = cases[case_id], pack.case(case_id)
             payload = case.payload
-            if stage == "smoke":
+            if stage == "smoke" or level == "L2":
                 _require((payload.get("status"), payload.get("metrics", {}).get("stop_reason")) in {
                     ("success", "terminal_output"), ("resource_limit", "max_tool_calls")},
-                    "smoke case has an operational failure rather than a bounded model-behavior outcome")
+                    "case has an operational failure rather than a bounded model-behavior outcome")
             else:
                 _require(payload.get("status") == "success" and payload.get("metrics", {}).get("stop_reason") == "terminal_output",
-                         "unsuccessful shared-screen case execution")
+                         "unsuccessful intrinsic shared-screen case execution")
             _require(_same(payload["manifest"], manifest.reference.to_dict())
                      and _same(payload["benchmark"], benchmark.reference.to_dict()), "foreign case execution")
             trial = records.get(payload["trial"], "trial_identity")
@@ -501,7 +501,7 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
             trace = records.get(payload["execution_evidence"]["primary"], "tool_execution_trace" if level == "L2" else "intrinsic_execution_trace")
             _require(_key(trace) not in used_traces, "reused execution trace")
             _trace(trace, case, source_case, level, effective, binding, interface, repo_root, observations, consumed, specs,
-                   allow_model_behavior_failure=stage == "smoke")
+                   allow_model_behavior_failure=stage == "smoke" or level == "L2")
             evaluations = [record for record in records.by_type["evaluation_result"] if _same(record.payload["case"], case.reference.to_dict())]
             _require(len(evaluations) == len(source_case["evaluators"]) == 1, "missing/duplicate case evaluator result")
             evaluation, evaluator_binding = evaluations[0], source_case["evaluators"][0]

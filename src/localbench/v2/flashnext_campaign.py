@@ -254,6 +254,7 @@ def measurement_rows(router: SharedDriverRouter, run=None) -> list[dict[str, Any
             evaluation = next(e for e in run.evaluation_results if e.payload["case"] == case.reference.to_dict())
             row.update(case_result=case.reference.to_dict(), evaluation_result=evaluation.reference.to_dict(),
                        correctness=evaluation.payload["verdict"], execution_status=case.payload["status"],
+                       stop_reason=case.payload["metrics"].get("stop_reason"),
                        resource_summary=json_copy(case.payload["metrics"].get("resource_telemetry_summary", row["resource_summary"])))
         rows.append(row)
     return rows
@@ -391,11 +392,15 @@ def create_gate(*, output_dir: Path, stage: str, foundation, result, parent_gate
                             and not row.get("truncated") and not row.get("runtime_errors") for row in result["rows"])
     passed = passed and result["native_tool_smoke_pass"]
     if stage != "smoke":
-        passed = passed and all(row.get("execution_status") == "success" for row in result["rows"])
-    # Smoke proves runtime/interface compatibility only. Candidate correctness,
-    # including bounded tool-use mistakes or a model-behavior resource limit,
-    # is preserved and scored separately. Complete shared screens still require
-    # successful executions but may contain deterministic correctness failures.
+        passed = passed and all(
+            row.get("execution_status") == "success"
+            or (row.get("level") == "L2" and row.get("execution_status") == "resource_limit"
+                and row.get("stop_reason") == "max_tool_calls")
+            for row in result["rows"]
+        )
+    # Smoke and shared progression prove runtime/interface compatibility. Candidate
+    # correctness and bounded L2 tool-loop exhaustion remain scored model behavior,
+    # not infrastructure invalidation.
     artifacts = []
     for path in sorted(output_dir.rglob("*")):
         if path.is_file() and ("runtime" in path.relative_to(output_dir).parts or "raw" in path.relative_to(output_dir).parts):

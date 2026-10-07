@@ -203,6 +203,55 @@ class FlashNextRolesTests(unittest.TestCase):
                 self.assertEqual(assessment["oracle_validation"]["correct"]["exit_code"], 0 if valid else 1)
                 self.assertEqual(assessment["observed_decision"], "FAIL")
 
+    def test_schema_literal_normalization_repairs_string_null_without_hiding_raw_call(self):
+        code = "import unittest\nfrom pricing.discount import apply_discount\n\nclass Added(unittest.TestCase):\n    def test_vip(self):\n        self.assertEqual(apply_discount(100, vip=True), 90)\n"
+
+        def handler(request):
+            if request.turn == 1:
+                return ModelTurnResponse(content="TESTER_READY")
+            if request.turn == 2:
+                return tool("write-null-string", "write_file", {
+                    "path": "tests/test_qualification.py",
+                    "content": code,
+                    "expected_sha256": "null",
+                })
+            if request.turn == 3:
+                return tool("tests", "run_tests", {})
+            return ModelTurnResponse(content="My decision is FAIL. The focused test exposes the VIP discount defect.")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            result, _, store = self._run(temporary, "tester", 1, handler)
+            self.assertEqual(result["status"], "success")
+            self.assertTrue(result["deterministic_passed"])
+            self.assertEqual(result["metrics"]["schema_normalizations"], 1)
+            self.assertEqual(result["metrics"]["validation_failures"], 0)
+            trace = store.load(EvidenceRef.from_dict(result["records"]["trace"]))
+            events = [event for event in trace.payload["events"] if event["event_type"] == "tool_argument_normalization"]
+            self.assertEqual(len(events), 1)
+            self.assertEqual(events[0]["payload"]["original_call"]["arguments"]["expected_sha256"], "null")
+            self.assertIsNone(events[0]["payload"]["normalized_call"]["arguments"]["expected_sha256"])
+
+    def test_invalid_tool_arguments_get_exactly_two_model_retries_then_stop(self):
+        def handler(request):
+            if request.turn == 1:
+                return ModelTurnResponse(content="TESTER_READY")
+            return tool(f"bad-{request.turn}", "run_tests", {"command": "forbidden"})
+
+        with tempfile.TemporaryDirectory() as temporary:
+            result, factory, store = self._run(temporary, "tester", 0, handler)
+            self.assertEqual(result["status"], "resource_limit")
+            self.assertEqual(result["stop_reason"], "tool_validation_retry_limit")
+            self.assertEqual(result["metrics"]["validation_failures"], 3)
+            self.assertEqual(result["metrics"]["validation_retry_turns"], 2)
+            self.assertEqual(result["metrics"]["max_validation_retries"], 2)
+            self.assertGreaterEqual(result["metrics"]["repetition_detections"], 2)
+            dispatched = [request for request in factory.requests if request.turn > 1]
+            self.assertEqual(len(dispatched), 3)
+            trace = store.load(EvidenceRef.from_dict(result["records"]["trace"]))
+            self.assertTrue(any(event["event_type"] == "limit_reached"
+                                and event["payload"].get("limit") == "validation_retries"
+                                for event in trace.payload["events"]))
+
     def test_model_cannot_supply_a_shell_command_to_fixed_test_tool(self):
         def handler(request):
             if request.turn == 1:

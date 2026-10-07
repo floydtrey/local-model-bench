@@ -11,6 +11,7 @@ import hashlib
 import ast
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -24,6 +25,7 @@ from .tool_harness import (
     BoundedWorkspace,
     ModelTurnRequest,
     ModelTurnResponse,
+    ToolCall,
 )
 
 ROLE_SURFACE_ID = "flashnext-role-files-tests:v1"
@@ -39,6 +41,70 @@ ROLE_TOOL_DEFINITIONS = (*BOUNDED_FILE_TOOL_DEFINITIONS, RUN_TESTS_TOOL)
 ROLE_TOOL_SCHEMA_SHA256 = sha256_json(
     {"surface_id": ROLE_SURFACE_ID, "tools": ROLE_TOOL_DEFINITIONS}
 )
+MAX_ROLE_VALIDATION_RETRIES = 2
+
+
+def _schema_matches(value: Any, schema: Mapping[str, Any]) -> bool:
+    if "anyOf" in schema:
+        return any(_schema_matches(value, item) for item in schema["anyOf"])
+    if "oneOf" in schema:
+        return sum(_schema_matches(value, item) for item in schema["oneOf"]) == 1
+    kind = schema.get("type")
+    if kind == "null" and value is not None:
+        return False
+    if kind == "string" and not isinstance(value, str):
+        return False
+    if kind == "boolean" and not isinstance(value, bool):
+        return False
+    if kind == "integer" and (not isinstance(value, int) or isinstance(value, bool)):
+        return False
+    if kind == "object" and not isinstance(value, Mapping):
+        return False
+    if "pattern" in schema and (not isinstance(value, str) or re.fullmatch(schema["pattern"], value) is None):
+        return False
+    if "enum" in schema and value not in schema["enum"]:
+        return False
+    if "const" in schema and value != schema["const"]:
+        return False
+    return True
+
+
+def _canonical_json_literal(value: Any, schema: Mapping[str, Any]) -> tuple[Any, dict[str, Any] | None]:
+    """Normalize only lossless JSON literal strings when the declared schema proves one meaning."""
+    if not isinstance(value, str) or _schema_matches(value, schema):
+        return value, None
+    literal = value.strip().lower()
+    candidates: list[tuple[Any, str]] = []
+    if literal == "null":
+        candidates.append((None, "null"))
+    elif literal == "true":
+        candidates.append((True, "boolean"))
+    elif literal == "false":
+        candidates.append((False, "boolean"))
+    matching = [(candidate, kind) for candidate, kind in candidates if _schema_matches(candidate, schema)]
+    if len(matching) != 1:
+        return value, None
+    candidate, kind = matching[0]
+    return candidate, {"from_type": "string", "to_type": kind, "from_value": value, "to_value": candidate}
+
+
+def normalize_role_tool_call(call: ToolCall) -> tuple[ToolCall, list[dict[str, Any]]]:
+    definition = next((tool for tool in ROLE_TOOL_DEFINITIONS if tool["name"] == call.name), None)
+    if definition is None:
+        return call, []
+    arguments = dict(call.arguments)
+    properties = definition["input_schema"].get("properties", {})
+    changes = []
+    for key, schema in properties.items():
+        if key not in arguments or not isinstance(schema, Mapping):
+            continue
+        normalized, change = _canonical_json_literal(arguments[key], schema)
+        if change is not None:
+            arguments[key] = normalized
+            changes.append({"field": key, **change})
+    if not changes:
+        return call, []
+    return ToolCall(call.call_id, call.name, arguments), changes
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -338,6 +404,7 @@ class RoleConversation:
         self, *, case_id: str, setup_driver: Callable, driver: Callable,
         evidence_dir: Path, workspace: BoundedWorkspace | None,
         max_tool_calls: int = 40, max_model_turns: int = 48,
+        max_validation_retries: int = MAX_ROLE_VALIDATION_RETRIES,
         timeout_seconds: float = 600, test_timeout_seconds: float = 120,
         inspect_tester_tests: bool = False,
     ) -> None:
@@ -345,12 +412,20 @@ class RoleConversation:
         self.evidence_dir, self.workspace = Path(evidence_dir), workspace
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
         self.max_tool_calls, self.max_model_turns = max_tool_calls, max_model_turns
+        if max_validation_retries < 0:
+            raise ValueError("max_validation_retries must be >= 0")
+        self.max_validation_retries = max_validation_retries
         self.deadline = time.monotonic() + timeout_seconds
         self.test_timeout_seconds = test_timeout_seconds
         self.inspect_tester_tests = inspect_tester_tests
         self.messages: list[dict[str, Any]] = []
         self.events: list[dict[str, Any]] = []
         self.model_turns = self.tool_calls = self.denied_calls = 0
+        self.validation_failures = self.validation_retry_turns = 0
+        self.schema_normalizations = self.repetition_detections = 0
+        self._validation_chain_failures = 0
+        self._retry_pending = False
+        self._failed_tool_signatures: dict[str, int] = {}
         self.test_calls: list[dict[str, Any]] = []
         self.status = "success"
         self.stop_reason = "not_started"
@@ -434,6 +509,9 @@ class RoleConversation:
         self.phase = phase
         self.messages.append({"role": "user", "content": prompt})
         while True:
+            if self._retry_pending:
+                self.validation_retry_turns += 1
+                self._retry_pending = False
             response = self._response(setup=False)
             if response is None:
                 return self.final
@@ -442,13 +520,22 @@ class RoleConversation:
                 self.status, self.stop_reason = "success", "terminal_output"
                 self.event("terminal_output", {"content": self.final})
                 return self.final
-            for call in response.tool_calls:
+            for original_call in response.tool_calls:
                 if self.tool_calls >= self.max_tool_calls:
                     self.status, self.stop_reason = "resource_limit", "max_tool_calls"
-                    self.event("limit_reached", {"blocked_call": call.to_dict()})
+                    self.event("limit_reached", {"blocked_call": original_call.to_dict()})
                     return self.final
                 self.tool_calls += 1
-                self.event("tool_request", call.to_dict())
+                self.event("tool_request", original_call.to_dict())
+                call, changes = normalize_role_tool_call(original_call)
+                if changes:
+                    self.schema_normalizations += 1
+                    self.event("tool_argument_normalization", {
+                        "policy": "schema-derived-lossless-json-literal:v1",
+                        "original_call": original_call.to_dict(),
+                        "normalized_call": call.to_dict(),
+                        "changes": changes,
+                    })
                 allowed, reason, relative = False, "tool_not_exposed", None
                 if self.workspace is not None:
                     if call.name == "run_tests":
@@ -462,7 +549,19 @@ class RoleConversation:
                 })
                 if not allowed:
                     self.denied_calls += 1
-                    result = {"ok": False, "error": "authorization_denied", "reason": reason, "path": relative}
+                    if reason == "invalid_arguments":
+                        self.validation_failures += 1
+                        self._validation_chain_failures += 1
+                        retries_used = max(0, self._validation_chain_failures - 1)
+                        retries_remaining = max(0, self.max_validation_retries - retries_used)
+                        result = {
+                            "ok": False, "error": "authorization_denied", "reason": reason, "path": relative,
+                            "validation_feedback": "Tool arguments do not satisfy the declared schema. Re-emit only schema-valid arguments.",
+                            "validation_retries_remaining": retries_remaining,
+                        }
+                    else:
+                        self._validation_chain_failures = 0
+                        result = {"ok": False, "error": "authorization_denied", "reason": reason, "path": relative}
                 elif call.name == "run_tests":
                     remaining = self.deadline - time.monotonic()
                     if remaining <= 0:
@@ -485,8 +584,51 @@ class RoleConversation:
                         result = self.workspace.execute(call, relative or "")
                     except Exception as exc:
                         result = {"ok": False, "error": "tool_execution_error", "error_type": type(exc).__name__, "detail": str(exc)}
+                if result.get("ok") is False:
+                    signature = sha256_json({
+                        "tool": call.name,
+                        "arguments": call.to_dict()["arguments"],
+                        "error": result.get("error"),
+                        "reason": result.get("reason"),
+                    })
+                    count = self._failed_tool_signatures.get(signature, 0) + 1
+                    self._failed_tool_signatures[signature] = count
+                    if count > 1:
+                        self.repetition_detections += 1
+                        self.event("repetition_detected", {
+                            "signature": signature, "occurrence": count,
+                            "tool": call.name, "reason": result.get("reason") or result.get("error"),
+                        })
+                else:
+                    self._validation_chain_failures = 0
+                    self._failed_tool_signatures.clear()
                 self.event("tool_result", {"call_id": call.call_id, "tool": call.name, "result": result})
                 self.messages.append({"role": "tool", "tool_call_id": call.call_id, "name": call.name, "result": result})
+                if reason == "invalid_arguments":
+                    if self._validation_chain_failures >= self.max_validation_retries + 1:
+                        self.status, self.stop_reason = "resource_limit", "tool_validation_retry_limit"
+                        self.event("limit_reached", {
+                            "limit": "validation_retries",
+                            "maximum_retries": self.max_validation_retries,
+                            "failed_call": call.to_dict(),
+                        })
+                        return self.final
+                    self._retry_pending = True
+                elif result.get("ok") is False:
+                    signature = sha256_json({
+                        "tool": call.name,
+                        "arguments": call.to_dict()["arguments"],
+                        "error": result.get("error"),
+                        "reason": result.get("reason"),
+                    })
+                    if self._failed_tool_signatures.get(signature, 0) >= self.max_validation_retries + 1:
+                        self.status, self.stop_reason = "resource_limit", "repeated_tool_failure"
+                        self.event("limit_reached", {
+                            "limit": "repeated_tool_failure",
+                            "maximum_retries": self.max_validation_retries,
+                            "failed_call": call.to_dict(),
+                        })
+                        return self.final
 
     def metrics(self) -> dict[str, Any]:
         responses = [x["payload"] for x in self.events if x["event_type"] == "model_response"]
@@ -524,6 +666,11 @@ class RoleConversation:
             "prompt_processing_seconds": total("prompt_processing_seconds"),
             "model_turns": self.model_turns, "tool_calls": self.tool_calls,
             "denied_tool_calls": self.denied_calls, "test_tool_calls": len(self.test_calls),
+            "max_validation_retries": self.max_validation_retries,
+            "validation_failures": self.validation_failures,
+            "validation_retry_turns": self.validation_retry_turns,
+            "schema_normalizations": self.schema_normalizations,
+            "repetition_detections": self.repetition_detections,
             "model_request_wall_seconds": sum(x["wall_seconds"] for x in responses),
             "final_output_characters": len(self.final), "final_output_bytes": len(final_bytes),
             "final_output_words": len(self.final.split()), "final_output_lines": len(self.final.splitlines()),
