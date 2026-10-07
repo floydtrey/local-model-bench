@@ -418,9 +418,13 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
         _require({host.logical_id for host in host_profiles}
                  == {"flashnext-host-capture-1", "flashnext-host-capture-2"},
                  "unexpected extra host-profile identity")
-    manifest_host_keys = {_key(record.payload.get("host")) for record in records.by_type["run_manifest"]}
-    _require(len(manifest_host_keys) == 1, "run manifests do not bind one execution host")
-    host = records.get(next(iter(manifest_host_keys)), "host_profile")
+    manifests_for_host = records.by_type["run_manifest"]
+    _require(manifests_for_host, "run manifests are missing")
+    first_host_ref = manifests_for_host[0].payload.get("host")
+    _require(isinstance(first_host_ref, Mapping), "run manifest host reference is missing")
+    host = records.get(first_host_ref, "host_profile")
+    _require(all(_same(record.payload.get("host"), host.reference.to_dict()) for record in manifests_for_host),
+             "run manifests do not bind one execution host")
     for record, key in ((runtime, "runtime_sha256"), (model, "model_sha256"), (interface, "execution_interface_sha256")):
         _require(record.sha256 == fingerprint.get(key), f"foreign {record.record_type} fingerprint")
     validate_execution_interface_identity(interface)
