@@ -537,6 +537,13 @@ def main(argv=None) -> int:
                     result = role_runner(foundation=foundation, profile=profile, output_dir=output_dir,
                                          campaign_root=campaign_root, server=server, roles=roles, phase=args.phase,
                                          governor_root=args.governor_root, progress=progress)
+                    if set(roles) == set(ROLES):
+                        from .flashnext_review import write_review_package
+                        package = write_review_package(
+                            output_dir=output_dir, summary=result, profile=profile,
+                            shared_run=args.shared_run, phase=args.phase,
+                        )
+                        result = {**result, "review_package": package}
                 else:
                     result = run_shared(repo_root=repo_root, output_dir=output_dir, foundation=foundation,
                                          profile=profile, server=server, stage=args.stage, progress=progress)

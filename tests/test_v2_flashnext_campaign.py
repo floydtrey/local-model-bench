@@ -14,6 +14,7 @@ import shutil
 import tempfile
 import threading
 import unittest
+import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
@@ -451,6 +452,42 @@ class FlashNextCampaignContractTests(unittest.TestCase):
             self.assertEqual(receipt["source_gate_status"], "blocked")
             self.assertFalse(receipt["source_evidence_rewritten"])
             self.assertEqual(json.loads(gate_path.read_bytes()), original)
+
+    def test_all_role_review_package_writes_json_csv_and_xlsx_without_external_dependencies(self):
+        from localbench.v2.flashnext_review import write_review_package
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            summary = {
+                "roles": ["planner", "governor", "worker", "tester", "reviewer"],
+                "planned_cases": 1, "completed_cases": 1, "stopped": None,
+                "qualification_status": "human-review-pending", "reviewer_status": "provisional-unqualified",
+                "results": [{
+                    "role": "worker", "case_id": "synthetic", "ordinal": 1,
+                    "status": "success", "stop_reason": "terminal_output",
+                    "runtime_compatibility": "compatible", "correctness": "deterministic-pass-review-pending",
+                    "deterministic_passed": True, "first_pass_passed": True,
+                    "repair_attempted": False, "repair_passed": None,
+                    "human_review_required": True, "qualification_status": "unqualified-pending-human-review",
+                    "evidence_directory": str(output / "evidence"),
+                    "metrics": {"wall_seconds": 2.0, "prompt_tokens": 10, "output_tokens": 20,
+                                "generation_seconds": 1.0, "generation_tokens_per_second": 20.0,
+                                "overall_output_tokens_per_second": 10.0, "model_turns": 2, "tool_calls": 1,
+                                "denied_tool_calls": 0, "schema_normalizations": 1, "validation_failures": 0,
+                                "validation_retry_turns": 0, "repetition_detections": 0,
+                                "test_tool_calls": 0, "final_output_words": 5},
+                }],
+            }
+            profile = {"candidate_id": "C01", "candidate_name": "synthetic", "model_entry": "m.gguf",
+                       "server_executable": "llama-server.exe", "fork_revision": "abc",
+                       "context_tokens": 262144}
+            package = write_review_package(output_dir=output, summary=summary, profile=profile,
+                                           shared_run=Path("shared"), phase="screen")
+            self.assertTrue(Path(package["xlsx"]).is_file())
+            self.assertTrue(Path(package["json"]).is_file())
+            self.assertTrue(Path(package["case_results_csv"]).is_file())
+            with zipfile.ZipFile(package["xlsx"]) as archive:
+                self.assertIn("xl/workbook.xml", archive.namelist())
+                self.assertIn("xl/worksheets/sheet5.xml", archive.namelist())
 
     def test_default_validate_does_not_preflight_or_start_a_runtime(self):
         with patch.object(campaign, "preflight_identity") as preflight, \
