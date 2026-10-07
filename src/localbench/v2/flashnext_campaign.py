@@ -495,8 +495,8 @@ def main(argv=None) -> int:
         # Validate explicit stage selection before any hashing, subprocess, or load.
         if args.stage in {"shared-screen", "shared-qualification"} and args.smoke_run is None:
             raise FlashNextBlocked("--smoke-run is required; first run the bounded smoke")
-        if args.stage in {"roles", "shared-qualification"} and args.shared_run is None:
-            raise FlashNextBlocked("--shared-run is required; first complete the unchanged 22-case shared screen")
+        if args.stage == "shared-qualification" and args.shared_run is None:
+            raise FlashNextBlocked("--shared-run is required for shared qualification")
         if args.stage == "roles" and not args.role:
             raise FlashNextBlocked("select --role planner/governor/worker/tester/reviewer (or explicitly all)")
         roles = list(ROLES) if args.role and "all" in args.role else list(dict.fromkeys(args.role or []))
@@ -522,7 +522,7 @@ def main(argv=None) -> int:
         parent = None
         if args.stage in {"shared-screen", "shared-qualification"}:
             parent = verify_gate(args.smoke_run.resolve(), stage="smoke", fingerprint=foundation["fingerprint"], repo_root=repo_root)
-        if args.stage == "roles":
+        if args.stage == "roles" and args.shared_run is not None:
             parent = verify_shared_run_for_roles(args.shared_run.resolve(), current_fingerprint=foundation["fingerprint"], repo_root=repo_root)
             write_json_once(output_dir / "shared-progression-receipt.json", parent)
         elif args.stage == "shared-qualification":

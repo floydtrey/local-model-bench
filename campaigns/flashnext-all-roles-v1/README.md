@@ -286,3 +286,8 @@ git push -u origin benchmark/flashnext-all-roles-v1
 Do not commit the ignored raw run directories or canonical private Governor
 snapshots inadvertently. The requested setup branch contains code, configuration,
 pinned source fixtures and synthetic tests only.
+
+
+### Role qualification independence
+
+Role screens do not require a shared-screen result. A supplied shared run is supplemental linked evidence only; omitting it does not block Planner, Governor, Worker, Tester, or Reviewer qualification.

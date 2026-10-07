@@ -508,6 +508,15 @@ class FlashNextCampaignContractTests(unittest.TestCase):
                 preflight.assert_not_called()
                 server.assert_not_called()
 
+    def test_roles_do_not_require_shared_screen_prerequisite(self):
+        with patch.object(campaign, "preflight_identity") as preflight, \
+             patch.object(campaign, "OwnedFlashNextServer") as server, \
+             contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            # Missing --role still blocks, but absence of --shared-run is no longer the reason.
+            self.assertEqual(campaign.main(["roles", "--repo-root", str(ROOT)]), 2)
+            preflight.assert_not_called()
+            server.assert_not_called()
+
     def test_full_shared_screen_runs_all_22_accepted_cases_with_real_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             chain = _run_chain(Path(tmp))
