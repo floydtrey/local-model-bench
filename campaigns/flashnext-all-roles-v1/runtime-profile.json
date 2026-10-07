@@ -1,0 +1,80 @@
+{
+  "schema_version": "flashnext-runtime-profile:v1",
+  "candidate_id": "C01",
+  "candidate_name": "Qwen3.8-Flash-Next UD-IQ3_XXS",
+  "model_entry": "C:\\AI\\FlashNext-Lab\\models\\Qwen3.8-Flash-Next\\UD-IQ3_XXS\\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf",
+  "server_executable": "C:\\AI\\FlashNext-Lab\\build\\cuda-13.3\\bin\\llama-server.exe",
+  "fork_revision": "27c54b4bbcefadedcec6397477cc2e866c1db716",
+  "host": "127.0.0.1",
+  "port": 18081,
+  "context_tokens": 262144,
+  "parallel_slots": 1,
+  "server_args": [
+    "-ngl",
+    "99",
+    "-ncmoe",
+    "99",
+    "-fa",
+    "on",
+    "-ctk",
+    "f16",
+    "-ctv",
+    "f16",
+    "-t",
+    "8",
+    "-b",
+    "256",
+    "-ub",
+    "128",
+    "--no-sched-async-cpu",
+    "--no-context-shift",
+    "--predict",
+    "-1",
+    "--reasoning-budget",
+    "-1",
+    "--timeout",
+    "-1",
+    "--jinja",
+    "--reasoning",
+    "auto",
+    "--reasoning-format",
+    "deepseek",
+    "--metrics"
+  ],
+  "environment": {
+    "GGML_CUDA_REGISTER_HOST": "1",
+    "HF_HUB_OFFLINE": "1"
+  },
+  "generation": {
+    "max_output_tokens": 8192,
+    "temperature": 0.0,
+    "seed": 42,
+    "top_p": 1.0,
+    "top_k": null,
+    "repeat_penalty": null,
+    "stop": [],
+    "reasoning": {
+      "mode": "enabled",
+      "effort": null
+    }
+  },
+  "limits": {
+    "startup_seconds": 600,
+    "smoke_total_seconds": 600,
+    "case_seconds": 600,
+    "max_tool_calls": 40,
+    "telemetry_interval_ms": 1000
+  },
+  "residency": {
+    "process": "owned_per_command",
+    "fresh_conversation_per_case": true,
+    "warm_resident_between_cases": true,
+    "stop_owned_server_on_exit": true
+  },
+  "notes": [
+    "Server --predict -1 and --timeout -1 are preserved. The client independently caps each response at 8192 tokens and each case at 600 seconds; smoke has a 600 second aggregate budget including server startup.",
+    "No claim that --reasoning auto forces reasoning on each response. The client preserves server_default behavior; enabled means no disable override.",
+    "One explicit parallel slot prevents dividing the requested 262144 context among concurrent sequences.",
+    "All three GGUF shards, the executable, and adjacent DLLs are hashed locally before launch. No model/runtime download or backend fallback."
+  ]
+}

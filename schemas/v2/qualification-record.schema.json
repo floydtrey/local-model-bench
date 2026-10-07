@@ -6,6 +6,8 @@
     {"$ref": "evidence-record.schema.json"}
   ],
   "oneOf": [
+    {"$ref": "execution-interface-identity.schema.json"},
+    {"$ref": "tool-compatibility-observation.schema.json"},
     {"properties": {"record_type": {"const": "host_profile"}, "payload": {"$ref": "#/$defs/hostProfile"}}},
     {"properties": {"record_type": {"const": "runtime_profile"}, "payload": {"$ref": "#/$defs/runtimeProfile"}}},
     {"properties": {"record_type": {"const": "model_identity"}, "payload": {"$ref": "#/$defs/modelIdentity"}}},
@@ -20,6 +22,8 @@
     {"properties": {"record_type": {"const": "aggregate_report"}, "payload": {"$ref": "aggregate-report.schema.json"}}},
     {"properties": {"record_type": {"const": "intrinsic_execution_trace"}, "payload": {"$ref": "intrinsic-execution-trace.schema.json"}}},
     {"properties": {"record_type": {"const": "tool_execution_trace"}, "payload": {"$ref": "tool-execution-trace.schema.json"}}},
+    {"properties": {"record_type": {"const": "role_execution_trace"}, "payload": {"$ref": "role-execution-trace.schema.json"}}},
+    {"properties": {"record_type": {"const": "resource_telemetry_trace"}, "payload": {"$ref": "resource-telemetry-trace.schema.json"}}},
     {"properties": {"record_type": {"const": "containment_execution"}, "payload": {"$ref": "containment-execution.schema.json"}}}
   ],
   "$defs": {
@@ -39,8 +43,9 @@
             "host_profile", "runtime_profile", "model_identity",
             "effective_runtime_config", "benchmark_input", "evaluator_identity",
             "trial_identity", "execution_binding", "run_manifest", "case_result",
+            "execution_interface_identity", "tool_compatibility_observation", "resource_telemetry_trace",
             "evaluation_result", "aggregate_report", "intrinsic_execution_trace",
-            "tool_execution_trace", "containment_execution"
+            "tool_execution_trace", "role_execution_trace", "containment_execution"
           ]
         },
         "logical_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},

@@ -4,6 +4,18 @@ A Windows-friendly, dependency-free benchmark harness for running fixed JSON or 
 
 This project is independent of Worker Lab. Put it in its own folder or Git repository; it neither imports nor edits Worker Lab.
 
+## Flash-Next all-role campaign (Benchmark Lab V2)
+
+The additive [Flash-Next campaign](campaigns/flashnext-all-roles-v1/README.md)
+starts from `architecture/multi-runtime-tool-interface`. It pins C01 to the
+owner-verified Flash-Next llama.cpp fork, gates the unchanged 22-case V2 shared
+screen behind a bounded native-interface smoke, and reuses historical role
+prompts/fixtures for Planner, Governor, Worker, Tester and provisional Reviewer.
+Raw runtime/tool evidence, correctness, compatibility, throughput, verbosity and
+resource observations remain separate. Start with the campaign README's Windows
+`validate` and `smoke` commands. The setup does not automatically start a larger
+campaign or claim that any role is qualified.
+
 ## Planning round 2 (current)
 
 The current decision run is a 90-call planning and task-contract benchmark: 18 cases per model across five models. Nine independent scenarios each have a `PLAN` turn followed by a preserved-context `TASK_CREATE` turn. Context resets between scenarios and models.

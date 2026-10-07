@@ -1,0 +1,55 @@
+{
+  "schema_version": "flashnext-role-suite:v1",
+  "campaign": "flashnext-all-roles:v1",
+  "parent_lineage": "architecture/multi-runtime-tool-interface",
+  "prerequisite": "The verified Flash-Next llama.cpp interface must pass the existing V2 shared screen; caller enforces gates before role execution.",
+  "screen_repetitions": 1,
+  "qualification_repetitions": 3,
+  "roles": {
+    "planner": {
+      "cases": ["planner-intent-01", "planner-intent-02", "planner-intent-03", "planner-intent-04", "planner-intent-05", "planner-intent-06"],
+      "evaluation": "human review of bounded task quality, acceptance conditions, source fidelity, scope, and ambiguity discipline"
+    },
+    "governor": {
+      "cases": ["governor-packet-a", "governor-packet-b", "governor-packet-c", "governor-packet-d"],
+      "requires": "canonical local Governor docs/LAW.md, docs/STATE.md, docs/GENERAL_INTENT.md; captured and hashed at run time",
+      "evaluation": "human review of valid A/B/C approvals and deliberately flawed D rejection plus useful intent extraction"
+    },
+    "worker": {
+      "cases": ["worker-title-task-01", "worker-intent04-task-01", "worker-intent04-task-02", "worker-intent04-task-03"],
+      "evaluation": "historical deterministic acceptance/regression checks and scope checks; handoff usefulness reviewed separately",
+      "intent04_session_policy": "fresh role session per task; one repair in same task session; next task only after accepted deterministic result and handoff; no gold continuation"
+    },
+    "tester": {
+      "cases": ["tester-case-a", "tester-case-c", "tester-case-d"],
+      "expected_routing": {"tester-case-a": "PASS", "tester-case-c": "FAIL", "tester-case-d": "PASS"},
+      "evaluation": "actual test execution, production restraint, test validity against known correct/defective historical implementations, natural-language handoff review",
+      "coverage_limit": "Only historical implemented cases A/C/D are reused. B/E/F remain qualification gaps.",
+      "controlled_test_policy": "pricing-unittest-static-v1: tests inspected before execution; unittest and pricing.discount imports plus ordinary assertions and numeric builtins only; unsupported test source is interface-blocked"
+    },
+    "reviewer": {
+      "cases": ["reviewer-title-captured-tests", "reviewer-title-claim-only", "reviewer-note-exact", "reviewer-note-wrong-content", "reviewer-note-scope-drift", "reviewer-note-missing-evidence"],
+      "evaluation": "human review against current native-lab Reviewer role and packet evidence; explicit provisional status",
+      "qualification_status": "provisional-unqualified"
+    }
+  },
+  "output_contract": "Natural prose. Only established Worker Handoff note and Tester/Reviewer routing decisions remain role contracts; no new fixed response forms.",
+  "tool_interface": {
+    "id": "flashnext-role-files-tests:v1",
+    "tools": ["read_file", "write_file", "run_tests"],
+    "file_scope": "exact BoundedWorkspace readable/writable paths",
+    "test_command": "python -B -m unittest discover -s tests -v",
+    "model_process_arguments": false,
+    "shell": false,
+    "os_isolation": false,
+    "network_isolation": false,
+    "max_tool_calls_per_case_including_repair": 40,
+    "max_model_turns_per_case_including_setup_and_repair": 48
+  },
+  "qualification_policy": "Repeated evidence collection does not auto-qualify or assign any role. Human review remains required; runtime compatibility and correctness remain separate.",
+  "provenance": {
+    "local_model_bench_commit": "fce91a7fa409aecd824a3fa1229724b0aab56812",
+    "deepseek_lab_commit": "e8bf69e664504fc54fbb94a00131b52e0a9c0de9",
+    "manifests": ["sources/local-model-bench/SOURCE_MANIFEST.json", "sources/deepseek-lab/SOURCE_MANIFEST.json"]
+  }
+}

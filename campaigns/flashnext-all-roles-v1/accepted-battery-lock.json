@@ -1,0 +1,129 @@
+{
+  "schema_version": "flashnext-accepted-battery-lock:v1",
+  "repository": "floydtrey/local-model-bench",
+  "base_branch": "architecture/multi-runtime-tool-interface",
+  "base_commit": "b01ec0a7cc693c8f4d731e13dedac613f2defba2",
+  "screen_counts": {
+    "L0": 9,
+    "L1": 5,
+    "L2": 8
+  },
+  "qualification_trials_per_case": 3,
+  "files": [
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/conflict-a.txt",
+      "sha256": "95ca25ffbb228562e3b59d05578c532c74ce0c26a06040bba554752b1f51f83b",
+      "bytes": 79
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/conflict-b.txt",
+      "sha256": "2a545e25e27602035f2a5a8520bb5eb8c6561c6679ce566860a9731b4faebe1e",
+      "bytes": 79
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/evidence-gap.txt",
+      "sha256": "2dba9c9e5db15af4e3987b2ac506da9c0aff908b524a06c5405a8907df013188",
+      "bytes": 155
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/lifecycle-current.txt",
+      "sha256": "801be82914d4970b6367edf1f97fc31ea21d15c267c9f44819b5346b71229a35",
+      "bytes": 90
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/lifecycle-old.txt",
+      "sha256": "2bec787a88d305fb4b0ab2cc2236dede99bc60a5843e298e2d3ed7b3d89cdcb0",
+      "bytes": 79
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/repair-code.py",
+      "sha256": "4b02a92a9162de119c6330e02d979fc1346b94d974fd429b574fe8093628bd41",
+      "bytes": 58
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/repair-failure.txt",
+      "sha256": "62198d27ba2ab9c418b2c2c6226a3538cb661e0cc6cc695e9cf9a6f86c1e0a5e",
+      "bytes": 115
+    },
+    {
+      "path": "benchmark-packs/v2/fixtures/shared-l1-v1/traceability.txt",
+      "sha256": "a4f3da3079f670bf249a2c3287c55cf9400bbf1ba8dd94a028f120c757ab5f0b",
+      "bytes": 221
+    },
+    {
+      "path": "benchmark-packs/v2/shared-l0-core-v1.json",
+      "sha256": "4777133615bfda2c6a897fda711aa5c7bbb39f019857d4332bcb6cc1b437469b",
+      "bytes": 10791
+    },
+    {
+      "path": "benchmark-packs/v2/shared-l1-core-v1.json",
+      "sha256": "ac4b3cda3dc47cc2eb4c9653057db8789e289e1e73ef188f3ef808375bb8cd3f",
+      "bytes": 9220
+    },
+    {
+      "path": "benchmark-packs/v2/shared-l2-core-v1.json",
+      "sha256": "1399a6c6e2b5382ec3c99dbcf7f6c2ef3b805eee6d5f58ae5ec8125f74299b9d",
+      "bytes": 10674
+    },
+    {
+      "path": "benchmark-packs/v2/shared-l2-workspaces-v1.json",
+      "sha256": "fe9e141c8b163ec0ee0b7f5ca6cae5e9f857ac9fde43c5c618d21b6ec863043d",
+      "bytes": 2492
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/idempotent-noop/state.txt",
+      "sha256": "43280df3d14707befa3ccf57ec40324a2140001759510356894d20cc31b3218b",
+      "bytes": 19
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/minimal-code-repair/calc.py",
+      "sha256": "e06cccbc4b4089238adb7d6ee5e2fa1f093cfcc8f30ce0ba32c2c2a8f27cc493",
+      "bytes": 43
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/minimal-code-repair/failure.txt",
+      "sha256": "3d231ba05bf987e9e0525b37e2865e7ab6d1141c9c8309a31243a8f8cd19f287",
+      "bytes": 57
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/multi-file-synthesis/north.txt",
+      "sha256": "4d1c2ca846e17d30bb9ff35a0d3fcfe6fc214cfabd0b514f2777f0486f38342a",
+      "bytes": 18
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/multi-file-synthesis/south.txt",
+      "sha256": "80ad516968b5835a3dc9c98edf205bdbf3ec87b97f7f141b88f7829ed3948ae5",
+      "bytes": 17
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/read-only-evidence-answer/facts.txt",
+      "sha256": "5a0fe0cf895c2fb3db4b8d96badea1ccd1ed45cf8b221ae64e9879529447a2be",
+      "bytes": 76
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/read-transform-write/input.txt",
+      "sha256": "6ec14897940105e77715cd1ed29428753133ebe8d22c40cedacd43bcb0ea372b",
+      "bytes": 40
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/safe-existing-update/settings.txt",
+      "sha256": "21e3df1b225e18756d403ef0497a49e660bdc4667ffda0f86a203858e347adc5",
+      "bytes": 36
+    },
+    {
+      "path": "benchmark-packs/v2/workspaces/shared-l2-v1/scope-restraint/authorized.txt",
+      "sha256": "2d84ffff374b7385e38ff26ce90382d4b73475fd76a4497d80eac2ab69b93d79",
+      "bytes": 15
+    },
+    {
+      "path": "src/localbench/v2/shared_battery.py",
+      "sha256": "7a8e7aecab68f53ff80de7b99fc790d591d66fc2399bad11429458e32a9107f6",
+      "bytes": 18517
+    },
+    {
+      "path": "src/localbench/v2/shared_l2_battery.py",
+      "sha256": "eb317249fa96b3cbcabdffb59ed5925ac5f3cee95d0b28019e2f29f66456f994",
+      "bytes": 21314
+    }
+  ]
+}

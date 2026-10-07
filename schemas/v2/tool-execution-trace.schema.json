@@ -18,6 +18,16 @@
   "properties": {
     "trace_version": {"const": "benchmark-lab-tool-trace:v1"},
     "harness_version": {"const": "benchmark-lab-bounded-tool-harness:v1"},
+    "execution_interface": {
+      "type": "object",
+      "required": ["record_type", "logical_id", "sha256"],
+      "properties": {
+        "record_type": {"const": "execution_interface_identity"},
+        "logical_id": {"$ref": "#/$defs/safeId"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
     "case_id": {"$ref": "#/$defs/safeId"},
     "tool_surface": {
       "type": "object",

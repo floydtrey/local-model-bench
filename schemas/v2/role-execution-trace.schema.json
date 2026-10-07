@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/role-execution-trace.schema.json",
+  "title": "Benchmark Lab V2 established-role conversation trace payload",
+  "description": "Campaign role conversations have an explicit trace contract, including setup/dispatch/repair phases and a bounded file/test extension. They do not claim the accepted BL-6 trace or BL-7 containment contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trace_version", "campaign_only_surface", "case_id", "role", "trial", "execution_interface", "source_refs", "tool_surface", "scope", "initial_workspace", "events", "final_workspace", "summary", "preflight", "assessments"],
+  "properties": {
+    "trace_version": {"const": "benchmark-lab-role-execution-trace:v1"},
+    "campaign_only_surface": {"const": true},
+    "case_id": {"$ref": "#/$defs/safeId"},
+    "role": {"enum": ["planner", "governor", "worker", "tester", "reviewer"]},
+    "trial": {"allOf": [{"$ref": "#/$defs/evidenceRef"}, {"properties": {"record_type": {"const": "trial_identity"}}}]},
+    "execution_interface": {"allOf": [{"$ref": "#/$defs/evidenceRef"}, {"properties": {"record_type": {"const": "execution_interface_identity"}}}]},
+    "source_refs": {"type": "array", "items": {"type": "object"}},
+    "tool_surface": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "tools", "max_tool_calls", "schema_sha256"],
+      "properties": {
+        "id": {"enum": ["none", "flashnext-role-files-tests:v1"]},
+        "tools": {"type": "array", "uniqueItems": true, "items": {"enum": ["read_file", "write_file", "run_tests"]}},
+        "max_tool_calls": {"type": "integer", "minimum": 0},
+        "schema_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}
+      }
+    },
+    "scope": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "additionalProperties": false, "required": ["readable_paths", "writable_paths"], "properties": {"readable_paths": {"$ref": "#/$defs/paths"}, "writable_paths": {"$ref": "#/$defs/paths"}}}
+      ]
+    },
+    "initial_workspace": {"$ref": "#/$defs/snapshot"},
+    "events": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["sequence", "event_type", "phase", "payload", "event_sha256"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "event_type": {"$ref": "#/$defs/safeId"},
+          "phase": {"enum": ["setup", "dispatch", "repair"]},
+          "payload": {"type": "object"},
+          "event_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "final_workspace": {"$ref": "#/$defs/snapshot"},
+    "summary": {
+      "type": "object", "required": ["status", "stop_reason", "compatibility", "correctness", "model_turns", "tool_calls"],
+      "properties": {
+        "status": {"enum": ["success", "error", "blocked", "resource_limit", "protocol_failure"]},
+        "stop_reason": {"type": "string", "minLength": 1},
+        "compatibility": {"type": "string", "minLength": 1},
+        "correctness": {"type": "string", "minLength": 1},
+        "model_turns": {"type": "integer", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0}
+      }
+    },
+    "preflight": {"type": ["object", "null"]},
+    "assessments": {"type": "array", "items": {"type": "object"}}
+  },
+  "$defs": {
+    "safeId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidenceRef": {"type": "object", "additionalProperties": false, "required": ["record_type", "logical_id", "sha256"], "properties": {"record_type": {"type": "string", "minLength": 1}, "logical_id": {"$ref": "#/$defs/safeId"}, "sha256": {"$ref": "#/$defs/sha256"}}},
+    "paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "snapshot": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^(?:[0-9a-f]{64}|symlink:.*)$"}}
+  }
+}

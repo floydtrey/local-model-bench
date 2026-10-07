@@ -4,3 +4,11 @@
 benchmark-packs/v2/*.json text eol=lf
 benchmark-packs/v2/fixtures/** text eol=lf
 benchmark-packs/v2/workspaces/** text eol=lf
+
+# Flash-Next source snapshots and campaign evidence identities are byte-addressed.
+# Preserve original source blobs (including any original CRLF) without conversion.
+campaigns/flashnext-all-roles-v1/sources/** -text
+campaigns/flashnext-all-roles-v1/*.json text eol=lf
+src/localbench/v2/*.py text eol=lf
+schemas/v2/*.json text eol=lf
+tools/campaigns/*.ps1 text eol=lf
