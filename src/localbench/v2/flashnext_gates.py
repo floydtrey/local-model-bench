@@ -382,13 +382,15 @@ def _trace(trace, case, source_case, level, effective, binding, interface, repo_
     return assets
 
 
-def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root: Path):
+def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root: Path, allow_blocked_shared: bool = False):
     _require(stage in {"smoke", "shared-screen"}, "unsupported progression gate stage")
     envelope = read_json(root / "gate.json")
     gate = envelope.get("payload")
     _require(envelope.get("schema_version") == "flashnext-campaign-gate:v1" and isinstance(gate, dict)
              and sha256_json(gate) == envelope.get("sha256"), "invalid or changed gate envelope")
-    _require(gate.get("stage") == stage and gate.get("status") == "pass", f"a passing {stage} gate is required")
+    _require(gate.get("stage") == stage, f"expected {stage} gate")
+    allowed_statuses = {"pass", "blocked"} if allow_blocked_shared and stage == "shared-screen" else {"pass"}
+    _require(gate.get("status") in allowed_statuses, f"a passing {stage} gate is required")
     _require(_same(gate.get("fingerprint"), fingerprint), "different runtime/model/host/configuration/implementation fingerprint")
     _require(gate.get("role_or_model_qualified") is False and gate.get("native_tool_smoke_pass") is True,
              "gate must prove interface operation without claiming model/role qualification")
@@ -399,7 +401,7 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
         _require(isinstance(parent, str) and Path(parent).is_absolute(), "shared gate requires its absolute smoke parent")
         parent_path = Path(parent).resolve()
         _require(parent_path != root, "gate ancestry cycle")
-        parent_gate = _verify(parent_path, stage="smoke", fingerprint=fingerprint, repo_root=repo_root)
+        parent_gate = _verify(parent_path, stage="smoke", fingerprint=fingerprint, repo_root=repo_root, allow_blocked_shared=False)
         _require(gate.get("parent_gate_sha256") == sha256_json(parent_gate), "smoke parent gate changed")
     packs = _packs(repo_root, root, stage)
     expected_cases = {case["case_id"]: (level, case) for level, (pack, _) in packs.items() for case in pack.cases}
@@ -545,7 +547,8 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
     return gate
 
 
-def verify_gate(run_dir: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root: Path | None = None) -> dict[str, Any]:
+def verify_gate(run_dir: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root: Path | None = None,
+                allow_blocked_shared: bool = False) -> dict[str, Any]:
     """Reject stale, incomplete or incompatible smoke/shared progression evidence.
 
     Shared correctness failures remain visible and do not by themselves block
@@ -554,8 +557,37 @@ def verify_gate(run_dir: Path, *, stage: str, fingerprint: Mapping[str, Any], re
     """
     try:
         return _verify(Path(run_dir).resolve(), stage=stage, fingerprint=fingerprint,
-                       repo_root=Path(repo_root).resolve() if repo_root is not None else Path(__file__).resolve().parents[3])
+                       repo_root=Path(repo_root).resolve() if repo_root is not None else Path(__file__).resolve().parents[3],
+                       allow_blocked_shared=allow_blocked_shared)
     except FlashNextBlocked:
         raise
     except (OSError, ValueError, TypeError, KeyError, AttributeError, IndexError, RecursionError, UnboundLocalError) as exc:
         raise FlashNextBlocked(f"gate evidence verification failed: {type(exc).__name__}: {exc}") from exc
+
+
+def verify_shared_run_for_roles(run_dir: Path, *, current_fingerprint: Mapping[str, Any], repo_root: Path | None = None) -> dict[str, Any]:
+    """Revalidate completed shared evidence for role progression without rewriting it."""
+    root = Path(run_dir).resolve()
+    envelope = read_json(root / "gate.json")
+    gate = envelope.get("payload")
+    _require(isinstance(gate, Mapping) and gate.get("stage") == "shared-screen", "role prerequisite is not a shared-screen gate")
+    historical = gate.get("fingerprint")
+    _require(isinstance(historical, Mapping), "shared gate fingerprint is missing")
+    ignored = {"implementation_sha256"}
+    for key in sorted((set(historical) | set(current_fingerprint)) - ignored):
+        _require(_same(historical.get(key), current_fingerprint.get(key)), f"shared prerequisite identity changed: {key}")
+    verified = verify_gate(root, stage="shared-screen", fingerprint=historical, repo_root=repo_root, allow_blocked_shared=True)
+    return {
+        "schema_version": "flashnext-shared-role-progression:v1",
+        "status": "pass",
+        "source_gate_status": gate.get("status"),
+        "source_gate_sha256": envelope.get("sha256"),
+        "historical_fingerprint_sha256": sha256_json(historical),
+        "current_fingerprint_sha256": sha256_json(current_fingerprint),
+        "ignored_role_progression_fields": sorted(ignored),
+        "completed_observations": verified.get("completed_observations"),
+        "correctness_all_pass": verified.get("correctness_all_pass"),
+        "native_tool_smoke_pass": verified.get("native_tool_smoke_pass"),
+        "source_run": str(root),
+        "source_evidence_rewritten": False,
+    }

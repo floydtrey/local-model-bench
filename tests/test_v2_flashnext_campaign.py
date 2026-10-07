@@ -435,6 +435,23 @@ class FlashNextCampaignContractTests(unittest.TestCase):
             self.assertEqual(smoke_provenance["source_sha256"], full_provenance["source_sha256"])
         self.assertEqual(total, 22)
 
+    def test_role_progression_can_revalidate_legacy_blocked_shared_gate_without_rewriting_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            chain = _run_chain(Path(tmp))
+            shared = chain["shared_dir"]
+            gate_path = shared / "gate.json"
+            original = json.loads(gate_path.read_bytes())
+            original["payload"]["status"] = "blocked"
+            original["sha256"] = sha256_json(original["payload"])
+            gate_path.write_bytes(canonical_json_bytes(original))
+            current = dict(chain["foundation"]["fingerprint"])
+            current["implementation_sha256"] = "f" * 64
+            receipt = campaign.verify_shared_run_for_roles(shared, current_fingerprint=current, repo_root=ROOT)
+            self.assertEqual(receipt["status"], "pass")
+            self.assertEqual(receipt["source_gate_status"], "blocked")
+            self.assertFalse(receipt["source_evidence_rewritten"])
+            self.assertEqual(json.loads(gate_path.read_bytes()), original)
+
     def test_default_validate_does_not_preflight_or_start_a_runtime(self):
         with patch.object(campaign, "preflight_identity") as preflight, \
              patch.object(campaign, "OwnedFlashNextServer") as server, \

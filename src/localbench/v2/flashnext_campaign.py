@@ -27,7 +27,7 @@ from .flashnext_runtime import (
     file_digest, preflight_identity, read_json, validate_profile, validate_sources,
     write_bytes_once, write_json_once,
 )
-from .flashnext_gates import verify_gate
+from .flashnext_gates import verify_gate, verify_shared_run_for_roles
 from .llama_cpp_driver import LLAMA_CPP_ADAPTER_ID, LlamaCppChatDriver, llama_cpp_adapter_resolution
 from .orchestrator import ConfigurationBinding, DriverBinding, EvidenceStore, WorkspaceBinding
 from .repetition import run_v2_repetitions
@@ -522,7 +522,10 @@ def main(argv=None) -> int:
         parent = None
         if args.stage in {"shared-screen", "shared-qualification"}:
             parent = verify_gate(args.smoke_run.resolve(), stage="smoke", fingerprint=foundation["fingerprint"], repo_root=repo_root)
-        if args.stage in {"roles", "shared-qualification"}:
+        if args.stage == "roles":
+            parent = verify_shared_run_for_roles(args.shared_run.resolve(), current_fingerprint=foundation["fingerprint"], repo_root=repo_root)
+            write_json_once(output_dir / "shared-progression-receipt.json", parent)
+        elif args.stage == "shared-qualification":
             parent = verify_gate(args.shared_run.resolve(), stage="shared-screen", fingerprint=foundation["fingerprint"], repo_root=repo_root)
         server = OwnedFlashNextServer(profile, output_dir / "runtime", progress=progress)
         # Smoke is bounded across startup + all three projected cases, not 600s
