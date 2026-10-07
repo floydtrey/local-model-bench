@@ -444,12 +444,13 @@ def role_runner(*, foundation, profile, output_dir, campaign_root, server, roles
     def case_context(case_dir, trial):
         binding = system_resource_telemetry_binding(sampling_interval_ms=profile["limits"]["telemetry_interval_ms"])
         capture = SafeResourceTelemetryCapture(binding, f"flashnext-resource-{trial.sha256[:24]}", trial.payload["case_id"], trial.reference)
-        timer = server.watchdog(profile["limits"]["case_seconds"])
+        # The llama.cpp driver already enforces the sealed per-request deadline.
+        # Do not kill the resident server when one role case times out; preserve the
+        # timeout as model performance evidence and continue later independent cases.
         capture.start()
         try:
             yield capture
         finally:
-            timer.cancel()
             trace = capture.stop()
             store.persist(trace)
             write_json_once(Path(case_dir) / "resource-telemetry-ref.json", trace.reference.to_dict())

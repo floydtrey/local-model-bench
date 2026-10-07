@@ -458,9 +458,10 @@ class RoleConversation:
                 raise TypeError("driver did not return ModelTurnResponse")
         except Exception as exc:
             category = getattr(exc, "category", getattr(exc, "classification", getattr(exc, "kind", None)))
-            self.status = "resource_limit" if category == "generation_truncated" else "protocol_failure"
+            bounded_model_limit = category in {"generation_truncated", "timeout"}
+            self.status = "resource_limit" if bounded_model_limit else "protocol_failure"
             self.stop_reason = category or "runtime_or_interface_failure"
-            self.compatibility = "compatible" if category == "generation_truncated" else "unresolved"
+            self.compatibility = "compatible" if bounded_model_limit else "unresolved"
             self.event("model_error", {
                 "error_type": type(exc).__name__, "detail": str(exc),
                 "classification": category,

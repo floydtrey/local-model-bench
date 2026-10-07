@@ -278,6 +278,24 @@ class FlashNextRolesTests(unittest.TestCase):
             self.assertIsNone(result["exit_code"])
             self.assertIn("controlled_test_source_policy", result["infrastructure_error"]["detail"])
 
+    def test_request_timeout_is_bounded_model_resource_limit_not_protocol_failure(self):
+        class RequestTimeout(RuntimeError):
+            category = "timeout"
+            provider_metadata = {"prompt_tokens": 7, "output_tokens": 0}
+
+        def handler(request):
+            if request.turn == 1:
+                return ModelTurnResponse(content="WORKER_READY")
+            raise RequestTimeout("total request deadline exceeded")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            result, _, _ = self._run(temporary, "worker", 0, handler)
+            self.assertEqual(result["status"], "resource_limit")
+            self.assertEqual(result["stop_reason"], "timeout")
+            self.assertEqual(result["runtime_compatibility"], "compatible")
+            self.assertIsNone(result["deterministic_passed"])
+            self.assertIn("not-assessed", result["correctness"])
+
     def test_parser_error_remains_unassessed_and_preserves_failure_metrics(self):
         class ParserError(RuntimeError):
             category = "tool_transport_incompatible"
