@@ -43,7 +43,15 @@ def _profile():
 
 def _foundation(base_url: str, output_dir: Path):
     host = host_profile(
-        "fixture-host", captured_at="2026-10-07T00:00:00Z",
+        "flashnext-host-capture-1", captured_at="2026-10-07T00:00:00Z",
+        os_info={"name": "synthetic-fixture", "build": "1"},
+        cpu={"model": "synthetic-cpu", "physical_cores": 2, "logical_cores": 4},
+        memory={"installed_bytes": 64_000_000_000, "available_bytes": None},
+        gpus=[], storage=[], python={"version": "3.12", "implementation": "CPython"},
+        compute_runtimes=[], power_thermal=None,
+    )
+    host2 = host_profile(
+        "flashnext-host-capture-2", captured_at="2026-10-07T00:00:01Z",
         os_info={"name": "synthetic-fixture", "build": "1"},
         cpu={"model": "synthetic-cpu", "physical_cores": 2, "logical_cores": 4},
         memory={"installed_bytes": 64_000_000_000, "available_bytes": None},
@@ -69,7 +77,7 @@ def _foundation(base_url: str, output_dir: Path):
         capabilities={"synthetic_test_fixture": True, "plain_text_tool_fallback": False},
     )
     store = EvidenceStore(output_dir / "evidence")
-    store.persist_many((host, runtime, model, interface))
+    store.persist_many((host, host2, runtime, model, interface))
     return {"host": host, "runtime": runtime, "model": model, "interface": interface, "store": store,
             "fingerprint": {"synthetic_fixture": True, "implementation_sha256": "d" * 64,
                             "host_facts_sha256": host.payload["facts_sha256"], "runtime_sha256": runtime.sha256,

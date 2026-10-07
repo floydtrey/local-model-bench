@@ -408,11 +408,21 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
              "gate observation count is incomplete")
     records = _Records(root, gate.get("evidence"))
     observations = _artifacts(root, gate.get("artifact_files"))
-    host, runtime, model, interface = [records.one(kind) for kind in
-        ("host_profile", "runtime_profile", "model_identity", "execution_interface_identity")]
+    runtime, model, interface = [records.one(kind) for kind in
+        ("runtime_profile", "model_identity", "execution_interface_identity")]
+    host_profiles = records.by_type["host_profile"]
+    _require(1 <= len(host_profiles) <= 2, "expected one execution host plus at most one BL-3 stability capture")
+    _require(all(host.payload.get("facts_sha256") == fingerprint.get("host_facts_sha256")
+                 for host in host_profiles), "foreign or unstable host facts")
+    if len(host_profiles) == 2:
+        _require({host.logical_id for host in host_profiles}
+                 == {"flashnext-host-capture-1", "flashnext-host-capture-2"},
+                 "unexpected extra host-profile identity")
+    manifest_host_keys = {_key(record.payload.get("host")) for record in records.by_type["run_manifest"]}
+    _require(len(manifest_host_keys) == 1, "run manifests do not bind one execution host")
+    host = records.get(next(iter(manifest_host_keys)), "host_profile")
     for record, key in ((runtime, "runtime_sha256"), (model, "model_sha256"), (interface, "execution_interface_sha256")):
         _require(record.sha256 == fingerprint.get(key), f"foreign {record.record_type} fingerprint")
-    _require(host.payload.get("facts_sha256") == fingerprint.get("host_facts_sha256"), "foreign host facts")
     validate_execution_interface_identity(interface)
     _require(_same(interface.payload["runtime"], runtime.reference.to_dict())
              and _same(interface.payload["model"], model.reference.to_dict())
