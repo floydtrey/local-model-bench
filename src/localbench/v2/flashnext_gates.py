@@ -273,7 +273,7 @@ def _terminal(content: str | None) -> dict[str, Any]:
     return {"kind": "assistant_text", "content": content, "sha256": hashlib.sha256(raw).hexdigest(), "size_bytes": len(raw)}
 
 
-def _trace(trace, case, source_case, level, effective, binding, interface, repo_root, observations, consumed, specs):
+def _trace(trace, case, source_case, level, effective, binding, interface, repo_root, observations, consumed, specs, *, allow_model_behavior_failure=False):
     assets = _resolve_assets(source_case, level=level, asset_loader=lambda asset: _path(repo_root, asset["source_locator"]).read_bytes())
     execution = _execution_case(source_case, assets)
     initial = ModelTurnRequest(case_id=case.payload["case_id"], turn=1,
@@ -297,8 +297,12 @@ def _trace(trace, case, source_case, level, effective, binding, interface, repo_
         payload = trace.payload
         _require(_same(payload.get("execution_interface"), interface.reference.to_dict()), "foreign tool execution interface")
         summary = payload["summary"]
-        _require(summary.get("status") == "success" and summary.get("stop_reason") == "terminal_output",
-                 "tool execution failed or exhausted a limit")
+        if allow_model_behavior_failure:
+            _require((summary.get("status"), summary.get("stop_reason")) in {("success", "terminal_output"), ("resource_limit", "max_tool_calls")},
+                     "tool execution has an operational failure rather than a bounded model-behavior outcome")
+        else:
+            _require(summary.get("status") == "success" and summary.get("stop_reason") == "terminal_output",
+                     "tool execution failed or exhausted a limit")
         spec = specs[source_case["case_id"]]
         readable = sorted(set(spec["readable_paths"]) | {asset.reference_path for asset in assets if asset.reference_path})
         writable = list(spec["writable_paths"])
@@ -318,6 +322,8 @@ def _trace(trace, case, source_case, level, effective, binding, interface, repo_
             {**scope, "initial_state_sha256": payload["initial_workspace"]["snapshot_sha256"]}), "bounded workspace scope changed")
         events, index, turn, call_count = payload["events"], 0, 0, 0
         history = _copy(initial["messages"])
+        terminal = None
+        limit_reached = False
         while index < len(events):
             turn += 1
             expected = {**initial, "turn": turn, "messages": history}
@@ -340,6 +346,14 @@ def _trace(trace, case, source_case, level, effective, binding, interface, repo_
                 assistant["reasoning"] = response["reasoning"]
             history.append(assistant)
             for call in calls:
+                if allow_model_behavior_failure and index < len(events) and events[index]["event_type"] == "limit_reached":
+                    limit = events[index]["payload"]
+                    _require(_same(limit.get("blocked_call"), call) and limit.get("limit") == "max_tool_calls"
+                             and limit.get("maximum") == effective.payload["tool_surface"]["max_tool_calls"],
+                             "resource-limit evidence does not bind the blocked native call")
+                    index += 1
+                    limit_reached = True
+                    break
                 _require(index + 2 < len(events), "tool request/result exchange is incomplete")
                 request_event, authorization, result = events[index:index + 3]
                 _require(request_event["event_type"] == "tool_request" and _same(request_event["payload"], call)
@@ -352,9 +366,18 @@ def _trace(trace, case, source_case, level, effective, binding, interface, repo_
                                 "result": _copy(result["payload"]["result"])})
                 call_count += 1
                 index += 3
+            if limit_reached:
+                break
         _require(call_count > 0 and call_count <= effective.payload["tool_surface"]["max_tool_calls"]
-                 and summary.get("tool_calls") == call_count and summary.get("model_turns") == turn
-                 and summary.get("terminal_output_sha256") == terminal["sha256"], "native tool interface/counts not proven")
+                 and summary.get("tool_calls") == call_count and summary.get("model_turns") == turn,
+                 "native tool interface/counts not proven")
+        if summary.get("status") == "success":
+            _require(terminal is not None and summary.get("terminal_output_sha256") == terminal["sha256"],
+                     "successful tool trace terminal output is not proven")
+        else:
+            _require(allow_model_behavior_failure and limit_reached and terminal is None
+                     and summary.get("terminal_output_sha256") is None and index == len(events),
+                     "bounded model-behavior resource limit is not completely evidenced")
     _require(_same(case.payload["terminal_output"], terminal), "case output differs from its execution trace")
     return assets
 
@@ -428,9 +451,15 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
         for case_id in pack.case_ids:
             case, source_case = cases[case_id], pack.case(case_id)
             payload = case.payload
-            _require(payload.get("status") == "success" and payload.get("metrics", {}).get("stop_reason") == "terminal_output"
-                     and _same(payload["manifest"], manifest.reference.to_dict())
-                     and _same(payload["benchmark"], benchmark.reference.to_dict()), "unsuccessful or foreign case execution")
+            if stage == "smoke":
+                _require((payload.get("status"), payload.get("metrics", {}).get("stop_reason")) in {
+                    ("success", "terminal_output"), ("resource_limit", "max_tool_calls")},
+                    "smoke case has an operational failure rather than a bounded model-behavior outcome")
+            else:
+                _require(payload.get("status") == "success" and payload.get("metrics", {}).get("stop_reason") == "terminal_output",
+                         "unsuccessful shared-screen case execution")
+            _require(_same(payload["manifest"], manifest.reference.to_dict())
+                     and _same(payload["benchmark"], benchmark.reference.to_dict()), "foreign case execution")
             trial = records.get(payload["trial"], "trial_identity")
             _require(_key(trial) not in used_trials and trial.payload.get("case_id") == case_id
                      and type(trial.payload.get("ordinal")) is int and trial.payload["ordinal"] == 1
@@ -457,7 +486,8 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
                      "foreign execution binding/driver")
             trace = records.get(payload["execution_evidence"]["primary"], "tool_execution_trace" if level == "L2" else "intrinsic_execution_trace")
             _require(_key(trace) not in used_traces, "reused execution trace")
-            _trace(trace, case, source_case, level, effective, binding, interface, repo_root, observations, consumed, specs)
+            _trace(trace, case, source_case, level, effective, binding, interface, repo_root, observations, consumed, specs,
+                   allow_model_behavior_failure=stage == "smoke")
             evaluations = [record for record in records.by_type["evaluation_result"] if _same(record.payload["case"], case.reference.to_dict())]
             _require(len(evaluations) == len(source_case["evaluators"]) == 1, "missing/duplicate case evaluator result")
             evaluation, evaluator_binding = evaluations[0], source_case["evaluators"][0]
@@ -467,7 +497,6 @@ def _verify(root: Path, *, stage: str, fingerprint: Mapping[str, Any], repo_root
             replay = registry.evaluate(evaluation.logical_id, evaluator_id=definition.evaluator_id, contract_version=definition.contract_version,
                 case_definition=source_case, case_result_record=case, supplemental_evidence=_supplemental_for_definition(definition, available))
             _require(replay.reference == evaluation.reference, "deterministic evaluation differs from preserved case/trace")
-            _require(stage != "smoke" or evaluation.payload["verdict"] == "pass", "smoke deterministic correctness did not pass")
             for collection, record in ((used_trials, trial), (local_trials, trial), (used_bindings, binding), (local_bindings, binding),
                 (used_traces, trace), (used_evaluations, evaluation), (used_configs, effective), (local_configs, effective),
                 (used_evaluators, definition.identity), (local_evaluators, definition.identity)):

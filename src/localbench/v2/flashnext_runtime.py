@@ -30,6 +30,7 @@ FORK_REVISION = "27c54b4bbcefadedcec6397477cc2e866c1db716"
 CONTEXT_TOKENS = 262144
 BASE_COMMIT = "b01ec0a7cc693c8f4d731e13dedac613f2defba2"
 CAMPAIGN_NAME = "flashnext-all-roles-v1"
+CUDA_RUNTIME_DLLS = ("cudart64_13.dll", "cublas64_13.dll", "cublasLt64_13.dll")
 SERVER_ARGS = (
     "-ngl", "99", "-ncmoe", "99", "-fa", "on", "-ctk", "f16", "-ctv", "f16",
     "-t", "8", "-b", "256", "-ub", "128", "--no-sched-async-cpu",
@@ -96,7 +97,7 @@ def validate_profile(profile: Mapping[str, Any]) -> None:
     port = profile.get("port")
     if not isinstance(port, int) or isinstance(port, bool) or not 1024 <= port <= 65535:
         raise FlashNextBlocked("port must be an unprivileged TCP port")
-    for key in ("model_entry", "server_executable"):
+    for key in ("model_entry", "server_executable", "cuda_runtime_path"):
         if not isinstance(profile.get(key), str) or not profile[key]:
             raise FlashNextBlocked(f"missing {key}")
     for name in ("startup_seconds", "smoke_total_seconds", "case_seconds", "max_tool_calls", "telemetry_interval_ms"):
@@ -109,6 +110,28 @@ def validate_profile(profile: Mapping[str, Any]) -> None:
         raise FlashNextBlocked("telemetry interval must be at least 100 ms")
     if profile["limits"]["max_tool_calls"] != 40:
         raise FlashNextBlocked("role campaign v1 declares a 40-call budget; shared L2 keeps its separate accepted 3/4/5 limits")
+
+
+def cuda_runtime_dependencies(profile: Mapping[str, Any]) -> tuple[Path, ...]:
+    root = Path(profile["cuda_runtime_path"])
+    if not root.is_dir():
+        raise FlashNextBlocked(f"pinned CUDA runtime directory is missing: {root}")
+    paths = tuple(root / name for name in CUDA_RUNTIME_DLLS)
+    missing = [str(path) for path in paths if not path.is_file()]
+    if missing:
+        raise FlashNextBlocked(f"pinned CUDA runtime DLLs are missing: {missing}")
+    return paths
+
+
+def runtime_environment(profile: Mapping[str, Any]) -> dict[str, str]:
+    """Recreate the verified Flash-Next runtime environment for every child process."""
+    validate_profile(profile)
+    cuda_root = str(Path(profile["cuda_runtime_path"]))
+    cuda_runtime_dependencies(profile)
+    env = {**os.environ, **profile["environment"]}
+    inherited = os.environ.get("PATH", "")
+    env["PATH"] = cuda_root if not inherited else cuda_root + os.pathsep + inherited
+    return env
 
 
 def validate_sources(repo_root: Path, campaign_root: Path) -> dict[str, Any]:
@@ -219,7 +242,7 @@ def preflight_identity(*, profile: Mapping[str, Any], repo_root: Path, campaign_
     shards = shard_paths(Path(profile["model_entry"]))
     raw_dir = output_dir / "runtime"
     raw_dir.mkdir(parents=True, exist_ok=True)
-    env = {**os.environ, **profile["environment"]}
+    env = runtime_environment(profile)
     progress("Capturing the pinned runtime version (no model load).")
     try:
         version = subprocess.run([str(executable), "--version"], capture_output=True, timeout=30, env=env)
@@ -235,7 +258,7 @@ def preflight_identity(*, profile: Mapping[str, Any], repo_root: Path, campaign_
     observed_revision = verify_version_revision(version_text)
     progress("Hashing all three model shards and the exact runtime installation.")
     artifacts = [{"file": p.name, "bytes": p.stat().st_size, "sha256": file_digest(p, progress)} for p in shards]
-    binaries = [executable, *sorted(executable.parent.glob("*.dll"))]
+    binaries = [executable, *sorted(executable.parent.glob("*.dll")), *cuda_runtime_dependencies(profile)]
     installation = [{"file": p.name, "bytes": p.stat().st_size, "sha256": file_digest(p, progress)} for p in binaries]
     progress("Capturing two V2 host profiles and comparing stable facts.")
     probe = SystemHostProbe(target_path=Path(profile["model_entry"]).parent)
@@ -251,7 +274,7 @@ def preflight_identity(*, profile: Mapping[str, Any], repo_root: Path, campaign_
         transport={"kind": "loopback_http", "base_uri": f"http://127.0.0.1:{profile['port']}",
                    "context_tokens": CONTEXT_TOKENS, "model_alias": "C01", "reasoning_mode": "auto",
                    "parallel_slots": 1, "launch_argv": server_command(profile),
-                   "environment": profile["environment"], "process_lifecycle": "owned_per_command",
+                   "environment": {**profile["environment"], "PATH_prepend": profile["cuda_runtime_path"]}, "process_lifecycle": "owned_per_command",
                    "revision_verification": "binary-reported-abbreviation-plus-owner-supplied-full-pin"},
         executable={"path": str(executable), **installation[0]},
         installation_digest=sha256_json(installation),
@@ -358,7 +381,7 @@ class OwnedFlashNextServer:
             except OSError as exc:
                 raise FlashNextBlocked(f"port {self.profile['port']} is already occupied; choose a free loopback port in the profile") from exc
         argv = server_command(self.profile)
-        write_json_once(self.output_dir / "launch.json", {"argv": argv, "environment_overrides": self.profile["environment"],
+        write_json_once(self.output_dir / "launch.json", {"argv": argv, "environment_overrides": {**self.profile["environment"], "PATH_prepend": self.profile["cuda_runtime_path"]},
                        "process_ownership": "created_here_only", "cold_kind": "new_process_os_file_cache_unknown"})
         self.started = time.monotonic()
         try:
@@ -367,7 +390,7 @@ class OwnedFlashNextServer:
             if self.expired:
                 raise FlashNextBlocked("startup time budget expired before launch")
             self.process = subprocess.Popen(argv, stdout=self._files[0], stderr=self._files[1],
-                                            env={**os.environ, **self.profile["environment"]}, stdin=subprocess.DEVNULL)
+                                            env=runtime_environment(self.profile), stdin=subprocess.DEVNULL)
             write_json_once(self.output_dir / "process.json", {"pid": self.process.pid, "owned": True})
             self.progress(f"Loading C01 in the pinned fork (owned PID {self.process.pid}).")
             last_message = time.monotonic()

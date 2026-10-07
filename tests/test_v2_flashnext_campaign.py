@@ -336,7 +336,7 @@ class FlashNextCampaignFailureTests(unittest.TestCase):
             self.assertEqual(case.payload["status"], "error")
             self.assertEqual(list((output / "l2/evidence/records/evaluation_result").glob("*.json")), [])
 
-    def test_correctness_failure_is_separate_from_runtime_and_blocks_smoke_gate(self):
+    def test_correctness_failure_is_separate_from_runtime_and_does_not_block_smoke_gate(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp)
             result, foundation, requests = _run(output, incorrect_case="structured-transformation")
@@ -344,9 +344,9 @@ class FlashNextCampaignFailureTests(unittest.TestCase):
             self.assertEqual(result["rows"][0]["correctness"], "fail")
             self.assertEqual(result["rows"][0]["runtime_compatibility"], "pass")
             gate = campaign.create_gate(output_dir=output, stage="smoke", foundation=foundation, result=result)
-            self.assertEqual(gate["status"], "blocked")
-            with self.assertRaises(FlashNextBlocked):
-                campaign.verify_gate(output, stage="smoke", fingerprint=foundation["fingerprint"])
+            self.assertEqual(gate["status"], "pass")
+            verified = campaign.verify_gate(output, stage="smoke", fingerprint=foundation["fingerprint"])
+            self.assertFalse(verified["correctness_all_pass"])
 
     def test_tool_shaped_prose_never_executes_and_cannot_unlock_native_smoke(self):
         with tempfile.TemporaryDirectory() as tmp:

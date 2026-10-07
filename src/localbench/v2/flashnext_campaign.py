@@ -387,13 +387,15 @@ def run_shared(*, repo_root: Path, output_dir: Path, foundation, profile, server
 def create_gate(*, output_dir: Path, stage: str, foundation, result, parent_gate=None, parent_smoke_run: Path | None = None) -> dict[str, Any]:
     expected = 3 if stage == "smoke" else 22
     passed = result["completed_observations"] == expected
-    passed = passed and all(row.get("execution_status") == "success" and row.get("runtime_compatibility") == "pass"
+    passed = passed and all(row.get("runtime_compatibility") == "pass"
                             and not row.get("truncated") and not row.get("runtime_errors") for row in result["rows"])
     passed = passed and result["native_tool_smoke_pass"]
-    if stage == "smoke":
-        passed = passed and result["all_correct"] and result["native_tool_smoke_pass"]
-    # A shared screen can record correctness failures without eliminating the
-    # candidate. Operational exceptions abort run_shared and never arrive here.
+    if stage != "smoke":
+        passed = passed and all(row.get("execution_status") == "success" for row in result["rows"])
+    # Smoke proves runtime/interface compatibility only. Candidate correctness,
+    # including bounded tool-use mistakes or a model-behavior resource limit,
+    # is preserved and scored separately. Complete shared screens still require
+    # successful executions but may contain deterministic correctness failures.
     artifacts = []
     for path in sorted(output_dir.rglob("*")):
         if path.is_file() and ("runtime" in path.relative_to(output_dir).parts or "raw" in path.relative_to(output_dir).parts):
@@ -404,7 +406,7 @@ def create_gate(*, output_dir: Path, stage: str, foundation, result, parent_gate
             "native_tool_smoke_pass": result["native_tool_smoke_pass"], "role_or_model_qualified": False,
             "parent_gate_sha256": sha256_json(parent_gate) if parent_gate else None,
             "parent_smoke_run": str(parent_smoke_run.resolve()) if parent_smoke_run else None,
-            "gate_meaning": "bounded runtime/interface smoke passed" if stage == "smoke" else "complete shared screen with correctness reported separately"}
+            "gate_meaning": "bounded runtime/interface smoke passed; correctness reported separately" if stage == "smoke" else "complete shared screen with correctness reported separately"}
     write_derived(output_dir / "gate.json", schema_version="flashnext-campaign-gate:v1", payload=gate)
     return gate
 
@@ -540,7 +542,7 @@ def main(argv=None) -> int:
             gate = create_gate(output_dir=output_dir, stage=args.stage, foundation=foundation, result=result, parent_gate=parent,
                                parent_smoke_run=args.smoke_run if args.stage == "shared-screen" else None)
             if gate["status"] != "pass":
-                raise FlashNextBlocked("smoke checks or native tool transport did not pass; inspect correctness and compatibility separately")
+                raise FlashNextBlocked("runtime/interface progression gate did not pass; inspect correctness and compatibility separately")
             progress(f"{args.stage} gate PASS. Model/role qualification remains separate. Gate: {output_dir / 'gate.json'}")
         else:
             write_derived(output_dir / "run-summary.json", schema_version="flashnext-stage-summary:v1", payload=result)

@@ -36,8 +36,13 @@ def fake_artifacts(root: Path) -> dict:
         entry.with_name(entry.name.replace("00001-of", f"{ordinal:05d}-of")).write_bytes(
             b"GGUF" + ordinal.to_bytes(4, "little") + b"synthetic header only\n"
         )
+    cuda_root = root / "cuda-runtime"
+    cuda_root.mkdir()
+    for name in runtime.CUDA_RUNTIME_DLLS:
+        (cuda_root / name).write_bytes(b"synthetic pinned CUDA runtime\n")
     result["server_executable"] = str(executable)
     result["model_entry"] = str(entry)
+    result["cuda_runtime_path"] = str(cuda_root)
     return result
 
 
@@ -114,6 +119,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
             "deepseek", "--metrics",
         ])
         self.assertEqual(config["environment"], {"GGML_CUDA_REGISTER_HOST": "1", "HF_HUB_OFFLINE": "1"})
+        self.assertEqual(config["cuda_runtime_path"], r"C:\AI\FlashNext-Lab\tools\cuda-13.3\bin\x64")
         for change in ({"candidate_id": "other"}, {"context_tokens": 32768}, {"fork_revision": "0" * 40},
                        {"parallel_slots": 2}, {"host": "0.0.0.0"}, {"server_args": []},
                        {"environment": {"HF_HUB_OFFLINE": "0"}}):
@@ -160,6 +166,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
             self.assertEqual(run.call_args.args[0], [config["server_executable"], "--version"])
             self.assertEqual(run.call_args.kwargs["env"]["HF_HUB_OFFLINE"], "1")
             self.assertEqual(run.call_args.kwargs["env"]["GGML_CUDA_REGISTER_HOST"], "1")
+            self.assertEqual(run.call_args.kwargs["env"]["PATH"].split(os.pathsep)[0], config["cuda_runtime_path"])
             return result
 
     def test_preflight_records_all_artifacts_without_loading_or_qualifying_a_model(self) -> None:
@@ -172,7 +179,8 @@ class FlashNextRuntimeTests(unittest.TestCase):
             self.assertFalse(receipt["model_started"])
             self.assertFalse(receipt["model_or_role_qualified"])
             self.assertEqual(len(receipt["model_artifacts"]), 3)
-            self.assertEqual({item["file"] for item in receipt["runtime_installation"]}, {"llama-server.exe", "ggml-cuda.dll"})
+            self.assertEqual({item["file"] for item in receipt["runtime_installation"]},
+                             {"llama-server.exe", "ggml-cuda.dll", *runtime.CUDA_RUNTIME_DLLS})
             self.assertEqual((root / "run/runtime/version.stdout.bin").read_bytes(), version.stdout)
             self.assertEqual((root / "run/runtime/version.stderr.bin").read_bytes(), version.stderr)
             self.assertEqual(result["runtime"].payload["build"], runtime.FORK_REVISION)
@@ -300,6 +308,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
             self.assertEqual(popen.call_args.args[0], runtime.server_command(config))
             self.assertEqual(popen.call_args.kwargs["env"]["HF_HUB_OFFLINE"], "1")
             self.assertEqual(popen.call_args.kwargs["env"]["GGML_CUDA_REGISTER_HOST"], "1")
+            self.assertEqual(popen.call_args.kwargs["env"]["PATH"].split(os.pathsep)[0], config["cuda_runtime_path"])
             self.assertEqual(child.terminated, 1)
             self.assertEqual(child.killed, 0)
             self.assertTrue(all(stream.closed for stream in server._files))

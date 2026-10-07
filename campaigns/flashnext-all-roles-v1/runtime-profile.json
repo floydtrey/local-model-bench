@@ -4,6 +4,7 @@
   "candidate_name": "Qwen3.8-Flash-Next UD-IQ3_XXS",
   "model_entry": "C:\\AI\\FlashNext-Lab\\models\\Qwen3.8-Flash-Next\\UD-IQ3_XXS\\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf",
   "server_executable": "C:\\AI\\FlashNext-Lab\\build\\cuda-13.3\\bin\\llama-server.exe",
+  "cuda_runtime_path": "C:\\AI\\FlashNext-Lab\\tools\\cuda-13.3\\bin\\x64",
   "fork_revision": "27c54b4bbcefadedcec6397477cc2e866c1db716",
   "host": "127.0.0.1",
   "port": 18081,
@@ -75,6 +76,7 @@
     "Server --predict -1 and --timeout -1 are preserved. The client independently caps each response at 8192 tokens and each case at 600 seconds; smoke has a 600 second aggregate budget including server startup.",
     "No claim that --reasoning auto forces reasoning on each response. The client preserves server_default behavior; enabled means no disable override.",
     "One explicit parallel slot prevents dividing the requested 262144 context among concurrent sequences.",
-    "All three GGUF shards, the executable, and adjacent DLLs are hashed locally before launch. No model/runtime download or backend fallback."
+    "All three GGUF shards, the executable, adjacent llama.cpp DLLs, and the pinned CUDA runtime DLLs are hashed locally before launch. No model/runtime download or backend fallback.",
+    "The campaign prepends the pinned CUDA runtime directory to PATH for both the version probe and the owned server process; no manual shell PATH mutation is required."
   ]
 }
