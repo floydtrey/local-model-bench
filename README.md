@@ -4,6 +4,20 @@ A Windows-friendly, dependency-free benchmark harness for running fixed JSON or 
 
 This project is independent of Worker Lab. Put it in its own folder or Git repository; it neither imports nor edits Worker Lab.
 
+## Local Ollama benchmark queue GUI
+
+The [Tkinter queue GUI](tools/gui/README.md) runs selected installed Ollama models
+one at a time through the existing five-role CLI. It provides live output,
+Pause/Stop After Current, queue ordering, and local recovery without additional
+Python dependencies. From the checkout on Windows, launch:
+
+```powershell
+.\tools\gui\benchmark-queue.cmd
+```
+
+The GUI wraps `tools/campaigns/run-all-roles.ps1`; the CLI still owns all benchmark
+and review behavior. A Complete queue row means CLI exit 0, not model qualification.
+
 ## Flash-Next all-role campaign (Benchmark Lab V2)
 
 The additive [Flash-Next campaign](campaigns/flashnext-all-roles-v1/README.md)

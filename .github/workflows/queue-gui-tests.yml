@@ -1,0 +1,43 @@
+name: Benchmark Queue GUI Tests
+
+on:
+  push:
+    branches:
+      - benchmark/flashnext-all-roles-v1
+    paths:
+      - src/localbench/queue_gui/**
+      - tools/gui/**
+      - tests/test_queue_gui*
+      - .github/workflows/queue-gui-tests.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-gui:
+    name: Python 3.12 / Windows / Tkinter
+    runs-on: windows-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+      LOCALBENCH_REQUIRE_TK: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python and Windows launcher entry points
+        shell: cmd
+        run: |
+          python tools\gui\benchmark-queue.py --help
+          if errorlevel 1 exit /b 1
+          call tools\gui\benchmark-queue.cmd --help <NUL
+          if errorlevel 1 exit /b 1
+
+      - name: Run queue and real Tkinter tests with fake benchmarks
+        run: python -m unittest discover -s tests -p "test_queue_gui*.py" -v
