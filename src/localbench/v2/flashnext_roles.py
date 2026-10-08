@@ -350,6 +350,7 @@ def run_role_case(
     workspace_root: Path | None = None, reuse_workspace: bool = False,
     prerequisite_handoff: str | None = None, dependency_blocked: bool = False,
     case_context_factory: Callable | None = None,
+    driver_binding: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Seal a single two-turn case before its first model call, then preserve all evidence."""
     folder = Path(output_dir)
@@ -402,9 +403,14 @@ def run_role_case(
         "max_repairs": spec.get("max_repairs", 0), "source_refs": spec.get("source_refs", []),
         "controls": {"scope": "exact-file-neutral-tools", "shell_access": False, "model_selects_process_arguments": False, "test_command": "python -B -m unittest discover -s tests -v", "test_source_inspection": "pricing-unittest-static-v1" if spec["role"] == "tester" else None, "os_isolation": False, "network_isolation": False, "case_watchdog": case_context_factory is not None},
     }
+    bound_driver = dict(driver_binding or {
+        "driver_id": "flashnext-role-conversation-v1",
+        "implementation_sha256": implementation,
+        "execution_kind": "in_process",
+    })
     binding = execution_binding(
         identity + "-binding", trial=trial.reference, execution_mode="lab_tool" if tool_case else "intrinsic",
-        driver={"driver_id": "flashnext-role-conversation-v1", "implementation_sha256": implementation, "execution_kind": "in_process"},
+        driver=bound_driver,
         workspace_scope=scope, context_assets=[], execution_interface=foundation["interface"].reference,
         containment=None,
     )
@@ -535,6 +541,7 @@ def run_role_campaign(
     driver_factory: Callable, evidence_store: EvidenceStore, output_dir: Path,
     governor_root: Path | None = None, case_context_factory: Callable | None = None,
     progress: Callable[[Mapping[str, Any]], None] | None = None,
+    driver_binding: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run a one-pass screen or three-repeat qualification evidence collection.
 
@@ -570,7 +577,7 @@ def run_role_campaign(
                 evidence_store=evidence_store, output_dir=output / f"repetition-{ordinal}" / spec["case_id"], ordinal=ordinal,
                 workspace_root=workspace, reuse_workspace=scenario and scenario_started,
                 prerequisite_handoff=previous_handoff if scenario else None, dependency_blocked=dependency_blocked,
-                case_context_factory=case_context_factory,
+                case_context_factory=case_context_factory, driver_binding=driver_binding,
             )
             if scenario:
                 scenario_started = True

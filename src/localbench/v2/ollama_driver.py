@@ -20,6 +20,12 @@ REASONING_TRANSPORTS = frozenset({"boolean", "effort", "unsupported"})
 class OllamaDriverError(RuntimeError):
     """A bounded, user-displayable Ollama transport or protocol failure."""
 
+    def __init__(self, message: str, *, category: str = "runtime_or_interface_failure",
+                 provider_metadata: Mapping[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.category = category
+        self.provider_metadata = dict(provider_metadata or {})
+
 
 def _mapping(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, Mapping):
@@ -387,11 +393,13 @@ class OllamaChatDriver:
                 body = response.read()
         except urllib.error.HTTPError as exc:
             detail = exc.read(2048).decode("utf-8", errors="replace")
-            raise OllamaDriverError(f"Ollama HTTP {exc.code}: {detail}") from exc
+            category = "tool_transport_incompatible" if "does not support tools" in detail.casefold() else "http_error"
+            raise OllamaDriverError(f"Ollama HTTP {exc.code}: {detail}", category=category) from exc
         except urllib.error.URLError as exc:
-            raise OllamaDriverError(f"Ollama request failed: {exc.reason}") from exc
+            category = "timeout" if isinstance(exc.reason, TimeoutError) else "transport_error"
+            raise OllamaDriverError(f"Ollama request failed: {exc.reason}", category=category) from exc
         except TimeoutError as exc:
-            raise OllamaDriverError("Ollama request timed out") from exc
+            raise OllamaDriverError("Ollama request timed out", category="timeout") from exc
         try:
             value = json.loads(body)
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:

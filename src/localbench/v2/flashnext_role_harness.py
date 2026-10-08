@@ -652,6 +652,10 @@ class RoleConversation:
         generation_seconds = total("generation_seconds")
         if generation_seconds is None and generation_ms is not None:
             generation_seconds = generation_ms / 1000
+        if generation_seconds is None:
+            eval_duration_ns = total("eval_duration")
+            if eval_duration_ns is not None:
+                generation_seconds = eval_duration_ns / 1_000_000_000
         predicted = [item.get("timings", {}).get("predicted_n") if isinstance(item.get("timings"), Mapping) else None for item in metadata]
         generation_tokens = sum(predicted) if predicted and all(isinstance(x, (int, float)) and not isinstance(x, bool) and x >= 0 for x in predicted) else None
         generation_rate = generation_tokens / generation_seconds if generation_tokens is not None and generation_seconds else None
@@ -666,7 +670,11 @@ class RoleConversation:
             "generation_tokens": generation_tokens,
             "generation_tokens_per_second": generation_rate,
             "generation_throughput_source": generation_rate_source,
-            "prompt_processing_seconds": total("prompt_processing_seconds"),
+            "prompt_processing_seconds": (
+                total("prompt_processing_seconds")
+                if total("prompt_processing_seconds") is not None
+                else (total("prompt_eval_duration") / 1_000_000_000 if total("prompt_eval_duration") is not None else None)
+            ),
             "model_turns": self.model_turns, "tool_calls": self.tool_calls,
             "denied_tool_calls": self.denied_calls, "test_tool_calls": len(self.test_calls),
             "max_validation_retries": self.max_validation_retries,
