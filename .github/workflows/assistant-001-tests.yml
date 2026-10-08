@@ -1,0 +1,40 @@
+name: Assistant 001 Benchmark Tests
+on:
+  push:
+    branches: [benchmark/flashnext-all-roles-v1]
+    paths:
+      - 'project-benchmarks/assistant-001/**'
+      - 'src/localbench/assistant001/**'
+      - 'tools/campaigns/run-assistant-001.ps1'
+      - 'tests/test_assistant001*.py'
+      - '.github/workflows/assistant-001-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deterministic:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+      ASSISTANT001_REQUIRE_V2: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify frozen packet without models
+        run: python -m localbench.assistant001 validate
+      - name: Deterministic project tests and negative controls
+        run: python -m unittest discover -s tests -p 'test_assistant001*.py' -v
+      - name: Windows PowerShell launcher (no inference)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          & .\tools\campaigns\run-assistant-001.ps1 -Action validate -PythonExe (Get-Command python).Source
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

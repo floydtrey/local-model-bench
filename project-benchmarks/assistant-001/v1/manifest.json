@@ -1,0 +1,23 @@
+{
+  "packet_id": "assistant-001-v1",
+  "files": {
+    "CONTRACT.md": "f511a4d881da7307e62f1298f8254afc6d90ad43361deb477c8bf8268ba9b3be",
+    "PROJECT_INTENT.md": "951f100286b99784a68e3a03fb1c677e61f74d54ebbad1ca64295ad47be56ca7",
+    "README.md": "b06f8f5e80e17278bfca5e8695a99b0bd9c29eff8dc492a5ee0e422587ecdc2c",
+    "REVIEW_RUBRICS.md": "672dc5eac76f5153f45f1c3c34f7981db6acb5814b9cba255c2ab79a3fd952a1",
+    "TASKS.md": "46f16980995595f5f064542dfe1d67e0849e91b5f732f94ce604fc6fd73f7071",
+    "assessor/checks.py": "8b6224a8d47766d42047c0656623a05f89c2962f17339ae9f4a30b88082e097d",
+    "assessor/reference/assistant_journal/cli.py": "95572d445f106b51a72b7dbd407fd3aa230d202d19538be033ba7320c0840ecf",
+    "assessor/reference/assistant_journal/journal.py": "79f93f339dff38eedc93be9d4b0098b587bdd71046cb2056448b5b1ea4ab2bba",
+    "assessor/reference/assistant_journal/validation.py": "ce30ec0f8066cca1d5bea9ff46592fd550bf222116c0855a3bc42b32e3c055f7",
+    "packet.json": "ac8b223d74c29161ad00d5be5325e42df11fa0ec81b2b98e1a36dcb9dd2415b6",
+    "starter/README.md": "65c994889b722ba0e45b9a2cafd4eccd8640959548f9dcbaad15b44ed1c014dd",
+    "starter/assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "starter/assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "starter/assistant_journal/cli.py": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e",
+    "starter/assistant_journal/journal.py": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2",
+    "starter/assistant_journal/validation.py": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac",
+    "starter/tests/test_candidate.py": "bb37efc1187f35f6b6949eae8bcbe1e216d8d18777c1da6c26d1650ccb37215f",
+    "starter/tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
+  }
+}

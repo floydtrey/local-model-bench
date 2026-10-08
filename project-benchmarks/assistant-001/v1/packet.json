@@ -1,0 +1,80 @@
+{
+  "packet_id": "assistant-001-v1",
+  "version": 1,
+  "base_branch": "benchmark/flashnext-all-roles-v1",
+  "base_commit": "8b783971557ac84c20b38ccb5db6bc668534c71e",
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Validate and normalize events",
+      "requirements": "R01",
+      "writable_paths": [
+        "assistant_journal/validation.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "Persist observations and duplicates",
+      "requirements": "R01\u2013R02",
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "Query bounded ordered history",
+      "requirements": "R01\u2013R03",
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "Project current state with replay time",
+      "requirements": "R01\u2013R04",
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "Ingest batches atomically",
+      "requirements": "R01\u2013R05",
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "Deliver the CLI, tests and documentation",
+      "requirements": "R01\u2013R06",
+      "writable_paths": [
+        "assistant_journal/cli.py",
+        "tests/test_candidate.py",
+        "README.md"
+      ]
+    }
+  ],
+  "runtime": "ollama",
+  "screen_repetitions": 1,
+  "qualification_repetitions": 3,
+  "timeout_seconds_per_role_task": 600,
+  "max_output_tokens": 8192,
+  "context_tokens": 32768,
+  "keep_alive_seconds": 3600,
+  "model_temperature": 0,
+  "model_seed": 42,
+  "max_tool_calls": 40,
+  "max_model_turns": 48,
+  "guided_repairs": 0,
+  "assessor_timeout_seconds": 120,
+  "candidate_network_policy": "none (not OS-enforced)",
+  "candidate_execution": "explicit host-execution acknowledgement required",
+  "qualification": "human-review-pending",
+  "production_promotion": "never automatic"
+}
