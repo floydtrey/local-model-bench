@@ -1,7 +1,8 @@
 # Local benchmark queue GUI
 
 A small, standard-library Tkinter front end for sequential Ollama role campaigns.
-Each queue item invokes the existing `tools/campaigns/run-all-roles.ps1` once.
+Each queue item invokes the existing `tools/campaigns/run-all-roles.ps1` once,
+through a small PowerShell proxy that makes terminal output consistently UTF-8.
 That CLI still owns the Planner, Governor, Worker, Tester, Reviewer, evidence,
 and review-workbook behavior.
 
@@ -85,10 +86,16 @@ For example, a default queue item builds this command as an argument list with
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File .\tools\campaigns\run-all-roles.ps1 `
+  -File .\tools\gui\run-queue-item.ps1 `
   -Runtime ollama -Model gemma3:27b -Phase screen `
   -GovernorRoot C:\Projects\governor
 ```
+
+`run-queue-item.ps1` sets only console/pipe output encoding, forwards all arguments
+to `tools/campaigns/run-all-roles.ps1` using PowerShell's `@args` proxy support,
+and returns its exit code. It defines no benchmark parameters or defaults.
+This preserves Unicode paths in live output and `RUN_DIR` without changing the
+existing CLI. See Microsoft's [parameter forwarding documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-5.1#splatting-command-parameters).
 
 ### Pause, continue, and stop
 
@@ -171,6 +178,7 @@ The implementation is separate from the benchmark engine:
 - `src/localbench/queue_gui/app.py`: Tk widgets and all queue scheduling on the UI
   thread.
 - `tools/gui/benchmark-queue.py` and `.cmd`: checkout launchers.
+- `tools/gui/run-queue-item.ps1`: terminal encoding and argument forwarding only.
 
 Run the focused tests from the repository root:
 

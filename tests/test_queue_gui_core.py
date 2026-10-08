@@ -27,7 +27,7 @@ class SettingsAndCommandTests(unittest.TestCase):
         root = Path("checkout with spaces")
         self.assertEqual(build_command(root, "gemma3:27b", settings), [
             "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-            str(root / "tools" / "campaigns" / "run-all-roles.ps1"),
+            str(root / "tools" / "gui" / "run-queue-item.ps1"),
             "-Runtime", "ollama", "-Model", "gemma3:27b", "-Phase", "screen",
             "-GovernorRoot", r"C:\Projects\governor",
         ])

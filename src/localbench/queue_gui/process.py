@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import codecs
 import errno
-import locale
 import os
 import queue
 import signal
@@ -43,7 +42,9 @@ class ProcessRunner:
         # Bound pending output to roughly 1 MiB of raw chunks. Backpressure keeps
         # all markers/events intact while a modal dialog temporarily stops polls.
         self.events: queue.Queue[ProcessEvent] = queue.Queue(maxsize=256)
-        self.encoding = encoding or locale.getpreferredencoding(False)
+        # The GUI's PowerShell adapter sets its output and native Python's
+        # standard streams to UTF-8. Do not guess a Windows ANSI/OEM code page.
+        self.encoding = encoding or "utf-8"
         codecs.lookup(self.encoding)
         self._lock = threading.Lock()
         self._process: subprocess.Popen[bytes] | None = None

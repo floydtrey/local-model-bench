@@ -267,6 +267,8 @@ class BenchmarkQueueApp:
                 self.queue.settings = self._read_settings()
             if not (self.repo_root / "tools" / "campaigns" / "run-all-roles.ps1").is_file():
                 raise ValueError("Cannot find tools/campaigns/run-all-roles.ps1 in this checkout.")
+            if not (self.repo_root / "tools" / "gui" / "run-queue-item.ps1").is_file():
+                raise ValueError("Cannot find tools/gui/run-queue-item.ps1 in this checkout.")
             self.queue.start()
         except ValueError as exc:
             messagebox.showerror("Cannot start queue", str(exc), parent=self.root)

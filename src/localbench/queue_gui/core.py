@@ -129,12 +129,12 @@ def build_command(
     repo_root: Path, model: str, settings: BenchmarkSettings,
     powershell_exe: str = "powershell.exe",
 ) -> list[str]:
-    """Build argv for Popen(shell=False); the existing CLI remains authoritative."""
+    """Build argv for the UTF-8 proxy, which forwards unchanged args to the CLI."""
     validate_model(model)
     settings.validate()
     command = [
         powershell_exe, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-        str(Path(repo_root) / "tools" / "campaigns" / "run-all-roles.ps1"),
+        str(Path(repo_root) / "tools" / "gui" / "run-queue-item.ps1"),
         "-Runtime", "ollama", "-Model", model, "-Phase", settings.phase,
         "-GovernorRoot", settings.governor_root,
     ]

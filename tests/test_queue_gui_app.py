@@ -85,6 +85,9 @@ class QueueGuiWidgetTests(unittest.TestCase):
         runner_script = self.repo / "tools" / "campaigns" / "run-all-roles.ps1"
         runner_script.parent.mkdir(parents=True)
         runner_script.write_text("# Test fixture; never executed.\n", encoding="utf-8")
+        proxy_script = self.repo / "tools" / "gui" / "run-queue-item.ps1"
+        proxy_script.parent.mkdir(parents=True)
+        proxy_script.write_text("# Test fixture; never executed.\n", encoding="utf-8")
         self.governor = self.repo / "governor"
         self.governor.mkdir()
         self.state_path = self.repo / "queue-state.json"
@@ -193,7 +196,7 @@ class QueueGuiWidgetTests(unittest.TestCase):
         for tag, (_, argv, cwd) in zip(self.tags, self.runner.started):
             self.assertEqual(argv[argv.index("-Model") + 1], tag)
             self.assertEqual(argv[argv.index("-Runtime") + 1], "ollama")
-            self.assertEqual(cwd, self.repo)
+            self.assertEqual(cwd, self.repo.resolve())
 
     def test_pause_finishes_current_and_continue_starts_next(self):
         self._start_first()

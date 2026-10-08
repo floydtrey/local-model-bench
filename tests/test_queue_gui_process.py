@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import errno
+import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -231,13 +233,19 @@ class ProcessTests(unittest.TestCase):
             repo = Path(temp)
             scripts = repo / "tools" / "campaigns"
             scripts.mkdir(parents=True)
+            shim = repo / "tools" / "gui" / "run-queue-item.ps1"
+            shim.parent.mkdir()
+            shutil.copyfile(Path(__file__).resolve().parents[1] / "tools" / "gui" / shim.name, shim)
             gate = scripts / "continue"
             (scripts / "run-all-roles.ps1").write_text(
                 "[CmdletBinding()]\n"
-                "param([string]$Runtime, [string]$Model, [string]$Phase, [string]$GovernorRoot)\n"
+                "param([string]$Runtime, [string]$Model, [string]$Phase, [string]$GovernorRoot,\n"
+                "  [int]$ContextTokens, [int]$MaxOutputTokens, [double]$TimeoutSeconds, [double]$KeepAliveSeconds)\n"
                 "$ErrorActionPreference = 'Stop'\n"
                 "[Console]::Out.WriteLine(\"ARGS=$Runtime|$Model|$Phase|$GovernorRoot\")\n"
-                "$RunPath = 'C:\\Bench runs\\Jos' + [char]233\n"
+                "$Overrides = @{ContextTokens=$ContextTokens; MaxOutputTokens=$MaxOutputTokens; TimeoutSeconds=$TimeoutSeconds; KeepAliveSeconds=$KeepAliveSeconds}\n"
+                "[Console]::Out.WriteLine('OVERRIDES=' + ($Overrides | ConvertTo-Json -Compress))\n"
+                "$RunPath = 'C:\\Bench runs\\Jos' + [char]233 + '\\' + [char]27979 + [char]35797\n"
                 "[Console]::Out.WriteLine(\"PS_PATH=$RunPath\")\n"
                 "[Console]::Out.Flush()\n"
                 "[Console]::Error.WriteLine('PS_STDERR=evidence')\n"
@@ -248,7 +256,8 @@ class ProcessTests(unittest.TestCase):
             )
             (scripts / "child.py").write_text(
                 "import pathlib, sys, time\n"
-                "print('RUN_DIR=C:\\\\Bench runs\\\\Jos' + chr(233), flush=True)\n"
+                "run_path = r'C:\\Bench runs\\Jos' + chr(233) + chr(92) + chr(27979) + chr(35797)\n"
+                "print('RUN_DIR=' + run_path, flush=True)\n"
                 "gate = pathlib.Path(sys.argv[1]); deadline = time.monotonic() + 15\n"
                 "while not gate.exists() and time.monotonic() < deadline: time.sleep(0.01)\n"
                 "sys.stderr.write('NATIVE_STDERR=evidence\\n'); sys.stderr.flush()\n"
@@ -256,30 +265,45 @@ class ProcessTests(unittest.TestCase):
                 encoding="ascii",
             )
             governor = str(repo / "governor root with spaces")
-            settings = BenchmarkSettings(phase="qualification", governor_root=governor)
+            settings = BenchmarkSettings(
+                phase="qualification", governor_root=governor,
+                context_tokens=24576, max_output_tokens=3072,
+                timeout_seconds=17.5, keep_alive_seconds=-1,
+            )
             command = build_command(repo, "qwen:9b", settings)
             runner = ProcessRunner()
             text = ""
+            early_finish = None
+            expected_path = "C:\\Bench runs\\Jos\u00e9\\\u6d4b\u8bd5"
             with patch.dict(os.environ, {"QUEUE_TEST_PYTHON": sys.executable}):
                 runner.start("windows-stub", command, repo)
                 try:
                     deadline = time.monotonic() + 10
                     while "RUN_DIR=" not in text or "\n" not in text.split("RUN_DIR=", 1)[-1]:
                         event = runner.events.get(timeout=max(0.001, deadline - time.monotonic()))
-                        self.assertEqual(event.kind, "output", event.error)
+                        if event.kind == "finished":
+                            early_finish = event
+                            self.fail(f"Premature exit {event.exit_code}: {ascii(text)}; error={event.error!a}")
                         text += event.text
                         if time.monotonic() >= deadline:
                             self.fail("PowerShell did not stream the stub output before exit")
-                    self.assertIn(f"ARGS=ollama|qwen:9b|qualification|{governor}", text)
-                    self.assertIn("PS_PATH=C:\\Bench runs\\Jos\u00e9", text)
-                    self.assertIn("C:\\Bench runs\\Jos\u00e9", [parse_run_dir(line) for line in text.splitlines()])
+                    diagnostic = f"Decoded output: {ascii(text)}"
+                    self.assertIn(f"ARGS=ollama|qwen:9b|qualification|{governor}", text, diagnostic)
+                    self.assertIn(f"PS_PATH={expected_path}", text, diagnostic)
+                    self.assertIn(expected_path, [parse_run_dir(line) for line in text.splitlines()], diagnostic)
+                    overrides = next((line.removeprefix("OVERRIDES=") for line in text.splitlines() if line.startswith("OVERRIDES=")), None)
+                    self.assertIsNotNone(overrides, diagnostic)
+                    self.assertEqual(json.loads(overrides), {
+                        "ContextTokens": 24576, "MaxOutputTokens": 3072,
+                        "TimeoutSeconds": 17.5, "KeepAliveSeconds": -1,
+                    })
                     self.assertTrue(runner.active)
                 finally:
                     gate.touch()
-                    events = self.finish(runner, timeout=10)
+                    events = [early_finish] if early_finish is not None else self.finish(runner, timeout=10)
                 text += "".join(event.text for event in events)
-                self.assertIn("PS_STDERR=evidence", text)
-                self.assertIn("NATIVE_STDERR=evidence", text)
+                self.assertIn("PS_STDERR=evidence", text, ascii(text))
+                self.assertIn("NATIVE_STDERR=evidence", text, ascii(text))
                 self.assertEqual(events[-1].exit_code, 17)
                 self.assertIsNone(events[-1].error)
                 runner.acknowledge("windows-stub")
