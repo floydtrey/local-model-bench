@@ -8,22 +8,24 @@ from .packet import DOCS, digest, packet_root, read_run, snapshot, task_prompt, 
 
 
 def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
-                     allow_host_execution=False, assessor=assess):
+                     allow_host_execution=False, assessor=assess, packet_api=None):
+    from . import packet as default_packet
+    api = packet_api or default_packet
     if not allow_host_execution:
         raise ValueError("Explicit host-execution acknowledgement required")
-    record, packet = read_run(run, repo); run = Path(run)
+    record, packet = api.read_run(run, repo); run = Path(run)
     if (run / "summary.json").exists():
         raise ValueError("Refusing to overwrite a prior campaign; start a fresh run")
     tasks = [item for item in packet["tasks"] if item["id"] <= through]
     if through not in [item["id"] for item in tasks]:
         raise ValueError("Unknown through task")
     results = []; handoff = ""; predecessor_accepted = True
-    summary = {"campaign": "assistant-001-v1", "track": "fixed-plan-worker-chain",
+    summary = {"campaign": record["packet_id"], "track": "fixed-plan-worker-chain",
                "results": results, "planned_cases": len(tasks), "completed_cases": 0,
                "qualification_status": "human-review-pending", "guided_repairs": 0,
                "stopped": None, "os_sandbox": False}
     for task in tasks:
-        case_id = "assistant001-" + task["id"].lower()
+        case_id = record["packet_id"].rsplit("-v", 1)[0].replace("-", "") + "-" + task["id"].lower()
         evidence = run / "roles/worker" / task["id"]
         row = {"case_id": case_id, "role": "worker", "ordinal": ordinal,
                "human_review_required": True, "qualification_status": "human-review-pending",
@@ -35,7 +37,7 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                        correctness="not-assessed-predecessor-blocked")
             results.append(row); continue
         before = snapshot(run / "workspace")
-        prompt = task_prompt(run, task["id"], handoff, repo)
+        prompt = api.task_prompt(run, task["id"], handoff, repo)
         print(f"Starting {task['id']}: {task['title']}", flush=True)
         started = time.monotonic()
         try:
@@ -76,11 +78,13 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
     return summary
 
 
-def role_prompt(role, source_run, *, repo=None, governor_root=None):
+def role_prompt(role, source_run, *, repo=None, governor_root=None, packet_api=None):
     """Build an auditable probe packet from actual artifacts, not claimed success."""
-    root = packet_root(repo); source_run = Path(source_run)
-    record, _ = read_run(source_run, repo)
-    text = "\n\n".join((root / name).read_text(encoding="utf-8") for name in DOCS)
+    from . import packet as default_packet
+    api = packet_api or default_packet
+    root = api.packet_root(repo); source_run = Path(source_run)
+    record, _ = api.read_run(source_run, repo)
+    text = "\n\n".join((root / name).read_text(encoding="utf-8") for name in api.DOCS)
     files = snapshot(source_run / "workspace")
     text += "\n\n# Actual candidate file snapshot\n"
     for path, sha in files.items():
@@ -114,12 +118,15 @@ def role_prompt(role, source_run, *, repo=None, governor_root=None):
 
 
 def run_probe(target_run, source_run, sessions, *, role, repo=None,
-              governor_root=None, plan_file=None, allow_host_execution=False):
+              governor_root=None, plan_file=None, allow_host_execution=False, packet_api=None):
     """One advisory role, never auto-authorize a subsequent role from its prose."""
     import shutil
     from .packet import scope_diff
     target_run, source_run = Path(target_run), Path(source_run)
-    read_run(target_run, repo); read_run(source_run, repo)
+    from . import packet as default_packet
+    api = packet_api or default_packet
+    record, _ = api.read_run(target_run, repo); api.read_run(source_run, repo)
+    prefix = record["packet_id"].rsplit("-v", 1)[0].replace("-", "") + "-"
     if target_run.resolve() == source_run.resolve():
         raise ValueError("Probe must use a separate disposable target")
     if role == "tester" and not allow_host_execution:
@@ -129,7 +136,7 @@ def run_probe(target_run, source_run, sessions, *, role, repo=None,
     source_before = snapshot(source_run / "workspace")
     shutil.rmtree(target_run / "workspace")
     shutil.copytree(source_run / "workspace", target_run / "workspace", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    prompt = role_prompt(role, target_run, repo=repo, governor_root=governor_root)
+    prompt = role_prompt(role, target_run, repo=repo, governor_root=governor_root, packet_api=api)
     if plan_file is not None:
         plan_file = Path(plan_file)
         prompt += f"\n# Supplied plan\nSHA256: {digest(plan_file)}\n" + plan_file.read_text(encoding="utf-8")
@@ -152,16 +159,16 @@ def run_probe(target_run, source_run, sessions, *, role, repo=None,
     (target_run / "probe-source.json").write_text(json.dumps({"source_run": str(source_run.resolve()), "files": source_before}, indent=2), encoding="utf-8")
     evidence = target_run / "roles" / role
     writable = ["tests/test_candidate.py"] if role == "tester" else []
-    result = sessions(role=role, case_id="assistant001-" + role, prompt=prompt,
+    result = sessions(role=role, case_id=prefix + role, prompt=prompt,
                       workspace=target_run / "workspace" if role == "tester" else None,
                       writable=writable, evidence=evidence)
     scope = scope_diff(source_before, snapshot(target_run / "workspace"), writable)
-    result.update(case_id="assistant001-" + role, role=role, ordinal=1,
+    result.update(case_id=prefix + role, role=role, ordinal=1,
                   human_review_required=True, qualification_status="human-review-pending",
                   correctness="human-review-pending", deterministic_passed=None,
                   evidence_directory=str(evidence), scope=scope,
                   source_unchanged=snapshot(source_run / "workspace") == source_before)
-    summary = {"campaign": "assistant-001-v1", "track": "advisory-role-probe", "results": [result],
+    summary = {"campaign": record["packet_id"], "track": "advisory-role-probe", "results": [result],
                "planned_cases": 1, "completed_cases": 1, "qualification_status": "human-review-pending"}
     write_json(target_run / "summary.json", summary)
     return summary

@@ -1,0 +1,10 @@
+{
+  "repository": "floydtrey/local-model-bench",
+  "commit": "5cee2904140650c0c8dfaf9fb003dc71bad49f4b",
+  "source_path": "project-benchmarks/assistant-001/v1/assessor/reference/assistant_journal/validation.py",
+  "source_sha256": "164d5428d1e1362e286e50b996b3dfeb6e14baefc1f98ffe2c470d740ae217cc",
+  "supplied_path": "starter/assistant_simulator/event_contract.py",
+  "supplied_sha256": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+  "transformation": "Only the module docstring changes to describe deliberate candidate-visible support for this new benchmark.",
+  "meaning": "Supplied normalization dependency, not an A001 model result; no Journal implementation exposed."
+}

@@ -1,0 +1,47 @@
+name: Assistant 002 and Shared Engine Regression
+on:
+  push:
+    branches: [benchmark/flashnext-all-roles-v1]
+    paths:
+      - 'project-benchmarks/assistant-002/**'
+      - 'src/localbench/assistant002/**'
+      - 'src/localbench/assistant001/**'
+      - 'tools/campaigns/run-assistant-002.ps1'
+      - 'tests/test_assistant002*.py'
+      - '.github/workflows/assistant-002-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deterministic:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+      ASSISTANT001_REQUIRE_V2: '1'
+      ASSISTANT002_REQUIRE_FULL: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Validate both frozen packets without models
+        shell: bash
+        run: |
+          python -m localbench.assistant001 validate
+          python -m localbench.assistant002 validate
+      - name: Original Assistant 001 regression suite
+        run: python -m unittest discover -s tests -p 'test_assistant001*.py' -v
+      - name: Assistant 002 calibration, workflows, journal pair and review integration
+        run: python -m unittest discover -s tests -p 'test_assistant002*.py' -v
+      - name: Windows PowerShell launcher without inference
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          & .\tools\campaigns\run-assistant-002.ps1 -Action validate -PythonExe (Get-Command python).Source
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

@@ -25,12 +25,14 @@ def terminate_owned(process):
 
 
 def assess(run, task="T06", *, repo=None, allow_host_execution=False,
-           before=None, writable=None, timeout=120):
+           before=None, writable=None, timeout=120, packet_api=None, assessor_args=()):
+    from . import packet as default_packet
+    api = packet_api or default_packet
     if not allow_host_execution:
         raise ValueError("Candidate Python is not OS-sandboxed. Explicit --allow-host-execution is required.")
     if type(timeout) not in (float, int) or not math.isfinite(timeout) or timeout <= 0:
         raise ValueError("Assessor timeout must be finite and positive")
-    run = Path(run).resolve(); record, packet = read_run(run, repo)
+    run = Path(run).resolve(); record, packet = api.read_run(run, repo)
     tasks = [item for item in packet["tasks"] if item["id"] <= task]
     if task not in [item["id"] for item in tasks]:
         raise ValueError("Unknown task")
@@ -47,11 +49,13 @@ def assess(run, task="T06", *, repo=None, allow_host_execution=False,
         write_json(evidence / "assessment.json", base)
         return base, evidence
     result_path = evidence / "checks.json"
-    command = [sys.executable, "-I", "-B", str(packet_root(repo) / "assessor/checks.py"),
-               "--workspace", str(workspace), "--task", task, "--result", str(result_path)]
+    command = [sys.executable, "-I", "-B", str(api.packet_root(repo) / "assessor/checks.py"),
+               "--workspace", str(workspace), "--task", task, "--result", str(result_path), *assessor_args]
     env = {k: v for k, v in os.environ.items() if k in
            ("SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "TMPDIR", "HOME", "USERPROFILE", "LANG", "LC_ALL")}
     env["PYTHONIOENCODING"] = "utf-8"
+    inventory = getattr(api, "expected_check_ids", None)
+    expected = inventory(task, repo) if inventory else None
     started = time.monotonic(); reason = None
     out_path, err_path = evidence / "stdout.txt", evidence / "stderr.txt"
     options = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
@@ -69,7 +73,7 @@ def assess(run, task="T06", *, repo=None, allow_host_execution=False,
             terminate_owned(process)
             raise
     base.update(exit_code=process.returncode, wall_seconds=time.monotonic() - started,
-                assessor_sha256=digest(packet_root(repo) / "assessor/checks.py"))
+                assessor_sha256=digest(api.packet_root(repo) / "assessor/checks.py"))
     try:
         checks = json.loads(result_path.read_text(encoding="utf-8")) if reason is None else None
         valid = (isinstance(checks, dict) and checks.get("contract") == record["packet_id"]
@@ -79,13 +83,15 @@ def assess(run, task="T06", *, repo=None, allow_host_execution=False,
         base.update(checks=checks["checks"], planned=checks.get("planned"), executed=checks.get("executed"),
                     status=checks.get("status", "candidate_error"), error=checks.get("error"))
         rows = checks["checks"]
+        if expected is not None and sorted(r.get("case_id", "") for r in rows) != sorted(expected):
+            raise ValueError("Assessor did not execute the frozen check inventory")
         base["passed"] = (process.returncode == 0 and checks.get("passed") is True and bool(rows)
                           and checks.get("executed") == checks.get("planned") == len(rows)
                           and all(r.get("passed") is True for r in rows))
     except (OSError, ValueError, KeyError):
         base.update(status=reason or "assessor_result_missing_or_invalid", checks=[])
     # Checks may import candidate code. Reverify frozen packet and the whole workspace.
-    validate_packet(repo)
+    api.validate_packet(repo)
     post = snapshot(workspace)
     base["post_test_candidate_sha256"] = post
     if post != pre:

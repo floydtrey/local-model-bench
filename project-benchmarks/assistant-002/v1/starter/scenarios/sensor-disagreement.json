@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "scenario_id": "sensor-disagreement",
+  "start_at": "2026-10-08T12:00:00.000000Z",
+  "duration_ms": 60000,
+  "events": [
+    {
+      "key": "camera",
+      "at_ms": 0,
+      "event": {
+        "event_id": "camera",
+        "source": "observer",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:00.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "present": true
+        },
+        "ttl_seconds": 30
+      }
+    },
+    {
+      "key": "contact",
+      "at_ms": 0,
+      "event": {
+        "event_id": "contact",
+        "source": "contact",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:00.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "open": false
+        },
+        "ttl_seconds": 30
+      }
+    }
+  ],
+  "checkpoints": [
+    {
+      "at_ms": 0,
+      "expected_ids": [
+        "camera",
+        "contact"
+      ]
+    },
+    {
+      "at_ms": 30000,
+      "expected_ids": []
+    }
+  ]
+}

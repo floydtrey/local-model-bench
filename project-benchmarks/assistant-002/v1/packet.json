@@ -1,0 +1,77 @@
+{
+  "packet_id": "assistant-002-v1",
+  "version": 1,
+  "base_commit": "5cee2904140650c0c8dfaf9fb003dc71bad49f4b",
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Normalize scenarios and stable identity",
+      "requirements": "S01",
+      "writable_paths": [
+        "assistant_simulator/scenario.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "Compile deterministic delayed/dropped/duplicate deliveries",
+      "requirements": "S01\u2013S02",
+      "writable_paths": [
+        "assistant_simulator/schedule.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "Drive the journal with a virtual clock",
+      "requirements": "S01\u2013S03",
+      "writable_paths": [
+        "assistant_simulator/replay.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "Validate checkpoints and recover at least once",
+      "requirements": "S01\u2013S04",
+      "writable_paths": [
+        "assistant_simulator/replay.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "Compare declared observations against actual journal state",
+      "requirements": "S01\u2013S05",
+      "writable_paths": [
+        "assistant_simulator/evaluate.py",
+        "tests/test_candidate.py"
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "Deliver the offline CLI, tests and usage examples",
+      "requirements": "S01\u2013S06",
+      "writable_paths": [
+        "assistant_simulator/cli.py",
+        "tests/test_candidate.py",
+        "README.md"
+      ]
+    }
+  ],
+  "screen_repetitions": 1,
+  "qualification_repetitions": 3,
+  "timeout_seconds_per_role_task": 600,
+  "context_tokens": 32768,
+  "max_output_tokens": 8192,
+  "keep_alive_seconds": 3600,
+  "model_temperature": 0,
+  "model_seed": 42,
+  "max_tool_calls": 40,
+  "max_model_turns": 48,
+  "guided_repairs": 0,
+  "assessor_timeout_seconds": 120,
+  "os_sandbox": false,
+  "qualification": "human-review-pending",
+  "production_promotion": "never automatic"
+}
