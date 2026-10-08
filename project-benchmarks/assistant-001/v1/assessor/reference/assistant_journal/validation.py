@@ -24,8 +24,11 @@ def instant(value):
     if not value.endswith("Z") and (int(value[-5:-3]) > 23 or int(value[-2:]) > 59):
         raise ValueError("Invalid timestamp offset")
     try:
-        # datetime.fromisoformat before Python 3.11 does not accept terminal Z.
-        result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        # Python 3.10 accepts three/six fractional digits, not arbitrary 1-6.
+        # Pad valid released precision without rounding or weakening validation.
+        padded = re.sub(r"\.(\d{1,6})(?=Z|[+-]\d{2}:\d{2}$)",
+                        lambda match: "." + match.group(1).ljust(6, "0"), value)
+        result = datetime.fromisoformat(padded.replace("Z", "+00:00"))
         return result.astimezone(timezone.utc)
     except (ValueError, OverflowError) as exc:
         raise ValueError("Invalid timestamp") from exc

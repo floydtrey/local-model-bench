@@ -9,7 +9,7 @@
     "assessor/checks.py": "8b6224a8d47766d42047c0656623a05f89c2962f17339ae9f4a30b88082e097d",
     "assessor/reference/assistant_journal/cli.py": "95572d445f106b51a72b7dbd407fd3aa230d202d19538be033ba7320c0840ecf",
     "assessor/reference/assistant_journal/journal.py": "79f93f339dff38eedc93be9d4b0098b587bdd71046cb2056448b5b1ea4ab2bba",
-    "assessor/reference/assistant_journal/validation.py": "ce30ec0f8066cca1d5bea9ff46592fd550bf222116c0855a3bc42b32e3c055f7",
+    "assessor/reference/assistant_journal/validation.py": "164d5428d1e1362e286e50b996b3dfeb6e14baefc1f98ffe2c470d740ae217cc",
     "packet.json": "ac8b223d74c29161ad00d5be5325e42df11fa0ec81b2b98e1a36dcb9dd2415b6",
     "starter/README.md": "65c994889b722ba0e45b9a2cafd4eccd8640959548f9dcbaad15b44ed1c014dd",
     "starter/assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",

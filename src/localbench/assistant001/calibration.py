@@ -66,7 +66,8 @@ def self_test(repo=None):
         reference = install_reference(root / "reference", repo)
         code, reference_result = check_workspace(reference, "T06", root / "reference.json", repo)
         rows = [{"name": "reference", "passed": code == 0 and reference_result["passed"],
-                 "checks_executed": reference_result.get("executed")}]
+                 "checks_executed": reference_result.get("executed"),
+                 "failures": [r for r in reference_result.get("checks", []) if not r["passed"]]}]
         for name, filename, before, after, task, expected_failure in MUTATIONS:
             workspace = root / name; shutil.copytree(reference, workspace)
             path = workspace / "assistant_journal" / filename
