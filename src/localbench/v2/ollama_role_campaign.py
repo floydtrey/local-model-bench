@@ -30,7 +30,8 @@ from .host import SystemHostProbe, collect_host_profile
 from .ollama_driver import OLLAMA_ADAPTER_ID, OllamaChatDriver, ollama_adapter_resolution
 from .orchestrator import EvidenceStore
 from .records import model_identity, runtime_profile
-from .resource_telemetry import SafeResourceTelemetryCapture, system_resource_telemetry_binding
+from .resource_telemetry import system_resource_telemetry_binding
+from .resource_telemetry_integration import SafeResourceTelemetryCapture
 
 
 CAMPAIGN_NAME = "all-roles-v1"
