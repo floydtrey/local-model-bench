@@ -56,6 +56,13 @@ normalization was rechecked in the focused suite; remote CI checks the pushed tr
 Remote CI status must be read from the checks on the implementation commit;
 local results do not stand in for Windows/Linux hosted CI.
 
+The first hosted full-suite run also exposed two existing lifecycle tests using
+the machine-specific CUDA directory despite mocking the child process. Both now
+reuse the existing `fake_artifacts` helper, including synthetic CUDA files. The
+production dependency guards remain unchanged. This explains why the local full
+suite passed while clean Windows/Linux hosts initially failed. The focused
+runtime regression is rerun locally, followed by full hosted CI on the correction.
+
 ## Acceptance limits
 
 T05 implementation is verified deterministically. T06's implementation and
