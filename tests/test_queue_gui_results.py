@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from localbench.queue_gui.results import load_report, read_evidence, discover_reports, filter_value
+from localbench.queue_gui.core import BenchmarkSettings, save_state
 from results_fixtures import ReportFixture
 from test_queue_gui_app import QueueGuiWidgetTests as _QueueTests
 
@@ -245,6 +246,69 @@ class ResultsWidgetTests(unittest.TestCase):
         self.assertIsNone(worker["denominator"])
         self.assertEqual(worker["attempt_count"], 0)
         self.assertEqual(worker["failed_cases"], [])
+
+    def test_r3_queue_to_result_and_back_preserves_saved_state(self):
+        fixture = ReportFixture(self.repo / "local-state" / "saved-run")
+        fixture.case()
+        fixture.write()
+        item = self.app.queue.add_models(["fixture-model"], BenchmarkSettings(governor_root=str(self.governor)))[0]
+        item.run_dir = "local-state/saved-run"
+        self.app.queue.start()
+        self.app.queue.start_next()
+        self.app.queue.finish(item.id, 0)
+        self.app._save()
+        self.app._render()
+        before = self.state_path.read_bytes()
+        self.app.queue_tree.selection_set(item.id)
+        self.app.view_selected_results()
+        self.root.update()
+        view = self.app.results
+        view.cases.selection_set(view.cases.get_children()[0])
+        view.cases.event_generate("<<TreeviewSelect>>")
+        self.root.update()
+        self.assertIn(item.id, view.detail.get("1.0", "end"))
+        view.reveal_queue()
+        self.assertEqual(self.app.notebook.select(), str(self.app.queue_tab))
+        self.assertEqual(self.app.queue_tree.selection(), (item.id,))
+        self.assertEqual(self.state_path.read_bytes(), before)
+        self.assertEqual(self.runner.started, [])
+
+    def test_r3_recovered_queue_results_never_retry_interrupted_run(self):
+        fixture = ReportFixture(self.repo / "saved-run")
+        fixture.case()
+        fixture.write()
+        self.app.request_close()
+        state = self.app.queue
+        item = state.add_models(["fixture-model"], BenchmarkSettings(governor_root=str(self.governor)))[0]
+        state.start()
+        state.start_next()
+        item.run_dir = str(fixture.root)
+        save_state(self.state_path, state)
+        before = self.state_path.read_bytes()
+        self._create_app()
+        self.app.results.load_queue_reports()
+        self.root.update()
+        self.assertEqual(self.app.queue.items[0].status, "Interrupted")
+        self.assertEqual(len(self.app.results.case_rows), 1)
+        self.assertEqual(self.state_path.read_bytes(), before)
+        self.assertEqual(self.runner.started, [])
+
+    def test_r3_similar_run_names_and_missing_reports_do_not_link(self):
+        fixture = ReportFixture(self.repo / "run")
+        fixture.case()
+        path = fixture.write()
+        item = self.app.queue.add_models(["fixture-model"], BenchmarkSettings(governor_root=str(self.governor)))[0]
+        item.run_dir = "run-other"
+        view = self.app.results
+        view.load_paths([path])
+        view.select_metric(*view.capabilities.targets[view.capabilities.bar_items[0]])
+        view.reveal_queue()
+        self.assertIn("No exact run-directory match", view.message.get())
+        view.load_run(self.repo / "missing-run")
+        self.root.update()
+        self.assertEqual(len(view.case_rows), 0)
+        self.assertIsNone(view.selected_report)
+        self.assertIn("No supported reports", view.message.get())
 
     def test_r0_cases_exact_evidence_and_workbook_in_existing_app(self):
         fixture = ReportFixture(self.repo / "local-state" / "synthetic-run")

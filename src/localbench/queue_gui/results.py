@@ -176,12 +176,26 @@ def discover_reports(roots):
         root = Path(root)
         if not root.is_dir():
             continue
-        for name in ("review-package.json", "aggregate-report.json", "summary.json"):
+        packages = list(root.rglob("review-package.json"))
+        package_runs = [p.parent.parent if p.parent.name == "review" else p.parent for p in packages]
+        found.update(p.resolve() for p in packages)
+        for name in ("aggregate-report.json", "summary.json"):
             for path in root.rglob(name):
-                if name != "review-package.json" and (path.parent / "review" / "review-package.json").is_file():
+                if name == "summary.json" and any(path.is_relative_to(run) for run in package_runs):
                     continue
                 found.add(path.resolve())
     return sorted(found)
+
+
+def queue_run_path(repo_root, item):
+    if not item.run_dir:
+        return None
+    path = Path(item.run_dir)
+    return (path if path.is_absolute() else Path(repo_root) / path).resolve()
+
+
+def queue_matches(report, items, repo_root):
+    return [item for item in items if queue_run_path(repo_root, item) == report.run_dir.resolve()]
 
 
 def evidence_path(report, row, ref):

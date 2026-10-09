@@ -22,6 +22,7 @@ from .process import (
     process_is_running,
 )
 from .results_view import ResultsView
+from .results import queue_run_path
 
 
 ADVANCED_FIELDS = (
@@ -91,7 +92,8 @@ class BenchmarkQueueApp:
         outer = ttk.Frame(self.notebook, padding=12)
         self.queue_tab = outer
         self.notebook.add(outer, text="Queue")
-        self.results = ResultsView(self.notebook, self.repo_root, self._open_output)
+        self.results = ResultsView(self.notebook, self.repo_root, self._open_output,
+                                   lambda: self.queue.items, self._reveal_queue_item)
         self.notebook.add(self.results, text="Results")
         outer.columnconfigure(0, weight=1)
         outer.rowconfigure(4, weight=1)
@@ -213,6 +215,7 @@ class BenchmarkQueueApp:
             self.edit_buttons.append(button)
         ttk.Button(queue_buttons, text="Open run folder", command=self.open_run_folder).pack(side="left", padx=(10, 5))
         ttk.Button(queue_buttons, text="Open review workbook", command=self.open_review_workbook).pack(side="left")
+        ttk.Button(queue_buttons, text="View results", command=self.view_selected_results).pack(side="left", padx=5)
         panes.add(queue_frame, weight=1)
 
         terminal_frame = ttk.LabelFrame(panes, text="Live terminal · stdout + stderr · recent 300,000 characters", padding=6)
@@ -630,6 +633,9 @@ class BenchmarkQueueApp:
 
     def _open_output(self, path, workbook=False):
         path = Path(path)
+        if workbook and path.suffix.lower() != ".xlsx":
+            messagebox.showerror("Output unavailable", "The recorded workbook must be an XLSX file.", parent=self.root)
+            return
         if not (path.is_file() if workbook else path.is_dir()):
             messagebox.showerror("Output unavailable", f"Cannot find {path}", parent=self.root)
             return
@@ -646,6 +652,20 @@ class BenchmarkQueueApp:
 
     def open_review_workbook(self):
         self._open_path(workbook=True)
+
+    def view_selected_results(self):
+        item = self._selected_item()
+        if item is None or not item.run_dir:
+            messagebox.showinfo("No run directory", "Select a queue row with a captured RUN_DIR first.", parent=self.root)
+            return
+        self.results.load_run(queue_run_path(self.repo_root, item))
+        self.notebook.select(self.results)
+
+    def _reveal_queue_item(self, item_id):
+        if self.queue_tree.exists(item_id):
+            self.queue_tree.selection_set(item_id)
+            self.queue_tree.see(item_id)
+            self.notebook.select(self.queue_tab)
 
     def request_close(self):
         if self.runner.active:

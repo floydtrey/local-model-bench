@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 
 from .results import (FILTERS, compare_reports, discover_reports, display, filter_value,
-                      load_report, metric_matches, read_evidence, row_matches)
+                      load_report, metric_matches, queue_matches, queue_run_path, read_evidence, row_matches)
 from .results_charts import ASSISTANT, MetricChart, RoleMatrix, configuration_label
 
 
@@ -36,22 +36,26 @@ def set_text(widget, value):
 
 
 class ResultsView(ttk.Frame):
-    def __init__(self, parent, repo_root, open_output):
+    def __init__(self, parent, repo_root, open_output, queue_items=lambda: (), show_queue=None):
         super().__init__(parent, padding=10)
         self.repo_root = Path(repo_root)
         self.open_output = open_output
+        self.queue_items = queue_items
+        self.show_queue = show_queue
         self.reports = {}
         self.case_rows = {}
         self.artifact_refs = {}
         self.selected_report = None
         self.selected_row = None
         self.selected_metric = None
+        self.empty_run = False
         self.rowconfigure(4, weight=1)
         self.columnconfigure(0, weight=1)
         toolbar = ttk.Frame(self)
         toolbar.grid(row=0, sticky="ew")
         ttk.Button(toolbar, text="Load reports…", command=self.choose_reports).pack(side="left")
         ttk.Button(toolbar, text="Discover saved reports", command=self.discover).pack(side="left", padx=6)
+        ttk.Button(toolbar, text="Load saved queue reports", command=self.load_queue_reports).pack(side="left")
         self.message = tk.StringVar(value="Load existing reports. Results never starts a model or changes a queue.")
         ttk.Label(self, textvariable=self.message, wraplength=1100).grid(row=1, sticky="ew", pady=5)
         frame, self.report_tree = tree(self, [("path", "Source report (select several to compare)", 600),
@@ -111,6 +115,7 @@ class ResultsView(ttk.Frame):
         ttk.Button(controls, text="Run folder", command=self.open_run).pack(side="left")
         ttk.Button(controls, text="Review workbook", command=self.open_workbook).pack(side="left", padx=4)
         ttk.Button(controls, text="Case rows", command=lambda: self.views.select(self.case_frame)).pack(side="left")
+        ttk.Button(controls, text="Queue entry", command=self.reveal_queue).pack(side="left", padx=4)
         self.detail = tk.Text(details, wrap="word", state="disabled", width=48, height=14)
         self.detail.grid(row=1, sticky="nsew")
         scroll = ttk.Scrollbar(details, command=self.detail.yview)
@@ -132,7 +137,37 @@ class ResultsView(ttk.Frame):
     def discover(self):
         self.load_paths(discover_reports([self.repo_root / "local-state", self.repo_root / "results"]))
 
+    def load_queue_reports(self):
+        roots = [queue_run_path(self.repo_root, item) for item in self.queue_items() if item.run_dir]
+        self.load_paths(discover_reports(roots))
+
+    def load_run(self, run_dir):
+        paths = discover_reports([run_dir])
+        self.load_paths(paths)
+        keys = [str(path) for path in paths if str(path) in self.reports]
+        self.report_tree.selection_set(keys)
+        self.empty_run = not keys
+        if not keys:
+            self.clear_detail()
+            self.message.set(f"No supported reports found for {run_dir}. No benchmark was started.")
+        self.refresh()
+
+    def queue_detail(self, report):
+        matches = queue_matches(report, self.queue_items(), self.repo_root)
+        return "Saved queue identities: " + (", ".join(f"{item.id} ({item.status})" for item in matches)
+            if matches else "No exact run-directory match") + "\n"
+
+    def reveal_queue(self):
+        if not self.selected_report:
+            return
+        matches = queue_matches(self.selected_report, self.queue_items(), self.repo_root)
+        if len(matches) != 1:
+            self.message.set("Queue link unavailable or ambiguous: " + self.queue_detail(self.selected_report))
+        elif self.show_queue:
+            self.show_queue(matches[0].id)
+
     def load_paths(self, paths):
+        self.empty_run = False
         errors = []
         for path in paths:
             try:
@@ -148,6 +183,10 @@ class ResultsView(ttk.Frame):
         self.refresh()
 
     def visible_reports(self):
+        if self.report_tree.selection():
+            self.empty_run = False
+        if self.empty_run:
+            return []
         keys = self.report_tree.selection() or tuple(self.reports)
         return [self.reports[key] for key in keys]
 
@@ -204,7 +243,7 @@ class ResultsView(ttk.Frame):
     def select_metric(self, report, metric):
         self.show_cases([(report, row) for row in report.metric_rows(metric)], metric)
         self.selected_report, self.selected_metric = report, metric
-        set_text(self.detail, self.metric_detail(report, metric) +
+        set_text(self.detail, self.queue_detail(report) + self.metric_detail(report, metric) +
             "\nSelect Case rows to inspect each exact attempt and artifact.\n\n" + json.dumps(metric, indent=2, ensure_ascii=False))
 
     @staticmethod
@@ -253,7 +292,7 @@ class ResultsView(ttk.Frame):
             refs = [ref for ref in self.selected_metric["case_refs"] if ref["row_id"] == row["row_id"]]
             excluded = [ref for ref in self.selected_metric.get("excluded", []) if row["row_id"] in ref.get("row_ids", [])]
             prefix += "Selected metric membership: " + display(refs or excluded) + "\n"
-        set_text(self.detail, prefix + f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
+        set_text(self.detail, self.queue_detail(report) + prefix + f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
                  f"Human review: {display(row.get('human_review_state'))}\n"
                  f"Technical/reference review: {display(row.get('technical_review_status') or row.get('reference_review_status'))}\n"
                  f"First pass: {display(row.get('first_pass_passed'))}\nRepair attempted: {display(row.get('repair_attempted'))}\n"
