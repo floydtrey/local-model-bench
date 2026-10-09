@@ -1,7 +1,7 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01 complete; T02–T18 not started. **Revised:** 2026-10-08 following the [T01 source audit](T01_CURRENT_IMPLEMENTATION_AUDIT.md).  
-**Authoritative implementation backlog:** This file supersedes the earlier chat-only 18-task outline. Task IDs have not been renumbered. No implementation beyond T01 is claimed by publishing this task list.
+**Status:** T01–T02 complete. T03–T04 reference-plan artifacts constructed and regression-validated; **Owner review/approval pending**. T05–T18 not started. **Updated:** 2026-10-08 after [Batch 1](BATCH1_T02_T04_ACCEPTANCE.md).  
+**Authoritative implementation backlog:** This file supersedes the earlier chat-only 18-task outline. Task IDs have not been renumbered. T02 mode contract/pure metadata guards and T03/T04 assessor-only draft references have now been implemented additively; no existing benchmark runner or v1 case has been changed.
 
 ## Key audit decisions (binding to the proposed implementation)
 
@@ -21,9 +21,9 @@
 | ID | Revised work item | Priority / size | Prerequisites | Status |
 |---|---|---|---|---|
 | T01 | Source audit and baseline evidence | P0 · Completed | — | COMPLETE |
-| T02 | Freeze evaluation-mode, authority and disclosure contracts | P0 · Medium | T01 | NOT STARTED |
-| T03 | Derive ASSISTANT-001 reference plan from existing tasks | P0 · Small | T02 | NOT STARTED — reuse v1 task decomposition |
-| T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | NOT STARTED — reuse v1 task decomposition |
+| T02 | Freeze evaluation-mode, authority and disclosure contracts | P0 · Medium | T01 | COMPLETE — specification, validator and CI |
+| T03 | Derive ASSISTANT-001 reference plan from existing tasks | P0 · Small | T02 | DRAFT COMPLETE — OWNER REVIEW PENDING |
+| T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | DRAFT COMPLETE — OWNER REVIEW PENDING |
 | T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | NOT STARTED |
 | T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | NOT STARTED |
 | T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | NOT STARTED |
@@ -70,7 +70,7 @@
 **Change from the pre-audit list:** Completed; revealed Planner reference leakage in two places, advisory governance, direct-Ollama vs native DSH split and advanced DSH development pipeline.
 
 ### T02 — Freeze evaluation-mode, authority and disclosure contracts
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T01  
+**Status:** COMPLETE — specification and pure metadata guards verified in four CI configurations · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T01  
 **Where:** local-model-bench: docs/qualification-v2/; additive contract and tests only
 
 **Reuse:** T01 map, frozen v1 manifests/role packets, existing benchmark human-review semantics, Governor authority boundaries, DSH release design.
@@ -82,7 +82,7 @@
 **Change from the pre-audit list:** Originally a generic track definition. Expanded to handle transport provenance, per-task vs chained-worker comparability, private governance and simulated vs real authority.
 
 ### T03 — Derive ASSISTANT-001 reference plan from existing tasks
-**Status:** NOT STARTED — reuse v1 task decomposition · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
+**Status:** DRAFT COMPLETE — owner/human signoff pending; requirement and trace validation passed · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
 **Where:** project-benchmarks/assistant-001/qualification-v2/
 
 **Reuse:** ASSISTANT-001/v1 PROJECT_INTENT, CONTRACT R01–R06, TASKS T01–T06 and existing independent acceptance tests.
@@ -94,7 +94,7 @@
 **Change from the pre-audit list:** Reduced from writing a new plan to organizing and independently reviewing the plan already embodied in v1.
 
 ### T04 — Derive ASSISTANT-002 reference plan from existing tasks
-**Status:** NOT STARTED — reuse v1 task decomposition · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
+**Status:** DRAFT COMPLETE — owner/human signoff pending; requirement and trace validation passed · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
 **Where:** project-benchmarks/assistant-002/qualification-v2/
 
 **Reuse:** ASSISTANT-002/v1 PROJECT_INTENT, CONTRACT S01–S06, TASKS T01–T06, 96 checks, eight scenarios and pinned A001 dependency.
@@ -312,4 +312,6 @@
 
 ## Next authorized implementation unit
 
-**T02 only.** Define mode/authority/disclosure contracts and acceptance checks. It must not change frozen v1 packets, initiate model execution, deploy a DSH process, or decide owner authority without an explicit source. T03 and T04 can then proceed using already-built project task sequences.
+**Next implementation batch: T05 → T06 (independent Planner).** Use the T02 visibility categories and T03/T04 reference drafts to build a truly blind Planner input packet. First prove that neither direct prompt, copied workspace, tool files/metadata nor retained session state can disclose v1 `TASKS.md` or the v2 assessor-only reference. Then implement outcome-equivalence review against R01–R06 and S01–S06. The **existing scaffolded Planner probe must remain available unchanged**.
+
+**Owner approval still required:** T03/T04 drafts are suitable for inspection and test development; they cannot become authorized Worker handoffs or final human-approved comparison oracles until reviewed. T05's disclosure-enforcement implementation may proceed using these drafts, but real model qualification/scoring needs explicit owner-approved references. T07 (Governor decisions) may be designed independently after T02, with identical owner-approval safeguards.
