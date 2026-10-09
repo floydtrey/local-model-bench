@@ -1,6 +1,6 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T08 are implemented with frozen authored Governor scenarios and semantic review controls; independent substantive scenario review and human calibration/signoff remain pending. T09–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-09 after [T07–T08 implementation](GOVERNOR_T07_T08.md); Results inventory and dependencies retained.
+**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T08 are implemented with frozen authored Governor scenarios and semantic review controls; independent substantive scenario review and human calibration/signoff remain pending. T09–T10 are implemented with deterministic Windows/Linux acceptance; formal Worker reference review, real seed validation/review and separate execution authorization remain pending. T11–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-09 after [Batch 4 deterministic acceptance](BATCH4_IMPLEMENTATION_RECORD.md); human gates, Results inventory and dependencies retained.
 **Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
@@ -31,8 +31,8 @@
 | T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | IMPLEMENTED — human substantive calibration/signoff pending |
 | T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | IMPLEMENTED — independent substantive scenario review pending |
 | T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | IMPLEMENTED — human substantive calibration/signoff pending |
-| T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | NOT STARTED |
-| T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | NOT STARTED |
+| T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | IMPLEMENTED — deterministic CI passed; formal reference/release review pending |
+| T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | IMPLEMENTED — deterministic CI passed; real seed validation/review and execution authorization pending |
 | T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | NOT STARTED |
 | T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | NOT STARTED |
 | T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | NOT STARTED |
@@ -167,7 +167,7 @@
 *T09–T12 · distinguish identical task inputs from model-specific continuation artifacts*
 
 ### T09 — Build canonical reference Worker handoffs with separate authority
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08  
+**Status:** IMPLEMENTED — versioned bundles and operator provenance gates passed Windows/Linux CI; human reference approval pending; see [Batch 4 record](BATCH4_IMPLEMENTATION_RECORD.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08  
 **Where:** project-benchmarks/assistant-001|002/qualification-v2/ + shared handoff assembler
 
 **Reuse:** v1 project task scopes, same task prompts, canonical governance case constraints, historical Worker approved-plan examples.
@@ -179,7 +179,7 @@
 **Change from the pre-audit list:** The current Worker receives fixed task+contract+predecessor, but lacks a separate explicitly approved plan/Governor guidance/authority record.
 
 ### T10 — Add isolated Worker task qualification alongside existing project chains
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09  
+**Status:** IMPLEMENTED — isolated/cumulative adapters and deterministic acceptance passed Windows/Linux CI; real prerequisite fixtures require separate validation, unsolved-target review and execution authorization; see [workflow](WORKER_T09_T10.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09  
 **Where:** local-model-bench: new controlled Worker mode/fixtures; reuse assistant001.campaign and assessment
 
 **Reuse:** Working six-step cumulative chain, frozen starters, exact file-scope checks, current Worker's accepted predecessor gating and no-gold-continuation semantics.
@@ -355,7 +355,7 @@
 
 **T05 → T06 implementation batch delivered:** Blind Planner inputs, an additive CLI over the existing role engine, outcome-based human-review records, calibration controls, frozen-source guards and Windows/Linux CI are implemented. The historical scaffolded probe remains unchanged. T06 is not fully accepted until human substantive calibration is recorded; deterministic record validation is not semantic signoff. See [T05–T06 implementation and validation commands](PLANNER_T05_T06.md).
 
-**Next implementation dependency:** T07 → T08 Governor case design and assessment. Existing prerequisites and all Results-tab requirements remain unchanged; this status update does not authorize that next batch or project execution.
+**T09 → T10 implementation batch delivered:** Versioned canonical Worker bundles, separate trusted operator release provenance, prevalidated seed preparation and isolated/cumulative modes reuse the original campaign, assessor and writer. Windows/Linux CI passed before this status update. See [Batch 4 acceptance record](BATCH4_IMPLEMENTATION_RECORD.md). Formal reference approval, real seed validation and unsolved-target review remain pending; no real inference/generated-code execution is authorized. T11/T12 are the subsequent scoped implementation work; existing dependencies and Results-tab requirements remain unchanged.
 
 **Owner decision recorded:** The owner accepted both T03/T04 designs for **benchmark reference use** after the Batch 1 review. Their traceability metadata remains `OWNER_REVIEW_PENDING` until a trusted controlled-reference authorization/version record is created in T09; this does not require repeating the high-level project approval. It is **not** approval to execute generated Python outside authorized limits, invent Governor authority, deploy into the Assistant or automatically assign a role. T05 now provides blind Planner isolation; T07 can independently design Governor cases under T02's existing rules.
 
