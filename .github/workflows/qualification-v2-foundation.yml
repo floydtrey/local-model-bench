@@ -1,7 +1,7 @@
 name: Qualification v2 Foundation and Frozen-Source Guard
 on:
   push:
-    branches: [benchmark/flashnext-all-roles-v1]
+    branches: [benchmark/flashnext-all-roles-v1, 'development/**']
     paths:
       - 'docs/qualification-v2/**'
       - 'project-benchmarks/assistant-001/qualification-v2/**'
@@ -44,3 +44,7 @@ jobs:
         run: python -m localbench.qualification_v2 calibrate
       - name: Validate Governor calibration records without private documents or inference
         run: python -m localbench.qualification_v2.governor calibrate
+      - name: Verify canonical Worker handoffs without candidate execution
+        run: |
+          python -m localbench.qualification_v2 worker validate --project assistant-001
+          python -m localbench.qualification_v2 worker validate --project assistant-002

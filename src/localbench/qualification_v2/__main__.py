@@ -12,6 +12,10 @@ from .planner import run_planner, assess_run
 
 
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "worker":
+        from .worker_cli import main as worker_main
+        return worker_main(argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("prepare", "run", "assess", "calibrate"))
     parser.add_argument("--repo-root", type=Path, default=repository_root())
