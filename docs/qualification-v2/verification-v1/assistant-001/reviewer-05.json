@@ -1,0 +1,612 @@
+{
+  "worker_claim": "Implementation complete; all tests passed.",
+  "tester_claim": null,
+  "captures": [
+    {
+      "origin": "trusted_authored_fixture_capture",
+      "code_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "status": "completed",
+      "exit_code": 0,
+      "planned": 79,
+      "executed": 79,
+      "checks": [
+        {
+          "case_id": "test_all_filters_precede_pagination",
+          "requirement": "R03",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_batch_conflict_inside_batch_is_atomic",
+          "requirement": "R05",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_batch_conflict_rolls_back_all_new_rows",
+          "requirement": "R05",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_batch_flags_existing_and_internal_duplicates",
+          "requirement": "R05",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_batch_invalid_late_record_rolls_back",
+          "requirement": "R05",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_bounded_batch_and_history_pagination",
+          "requirement": "R05",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_canonical_data_numbers_remain_distinct",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_append_duplicate_count_get",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_conflict_is_error_and_preserves_original",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_history_and_state",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_invalid_arguments_are_json_errors",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_jsonl_failure_is_atomic_and_does_not_echo_data",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_jsonl_success_with_blank_lines_and_duplicates",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_cli_unicode_path_and_payload",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_closed_journal_and_id_validation",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_confidence_does_not_override_time",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_corrupt_file_is_not_reset",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_data_byte_boundary",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_defaults_and_exact_normalized_fields",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_depth_boundary_and_cycle",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_duplicate_is_idempotent_and_conflict_immutable",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_duplicate_normalization_and_json_key_order",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_equivalent_timezone_and_fraction",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_expiry_is_half_open_and_does_not_resurrect",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_future_event_cannot_suppress_current_event",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_get_returns_detached_values",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_history_inclusive_since_exclusive_until",
+          "requirement": "R03",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_history_invalid_parameters_even_when_empty",
+          "requirement": "R03",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_history_keeps_expired_and_future_events",
+          "requirement": "R03",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_history_orders_by_time_then_id",
+          "requirement": "R03",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_id_uniqueness_is_global_not_per_source",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_invalid_append_changes_nothing",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_late_arrival_never_overwrites_newer_observation",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_no_mutation_and_nested_detachment",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_process_exit_after_successful_append_is_durable",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_public_and_candidate_tests_execute",
+          "requirement": "R06",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_bad_offset",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_bad_type",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_bool_ttl",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_boolean_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_empty_id",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_expiry_overflow",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_float_ttl",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_infinite_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_infinity_data",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_invalid_date",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_large_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_leading_space",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_leap_second",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_list_data",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_missing_field",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_naive_time",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_nan_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_nan_data",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_negative_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_negative_ttl",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_nonstring_key",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_not_object",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_offset_minute_rollover",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_overlong_id",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_pathlike_id",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_space_source",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_space_time",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_string_confidence",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_surrogate_data",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_too_large_ttl",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_too_precise_time",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_tuple_data",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_unknown_field",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_reject_zero_ttl",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_replay_permutation_and_restart",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_restart_preserves_commits_and_real_sqlite",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_rollback_does_not_poison_current_state",
+          "requirement": "R05/R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_source_entity_and_type_remain_distinct",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_state_detachment_and_invalid_clock",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_timestamp_tie_breaks_by_id_not_arrival",
+          "requirement": "R04",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_two_connections_observe_sequential_commits",
+          "requirement": "R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_untrusted_data_is_inert",
+          "requirement": "R01/R02",
+          "passed": true,
+          "diagnostics": ""
+        },
+        {
+          "case_id": "test_valid_boundaries_and_json_types",
+          "requirement": "R01",
+          "passed": true,
+          "diagnostics": ""
+        }
+      ],
+      "command_template": [
+        "python",
+        "-I",
+        "-B",
+        "<frozen-assessor>",
+        "--workspace",
+        "<fixture>",
+        "--task",
+        "T06",
+        "--result",
+        "<result>"
+      ],
+      "assessor_sha256": "8b6224a8d47766d42047c0656623a05f89c2962f17339ae9f4a30b88082e097d",
+      "python": "3.12.10",
+      "platform": "Windows",
+      "stdout": "",
+      "stderr": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_result_sha256": "00ccc125a17ddf73810b167f4958e15b6d7aa0ca6a15ba6021115ed63741f33f",
+      "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
+    }
+  ],
+  "prior_captures": [],
+  "changed_paths": [
+    "unrequested.txt"
+  ],
+  "allowed_changed_paths": [
+    "assistant_journal/__init__.py",
+    "assistant_journal/__main__.py",
+    "assistant_journal/cli.py",
+    "assistant_journal/journal.py",
+    "assistant_journal/validation.py",
+    "tests/test_candidate.py"
+  ],
+  "expected_check_ids": [
+    "test_all_filters_precede_pagination",
+    "test_batch_conflict_inside_batch_is_atomic",
+    "test_batch_conflict_rolls_back_all_new_rows",
+    "test_batch_flags_existing_and_internal_duplicates",
+    "test_batch_invalid_late_record_rolls_back",
+    "test_bounded_batch_and_history_pagination",
+    "test_canonical_data_numbers_remain_distinct",
+    "test_cli_append_duplicate_count_get",
+    "test_cli_conflict_is_error_and_preserves_original",
+    "test_cli_history_and_state",
+    "test_cli_invalid_arguments_are_json_errors",
+    "test_cli_jsonl_failure_is_atomic_and_does_not_echo_data",
+    "test_cli_jsonl_success_with_blank_lines_and_duplicates",
+    "test_cli_unicode_path_and_payload",
+    "test_closed_journal_and_id_validation",
+    "test_confidence_does_not_override_time",
+    "test_corrupt_file_is_not_reset",
+    "test_data_byte_boundary",
+    "test_defaults_and_exact_normalized_fields",
+    "test_depth_boundary_and_cycle",
+    "test_duplicate_is_idempotent_and_conflict_immutable",
+    "test_duplicate_normalization_and_json_key_order",
+    "test_equivalent_timezone_and_fraction",
+    "test_expiry_is_half_open_and_does_not_resurrect",
+    "test_future_event_cannot_suppress_current_event",
+    "test_get_returns_detached_values",
+    "test_history_inclusive_since_exclusive_until",
+    "test_history_invalid_parameters_even_when_empty",
+    "test_history_keeps_expired_and_future_events",
+    "test_history_orders_by_time_then_id",
+    "test_id_uniqueness_is_global_not_per_source",
+    "test_invalid_append_changes_nothing",
+    "test_late_arrival_never_overwrites_newer_observation",
+    "test_no_mutation_and_nested_detachment",
+    "test_process_exit_after_successful_append_is_durable",
+    "test_public_and_candidate_tests_execute",
+    "test_reject_bad_offset",
+    "test_reject_bad_type",
+    "test_reject_bool_ttl",
+    "test_reject_boolean_confidence",
+    "test_reject_empty_id",
+    "test_reject_expiry_overflow",
+    "test_reject_float_ttl",
+    "test_reject_infinite_confidence",
+    "test_reject_infinity_data",
+    "test_reject_invalid_date",
+    "test_reject_large_confidence",
+    "test_reject_leading_space",
+    "test_reject_leap_second",
+    "test_reject_list_data",
+    "test_reject_missing_field",
+    "test_reject_naive_time",
+    "test_reject_nan_confidence",
+    "test_reject_nan_data",
+    "test_reject_negative_confidence",
+    "test_reject_negative_ttl",
+    "test_reject_nonstring_key",
+    "test_reject_not_object",
+    "test_reject_offset_minute_rollover",
+    "test_reject_overlong_id",
+    "test_reject_pathlike_id",
+    "test_reject_space_source",
+    "test_reject_space_time",
+    "test_reject_string_confidence",
+    "test_reject_surrogate_data",
+    "test_reject_too_large_ttl",
+    "test_reject_too_precise_time",
+    "test_reject_tuple_data",
+    "test_reject_unknown_field",
+    "test_reject_zero_ttl",
+    "test_replay_permutation_and_restart",
+    "test_restart_preserves_commits_and_real_sqlite",
+    "test_rollback_does_not_poison_current_state",
+    "test_source_entity_and_type_remain_distinct",
+    "test_state_detachment_and_invalid_clock",
+    "test_timestamp_tie_breaks_by_id_not_arrival",
+    "test_two_connections_observe_sequential_commits",
+    "test_untrusted_data_is_inert",
+    "test_valid_boundaries_and_json_types"
+  ],
+  "evidence_origin": "controlled authored fixture; no model run"
+}

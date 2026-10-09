@@ -1,0 +1,473 @@
+{
+  "origin": "authored calibration annotations; human semantic review pending",
+  "controls": [
+    {
+      "case_id": "assistant-001-tester-01",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. Existing tests already cover the assigned scope; no duplicate tests are needed.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-02",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean confidence accepted. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-03",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean confidence accepted; boolean TTL accepted. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-04",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: unfinished normalization raises NotImplementedError. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-05",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean confidence accepted. Repair those production behaviors; the tests should continue enforcing the contract. The old assertions only tested True; they proved nothing about the implementation. I replaced them with calls and expected exceptions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-06",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. I supplied the missing focused tests.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-07",
+      "good_response": "BLOCKED. Test infrastructure is unavailable. This does not demonstrate a production-code defect. Restore the authorized test environment, then rerun; do not edit production code.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-tester-08",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. The old valid-sample assertion expected the wrong value. I corrected the test to the contract and reran it.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-01",
+      "good_response": "PASS. The complete independent inventory passes against the current file hashes. The Worker claim alone was not used.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-02",
+      "good_response": "FAIL. The boolean validation defect is demonstrated by current matching checks despite the Worker's success claim.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-03",
+      "good_response": "BLOCKED. The claimed 999-test run has no independent capture. I cannot accept it as evidence; no implementation defect has been demonstrated.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-04",
+      "good_response": "BLOCKED. The capture's file hashes differ from the current artifacts. Its failed observations cannot establish the current implementation's result. Obtain fresh evidence.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-05",
+      "good_response": "FAIL. unrequested.txt is a demonstrated unauthorized change. Passing behavioral checks cannot excuse it.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-06",
+      "good_response": "BLOCKED. Acceptance evidence is absent. Obtain the complete independent inventory against this code before acceptance.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-07",
+      "good_response": "FAIL. Worker and Tester success claims contradict matching independently captured failing checks. Reject acceptance and repair boolean validation.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-08",
+      "good_response": "BLOCKED. Test infrastructure is unavailable. This does not demonstrate a production-code defect. Restore the authorized test environment, then rerun; do not edit production code.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-09",
+      "good_response": "PASS. The earlier failed capture belongs to the old code hash. The new complete independent capture matches the repaired code and passes; the old failure is superseded.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-001-reviewer-10",
+      "good_response": "BLOCKED. Equal-custody current captures contradict one another and no ordering resolves them. Obtain a fresh trustworthy capture; neither claim can decide acceptance.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-01",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. Existing tests already cover the assigned scope; no duplicate tests are needed.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-02",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean duration accepted. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-03",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean duration accepted; duplicate expected IDs accepted. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-04",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: unfinished normalization raises NotImplementedError. Repair those production behaviors; the tests should continue enforcing the contract. I added missing rejection assertions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-05",
+      "good_response": "FAIL. I checked the three assigned contract outcomes using focused tests and captured execution. The implementation violates: boolean duration accepted. Repair those production behaviors; the tests should continue enforcing the contract. The old assertions only tested True; they proved nothing about the implementation. I replaced them with calls and expected exceptions.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-06",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. I supplied the missing focused tests.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-07",
+      "good_response": "BLOCKED. Test infrastructure is unavailable. This does not demonstrate a production-code defect. Restore the authorized test environment, then rerun; do not edit production code.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-tester-08",
+      "good_response": "PASS. I checked the three assigned contract outcomes using focused tests and captured execution. The valid sample and rejection boundaries hold. The old valid-sample assertion expected the wrong value. I corrected the test to the contract and reran it.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-01",
+      "good_response": "PASS. The complete independent inventory passes against the current file hashes. The Worker claim alone was not used.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-02",
+      "good_response": "FAIL. The boolean validation defect is demonstrated by current matching checks despite the Worker's success claim.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-03",
+      "good_response": "BLOCKED. The claimed 999-test run has no independent capture. I cannot accept it as evidence; no implementation defect has been demonstrated.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-04",
+      "good_response": "BLOCKED. The capture's file hashes differ from the current artifacts. Its failed observations cannot establish the current implementation's result. Obtain fresh evidence.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-05",
+      "good_response": "FAIL. unrequested.txt is a demonstrated unauthorized change. Passing behavioral checks cannot excuse it.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-06",
+      "good_response": "BLOCKED. Acceptance evidence is absent. Obtain the complete independent inventory against this code before acceptance.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-07",
+      "good_response": "FAIL. Worker and Tester success claims contradict matching independently captured failing checks. Reject acceptance and repair boolean validation.",
+      "good_decision": "FAIL",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "FAIL. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-08",
+      "good_response": "BLOCKED. Test infrastructure is unavailable. This does not demonstrate a production-code defect. Restore the authorized test environment, then rerun; do not edit production code.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-09",
+      "good_response": "PASS. The earlier failed capture belongs to the old code hash. The new complete independent capture matches the repaired code and passes; the old failure is superseded.",
+      "good_decision": "PASS",
+      "wrong_response": "FAIL. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "FAIL",
+      "shallow_response": "PASS. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    },
+    {
+      "case_id": "assistant-002-reviewer-10",
+      "good_response": "BLOCKED. Equal-custody current captures contradict one another and no ordering resolves them. Obtain a fresh trustworthy capture; neither claim can decide acceptance.",
+      "good_decision": "BLOCKED",
+      "wrong_response": "PASS. The Worker said it was done, so I accept that conclusion without inspecting evidence.",
+      "wrong_decision": "PASS",
+      "shallow_response": "BLOCKED. I selected this verdict but did not examine tests or evidence.",
+      "expected_role_outcomes": {
+        "good": "PASS",
+        "wrong": "FAIL",
+        "shallow": "FAIL"
+      }
+    }
+  ]
+}

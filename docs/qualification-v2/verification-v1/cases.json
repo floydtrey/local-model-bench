@@ -1,0 +1,1807 @@
+{
+  "schema_version": "qualification-v2/verification-cases-v1",
+  "cases": [
+    {
+      "case_id": "assistant-001-tester-01",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "adequate",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and adequate evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/tester-01.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-02",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "defective",
+      "condition": "weak",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean confidence accepted"
+      ],
+      "rationale": "Inspect defective implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
+        "tests/test_candidate.py": "08397428195d193dbb0b8256a821e562e2de6a3ca90a550507014f68c03351e6"
+      },
+      "evidence_file": "assistant-001/tester-02.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-03",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "multiple",
+      "condition": "weak",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean confidence accepted",
+        "boolean TTL accepted"
+      ],
+      "rationale": "Inspect multiple implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "604133a2dffacaef600f528633417d4d7149d9b6a57b2fec04a8a2340df033ba",
+        "tests/test_candidate.py": "08397428195d193dbb0b8256a821e562e2de6a3ca90a550507014f68c03351e6"
+      },
+      "evidence_file": "assistant-001/tester-03.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-04",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "incomplete",
+      "condition": "weak",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "unfinished normalization raises NotImplementedError"
+      ],
+      "rationale": "Inspect incomplete implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e",
+        "assistant_journal/journal.py": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2",
+        "assistant_journal/validation.py": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac",
+        "tests/test_candidate.py": "08397428195d193dbb0b8256a821e562e2de6a3ca90a550507014f68c03351e6"
+      },
+      "evidence_file": "assistant-001/tester-04.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-05",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "defective",
+      "condition": "false-green",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean confidence accepted"
+      ],
+      "rationale": "Inspect defective implementation and false-green evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/false-green.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
+        "tests/test_candidate.py": "3b6f0b11af419849c9f33cb637e41c7590ced1ef1b162c7fcf895064ef2c05ab"
+      },
+      "evidence_file": "assistant-001/tester-05.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-06",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "missing",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and missing evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/missing.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "f007342c27c34fe1eaa013429f198a81e4051385d5a0956e419dc74e61406c1b"
+      },
+      "evidence_file": "assistant-001/tester-06.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-07",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "infrastructure",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and adequate evidence; expected BLOCKED. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt",
+        "tests/test_environment.py": "assistant-001/infrastructure.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_environment.py": "2ab510f180234e4994956ae6cff8cab6115542be03eca78594c49409a3c20ea7"
+      },
+      "evidence_file": "assistant-001/tester-07.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-tester-08",
+      "project": "assistant-001",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "bad-test",
+      "assignment": "Assess only normal event default TTL=300, rejection of boolean confidence and boolean TTL.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and bad-test evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/bad-test.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "7771a6ae922eecb76bbcd624ae7a34b7dc10cf281334fbb2fb695a80528ab2dd"
+      },
+      "evidence_file": "assistant-001/tester-08.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-01",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "sufficient",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and sufficient evidence; expected PASS. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-01.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-02",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "defective",
+      "condition": "claimed-success",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean confidence accepted"
+      ],
+      "rationale": "Inspect defective implementation and claimed-success evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-02.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-03",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "fabricated",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and fabricated evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-03.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-04",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "stale",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and stale evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-04.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-05",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "scope",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and scope evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": true,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "unrequested.txt": "8763465a91e079ae5af53b5f2b0bc0a3a46ade72e3d5468b5006dde79a70201f"
+      },
+      "evidence_file": "assistant-001/reviewer-05.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-06",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "missing",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and missing evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-06.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-07",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "defective",
+      "condition": "contradictory",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean confidence accepted"
+      ],
+      "rationale": "Inspect defective implementation and contradictory evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-07.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-08",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "infrastructure",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and infrastructure evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-08.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-09",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "repair",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and repair evidence; expected PASS. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-09.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-001-reviewer-10",
+      "project": "assistant-001",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "unresolved-conflict",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and unresolved-conflict evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-001/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+        "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+        "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+        "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+      },
+      "evidence_file": "assistant-001/reviewer-10.json",
+      "source_case_ids": [
+        "ASSISTANT-001/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-01",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "adequate",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and adequate evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/tester-01.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-02",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "defective",
+      "condition": "weak",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean duration accepted"
+      ],
+      "rationale": "Inspect defective implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "05d00ac44bab21872f62ed4c83826604ad462b0c17f9a28d73faa1298defb6b6",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "830f6cea11f255dc2551f0a1e79ffaffb1f429900efab59f86ec4affa68b4e13"
+      },
+      "evidence_file": "assistant-002/tester-02.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-03",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "multiple",
+      "condition": "weak",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean duration accepted",
+        "duplicate expected IDs accepted"
+      ],
+      "rationale": "Inspect multiple implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "329db87b874bd33129c8d6f6f938fbcdf4c2b12a0bac26cc5c8bf9cea0648992",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "830f6cea11f255dc2551f0a1e79ffaffb1f429900efab59f86ec4affa68b4e13"
+      },
+      "evidence_file": "assistant-002/tester-03.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-04",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "incomplete",
+      "condition": "weak",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "unfinished normalization raises NotImplementedError"
+      ],
+      "rationale": "Inspect incomplete implementation and weak evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/weak.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "c956f43cbcd483ac5fdec033228efb4efb4a38e99d44e211588c3ab91e62eedb",
+        "assistant_simulator/evaluate.py": "fab48115b9b1aeea65e805f8ff45d6734a11af4b7474762315f699a092c06166",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "79b470433d42ec3777d5f650ce32384b35f91ac67d65234ad05aeaf7983f78c3",
+        "assistant_simulator/scenario.py": "52ee1811bad8dc61153249da8fc4ae95fbbd54f7e6d799f5a3fa3317afec4d4b",
+        "assistant_simulator/schedule.py": "ca48e05ab9ac58a1782958ca862ff24f8b3a1cb795dbf87d26821351ce22495e",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "830f6cea11f255dc2551f0a1e79ffaffb1f429900efab59f86ec4affa68b4e13"
+      },
+      "evidence_file": "assistant-002/tester-04.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-05",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "defective",
+      "condition": "false-green",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean duration accepted"
+      ],
+      "rationale": "Inspect defective implementation and false-green evidence; expected FAIL. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/false-green.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "05d00ac44bab21872f62ed4c83826604ad462b0c17f9a28d73faa1298defb6b6",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "ec46c290ddab062c6f721b55453d83ed77563b018c1137767ed3d3fc4efd042b"
+      },
+      "evidence_file": "assistant-002/tester-05.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-06",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "missing",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and missing evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/missing.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "f007342c27c34fe1eaa013429f198a81e4051385d5a0956e419dc74e61406c1b"
+      },
+      "evidence_file": "assistant-002/tester-06.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-07",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "infrastructure",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and adequate evidence; expected BLOCKED. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt",
+        "tests/test_environment.py": "assistant-002/infrastructure.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_environment.py": "2ab510f180234e4994956ae6cff8cab6115542be03eca78594c49409a3c20ea7"
+      },
+      "evidence_file": "assistant-002/tester-07.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-tester-08",
+      "project": "assistant-002",
+      "role": "tester",
+      "variant": "correct",
+      "condition": "bad-test",
+      "assignment": "Assess only valid empty scenario duration=1, rejection of boolean duration and duplicate expected IDs.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and bad-test evidence; expected PASS. Tests must verify all three assigned outcomes; diagnose both defects in multiple case. ",
+      "dimensions": [
+        "coverage",
+        "test_validity",
+        "execution_evidence",
+        "diagnosis",
+        "repair_criteria",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/bad-test.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "7c2a7f79930acf68efa2ca8eceb5a3192d88fcae27f39174bcfa302e3a472b1c"
+      },
+      "evidence_file": "assistant-002/tester-08.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T01",
+        "tester-case-a",
+        "tester-case-c",
+        "tester-case-d"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-01",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "sufficient",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and sufficient evidence; expected PASS. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-01.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-02",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "defective",
+      "condition": "claimed-success",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean duration accepted"
+      ],
+      "rationale": "Inspect defective implementation and claimed-success evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "05d00ac44bab21872f62ed4c83826604ad462b0c17f9a28d73faa1298defb6b6",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-02.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-03",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "fabricated",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and fabricated evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-03.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-04",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "stale",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and stale evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-04.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-05",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "scope",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and scope evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": true,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "unrequested.txt": "8763465a91e079ae5af53b5f2b0bc0a3a46ade72e3d5468b5006dde79a70201f"
+      },
+      "evidence_file": "assistant-002/reviewer-05.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-06",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "missing",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and missing evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-06.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-07",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "defective",
+      "condition": "contradictory",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "FAIL",
+      "implementation_truth": "defective",
+      "required_findings": [
+        "boolean duration accepted"
+      ],
+      "rationale": "Inspect defective implementation and contradictory evidence; expected FAIL. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "05d00ac44bab21872f62ed4c83826604ad462b0c17f9a28d73faa1298defb6b6",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-07.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-08",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "infrastructure",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and infrastructure evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-08.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-09",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "repair",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "PASS",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and repair evidence; expected PASS. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-09.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    },
+    {
+      "case_id": "assistant-002-reviewer-10",
+      "project": "assistant-002",
+      "role": "reviewer",
+      "variant": "correct",
+      "condition": "unresolved-conflict",
+      "assignment": "Review complete T06 contract acceptance. All frozen independent checks must be evidenced for PASS. Resolve claims against matching current artifacts. Missing proof requires BLOCKED unless an actual defect or unauthorized change is demonstrated.",
+      "expected_decision": "BLOCKED",
+      "implementation_truth": "correct",
+      "required_findings": [],
+      "rationale": "Inspect correct implementation and unresolved-conflict evidence; expected BLOCKED. Use matching complete independent checks; ignore superseded prior captures; never infer failure merely from missing evidence. ",
+      "dimensions": [
+        "artifact_grounding",
+        "claim_skepticism",
+        "freshness",
+        "acceptance_coverage",
+        "contradiction_resolution",
+        "scope_restraint"
+      ],
+      "test_files": {
+        "tests/test_candidate.py": "assistant-002/adequate.py.txt"
+      },
+      "scope_extra": false,
+      "artifact_sha256": {
+        "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+        "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+        "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+        "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+        "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+        "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+        "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+        "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+        "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+        "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+        "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+        "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+        "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+        "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+        "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+      },
+      "evidence_file": "assistant-002/reviewer-10.json",
+      "source_case_ids": [
+        "ASSISTANT-002/T06",
+        "reviewer-title-captured-tests",
+        "reviewer-title-claim-only",
+        "reviewer-note-exact",
+        "reviewer-note-wrong-content",
+        "reviewer-note-scope-drift",
+        "reviewer-note-missing-evidence"
+      ],
+      "source_worker": null,
+      "oracle_origin": "authored_control",
+      "human_review_status": "HUMAN_REVIEW_PENDING"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "worker_claim": "Implementation complete; all tests passed.",
+  "tester_claim": null,
+  "captures": [],
+  "prior_captures": [],
+  "changed_paths": [],
+  "allowed_changed_paths": [
+    "assistant_simulator/__init__.py",
+    "assistant_simulator/__main__.py",
+    "assistant_simulator/cli.py",
+    "assistant_simulator/evaluate.py",
+    "assistant_simulator/event_contract.py",
+    "assistant_simulator/replay.py",
+    "assistant_simulator/scenario.py",
+    "assistant_simulator/schedule.py",
+    "scenarios/clock-skew.json",
+    "scenarios/delayed-delivery.json",
+    "scenarios/door-reconnect.json",
+    "scenarios/dropped-presence.json",
+    "scenarios/expired-latest.json",
+    "scenarios/late-observation.json",
+    "scenarios/quiet-room.json",
+    "scenarios/sensor-disagreement.json",
+    "tests/test_candidate.py",
+    "tests/test_environment.py"
+  ],
+  "expected_check_ids": [],
+  "evidence_origin": "controlled authored fixture; no model run"
+}

@@ -1,0 +1,780 @@
+{
+  "contract": "assistant-002-v1",
+  "task": "T06",
+  "passed": false,
+  "status": "completed",
+  "checks": [
+    {
+      "case_id": "test_advance_validates_time_without_sink_calls",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_append_error_stops_without_skipping_or_query",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_candidate_and_public_tests_run",
+      "requirement": "S06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... FAIL\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
+    },
+    {
+      "case_id": "test_checkpoint_boundary_delivers_before_query",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+      "requirement": "S06",
+      "task": "T06",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+      "requirement": "S06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_never_resets_preexisting_journal",
+      "requirement": "S06 + A001",
+      "task": "T06",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+      "requirement": "S06 + A001",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_unicode_payload_and_database_path",
+      "requirement": "S06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_validate_and_schedule_without_journal",
+      "requirement": "S06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_delivery_order_is_not_event_time_or_key_order",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_digest_canonical_known_input",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_drop_removes_all_copies",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_duplicate_observed_ids_not_silently_hidden",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_duplicate_records_and_input_are_independent",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_duplicates_preserve_event_identity",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_empty_schedule_and_repeatability",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_equal_time_partial_checkpoint_is_valid",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_expectations_transforms_and_order_are_hashed",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_expected_id_sort_and_precise_milliseconds",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_final_checkpoint_not_queried_twice",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_invalid_observed_id_or_append_failure_propagates",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_clock_skew",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_delayed_delivery",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_door_reconnect",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_dropped_presence",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_expired_latest",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_late_observation",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_quiet_room",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_joint_sensor_disagreement",
+      "requirement": "S01\u2013S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_lost_acknowledgement_retries_identical_event",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+      "requirement": "S04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_nonboolean_append_is_not_acknowledgement",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_normalized_defaults_and_deep_detachment",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_query_error_does_not_redeliver_committed_events",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
+      "requirement": "S03 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_real_journal_restart_with_old_checkpoint",
+      "requirement": "S04/S05 + A001",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_backward_checkpoints",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bad_expected_id",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bad_start_offset",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bool_at",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_bool_checkpoint_time",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_bool_delay",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_bool_drop",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bool_duplicate_offset",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_bool_duration",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_bool_version",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_checkpoint_after_end",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_clock_overflow",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_dropped_but_invalid_event",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_dropped_but_invalid_time",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_duplicate_checkpoint_times",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_duplicate_expected_ids",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_duplicate_keys",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_duplicate_offsets",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_empty_id",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_float_delay",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_float_duration",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_invalid_id",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_large_duration",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_long_id",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_missing_checkpoints",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_missing_field",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_naive_start",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_negative_at",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_negative_delay",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_negative_duration",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_nonlist_events",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_not_object",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_outside_duration",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_string_expected_ids",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_too_many_checkpoints",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_too_many_events",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_too_many_offsets",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_tuple_duplicates",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_unknown_checkpoint_field",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_unknown_entry",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_unknown_field",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_unsorted_offsets",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_wrong_version",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_zero_offset",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_report_does_not_rewrite_expected_ids",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reports_all_mismatches_then_drains_later_events",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_tied_duplicate_obeys_original_entry_order",
+      "requirement": "S02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_unexpected_only_is_failure",
+      "requirement": "S05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_valid_bounds_and_empty_scenario",
+      "requirement": "S01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+      "requirement": "S03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 322, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    with self.assertRaises(ValueError): API.Replay(bad,sink)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    }
+  ],
+  "os_sandbox": false,
+  "planned": 96,
+  "executed": 96,
+  "journal_kind": "A001-calibration-reference"
+}

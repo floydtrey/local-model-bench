@@ -13,6 +13,9 @@ from .planner import run_planner, assess_run
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "verification":
+        from .verification_cli import main as verification_main
+        return verification_main(argv[1:])
     if argv and argv[0] == "worker":
         from .worker_cli import main as worker_main
         return worker_main(argv[1:])

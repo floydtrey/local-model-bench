@@ -1,0 +1,33 @@
+{
+  "origin": "trusted_authored_fixture_execution",
+  "model": null,
+  "command": [
+    "C:\\Users\\floyd_dev\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "-I",
+    "-B",
+    "C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py",
+    "--workspace",
+    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-lo1m4o4e\\workspace",
+    "--task",
+    "T06",
+    "--result",
+    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-lo1m4o4e\\checks.json"
+  ],
+  "exit_code": 1,
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "stdout": "",
+  "stderr": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "assessment_file": "defective.assessment.json",
+  "assessment_sha256": "2f0f1d66d2aa4c528f21ac13522898af21d3b66c2e09325ec94164b848e0067e",
+  "workspace_sha256": {
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+    "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+    "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "artifact_before_sha256": {
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+    "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+    "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+  },
+  "artifact_after_sha256": {
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
+    "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
+    "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "infrastructure_error": null,
+  "source_inspection": null,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "230384abf509a2d218c6dbd5f5539f9241f7e8b02f280322e8565d63de27d0ae",
+  "stdout_bytes": 0,
+  "stderr_bytes": 324,
+  "stdout": "",
+  "stderr": "test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... ok\r\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\r\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.000s\r\n\r\nOK\r\n",
+  "origin": "trusted_authored_fixture_capture"
+}

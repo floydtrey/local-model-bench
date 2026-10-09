@@ -38,8 +38,8 @@ jobs:
         run: |
           python -m localbench.assistant001 validate
           python -m localbench.assistant002 validate
-      - name: Audit controlled-mode registry and frozen sources
-        run: python -m unittest discover -s tests -p 'test_qualification_v2*.py' -v
+      - name: Full deterministic regressions including T05-T12 and frozen sources
+        run: python -m unittest discover -s tests -v
       - name: Validate Planner calibration record controls (no semantic auto-grading)
         run: python -m localbench.qualification_v2 calibrate
       - name: Validate Governor calibration records without private documents or inference
@@ -48,3 +48,7 @@ jobs:
         run: |
           python -m localbench.qualification_v2 worker validate --project assistant-001
           python -m localbench.qualification_v2 worker validate --project assistant-002
+      - name: Validate Tester and Reviewer cases and authored annotation controls
+        run: |
+          python -m localbench.qualification_v2 verification validate
+          python -m localbench.qualification_v2 verification calibrate

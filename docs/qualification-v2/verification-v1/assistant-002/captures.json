@@ -1,0 +1,2502 @@
+{
+  "correct": {
+    "origin": "trusted_authored_fixture_capture",
+    "code_sha256": {
+      "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+      "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+      "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+      "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+      "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+      "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
+      "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+      "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+      "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+      "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+      "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+      "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+      "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+      "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+      "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+      "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+    },
+    "status": "completed",
+    "exit_code": 0,
+    "planned": 96,
+    "executed": 96,
+    "checks": [
+      {
+        "case_id": "test_advance_validates_time_without_sink_calls",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_append_error_stops_without_skipping_or_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_candidate_and_public_tests_run",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_boundary_delivers_before_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_never_resets_preexisting_journal",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_unicode_payload_and_database_path",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_validate_and_schedule_without_journal",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_delivery_order_is_not_event_time_or_key_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_digest_canonical_known_input",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_drop_removes_all_copies",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_observed_ids_not_silently_hidden",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_records_and_input_are_independent",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicates_preserve_event_identity",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_empty_schedule_and_repeatability",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equal_time_partial_checkpoint_is_valid",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expectations_transforms_and_order_are_hashed",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expected_id_sort_and_precise_milliseconds",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_final_checkpoint_not_queried_twice",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_invalid_observed_id_or_append_failure_propagates",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_clock_skew",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_delayed_delivery",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_door_reconnect",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_dropped_presence",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_expired_latest",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_late_observation",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_quiet_room",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_sensor_disagreement",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_acknowledgement_retries_identical_event",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_nonboolean_append_is_not_acknowledgement",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_normalized_defaults_and_deep_detachment",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_query_error_does_not_redeliver_committed_events",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
+        "requirement": "S03 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_restart_with_old_checkpoint",
+        "requirement": "S04/S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_backward_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_expected_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_start_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_at",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_checkpoint_time",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_drop",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_duplicate_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_version",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_checkpoint_after_end",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_clock_overflow",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_event",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_time",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_checkpoint_times",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_expected_ids",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_keys",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_empty_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_invalid_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_large_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_long_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_naive_start",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_at",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_nonlist_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_not_object",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_outside_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_string_expected_ids",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_tuple_duplicates",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_checkpoint_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_entry",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unsorted_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_wrong_version",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_zero_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_report_does_not_rewrite_expected_ids",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reports_all_mismatches_then_drains_later_events",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_tied_duplicate_obeys_original_entry_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_unexpected_only_is_failure",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_valid_bounds_and_empty_scenario",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      }
+    ],
+    "command_template": [
+      "python",
+      "-I",
+      "-B",
+      "<frozen-assessor>",
+      "--workspace",
+      "<fixture>",
+      "--task",
+      "T06",
+      "--result",
+      "<result>"
+    ],
+    "assessor_sha256": "5a2d2f02a3d0b36c5676f69007398fd9794e155304c4dd7665488aea87a26898",
+    "python": "3.12.10",
+    "platform": "Windows",
+    "stdout": "",
+    "stderr": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_result_sha256": "0f6f7338c59fc5facee56abbf6f646548a7cc7ae55f08dddf9fb858716114539",
+    "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
+  },
+  "defective": {
+    "origin": "trusted_authored_fixture_capture",
+    "code_sha256": {
+      "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+      "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+      "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+      "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+      "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+      "assistant_simulator/scenario.py": "05d00ac44bab21872f62ed4c83826604ad462b0c17f9a28d73faa1298defb6b6",
+      "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+      "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+      "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+      "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+      "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+      "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+      "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+      "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+      "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+      "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+    },
+    "status": "completed",
+    "exit_code": 1,
+    "planned": 96,
+    "executed": 96,
+    "checks": [
+      {
+        "case_id": "test_advance_validates_time_without_sink_calls",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_append_error_stops_without_skipping_or_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_candidate_and_public_tests_run",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-u7oxk15v\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=1)\\r\\n'\n"
+      },
+      {
+        "case_id": "test_checkpoint_boundary_delivers_before_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_never_resets_preexisting_journal",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_unicode_payload_and_database_path",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_validate_and_schedule_without_journal",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_delivery_order_is_not_event_time_or_key_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_digest_canonical_known_input",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_drop_removes_all_copies",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_observed_ids_not_silently_hidden",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_records_and_input_are_independent",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicates_preserve_event_identity",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_empty_schedule_and_repeatability",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equal_time_partial_checkpoint_is_valid",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expectations_transforms_and_order_are_hashed",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expected_id_sort_and_precise_milliseconds",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_final_checkpoint_not_queried_twice",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_invalid_observed_id_or_append_failure_propagates",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_clock_skew",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_delayed_delivery",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_door_reconnect",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_dropped_presence",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_expired_latest",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_late_observation",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_quiet_room",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_sensor_disagreement",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_acknowledgement_retries_identical_event",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_nonboolean_append_is_not_acknowledgement",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_normalized_defaults_and_deep_detachment",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_query_error_does_not_redeliver_committed_events",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
+        "requirement": "S03 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_restart_with_old_checkpoint",
+        "requirement": "S04/S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_backward_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_expected_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_start_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_at",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_checkpoint_time",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_delay",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_drop",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_duplicate_offset",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_version",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_checkpoint_after_end",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_clock_overflow",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_event",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_time",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_checkpoint_times",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_expected_ids",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_keys",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_empty_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_invalid_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_large_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_long_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_naive_start",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_at",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_nonlist_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_not_object",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_outside_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_string_expected_ids",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_tuple_duplicates",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_checkpoint_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_entry",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unsorted_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_wrong_version",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_zero_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_report_does_not_rewrite_expected_ids",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reports_all_mismatches_then_drains_later_events",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_tied_duplicate_obeys_original_entry_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_unexpected_only_is_failure",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_valid_bounds_and_empty_scenario",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 322, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    with self.assertRaises(ValueError): API.Replay(bad,sink)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      }
+    ],
+    "command_template": [
+      "python",
+      "-I",
+      "-B",
+      "<frozen-assessor>",
+      "--workspace",
+      "<fixture>",
+      "--task",
+      "T06",
+      "--result",
+      "<result>"
+    ],
+    "assessor_sha256": "5a2d2f02a3d0b36c5676f69007398fd9794e155304c4dd7665488aea87a26898",
+    "python": "3.12.10",
+    "platform": "Windows",
+    "stdout": "",
+    "stderr": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_result_sha256": "b34c79cb4628a6f25191a0d5339fa9683c25d0f54d34cfe3a14461b6c12edbad",
+    "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
+  },
+  "multiple": {
+    "origin": "trusted_authored_fixture_capture",
+    "code_sha256": {
+      "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+      "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
+      "assistant_simulator/evaluate.py": "c3c0c90c321ad33012d9a16d7d14cf7af652c2264eb3ba573647f02eede8f66f",
+      "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+      "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
+      "assistant_simulator/scenario.py": "329db87b874bd33129c8d6f6f938fbcdf4c2b12a0bac26cc5c8bf9cea0648992",
+      "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+      "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+      "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+      "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+      "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+      "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+      "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+      "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+      "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+      "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+    },
+    "status": "completed",
+    "exit_code": 1,
+    "planned": 96,
+    "executed": 96,
+    "checks": [
+      {
+        "case_id": "test_advance_validates_time_without_sink_calls",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_append_error_stops_without_skipping_or_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_candidate_and_public_tests_run",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... FAIL\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
+      },
+      {
+        "case_id": "test_checkpoint_boundary_delivers_before_query",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_never_resets_preexisting_journal",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+        "requirement": "S06 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_unicode_payload_and_database_path",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_cli_validate_and_schedule_without_journal",
+        "requirement": "S06",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_delivery_order_is_not_event_time_or_key_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_digest_canonical_known_input",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_drop_removes_all_copies",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_observed_ids_not_silently_hidden",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicate_records_and_input_are_independent",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_duplicates_preserve_event_identity",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_empty_schedule_and_repeatability",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equal_time_partial_checkpoint_is_valid",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expectations_transforms_and_order_are_hashed",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_expected_id_sort_and_precise_milliseconds",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_final_checkpoint_not_queried_twice",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_invalid_observed_id_or_append_failure_propagates",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_clock_skew",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_delayed_delivery",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_door_reconnect",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_dropped_presence",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_expired_latest",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_late_observation",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_quiet_room",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_joint_sensor_disagreement",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_acknowledgement_retries_identical_event",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+        "requirement": "S04",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_nonboolean_append_is_not_acknowledgement",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_normalized_defaults_and_deep_detachment",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_query_error_does_not_redeliver_committed_events",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
+        "requirement": "S03 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_real_journal_restart_with_old_checkpoint",
+        "requirement": "S04/S05 + A001",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_backward_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_expected_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bad_start_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_at",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_checkpoint_time",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_delay",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_drop",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_bool_duplicate_offset",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_bool_version",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_checkpoint_after_end",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_clock_overflow",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_event",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_time",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_checkpoint_times",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_expected_ids",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      },
+      {
+        "case_id": "test_reject_duplicate_keys",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_duplicate_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_empty_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_float_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_invalid_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_large_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_long_id",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_missing_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_naive_start",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_at",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_delay",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_negative_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_nonlist_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_not_object",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_outside_duration",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_string_expected_ids",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_checkpoints",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_events",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_too_many_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_tuple_duplicates",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_checkpoint_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_entry",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unknown_field",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_unsorted_offsets",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_wrong_version",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reject_zero_offset",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_report_does_not_rewrite_expected_ids",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_reports_all_mismatches_then_drains_later_events",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
+        "requirement": "S03",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_tied_duplicate_obeys_original_entry_order",
+        "requirement": "S02",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_unexpected_only_is_failure",
+        "requirement": "S05",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_valid_bounds_and_empty_scenario",
+        "requirement": "S01",
+        "passed": true,
+        "diagnostics": ""
+      },
+      {
+        "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 322, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    with self.assertRaises(ValueError): API.Replay(bad,sink)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      }
+    ],
+    "command_template": [
+      "python",
+      "-I",
+      "-B",
+      "<frozen-assessor>",
+      "--workspace",
+      "<fixture>",
+      "--task",
+      "T06",
+      "--result",
+      "<result>"
+    ],
+    "assessor_sha256": "5a2d2f02a3d0b36c5676f69007398fd9794e155304c4dd7665488aea87a26898",
+    "python": "3.12.10",
+    "platform": "Windows",
+    "stdout": "",
+    "stderr": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_result_sha256": "22dafdbd6afd79080111c900e846571ac2bccc09474fafe91ea93cdf2708fb34",
+    "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
+  },
+  "incomplete": {
+    "origin": "trusted_authored_fixture_capture",
+    "code_sha256": {
+      "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
+      "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "assistant_simulator/cli.py": "c956f43cbcd483ac5fdec033228efb4efb4a38e99d44e211588c3ab91e62eedb",
+      "assistant_simulator/evaluate.py": "fab48115b9b1aeea65e805f8ff45d6734a11af4b7474762315f699a092c06166",
+      "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+      "assistant_simulator/replay.py": "79b470433d42ec3777d5f650ce32384b35f91ac67d65234ad05aeaf7983f78c3",
+      "assistant_simulator/scenario.py": "52ee1811bad8dc61153249da8fc4ae95fbbd54f7e6d799f5a3fa3317afec4d4b",
+      "assistant_simulator/schedule.py": "ca48e05ab9ac58a1782958ca862ff24f8b3a1cb795dbf87d26821351ce22495e",
+      "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+      "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+      "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+      "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+      "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+      "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+      "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+      "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+      "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+    },
+    "status": "completed",
+    "exit_code": 1,
+    "planned": 96,
+    "executed": 96,
+    "checks": [
+      {
+        "case_id": "test_advance_validates_time_without_sink_calls",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 264, in test_advance_validates_time_without_sink_calls\n    sink = SpySink(); replay = API.Replay(scenario(),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_append_error_stops_without_skipping_or_query",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 273, in test_append_error_stops_without_skipping_or_query\n    replay = API.Replay(scenario(events=[entry('a'),entry('b',1),entry('c',2)]),sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_candidate_and_public_tests_run",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... ERROR\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ERROR\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ERROR\\r\\n\\r\\n======================================================================\\r\\nERROR: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_valid (test_candidate.ContractTests.test_valid)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 10, in test_valid\\r\\n    self.assertEqual(normalize_scenario(self.sample())[\"duration_ms\"], 1)\\r\\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (errors=3)\\r\\n'\n"
+      },
+      {
+        "case_id": "test_checkpoint_boundary_delivers_before_query",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 244, in test_checkpoint_boundary_delivers_before_query\n    replay = API.Replay(scenario(events=[entry('a',1000),entry('b',1001)]), sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 364, in test_checkpoint_changed_scenario_or_expectations_rejected\n    raw=scenario(); saved=API.Replay(raw,SpySink()).checkpoint()\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 329, in test_checkpoint_exact_format_and_json_roundtrip\n    sink=SpySink(); replay=API.Replay(raw,sink); replay.advance(1)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 371, in test_checkpoint_invalid_fields_counts_bounds_and_clock\n    good=API.Replay(raw,SpySink()).checkpoint()\n         ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 484, in test_cli_error_does_not_emit_partial_schedule_or_payload\n    result=self.cli(raw,'jsonl',expected=2)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 2 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 476, in test_cli_jsonl_is_canonical_and_retains_duplicates\n    text=self.cli(raw,'jsonl').stdout\n         ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_cli_never_resets_preexisting_journal",
+        "requirement": "S06 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 505, in test_cli_never_resets_preexisting_journal\n    result=self.cli(scenario(),'run',dependency=True,expected=1,extra=('--db',str(db)))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 123, in cli\n    self.assertEqual(result.stderr, '')\nAssertionError: 'Traceback (most recent call last):\\n  Fil[514 chars]06\\n' != ''\n- Traceback (most recent call last):\n-   File \"<frozen runpy>\", line 198, in _run_module_as_main\n-   File \"<frozen runpy>\", line 88, in _run_code\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n-     raise SystemExit(main())\n-                      ^^^^^^\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n-     raise NotImplementedError(\"T06\")\n- NotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+        "requirement": "S06 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 493, in test_cli_run_pass_and_mismatch_are_distinct_exit_codes\n    report=json.loads(self.cli(raw,'run',dependency=True,extra=('--db',str(db))).stdout)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_cli_unicode_payload_and_database_path",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 512, in test_cli_unicode_payload_and_database_path\n    schedule=json.loads(self.cli(raw,'schedule').stdout)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_cli_validate_and_schedule_without_journal",
+        "requirement": "S06",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 469, in test_cli_validate_and_schedule_without_journal\n    result=json.loads(self.cli(raw).stdout)\n                      ^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      },
+      {
+        "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 176, in test_conflicting_event_ids_are_preserved_as_deliveries\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_delivery_order_is_not_event_time_or_key_order",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 204, in test_delivery_order_is_not_event_time_or_key_order\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_digest_canonical_known_input",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 149, in test_digest_canonical_known_input\n    self.assertEqual(API.scenario_digest(raw), expected)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_drop_removes_all_copies",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 217, in test_drop_removes_all_copies\n    records = API.compile_schedule(scenario(events=[entry('lost',drop=True,duplicate_after_ms=[1,2]),entry('kept')]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_duplicate_observed_ids_not_silently_hidden",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 424, in test_duplicate_observed_ids_not_silently_hidden\n    API.evaluate_scenario(scenario(),SpySink(state=[event('a'),event('a')]))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_duplicate_records_and_input_are_independent",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 223, in test_duplicate_records_and_input_are_independent\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_duplicates_preserve_event_identity",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 210, in test_duplicates_preserve_event_identity\n    records = API.compile_schedule(scenario(events=[entry('a', 10, delay_ms=20, duplicate_after_ms=[5,10])]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_empty_schedule_and_repeatability",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 236, in test_empty_schedule_and_repeatability\n    self.assertEqual(API.compile_schedule(scenario(events=[])), [])\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_equal_time_partial_checkpoint_is_valid",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 386, in test_equal_time_partial_checkpoint_is_valid\n    replay=API.Replay(raw,sink)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 158, in test_equivalent_defaults_and_offsets_have_same_identity\n    self.assertEqual(API.scenario_digest(raw), API.scenario_digest(other))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_expectations_transforms_and_order_are_hashed",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 163, in test_expectations_transforms_and_order_are_hashed\n    original = API.scenario_digest(raw)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_expected_id_sort_and_precise_milliseconds",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 185, in test_expected_id_sort_and_precise_milliseconds\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_final_checkpoint_not_queried_twice",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 441, in test_final_checkpoint_not_queried_twice\n    sink=SpySink(); API.evaluate_scenario(scenario(events=[],cps=[cp(60000)]),sink)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_invalid_observed_id_or_append_failure_propagates",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 428, in test_invalid_observed_id_or_append_failure_propagates\n    with self.assertRaises(ValueError): API.evaluate_scenario(scenario(),SpySink(state=[event('bad id')]))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_clock_skew",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_delayed_delivery",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_door_reconnect",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_dropped_presence",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_expired_latest",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_late_observation",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_quiet_room",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_joint_sensor_disagreement",
+        "requirement": "S01\u2013S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_lost_acknowledgement_retries_identical_event",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 354, in test_lost_acknowledgement_retries_identical_event\n    raw=scenario(); replay=API.Replay(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+        "requirement": "S04",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 342, in test_lost_checkpoint_replays_committed_event_as_duplicate\n    raw=scenario(); sink=SpySink(); replay=API.Replay(raw,sink); saved=replay.checkpoint()\n                                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 253, in test_no_duplicate_suppression_or_repeat_advance_delivery\n    sink = SpySink(); replay = API.Replay(scenario(events=[entry('a',duplicate_after_ms=[1])]),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_nonboolean_append_is_not_acknowledgement",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 292, in test_nonboolean_append_is_not_acknowledgement\n    sink=SpySink(); sink.return_value=1; replay=API.Replay(scenario(),sink)\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_normalized_defaults_and_deep_detachment",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 136, in test_normalized_defaults_and_deep_detachment\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 416, in test_observations_compared_as_sets_with_sorted_diagnostics\n    report=API.evaluate_scenario(raw,SpySink(state=[event('b'),event('a')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_query_error_does_not_redeliver_committed_events",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 284, in test_query_error_does_not_redeliver_committed_events\n    sink=SpySink(); sink.fail_query=True; replay=API.Replay(scenario(),sink)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
+        "requirement": "S03 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 460, in test_real_journal_conflict_leaves_prior_event_and_stops\n    replay=API.Replay(raw,journal)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_real_journal_restart_with_old_checkpoint",
+        "requirement": "S04/S05 + A001",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 447, in test_real_journal_restart_with_old_checkpoint\n    first=API.Replay(raw,journal); saved=first.checkpoint(); first.advance(0); journal.close()\n          ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_reject_backward_checkpoints",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bad_expected_id",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bad_start_offset",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_at",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_checkpoint_time",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_delay",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_drop",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_duplicate_offset",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_bool_version",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_checkpoint_after_end",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_clock_overflow",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_event",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_dropped_but_invalid_time",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_duplicate_checkpoint_times",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_duplicate_expected_ids",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_duplicate_keys",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_duplicate_offsets",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_empty_id",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_float_delay",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_float_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_invalid_id",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_large_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_long_id",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_missing_checkpoints",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_missing_field",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_naive_start",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_negative_at",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_negative_delay",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_negative_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_nonlist_events",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_not_object",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_outside_duration",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_string_expected_ids",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_too_many_checkpoints",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_too_many_events",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_too_many_offsets",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_tuple_duplicates",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_unknown_checkpoint_field",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_unknown_entry",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_unknown_field",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_unsorted_offsets",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_wrong_version",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_reject_zero_offset",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_report_does_not_rewrite_expected_ids",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 395, in test_report_does_not_rewrite_expected_ids\n    report=API.evaluate_scenario(raw,SpySink(state=[event('observed')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_reports_all_mismatches_then_drains_later_events",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 405, in test_reports_all_mismatches_then_drains_later_events\n    sink=SpySink(); report=API.evaluate_scenario(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 301, in test_sink_mutation_cannot_poison_scheduled_duplicates\n    raw=scenario(events=[entry(duplicate_after_ms=[1])]); replay=API.Replay(raw,sink)\n                                                                 ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 309, in test_state_result_detached_and_virtual_clock_never_sleeps\n    sink=SpySink(state=[event()]); replay=API.Replay(scenario(events=[]),sink)\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      },
+      {
+        "case_id": "test_tied_duplicate_obeys_original_entry_order",
+        "requirement": "S02",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 232, in test_tied_duplicate_obeys_original_entry_order\n    self.assertEqual([r['delivery_id'] for r in API.compile_schedule(raw)], ['z/0','z/1','a/0'])\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      },
+      {
+        "case_id": "test_unexpected_only_is_failure",
+        "requirement": "S05",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 435, in test_unexpected_only_is_failure\n    result=API.evaluate_scenario(scenario(events=[],cps=[cp()]),SpySink(state=[event('extra')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      },
+      {
+        "case_id": "test_valid_bounds_and_empty_scenario",
+        "requirement": "S01",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 191, in test_valid_bounds_and_empty_scenario\n    API.normalize_scenario(scenario(events=[], cps=[cp()], duration_ms=0, scenario_id='x'*64))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      },
+      {
+        "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+        "requirement": "S03",
+        "passed": false,
+        "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 318, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    sink=SpySink(); replay=API.Replay(scenario(duration_ms=0),sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      }
+    ],
+    "command_template": [
+      "python",
+      "-I",
+      "-B",
+      "<frozen-assessor>",
+      "--workspace",
+      "<fixture>",
+      "--task",
+      "T06",
+      "--result",
+      "<result>"
+    ],
+    "assessor_sha256": "5a2d2f02a3d0b36c5676f69007398fd9794e155304c4dd7665488aea87a26898",
+    "python": "3.12.10",
+    "platform": "Windows",
+    "stdout": "",
+    "stderr": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_result_sha256": "ca7467c770ab80508ad209ff6e4f763a9320faed777d77a19b0d25d0f5e04fda",
+    "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
+  }
+}

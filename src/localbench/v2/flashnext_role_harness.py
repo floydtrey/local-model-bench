@@ -145,6 +145,8 @@ def run_python_check(
     inspect_tester_tests: bool = False,
 ) -> dict[str, Any]:
     """Only controller-owned arguments reach this function, never tool arguments."""
+    from localbench.assistant001.packet import snapshot
+    before_sha256 = snapshot(workspace)
     if timeout_seconds <= 0:
         raise ValueError("test timeout must be positive")
     if stage is not None and (script is None or stage not in {1, 2, 3}):
@@ -197,6 +199,8 @@ def run_python_check(
             error = {"type": type(exc).__name__, "detail": str(exc)}
     stdout, stderr = stdout_path.read_bytes(), stderr_path.read_bytes()
     result = {
+        "artifact_before_sha256": before_sha256,
+        "artifact_after_sha256": snapshot(workspace),
         "command": args, "cwd": str(workspace.resolve()), "exit_code": exit_code,
         "timed_out": timed_out, "infrastructure_error": error,
         "wall_seconds": time.monotonic() - started,

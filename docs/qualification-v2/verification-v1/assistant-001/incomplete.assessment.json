@@ -1,0 +1,644 @@
+{
+  "contract": "assistant-001-v1",
+  "task": "T06",
+  "checks": [
+    {
+      "case_id": "test_all_filters_precede_pagination",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 249, in test_all_filters_precede_pagination\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_batch_conflict_inside_batch_is_atomic",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 368, in test_batch_conflict_inside_batch_is_atomic\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_batch_conflict_rolls_back_all_new_rows",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 350, in test_batch_conflict_rolls_back_all_new_rows\n    journal = self.journal(); journal.append(event(\"existing\"))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_batch_flags_existing_and_internal_duplicates",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 375, in test_batch_flags_existing_and_internal_duplicates\n    journal = self.journal(); journal.append(event(\"old\"))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_batch_invalid_late_record_rolls_back",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 360, in test_batch_invalid_late_record_rolls_back\n    journal = self.journal(); journal.append(event(\"existing\"))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_bounded_batch_and_history_pagination",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 384, in test_bounded_batch_and_history_pagination\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_canonical_data_numbers_remain_distinct",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 154, in test_canonical_data_numbers_remain_distinct\n    journal = self.journal(); journal.append(event(data={\"value\": 1}))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_cli_append_duplicate_count_get",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 404, in test_cli_append_duplicate_count_get\n    self.assertEqual(self.cli(\"append\", \"--event-json\", json.dumps(event())), {\"inserted\": True})\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_conflict_is_error_and_preserves_original",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 433, in test_cli_conflict_is_error_and_preserves_original\n    self.cli(\"append\", \"--event-json\", json.dumps(event()))\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_history_and_state",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 413, in test_cli_history_and_state\n    self.cli(\"append\", \"--event-json\", json.dumps(row))\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_invalid_arguments_are_json_errors",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 441, in test_cli_invalid_arguments_are_json_errors\n    self.cli(*args, expected=2)\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 2 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_jsonl_failure_is_atomic_and_does_not_echo_data",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 421, in test_cli_jsonl_failure_is_atomic_and_does_not_echo_data\n    error = self.cli(\"ingest\", \"--input\", str(source), expected=2)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 2 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_jsonl_success_with_blank_lines_and_duplicates",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 429, in test_cli_jsonl_success_with_blank_lines_and_duplicates\n    self.assertEqual(self.cli(\"ingest\", \"--input\", str(source)), {\"inserted\": 1, \"duplicates\": 1})\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_cli_unicode_path_and_payload",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 447, in test_cli_unicode_path_and_payload\n    self.cli(\"append\", \"--event-json\", json.dumps(raw, ensure_ascii=False))\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 68, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[:2000])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\cli.py\", line 4, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+    },
+    {
+      "case_id": "test_closed_journal_and_id_validation",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 222, in test_closed_journal_and_id_validation\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_confidence_does_not_override_time",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 323, in test_confidence_does_not_override_time\n    journal = self.journal(); journal.append(event(\"high\", 0, confidence=1))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_corrupt_file_is_not_reset",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_data_byte_boundary",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 115, in test_data_byte_boundary\n    self.assertEqual(API.normalize_event(event(data={\"v\": \"x\" * 16376}))[\"data\"][\"v\"], \"x\" * 16376)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_defaults_and_exact_normalized_fields",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 84, in test_defaults_and_exact_normalized_fields\n    self.assertEqual(API.normalize_event(raw), expected)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_depth_boundary_and_cycle",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 126, in test_depth_boundary_and_cycle\n    API.normalize_event(event(data=data))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_duplicate_is_idempotent_and_conflict_immutable",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 135, in test_duplicate_is_idempotent_and_conflict_immutable\n    journal = self.journal(); original = event()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_duplicate_normalization_and_json_key_order",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 145, in test_duplicate_normalization_and_json_key_order\n    journal = self.journal(); raw = event(); raw.pop(\"ttl_seconds\")\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_equivalent_timezone_and_fraction",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 90, in test_equivalent_timezone_and_fraction\n    self.assertEqual(API.normalize_event(event(timestamp=timestamp))[\"timestamp\"], stamp())\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_expiry_is_half_open_and_does_not_resurrect",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 294, in test_expiry_is_half_open_and_does_not_resurrect\n    journal = self.journal(); journal.append(event(\"older\", 0, ttl_seconds=1000))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_future_event_cannot_suppress_current_event",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 302, in test_future_event_cannot_suppress_current_event\n    journal = self.journal(); journal.append(event(\"past\", 0)); journal.append(event(\"future\", 100))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_get_returns_detached_values",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 193, in test_get_returns_detached_values\n    journal = self.journal(); raw = event(); journal.append(raw)\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_history_inclusive_since_exclusive_until",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 259, in test_history_inclusive_since_exclusive_until\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_history_invalid_parameters_even_when_empty",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 269, in test_history_invalid_parameters_even_when_empty\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_history_keeps_expired_and_future_events",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 279, in test_history_keeps_expired_and_future_events\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_history_orders_by_time_then_id",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 240, in test_history_orders_by_time_then_id\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_id_uniqueness_is_global_not_per_source",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 161, in test_id_uniqueness_is_global_not_per_source\n    journal = self.journal(); journal.append(event())\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_invalid_append_changes_nothing",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 202, in test_invalid_append_changes_nothing\n    journal = self.journal(); journal.append(event())\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_late_arrival_never_overwrites_newer_observation",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 289, in test_late_arrival_never_overwrites_newer_observation\n    journal = self.journal(); journal.append(event(\"newer\", 20)); journal.append(event(\"older\", 10))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_no_mutation_and_nested_detachment",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 96, in test_no_mutation_and_nested_detachment\n    normalized = API.normalize_event(raw)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_process_exit_after_successful_append_is_durable",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 180, in test_process_exit_after_successful_append_is_durable\n    self.assertEqual(result.returncode, 0, result.stderr)\nAssertionError: 1 != 0 : b'Traceback (most recent call last):\\r\\n  File \"<string>\", line 1, in <module>\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\assistant_journal\\\\journal.py\", line 5, in __init__\\r\\n    raise NotImplementedError(\"T02\")\\r\\nNotImplementedError: T02\\r\\n'\n"
+    },
+    {
+      "case_id": "test_public_and_candidate_tests_execute",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... ERROR\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ERROR\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ERROR\\r\\n\\r\\n======================================================================\\r\\nERROR: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\assistant_journal\\\\validation.py\", line 9, in normalize_event\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\assistant_journal\\\\validation.py\", line 9, in normalize_event\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_valid (test_candidate.ContractTests.test_valid)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\tests\\\\test_candidate.py\", line 10, in test_valid\\r\\n    self.assertEqual(normalize_event(self.sample())[\"ttl_seconds\"], 300)\\r\\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-d7wzc79h\\\\workspace\\\\assistant_journal\\\\validation.py\", line 9, in normalize_event\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (errors=3)\\r\\n'\n"
+    },
+    {
+      "case_id": "test_reject_bad_offset",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_bad_type",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_bool_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_boolean_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_empty_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_expiry_overflow",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_float_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_infinite_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_infinity_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_invalid_date",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_large_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_leading_space",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_leap_second",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_list_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_missing_field",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_naive_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_nan_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_nan_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_negative_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_negative_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_nonstring_key",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_not_object",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_offset_minute_rollover",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_overlong_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_pathlike_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_space_source",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_space_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_string_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_surrogate_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_too_large_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_too_precise_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_tuple_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_unknown_field",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_reject_zero_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 501, in method\n    API.normalize_event(copy.deepcopy(invalid))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    },
+    {
+      "case_id": "test_replay_permutation_and_restart",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 332, in test_replay_permutation_and_restart\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_restart_preserves_commits_and_real_sqlite",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 168, in test_restart_preserves_commits_and_real_sqlite\n    journal = self.journal(); journal.append(event()); journal.close()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_rollback_does_not_poison_current_state",
+      "requirement": "R05/R04",
+      "task": "T05",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 397, in test_rollback_does_not_poison_current_state\n    journal = self.journal(); journal.append(event(\"old\", 0))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_source_entity_and_type_remain_distinct",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 314, in test_source_entity_and_type_remain_distinct\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_state_detachment_and_invalid_clock",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 342, in test_state_detachment_and_invalid_clock\n    journal = self.journal(); journal.append(event())\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_timestamp_tie_breaks_by_id_not_arrival",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 309, in test_timestamp_tie_breaks_by_id_not_arrival\n    journal = self.journal(); journal.append(event(\"z\")); journal.append(event(\"a\"))\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_two_connections_observe_sequential_commits",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 185, in test_two_connections_observe_sequential_commits\n    first, second = self.journal(), self.journal()\n                    ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_untrusted_data_is_inert",
+      "requirement": "R01/R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 232, in test_untrusted_data_is_inert\n    journal = self.journal()\n              ^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 52, in journal\n    journal = API.Journal(self.path)\n              ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\journal.py\", line 5, in __init__\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+    },
+    {
+      "case_id": "test_valid_boundaries_and_json_types",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 109, in test_valid_boundaries_and_json_types\n    self.assertEqual(API.normalize_event(row)[\"data\"], row[\"data\"])\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+    }
+  ],
+  "passed": false,
+  "status": "completed",
+  "os_sandbox": false,
+  "planned": 79,
+  "executed": 79,
+  "wall_seconds": 0.5310000000026776
+}

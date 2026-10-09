@@ -1,0 +1,18 @@
+import unittest
+from assistant_simulator import normalize_scenario
+
+class ContractTests(unittest.TestCase):
+    def sample(self):
+        return dict(schema_version=1, scenario_id="demo", start_at="2026-10-07T18:30:00Z",
+                    duration_ms=1, events=[], checkpoints=[dict(at_ms=0, expected_ids=[])])
+
+    def test_valid(self):
+        self.assertEqual(normalize_scenario(self.sample())["duration_ms"], 1)
+
+    def test_boolean_number(self):
+        value = self.sample(); value["duration_ms"] = True
+        with self.assertRaises(ValueError): normalize_scenario(value)
+
+    def test_second_boundary(self):
+        value = self.sample(); value["checkpoints"][0]["expected_ids"] = ["e1", "e1"]
+        with self.assertRaises(ValueError): normalize_scenario(value)

@@ -1,0 +1,18 @@
+import unittest
+from assistant_journal import normalize_event
+
+class ContractTests(unittest.TestCase):
+    def sample(self):
+        return dict(event_id="event-1", source="sensor", type="presence", entity="door",
+                    timestamp="2026-10-07T18:30:00Z", confidence=0.5, data={})
+
+    def test_valid(self):
+        self.assertEqual(normalize_event(self.sample())["ttl_seconds"], 300)
+
+    def test_boolean_number(self):
+        value = self.sample(); value["confidence"] = True
+        with self.assertRaises(ValueError): normalize_event(value)
+
+    def test_second_boundary(self):
+        value = self.sample(); value["ttl_seconds"] = True
+        with self.assertRaises(ValueError): normalize_event(value)

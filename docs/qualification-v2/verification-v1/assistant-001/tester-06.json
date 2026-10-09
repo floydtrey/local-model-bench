@@ -1,0 +1,17 @@
+{
+  "worker_claim": "Implementation complete; all tests passed.",
+  "tester_claim": null,
+  "captures": [],
+  "prior_captures": [],
+  "changed_paths": [],
+  "allowed_changed_paths": [
+    "assistant_journal/__init__.py",
+    "assistant_journal/__main__.py",
+    "assistant_journal/cli.py",
+    "assistant_journal/journal.py",
+    "assistant_journal/validation.py",
+    "tests/test_candidate.py"
+  ],
+  "expected_check_ids": [],
+  "evidence_origin": "controlled authored fixture; no model run"
+}

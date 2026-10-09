@@ -1,0 +1,29 @@
+{
+  "artifact_before_sha256": {
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e",
+    "assistant_journal/journal.py": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2",
+    "assistant_journal/validation.py": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac",
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+  },
+  "artifact_after_sha256": {
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e",
+    "assistant_journal/journal.py": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2",
+    "assistant_journal/validation.py": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac",
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+  },
+  "exit_code": 1,
+  "timed_out": false,
+  "infrastructure_error": null,
+  "source_inspection": null,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "34fa89f400e3c92793ffae7a26452f46a06df145a102cff77bb8df072adbb5ff",
+  "stdout_bytes": 0,
+  "stderr_bytes": 2561,
+  "stdout": "",
+  "stderr": "test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... ERROR\r\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ERROR\r\ntest_valid (test_candidate.ContractTests.test_valid) ... ERROR\r\n\r\n======================================================================\r\nERROR: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\tests\\test_candidate.py\", line 14, in test_boolean_number\r\n    with self.assertRaises(ValueError): normalize_event(value)\r\n                                        ^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\r\n    raise NotImplementedError(\"T01\")\r\nNotImplementedError: T01\r\n\r\n======================================================================\r\nERROR: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\tests\\test_candidate.py\", line 18, in test_second_boundary\r\n    with self.assertRaises(ValueError): normalize_event(value)\r\n                                        ^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\r\n    raise NotImplementedError(\"T01\")\r\nNotImplementedError: T01\r\n\r\n======================================================================\r\nERROR: test_valid (test_candidate.ContractTests.test_valid)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\tests\\test_candidate.py\", line 10, in test_valid\r\n    self.assertEqual(normalize_event(self.sample())[\"ttl_seconds\"], 300)\r\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace\\assistant_journal\\validation.py\", line 9, in normalize_event\r\n    raise NotImplementedError(\"T01\")\r\nNotImplementedError: T01\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nFAILED (errors=3)\r\n",
+  "origin": "trusted_authored_fixture_capture"
+}

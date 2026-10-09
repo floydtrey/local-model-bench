@@ -1,0 +1,644 @@
+{
+  "contract": "assistant-001-v1",
+  "task": "T06",
+  "checks": [
+    {
+      "case_id": "test_all_filters_precede_pagination",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_batch_conflict_inside_batch_is_atomic",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_batch_conflict_rolls_back_all_new_rows",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_batch_flags_existing_and_internal_duplicates",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_batch_invalid_late_record_rolls_back",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_bounded_batch_and_history_pagination",
+      "requirement": "R05",
+      "task": "T05",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_canonical_data_numbers_remain_distinct",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_append_duplicate_count_get",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_conflict_is_error_and_preserves_original",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_history_and_state",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_invalid_arguments_are_json_errors",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_jsonl_failure_is_atomic_and_does_not_echo_data",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_jsonl_success_with_blank_lines_and_duplicates",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_cli_unicode_path_and_payload",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_closed_journal_and_id_validation",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_confidence_does_not_override_time",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_corrupt_file_is_not_reset",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_data_byte_boundary",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_defaults_and_exact_normalized_fields",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_depth_boundary_and_cycle",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_duplicate_is_idempotent_and_conflict_immutable",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_duplicate_normalization_and_json_key_order",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_equivalent_timezone_and_fraction",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_expiry_is_half_open_and_does_not_resurrect",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_future_event_cannot_suppress_current_event",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_get_returns_detached_values",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_history_inclusive_since_exclusive_until",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_history_invalid_parameters_even_when_empty",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_history_keeps_expired_and_future_events",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_history_orders_by_time_then_id",
+      "requirement": "R03",
+      "task": "T03",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_id_uniqueness_is_global_not_per_source",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_invalid_append_changes_nothing",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 203, in test_invalid_append_changes_nothing\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_late_arrival_never_overwrites_newer_observation",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_no_mutation_and_nested_detachment",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_process_exit_after_successful_append_is_durable",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_public_and_candidate_tests_execute",
+      "requirement": "R06",
+      "task": "T06",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-lo1m4o4e\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=1)\\r\\n'\n"
+    },
+    {
+      "case_id": "test_reject_bad_offset",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bad_type",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_bool_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_boolean_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": false,
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 500, in method\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    },
+    {
+      "case_id": "test_reject_empty_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_expiry_overflow",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_float_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_infinite_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_infinity_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_invalid_date",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_large_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_leading_space",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_leap_second",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_list_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_missing_field",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_naive_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_nan_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_nan_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_negative_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_negative_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_nonstring_key",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_not_object",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_offset_minute_rollover",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_overlong_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_pathlike_id",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_space_source",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_space_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_string_confidence",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_surrogate_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_too_large_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_too_precise_time",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_tuple_data",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_unknown_field",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_reject_zero_ttl",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_replay_permutation_and_restart",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_restart_preserves_commits_and_real_sqlite",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_rollback_does_not_poison_current_state",
+      "requirement": "R05/R04",
+      "task": "T05",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_source_entity_and_type_remain_distinct",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_state_detachment_and_invalid_clock",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_timestamp_tie_breaks_by_id_not_arrival",
+      "requirement": "R04",
+      "task": "T04",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_two_connections_observe_sequential_commits",
+      "requirement": "R02",
+      "task": "T02",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_untrusted_data_is_inert",
+      "requirement": "R01/R02",
+      "task": "T02",
+      "severity": "critical",
+      "passed": true,
+      "diagnostics": ""
+    },
+    {
+      "case_id": "test_valid_boundaries_and_json_types",
+      "requirement": "R01",
+      "task": "T01",
+      "severity": "major",
+      "passed": true,
+      "diagnostics": ""
+    }
+  ],
+  "passed": false,
+  "status": "completed",
+  "os_sandbox": false,
+  "planned": 79,
+  "executed": 79,
+  "wall_seconds": 2.0469999999913853
+}
