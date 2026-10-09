@@ -21,6 +21,7 @@ from .process import (
     InstanceAlreadyRunning, InstanceLock, ProcessRunner, list_ollama,
     process_is_running,
 )
+from .results_view import ResultsView
 
 
 ADVANCED_FIELDS = (
@@ -85,8 +86,13 @@ class BenchmarkQueueApp:
         root.minsize(990, 720)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
-        outer = ttk.Frame(root, padding=12)
-        outer.grid(sticky="nsew")
+        self.notebook = ttk.Notebook(root)
+        self.notebook.grid(sticky="nsew")
+        outer = ttk.Frame(self.notebook, padding=12)
+        self.queue_tab = outer
+        self.notebook.add(outer, text="Queue")
+        self.results = ResultsView(self.notebook, self.repo_root, self._open_output)
+        self.notebook.add(self.results, text="Results")
         outer.columnconfigure(0, weight=1)
         outer.rowconfigure(4, weight=1)
         ttk.Label(outer, text="Model Benchmark Queue", font=("Segoe UI", 16, "bold")).grid(sticky="w")
@@ -620,6 +626,10 @@ class BenchmarkQueueApp:
             path = self.repo_root / path
         if workbook:
             path = path / "review" / "review-package.xlsx"
+        self._open_output(path, workbook)
+
+    def _open_output(self, path, workbook=False):
+        path = Path(path)
         if not (path.is_file() if workbook else path.is_dir()):
             messagebox.showerror("Output unavailable", f"Cannot find {path}", parent=self.root)
             return
