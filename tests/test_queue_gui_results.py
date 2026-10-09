@@ -80,6 +80,67 @@ class ResultsWidgetTests(unittest.TestCase):
     _create_app = _QueueTests._create_app
     _discover = _QueueTests._discover
 
+    def click_canvas_item(self, chart, item):
+        self.app.notebook.select(self.app.results)
+        self.app.results.views.select(chart)
+        self.root.deiconify()
+        self.root.update()
+        canvas = chart.canvas
+        x0, y0, x1, y1 = canvas.bbox(item)
+        bounds = list(map(float, canvas.cget("scrollregion").split()))
+        canvas.xview_moveto(max(0, x0 - 20) / bounds[2])
+        canvas.yview_moveto(max(0, y0 - 20) / bounds[3])
+        self.root.update()
+        canvas.event_generate("<Button-1>", x=int((x0 + x1) / 2 - canvas.canvasx(0)),
+                              y=int((y0 + y1) / 2 - canvas.canvasy(0)))
+        self.root.update()
+
+    def test_r1_measured_bars_select_their_own_report_and_case(self):
+        good = ReportFixture(self.repo / "good", "alpha")
+        good.case()
+        bad = ReportFixture(self.repo / "bad", "beta")
+        bad.case(assessed_outcome="FAIL")
+        view = self.app.results
+        view.load_paths([good.write(), bad.write()])
+        bars = view.capabilities.bar_items
+        self.assertEqual(len(bars), 2)
+        self.assertEqual(sorted(view.capabilities.targets[b][1]["percentage"] for b in bars), [0, 100])
+        item = next(b for b in bars if view.capabilities.targets[b][1]["percentage"] == 100)
+        self.click_canvas_item(view.capabilities, item)
+        self.assertEqual(view.selected_metric["numerator"], 1)
+        self.assertEqual(len(view.case_rows), 1)
+        report, row = next(iter(view.case_rows.values()))
+        self.assertEqual(row["configuration"]["model_name"], "alpha")
+        self.assertEqual(report.run_dir.name, "good")
+        self.assertIn("1 / 1", view.detail.get("1.0", "end"))
+        self.assertEqual(self.runner.started, [])
+
+    def test_r1_untested_categories_have_labels_without_bars(self):
+        fixture = ReportFixture(self.repo / "run")
+        fixture.case()
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        self.assertEqual({view.capabilities.targets[b][1]["metric_id"] for b in view.capabilities.bar_items}, {"coding"})
+        labels = [view.capabilities.canvas.itemcget(i, "text") for i in view.capabilities.canvas.find_all()
+                  if view.capabilities.canvas.type(i) == "text"]
+        self.assertIn("Vision", labels)
+        self.assertIn("Long context recall", labels)
+        self.assertIn("Not tested", labels)
+
+    def test_r1_role_cell_keeps_provisional_criteria_and_critical_conditions(self):
+        fixture = ReportFixture(self.repo / "role-run")
+        fixture.case("assistant-001-planner-v2-complete", metric="role_planner", role="planner",
+                     human_review_required=True, human_review_status="pending")
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        item = next(i for i, (_, m) in view.roles.targets.items() if m["metric_id"] == "role_planner")
+        self.click_canvas_item(view.roles, item)
+        self.assertEqual(view.selected_metric["suitability"], "provisional_review_pending")
+        detail = view.detail.get("1.0", "end")
+        self.assertIn("role-suitability:v1", detail)
+        self.assertIn("critical_safety_gates", detail)
+        self.assertIn("Unsafe scope expansion", detail)
+
     def test_r0_cases_exact_evidence_and_workbook_in_existing_app(self):
         fixture = ReportFixture(self.repo / "local-state" / "synthetic-run")
         fixture.case()

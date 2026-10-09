@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 
 from .results import discover_reports, display, load_report, read_evidence
+from .results_charts import MetricChart, RoleMatrix
 
 
 def tree(parent, columns, *, height=8):
@@ -43,6 +44,7 @@ class ResultsView(ttk.Frame):
         self.artifact_refs = {}
         self.selected_report = None
         self.selected_row = None
+        self.selected_metric = None
         self.rowconfigure(3, weight=1)
         self.columnconfigure(0, weight=1)
         toolbar = ttk.Frame(self)
@@ -58,6 +60,10 @@ class ResultsView(ttk.Frame):
         panes = ttk.Panedwindow(self, orient="horizontal")
         panes.grid(row=3, sticky="nsew", pady=6)
         self.views = ttk.Notebook(panes)
+        self.capabilities = MetricChart(self.views, self.select_metric)
+        self.roles = RoleMatrix(self.views, self.select_metric)
+        self.views.add(self.capabilities, text="Capabilities")
+        self.views.add(self.roles, text="Role suitability")
         case_frame, self.cases = tree(self.views, [("model", "Model configuration", 180),
             ("case", "Suite / case", 280), ("status", "Outcome / status", 130),
             ("review", "Human review", 100), ("attempt", "Run / trial / attempt", 260)])
@@ -73,6 +79,7 @@ class ResultsView(ttk.Frame):
         controls.grid(row=0, sticky="ew")
         ttk.Button(controls, text="Run folder", command=self.open_run).pack(side="left")
         ttk.Button(controls, text="Review workbook", command=self.open_workbook).pack(side="left", padx=4)
+        ttk.Button(controls, text="Case rows", command=lambda: self.views.select(self.case_frame)).pack(side="left")
         self.detail = tk.Text(details, wrap="word", state="disabled", width=48, height=14)
         self.detail.grid(row=1, sticky="nsew")
         scroll = ttk.Scrollbar(details, command=self.detail.yview)
@@ -114,7 +121,28 @@ class ResultsView(ttk.Frame):
         return [self.reports[key] for key in keys]
 
     def refresh(self):
-        self.show_cases([(report, row) for report in self.visible_reports() for row in report.rows.values()])
+        reports = self.visible_reports()
+        self.selected_metric = None
+        self.show_cases([(report, row) for report in reports for row in report.rows.values()])
+        series = [(report, metric) for report in reports for metric in report.metrics]
+        self.capabilities.render(series)
+        self.roles.render(reports, series)
+
+    def select_metric(self, report, metric):
+        self.show_cases([(report, row) for row in report.metric_rows(metric)])
+        self.selected_report, self.selected_metric = report, metric
+        set_text(self.detail, self.metric_detail(report, metric) +
+            "\nSelect Case rows to inspect each exact attempt and artifact.\n\n" + json.dumps(metric, indent=2, ensure_ascii=False))
+
+    @staticmethod
+    def metric_detail(report, metric):
+        return (f"{metric['metric_id']} @ {display(metric.get('metric_version'))}\nSource: {report.path}\n"
+                f"Measured outcome: {display(metric.get('suitability') or metric.get('status'))}\n"
+                f"Numerator / denominator: {display(metric.get('numerator'))} / {display(metric.get('denominator'))}\n"
+                f"Review: {display(metric.get('review_status'))}\n"
+                f"Comparison eligible: {display(metric.get('comparison_eligible'))}\n"
+                f"Exclusions: {display(metric.get('comparison_exclusion_reasons'))}\n"
+                "Counts are distinct cases; attempts and cumulative acceptance checks remain separate.\n")
 
     def show_cases(self, rows):
         self.cases.delete(*self.cases.get_children())
@@ -141,7 +169,8 @@ class ResultsView(ttk.Frame):
             return
         report, row = self.case_rows[selection[0]]
         self.selected_report, self.selected_row = report, row
-        set_text(self.detail, f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
+        prefix = self.metric_detail(report, self.selected_metric) if self.selected_metric else ""
+        set_text(self.detail, prefix + f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
                  "Missing fields: Unknown. Assessment and execution are separate.\n\n" + json.dumps(row, indent=2, ensure_ascii=False))
         self.artifacts.delete(*self.artifacts.get_children())
         self.artifact_refs.clear()
