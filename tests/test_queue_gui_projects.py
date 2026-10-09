@@ -170,6 +170,13 @@ class PowerShellRoutingTests(unittest.TestCase):
                     encoding="utf-8",
                 )
             for project in ("assistant-001", "assistant-002"):
+                packet = repo / "project-benchmarks" / project / "v1" / "packet.json"
+                packet.parent.mkdir(parents=True)
+                packet.write_text(json.dumps({
+                    "packet_id": project + "-v1",
+                    "tasks": [{"id": "T01", "title": "First stage"},
+                              {"id": "T02", "title": "Second stage"}],
+                }), encoding="utf-8")
                 settings = BenchmarkSettings(
                     benchmark=project, through="T02", phase="qualification",
                     allow_host_execution=True, timeout_seconds=42.5)

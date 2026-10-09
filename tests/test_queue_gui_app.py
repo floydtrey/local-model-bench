@@ -440,6 +440,7 @@ class QueueGuiWidgetTests(unittest.TestCase):
         self.app.stop_after_current()
         self.runner.finish(0)
         self._wait_until(lambda: not self.runner.active, "project completion")
+        from localbench.queue_gui.core import load_state
         restored = load_state(self.state_path)
         self.assertEqual([i.settings.benchmark for i in restored.items], ["roles", "assistant-002"])
 

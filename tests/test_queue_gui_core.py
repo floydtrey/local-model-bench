@@ -367,7 +367,7 @@ class PersistenceTests(unittest.TestCase):
         valid = json.loads(self.path.read_text())
 
         def changes():
-            yield lambda data: data.update(version=2)
+            yield lambda data: data.update(version=3)
             yield lambda data: data.update(version=True)
             yield lambda data: data.update(environment={"TOKEN": "must not be accepted"})
             yield lambda data: data.update(items={})

@@ -293,7 +293,7 @@ class BenchmarkQueueApp:
                 if not messagebox.askyesno(
                     "Execute model-generated Python?",
                     f"Add {len(selected)} model(s) for {chosen.benchmark} through {chosen.through} "
-                    f"({chosen.phase})?\\n\\nBounded file tools are NOT an OS/network sandbox. "
+                    f"({chosen.phase})?\n\nBounded file tools are NOT an OS/network sandbox. "
                     "The generated Python runs on this computer. Prefer a disposable VM. "
                     "Confirm authorization for these queued tasks.",
                     parent=self.root,
