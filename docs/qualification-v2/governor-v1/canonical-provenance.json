@@ -1,0 +1,12 @@
+{
+  "source_repository": "https://github.com/floydtrey/governor",
+  "source_commit": "234b482916463c08875120ca22ce1c7e84e4e33c",
+  "documents": {
+    "LAW.md": "0ff7bd9438bfa07a4156e2a8a512788d4016028da302671b3e3ce351d184ac2a",
+    "STATE.md": "2820d6865d435c62a9bfe4bd36ae69167eaf36afd12d0ed00bbaa4f8b5e13c06",
+    "GENERAL_INTENT.md": "57b7cbc3026ef3bde768ca16f2d2aec56cb96bf67ad024e989bf957440d28118"
+  },
+  "effective_authority_status": "SIMULATION_ONLY_NOT_VERIFIED_PRODUCTION_AUTHORITY",
+  "review_status": "HUMAN_REVIEW_PENDING",
+  "content_policy": "Private canonical bytes remain external to benchmark repository; hashes are byte identities, not authority receipts."
+}

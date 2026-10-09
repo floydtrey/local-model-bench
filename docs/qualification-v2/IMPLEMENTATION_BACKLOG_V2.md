@@ -1,7 +1,7 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-08 after [T05–T06 implementation](PLANNER_T05_T06.md); Results inventory and dependencies retained.
-**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. This batch adds the independent Planner adapter, semantic review workflow and narrow writer projections; no Results tab, actual model test or production authority is claimed.
+**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T08 are implemented with frozen authored Governor scenarios and semantic review controls; independent substantive scenario review and human calibration/signoff remain pending. T09–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-09 after [T07–T08 implementation](GOVERNOR_T07_T08.md); Results inventory and dependencies retained.
+**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
 
@@ -29,8 +29,8 @@
 | T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED FOR BENCHMARK — artifact signoff pending |
 | T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | IMPLEMENTED — deterministic isolation checks |
 | T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | IMPLEMENTED — human substantive calibration/signoff pending |
-| T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | NOT STARTED |
-| T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | NOT STARTED |
+| T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | IMPLEMENTED — independent substantive scenario review pending |
+| T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | IMPLEMENTED — human substantive calibration/signoff pending |
 | T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | NOT STARTED |
 | T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | NOT STARTED |
 | T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | NOT STARTED |
@@ -139,7 +139,7 @@
 **Change from the pre-audit list:** Existing historical Planner evaluation is manual and cannot serve as a project-specific equivalence oracle.
 
 ### T07 — Create frozen project Governor decisions and authority conditions
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T02, T03, T04  
+**Status:** IMPLEMENTED — frozen authored cases and private snapshot binding; independent substantive human review pending; see [implementation and limits](GOVERNOR_T07_T08.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T02, T03, T04
 **Where:** local-model-bench: project-specific v2 case metadata; private run evidence for canonical governance bytes
 
 **Reuse:** Historical four Governor packets, source-backed LAW/STATE/GENERAL_INTENT loader and separate Governor authority corpus.
@@ -151,7 +151,7 @@
 **Change from the pre-audit list:** The existing project Governor probe accepts arbitrary plan/doc inputs, not a frozen project decision oracle; no simulation decision may be confused with production permission.
 
 ### T08 — Evaluate Governor rulings and constraint extraction independently
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T07  
+**Status:** IMPLEMENTED — semantic adjudication, sixteen authored controls and evidence-based comparison; human substantive calibration/signoff pending; see [implementation and limits](GOVERNOR_T07_T08.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T07
 **Where:** local-model-bench: additive Governor assessment and review records
 
 **Reuse:** Actual governor cases from historical role campaign; project run_probe and evidence writer.

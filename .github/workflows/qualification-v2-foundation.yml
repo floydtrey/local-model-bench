@@ -42,3 +42,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_qualification_v2*.py' -v
       - name: Validate Planner calibration record controls (no semantic auto-grading)
         run: python -m localbench.qualification_v2 calibrate
+      - name: Validate Governor calibration records without private documents or inference
+        run: python -m localbench.qualification_v2.governor calibrate
