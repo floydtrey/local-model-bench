@@ -17,11 +17,22 @@ tests use synthetic drivers/HTTP servers. They cannot qualify the Windows fork.
 | Candidate | Qwen3.8-Flash-Next UD-IQ3_XXS |
 | Alias | C01 |
 | Model entry | `C:\AI\FlashNext-Lab\models\Qwen3.8-Flash-Next\UD-IQ3_XXS\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf` |
-| Runtime | `C:\AI\FlashNext-Lab\build\cuda-13.3\bin\llama-server.exe` |
-| Owner-verified fork revision | `27c54b4bbcefadedcec6397477cc2e866c1db716` |
+| Runtime | `C:\AI\FlashNext-Lab\build\startup-safe-20261008\bin\llama-server.exe` |
+| Base fork revision (local startup patch described below) | `27c54b4bbcefadedcec6397477cc2e866c1db716` |
 | Context | 262144 tokens, one explicit parallel slot |
 | Endpoint | `http://127.0.0.1:18081` |
-| Environment | `GGML_CUDA_REGISTER_HOST=1`, `HF_HUB_OFFLINE=1` |
+| Environment | `GGML_CUDA_REGISTER_HOST=1`, `HF_HUB_OFFLINE=1`, `LLAMA_WIN32_PREFETCH=0` |
+
+The local Windows startup repair uses the same base fork plus a narrowly patched
+`llama.dll` that accepts `LLAMA_WIN32_PREFETCH=0`, disabling bulk Windows model
+prefetch while retaining memory mapping and all existing launch flags. The patch
+source hash is `68a509522b767c4b9c61363ee5e3c453f8bc01d558375b6353e76e84089f4477`;
+the tested DLL hash is `7a27f666827e1ac006bcf0b240cc6ba58fc37de3451daf855ffb5117a3458e49`.
+`--version` still reports the base revision. Each run records the actual DLL
+hashes and changed profile/runtime fingerprint, so this repaired installation
+is distinguishable from prior benchmark evidence. Keep the versioned binary
+folder intact. Do not substitute the old DLL: it does not implement the switch.
+A fresh smoke is required before progression stages; old evidence is preserved.
 
 The server launch preserves every supplied flag:
 
@@ -33,7 +44,7 @@ The server launch preserves every supplied flag:
 ```
 
 The launcher adds only the explicit model path, alias, context, single slot,
-loopback host, and port. The exact argument vector and the two environment
+loopback host, and port. The exact argument vector and the three environment
 overrides are preserved in each run's `runtime/launch.json`.
 
 `--version` must report the supplied revision or an identifiable abbreviation of
