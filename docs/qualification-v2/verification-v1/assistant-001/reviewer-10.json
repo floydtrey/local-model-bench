@@ -1118,5 +1118,10 @@
     "test_untrusted_data_is_inert",
     "test_valid_boundaries_and_json_types"
   ],
-  "evidence_origin": "controlled authored fixture; no model run"
+  "evidence_origin": "controlled authored fixture; no model run",
+  "simulation_conditions": {
+    "capture_custody": "Both current captures represent equally trusted independent observations in this controlled counterfactual.",
+    "ordering": "No trustworthy chronology or additional observation resolves the disagreement.",
+    "construction_labels": "Synthetic origin labels describe fixture construction, not lesser custody inside this case."
+  }
 }

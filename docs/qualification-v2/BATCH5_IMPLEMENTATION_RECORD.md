@@ -20,8 +20,25 @@ See [case inventory, expected outcomes and operating boundaries](TESTER_REVIEWER
   108 authored controls and trusted fixture sensitivity checks.
 - Full post-change Windows Python 3.12 suite: **465 tests, OK, 2 existing skips**,
   133.381 seconds. The targeted suite also passed after retaining the additional
-  raw execution artifacts. Remote Windows/Linux Python 3.10/3.12 matrix results
-  will be recorded after the implementation commit is tested.
+  raw execution artifacts and after clarifying the equal-custody conflict case.
+- Implementation commit: `16e0b19bfeb86ffbbcf78bd1357b0acf7ffada8d`.
+  [Remote four-configuration acceptance run](https://github.com/floydtrey/local-model-bench/actions/runs/37926363452): **all passed**.
+
+| CI configuration | Full suite result | Job |
+|---|---|---|
+| Windows Python 3.10 | 465 tests; OK; 1 skip | [Job](https://github.com/floydtrey/local-model-bench/actions/runs/37926363452/job/113806157844) |
+| Windows Python 3.12 | 465 tests; OK; 1 skip | [Job](https://github.com/floydtrey/local-model-bench/actions/runs/37926363452/job/113806157886) |
+| Linux Python 3.10 | 450 tests; OK; 4 skips | [Job](https://github.com/floydtrey/local-model-bench/actions/runs/37926363452/job/113806157626) |
+| Linux Python 3.12 | 450 tests; OK; 4 skips | [Job](https://github.com/floydtrey/local-model-bench/actions/runs/37926363452/job/113806157973) |
+
+Linux skips the existing Tk display class and Windows-only junction/PowerShell
+checks. All 15 new verification tests ran on every configuration. Every job also
+passed original packet validation, Planner/Governor calibration, canonical Worker
+handoff validation, the 36-case validation and 108 verification annotation controls.
+The follow-up commit clarifies the counterfactual equal-custody assumption in
+Reviewer case 10 and records these acceptance results; its final CI run is linked
+in the completion report.
+
 - Reference/defect captures: the existing independent assessors executed the
   complete 79-check A001 and 96-check A002 inventories on correct, single-defect,
   multiple-defect and incomplete authored fixtures. Correct fixtures passed;
@@ -57,6 +74,8 @@ T13/T16 and capability expansion remain not started by this batch.
 The permanent installation remains on its repaired machine branch at
 `da2fb728135b58370e87cb91711f44f5225f8a62`. Later integration must preserve that
 branch's startup/runtime repairs. Fetch and review in a separate checkout, back up
-local work, then deliberately cherry-pick Batch 5 commits onto the machine branch;
+local work, and reconcile missing Batch 3/4 prerequisites through `dbee966` first.
+The permanent checkout does not currently have that commit object. Then deliberately
+cherry-pick Batch 5 commits onto the machine branch;
 never reset/overwrite the permanent checkout. Run only offline checks during that
 update. The detailed safe procedure is in the T11/T12 guide.

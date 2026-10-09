@@ -1372,5 +1372,10 @@
     "test_valid_bounds_and_empty_scenario",
     "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls"
   ],
-  "evidence_origin": "controlled authored fixture; no model run"
+  "evidence_origin": "controlled authored fixture; no model run",
+  "simulation_conditions": {
+    "capture_custody": "Both current captures represent equally trusted independent observations in this controlled counterfactual.",
+    "ordering": "No trustworthy chronology or additional observation resolves the disagreement.",
+    "construction_labels": "Synthetic origin labels describe fixture construction, not lesser custody inside this case."
+  }
 }

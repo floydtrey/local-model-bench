@@ -12,7 +12,7 @@ from .planner_packet import read_regular, sha
 from .worker import APIS
 
 VERSION = "qualification-v2/verification-cases-v1"
-FREEZE_SHA256 = "c721ff4357d79153aa775d1abcb12e9560a83528b31889c888beb25b0a76ab81"
+FREEZE_SHA256 = "cb858e6db0f6ccdea5b1f254f3c8d8ec1955e03c009f93f1ec716862cf79a517"
 WRITABLE = ["tests/test_candidate.py"]
 
 

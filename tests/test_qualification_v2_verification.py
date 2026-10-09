@@ -87,6 +87,8 @@ class VerificationTests(unittest.TestCase):
             self.assertTrue(self.result("reviewer", 7, project)["evidence_diagnostics"]["demonstrated_failure"])
             self.assertTrue(self.result("reviewer", 9, project)["evidence_diagnostics"]["sufficient_acceptance_evidence"])
             self.assertTrue(self.result("reviewer", 10, project)["evidence_diagnostics"]["conflicting_observations"])
+            packet = build_packet(f"{project}-reviewer-10", REPO)
+            self.assertIn("equally trusted", packet["evidence"]["simulation_conditions"]["capture_custody"])
 
     def test_exit_zero_empty_checks_and_stale_tests_are_not_proof(self):
         packet = build_packet("assistant-001-reviewer-01", REPO)

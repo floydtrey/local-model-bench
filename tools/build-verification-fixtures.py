@@ -187,6 +187,10 @@ class ContractTests(unittest.TestCase):
                         evidence["prior_captures"] = [copy.deepcopy(captures["defective"])]
                         evidence["worker_claim"] = "Repaired boolean validation; fresh evidence attached."
                     if condition == "unresolved-conflict":
+                        evidence["simulation_conditions"] = {
+                            "capture_custody": "Both current captures represent equally trusted independent observations in this controlled counterfactual.",
+                            "ordering": "No trustworthy chronology or additional observation resolves the disagreement.",
+                            "construction_labels": "Synthetic origin labels describe fixture construction, not lesser custody inside this case."}
                         other = copy.deepcopy(captures["correct"])
                         other.update(origin="synthetic_conflict_control", exit_code=1)
                         other["checks"][0].update(passed=False, diagnostics="Conflicting equal-custody observation; ordering unavailable.")

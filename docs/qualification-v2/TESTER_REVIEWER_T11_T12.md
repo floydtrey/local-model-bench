@@ -185,8 +185,13 @@ See [Batch 5 acceptance record](BATCH5_IMPLEMENTATION_RECORD.md) for actual resu
 
 For a later update, first fetch and inspect the permanent machine checkout's
 branch, status and local commits. Preserve its repair branch and any new work with
-a backup branch and a saved patch/commit. Review Batch 5 in another checkout. Only
-after deliberate integration approval, cherry-pick the Batch 5 commits in order
+a backup branch and a saved patch/commit. Review Batch 5 in another checkout.
+First reconcile the Batch 3/4 prerequisites through the approved Batch 4 baseline
+`dbee96628d6ed9248f0ed747d02aeed940a8ddd5`; do not assume the older permanent
+checkout contains them. Its current history only shows the earlier Planner update
+and local startup-repair reconciliation, and it does not have that Batch 4 commit
+object. Validate the reconciled staging checkout while retaining those repairs.
+Only after deliberate integration approval, cherry-pick the Batch 5 commits in order
 onto the existing machine branch, preserving startup/runtime repairs in conflicts.
 Do not reset it to this development branch, overwrite its configuration, or copy
 the checkout wholesale. Run offline validation and deterministic tests only;
