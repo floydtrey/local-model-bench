@@ -1,16 +1,16 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T12 implementation and the delegated AI technical review of T05–T12 are complete within the authored/synthetic benchmark scope. The audit reviewed 80 case/task units and all 134 controls, corrected 40 case records and 120 controls, and approved the revised materials for benchmark use. This is not independent human certification, model qualification or Owner execution authority. Real isolated Worker seeds remain BLOCKED; real Worker artifact compatibility remains PROVISIONAL; untrusted Worker/Tester Python needs a separately authorized isolated environment. T13 reporting is COMPLETE with all material conditions and the four-configuration Windows/Linux CI matrix verified; T14–T18 remain NOT STARTED; T19 expansion remains NOT STARTED. **Updated:** 2026-10-09; see [versioned technical audit](technical-audit-20261009/AUDIT_REPORT.md), [case decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md), its integration/validation completion record, and [T13 acceptance](T13_ACCEPTANCE_20261009.md).
-**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
+**Status:** T01–T12 implementation and the delegated AI technical review of T05–T12 are complete within the authored/synthetic benchmark scope. The audit reviewed 80 case/task units and all 134 controls, corrected 40 case records and 120 controls, and approved the revised materials for benchmark use. This is not independent human certification, model qualification or Owner execution authority. Real isolated Worker seeds remain BLOCKED; real Worker artifact compatibility remains PROVISIONAL; untrusted Worker/Tester Python needs a separately authorized isolated environment. T13 reporting is COMPLETE with all material conditions and the four-configuration Windows/Linux CI matrix verified; T14 native DSH integration is DEFERRED / OUT OF SCOPE; T15–T18 remain NOT STARTED; T19 expansion remains optional and NOT STARTED. **Updated:** 2026-10-09; see [versioned technical audit](technical-audit-20261009/AUDIT_REPORT.md), [case decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md), its integration/validation completion record, and [T13 acceptance](T13_ACCEPTANCE_20261009.md).
+**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T19 IDs and completed T01–T13 records are preserved. The 2026-10-09 architecture correction below supersedes the original T14–T19 dependencies: Benchmark Lab is a standalone application, separate from the operational DSH Lab. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
 
 1. **Do not rebuild what already works.** Existing 23-case historical role battery, Assistant-001/002 fixed six-task Worker campaigns, 79/96 cumulative acceptance checks (not independent case counts), original role prompts, V2 Ollama execution/assessor/review writer, and mixed-benchmark GUI remain baselines. Keep frozen v1 packets unchanged.
-2. **Two evaluation tracks; three Worker-relevant modes.** CONTROLLED_ROLE_QUALIFICATION tests each role against separately reviewed input. Its Worker assessments include ISOLATED_TASK (identical verified preconditions) and CUMULATIVE_PROJECT (identical initial intent/plan but each model's own predecessor code). NATIVE_PIPELINE_INTEGRATION deliberately uses real preceding role outputs.
+2. **Two evaluation tracks; three Worker-relevant modes.** CONTROLLED_ROLE_QUALIFICATION tests each role against separately reviewed input. Its Worker assessments include ISOLATED_TASK (identical verified preconditions) and CUMULATIVE_PROJECT (identical initial intent/plan but each model's own predecessor code). The previously specified NATIVE_PIPELINE_INTEGRATION track remains historical/future research, outside this standalone release; it is not a prerequisite for controlled role or sequential Worker qualification.
 3. **Blind Planner means truly blind.** The current project Planner probe exposes TASKS.md in the DOCS prompt AND again in its copied workspace. Neither visible path, metadata nor tool access may leak the fixed plan or assessor oracle into the new independent Planner mode. Keep old scaffolded probes labeled separately.
 4. **Governor compares, but cannot authorize by prose.** Freeze substantive approvals/denials/escalations against exact canonical governance snapshots and explicit simulation assumptions. Governor candidate outputs are evaluation evidence, not permits. Actual owner-origin release and deterministic scope enforcement remain separate. Canonical governance bytes must not enter the public repository.
 5. **Same reference plan is necessary but not sufficient for comparable Worker outcomes.** Independent per-task qualification needs identical starting code; end-to-end Worker continuation intentionally varies by candidate. Never insert the gold solution after a failed model task to pretend that the same candidate completed the project.
-6. **The native DSH full-pipeline backend already exists in a separate development branch.** T14 is a read-only installed-version/provenance reconciliation followed by a thin adapter, safe validation and qualification of the existing native Planner→Governor→Worker→Tester→Repair→Reviewer release flow—not a second engine. The currently installed host/process has not been verified by T01.
+6. **Benchmark Lab does not operate the DSH Lab.** Native DSH installation, release receipts, role orchestration and operational availability are out of scope. T14 preserves the prior research as deferred future work, not completed integration. Existing Benchmark Lab runners, role interfaces, assessors and evidence paths own standalone qualification. Any additional role-handoff validation belongs to those existing paths; no duplicate engine or controller.
 7. **Preserve role and review truthfulness.** No exact-phrase plan matcher, no implied pass from CLI exit 0, no automatic promotion/role assignment, no assumption that generated Python is OS-sandboxed. Report evidence gaps, wrong authority and wrong transport distinctly.
 8. **Source/provenance boundary.** Public repo stores test case metadata, references and hashes. Private Governor and DSH sources and owner credentials are never copied into it; case-specific canonical governance snapshots belong in access-controlled run evidence.
 9. **Results are traceable measurements, not decorative leaderboards.** The existing `queue_gui` owns the Tk interface; the existing runners and `flashnext_review` JSON/CSV/XLSX writer own execution and evidence. Add a chart-focused **Results tab in this GUI**, consuming the existing report files. Every capability bar/matrix decision must trace to versioned case membership, rubric, a real numerator/denominator and exact evidence. No new dashboard application, database, API server, run controller or scoring store.
@@ -38,25 +38,69 @@
 | T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | APPROVED_FOR_BENCHMARK — 16 authored cases/48 controls reviewed; real-artifact compatibility PROVISIONAL, untrusted execution BLOCKED |
 | T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | APPROVED_FOR_BENCHMARK — 20 authored cases/60 controls reviewed and corrected; real-artifact compatibility PROVISIONAL |
 | T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | COMPLETE — all reporting conditions; 524-test regressions and Windows/Linux Python 3.10/3.12 CI verified |
-| T14 | Verify and adapt the existing native DSH full pipeline for integration trials | P0 · Large | T02, T09, T13 | NOT STARTED — native source exists; installed state unverified |
-| T15 | Regression-test authority, data/report truthfulness and failure propagation | P0 · Large | T05, T08, T10, T11, T12, T13, T14 | NOT STARTED |
-| T16 | Extend existing GUI with chart-first Results tab and track/role selection | P1 · Large | T14, T15 | NOT STARTED — read-only Results MVP can follow T13 |
-| T17 | Pilot real models and reconcile Results against actual evidence | P0 · Medium | T15, T16 | NOT STARTED — no real model runs for this change |
-| T18 | Freeze v2 qualification release with metric definitions and coverage | P1 · Small–medium | T17 | NOT STARTED |
+| T14 | Deferred native DSH integration research | Future / out of scope | None for this release | DEFERRED — not implemented or qualified |
+| T15 | Standalone execution, evaluation and report regression validation | P0 · Large | T05, T08, T10, T11, T12, T13 | NOT STARTED |
+| T16 | Complete existing GUI with chart-focused Results tab | P0 · Large | T13 | NOT STARTED — R0–R4 proceed incrementally; no DSH dependency |
+| T17 | Independently authorized standalone model benchmarks and Results validation | P0 · Medium | T15, T16 | NOT STARTED — no real model runs for this change |
+| T18 | Standalone Benchmark Lab release with GUI, methodology and evidence exports | P1 · Small–medium | T15, T16, T17 | NOT STARTED |
 | T19 | Expand capability cases for vision, long-context, reasoning and instruction following | P2 · Large | T02, T13 | NOT STARTED — existing-case/runtime inventory recorded; optional and nonblocking |
 
 ## Execution milestones and stop gates
 
 | Milestone | Included tasks | Go/no-go evidence |
 |---|---|---|
-| M0 · Baseline | T01 | Source implementation map + prior CI and Git blob snapshot recorded; installed DSH still unverified |
+| M0 · Baseline | T01 | Source implementation map + prior CI and Git blob snapshot recorded; DSH provenance is historical, outside release scope |
 | M1 · Ground truth and independent comparisons | T02–T08 | v2 mode/authority matrix; separate reference plans; blind Planner leakage tests; technically reviewed Governor case outcomes (AI review explicitly identified) |
 | M2 · Canonical Worker and downstream roles | T09–T13 | reviewed reference Worker handoffs; independent-isolated vs cumulative Worker separation; Tester/Reviewer oracles; inherited evidence writer |
-| M3 · Native pipeline and safety proof | T14–T15 | installed DSH provenance verified; existing DSH releases/dispatchers exercised with fakes; old v1 and GUI regressions pass |
-| M4 · Interface and genuine model results | T16–T18 | new modes and a chart-focused Results tab **in the same GUI**; measured case-level comparisons/evidence links verified against actual runs; released metric/rubric docs |
+| M3 · Standalone regression proof | T15 | independent roles, authority boundaries, sequential Worker handoffs, failure propagation, report/CLI/GUI and frozen v1 regressions pass |
+| M4 · Interface and genuine model results | T16–T18 | a chart-focused Results tab **in the same GUI**; measured case-level comparisons/evidence links verified against actual runs; released metric/rubric docs |
 | M5 · Optional capability expansion (independent) | T19 | inventory existing case/runtime inputs; add reviewed and calibrated missing capability cases only when supported; **not a prerequisite** to first Results tab, T16/T17/T18 |
 
-**Critical gate:** Do not promote an integration test to PASS if the local native DSH installation, authorization origin or model/runtime configuration differs from what was actually tested. T03–T13 may progress in the benchmark repo while native installation reconciliation awaits T14. **A read-only Results-tab MVP (`T16-R0`) may be implemented after T13 without waiting for T14/T15**, but full T16 completion and its launch-mode additions retain their existing dependencies. T19 does not gate T16–T18.
+**Critical gate:** Qualification requires evidence from Benchmark Lab's own authorized harness and the exact tested model/runtime configuration. Process exit zero is not qualification. T16-R0–R4 depend on T13 reporting and their preceding phase tests, not T14, T15 or T19. T15 is a standalone release regression gate; real-model authorization, hardware and containment remain separate T17 gates. No operational DSH process or native release is required.
+
+```mermaid
+flowchart LR
+  T01 --> T02
+  T02 --> T03
+  T02 --> T04
+  T03 --> T05
+  T04 --> T05
+  T05 --> T06
+  T02 --> T07
+  T03 --> T07
+  T04 --> T07
+  T07 --> T08
+  T03 --> T09
+  T04 --> T09
+  T08 --> T09
+  T09 --> T10
+  T02 --> T11
+  T10 --> T11
+  T10 --> T12
+  T11 --> T12
+  T06 --> T13
+  T08 --> T13
+  T10 --> T13
+  T11 --> T13
+  T12 --> T13
+  T05 --> T15
+  T08 --> T15
+  T10 --> T15
+  T11 --> T15
+  T12 --> T15
+  T13 --> T15
+  T13 --> T16
+  T15 --> T17
+  T16 --> T17
+  T15 --> T18
+  T16 --> T18
+  T17 --> T18
+  T02 --> T19
+  T13 --> T19
+  T14["T14: DSH integration deferred / out of scope"]
+```
+
+**Historical record rule:** T01–T13 task text below records the completed work and its original design assumptions. References there to future native integration are historical, not current dependencies or authority. Their accepted statuses and qualification limitations are unchanged.
 
 ## Detailed tasks
 
@@ -218,7 +262,7 @@
 
 **Batch 5 implementation evidence (T11–T12):** [T11/T12 case inventory and boundaries](TESTER_REVIEWER_T11_T12.md) and [acceptance record](BATCH5_IMPLEMENTATION_RECORD.md). Windows/Linux Python 3.10/3.12 CI passed. Adds 36 independently assessable project cases and 108 authored annotation controls through the existing role harness, project assessors and writer. Correct Tester FAIL can receive role PASS; evidence and scope failures remain distinct. No real Worker bundles were available in the inspected inventories; all source origins remain explicit. Deterministic validation is not human substantive acceptance or model qualification.
 
-## Evidence, existing DSH integration and regressions
+## Evidence and standalone regressions
 
 *T13–T15 · extend known tooling, do not build a second orchestrator*
 
@@ -244,71 +288,69 @@
 
 **Change from the earlier backlog:** Reporting is now a **Results-tab metric contract**, not merely extra generic failure-attribution fields. The existing writer and V2 aggregate layer still own authoritative evidence/scoring; category bars/suitability are projections of reviewed case-level results, never self-assigned model intelligence ratings.
 
-### T14 — Verify and adapt the existing native DSH full pipeline for integration trials
-**Status:** NOT STARTED — native source exists; installed state unverified · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T02, T09, T13  
-**Where:** deepseek-lab native harness (owner-authorized changes only) + thin local-model-bench adapter
+### T14 — Deferred native DSH integration research (out of scope)
+**Status:** DEFERRED / OUT OF SCOPE — not implemented or qualified · **Priority:** Future proposal · **Dependencies:** None for standalone release
+**Where:** Historical source audit and prior Git versions of this backlog; any future integration benchmark requires a separately approved scope.
 
-**Reuse:** DSH development source has release-bound Planner/Governor, WorkerDispatcher, Tester, Repair Worker and final Reviewer with saved handoffs and evidence. Native queue/owner release must remain the only execution authority.
+**Preserved research:** T01's source audit found native release-bound Planner/Governor, Worker, Tester, Repair and Reviewer paths in a separate DSH development branch. Installed DSH provenance was not verified. The former T14 proposed installation reconciliation, a thin adapter and synthetic native release trials. That proposal is deferred, not completed or silently deleted.
 
-**Bounded work:** FIRST compare the local installed DSH checkout/process, running version/branch, models, profiles and canonical Governor files against reviewed development source; capture provenance privately and stop if out of sync. Identify supported native release/plan/dispatcher interfaces and wire controlled test packets without bypassing owner-origin release authority or changing hashes after approval. For INTEGRATION use actual Planner plan and Governor advice under the existing safe controller gates, then actual Worker/Tester/repair/Reviewer outputs; no replacement Planner plan in this mode. Use existing native pipeline/verification dispatchers; do NOT recreate them in Python/GUI or treat a Governor approval word as owner permission. Verify native run status and actual tool evidence.
+**Current boundary:** Do not connect to, inspect the live pipeline of, modify or operate the operational DSH Lab for this project. Native installation, release receipts and operational role orchestration do not gate Benchmark Lab. Governor may read applicable canonical governance documents only as benchmark reference material; no operational authority follows.
 
-**Acceptance:** One synthetic/no-inference native release trial traverses the existing stage boundaries with reproducible trace and correct block/deny/repair/stop paths, or reports a concrete installed-version/integration blocker. No duplicate controller, no forged release receipt, and no claim of live full-pipeline qualification without actual model evidence.
+**Acceptance of architecture correction:** T15–T18 have no dependency on this deferred item. If standalone sequential role/Worker handoffs need more validation, extend tests of the existing Benchmark Lab harness under T15. No new engine, service, state store or orchestration layer is authorized.
 
-**Change from the pre-audit list:** Formerly 'implement full pipeline'; audit found it implemented on a separate DSH development branch. The new work is provenance reconciliation, safe adapter integration and qualification rather than rebuilding orchestration.
+### T15 — Standalone benchmark regression validation
+**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T05, T08, T10, T11, T12, T13  
+**Where:** existing `local-model-bench` test suites/workflows only; report fixtures exercise the **existing** writer/reader and provenance boundaries.
 
-### T15 — Regression-test authority, isolation, report truthfulness and failure propagation
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T05, T08, T10, T11, T12, T13, T14  
-**Where:** existing `local-model-bench` test suites/workflows and the DSH native synthetic tests when required; report fixtures exercise the **existing** writer/reader and provenance boundaries.
+**Reuse:** Prior Windows/Linux Python suites, existing standalone role/handoff tests, GUI fake runner and native PowerShell launch tests, historic role fixtures, A001/A002 assessor calibration, and new T13 versioned metric definitions.
 
-**Reuse:** Prior Windows/Linux Python suites, DSH Node role/release tests, GUI fake runner and native PowerShell launch tests, historic role fixtures, A001/A002 assessor calibration, and new T13 versioned metric definitions.
+**Bounded work:** Validate independent role qualification, controlled inputs and authority boundaries, sequential Worker handoffs, Tester/Reviewer evidence, failure propagation, runtime/tool compatibility, first-pass/repaired outcomes, reports and existing CLI/GUI behavior using Benchmark Lab alone. No external DSH process or native release is required. Preserve earlier regression targets (direct/indirect Planner answer leaks, changing governance, forged Governor grants, wrong plan/role, seed contamination, stale hashes, inherited bad code, no-gold continuation, false-green Tester/reviewer, unexecuted test commands, runtime mismatches, failed/interrupt/restore and authorized stop). Add deterministic **report fixture cases** for: executed PASS and FAIL, upstream BLOCKED, NOT_ATTEMPTED, NOT_TESTED category, UNSUPPORTED verified runtime/input, human PENDING_REVIEW, stale/missing legacy fields, genuine `0/n` versus no denominator, untested vision and long-context, first-pass failure repaired to success, an independently **correct Tester FAIL** on a defective implementation, repeat/cumulative-check inflation, contradictory evidence, and two suites/Worker modes/rubric versions that must remain incomparable. Validate JSON/CSV/XLSX normalized values and exact source evidence/case/attempt references; no live inference.
 
-**Bounded work:** Preserve earlier regression targets (direct/indirect Planner answer leaks, changing governance, forged Governor grants, wrong plan/role, seed contamination, stale hashes, inherited bad code, no-gold continuation, false-green Tester/reviewer, unexecuted test commands, runtime mismatches, failed/interrupt/restore and authorized stop). Add deterministic **report fixture cases** for: executed PASS and FAIL, upstream BLOCKED, NOT_ATTEMPTED, NOT_TESTED category, UNSUPPORTED verified runtime/input, human PENDING_REVIEW, stale/missing legacy fields, genuine `0/n` versus no denominator, untested vision and long-context, first-pass failure repaired to success, an independently **correct Tester FAIL** on a defective implementation, repeat/cumulative-check inflation, contradictory evidence, and two suites/Worker modes/rubric versions that must remain incomparable. Validate JSON/CSV/XLSX normalized values and exact source evidence/case/attempt references; no live inference.
+**Acceptance:** Deterministic fixtures produce **the expected status and denominator** at raw-case and grouped-result layers, correctly exclude incomparable records with explicit reasons, never turn missing fields into zero/pass or blocked successors into failed attempts, and keep Tester success distinct from the defective code outcome. All existing authority and v1 packet regressions remain passing; original output schema and review links remain usable. No new Results-tab metric can pass its test without the case IDs/evidence records needed for drilldown. Synthetic harness evidence must not be mistaken for real-model qualification.
 
-**Acceptance:** Deterministic fixtures produce **the expected status and denominator** at raw-case and grouped-result layers, correctly exclude incomparable records with explicit reasons, never turn missing fields into zero/pass or blocked successors into failed attempts, and keep Tester success distinct from the defective code outcome. All existing authority and v1 packet regressions remain passing; original output schema and review links remain usable. No new Results-tab metric can pass its test without the case IDs/evidence records needed for drilldown. Synthetic DSH/harness evidence must not be mistaken for real-model qualification.
-
-**Change from the earlier backlog:** Expands the existing regression gate to catch false reporting and chart-denominator bugs before T16 builds the user interface; T16 still owns **real Tk click-to-evidence** tests.
+**Change from the earlier backlog:** Expands the existing regression gate to catch false reporting and chart-denominator bugs alongside incremental T16 user-interface verification; T16 still owns **real Tk click-to-evidence** tests.
 
 ## GUI, real-model pilots and release
 
 *T16–T18 · extend existing queue and existing review writer; a read-only Results slice can begin after T13 without starting a second app or waiting for T19*
 
-### T16 — Extend existing GUI with a chart-first Results tab and evaluation-mode controls
-**Status:** NOT STARTED — existing GUI already queues three benchmarks, opens workbooks and persists model/settings; **there is no Results tab yet** · **Priority:** P1 · **Complexity:** Large · **Dependencies:** T14, T15  
+### T16 — Complete the existing GUI and chart-focused Results tab
+**Status:** NOT STARTED — existing GUI already queues three benchmarks, opens workbooks and persists model/settings; **there is no Results tab yet** · **Priority:** P1 · **Complexity:** Large · **Dependencies:** T13  
 **Where:** `src/localbench/queue_gui/app.py`, existing queue state/controller, Tkinter widgets and project launchers; consume JSON/CSV/review writer outputs and run evidence **read-only**, with no second dashboard, back-end service, database, state store or orchestration.
 
 **Reuse:** Existing Ollama-model selection, mixed benchmark queue, dynamic T01–T06 tasks, screen/qualification phases, live terminal, subprocess custody, pause/stop/emergency stop, atomic queue persistence/recovery and `Open review workbook`. Read stored legacy role/package/Assistant reports plus T13 normalized metric exports; report writer remains the source of authoritative scoring.
 
 **Bounded implementation slices (linked, not renumbered tasks):**
 
-- **T16-R0 — Early read-only Results MVP (entry gate: T13; may begin before T14/T15).** Add `Results` as another view/tab **inside the same Tkinter GUI**, not a new application. Discover/load existing stored `RUN_DIR` reports and original `review-package.json`/`case-results.csv`/`role-summary.csv`, V2 aggregate reports and Assistant summaries through a backwards-compatible read-only adapter. Show model config, source/run/suite, case list, observed statuses, review pending state and evidence links where known. Unsupported/missing fields remain unknown. Do not touch queue state or infer success from process exit. T16 as a whole is still gated on its original T14/T15 dependencies.
+- **T16-R0 — Read-only Results foundation (entry gate: accepted T13).** Add `Results` as another view/tab **inside the same Tkinter GUI**, not a new application. Discover/load existing stored `RUN_DIR` reports and original `review-package.json`/`case-results.csv`/`role-summary.csv`, V2 aggregate reports and Assistant summaries through a backwards-compatible read-only adapter. Show model config, source/run/suite, case list, observed statuses, review pending state and evidence links where known. Unsupported/missing fields remain unknown. Do not touch queue state or infer success from process exit. Complete this phase's tests before R1; subsequent phases likewise advance only after their tests pass.
 - **T16-R1 — Charts and role matrix (requires T13-defined metrics and verified data).** Show **grouped horizontal bar charts by model configuration** for reasoning, coding, vision, tool use, instruction following and long-context recall; show numerator/denominator, **distinct case count alongside percent**, suite/rubric/source and review/eligibility legend, and visibly distinguish **first pass** vs **after repair**. Render `Not tested`/no score/**no bar** for categories without qualified cases; show `Unsupported` only from verified modality/interface limitation. Build a five-role suitability matrix (Planner/Governor/Worker/Tester/Reviewer) with supporting case counts/evidence and **versioned minimum coverage, essential safety gates, critical failure policy, human adjudication and criterion IDs**; until requirements are satisfied, status is **Provisional/Review pending/Insufficient evidence**, never automatically Qualified. No universal intelligence score or role assignment.
 - **T16-R2 — Assistant-specific panels, filters and exact drilldown (requires T13).** Add distinct Assistant indicators for multi-step tasks, tool selection, error recovery, permission boundaries and evidence accuracy, each with a defined case population and measured basis; distinguish code that implements recovery from the *agent's* recovery ability. Filters for suite, role, evaluation track, Worker mode, exact model/configuration/runtime and human review status (with coverage and first-pass/final options). Selecting a horizontal bar, matrix cell or Assistant metric populates a **selected-result panel** showing measured outcome, numerator/denominator, contributing unique case IDs, failed and blocked/not-attempted cases, human review/provisional reason, exclusion/incompatibility reason and exact underlying raw evidence/run folder/workbook path; allow opening the selected case artifact. Chart selection must never open a similarly named case from a different suite, ordinal or code hash.
-- **T16-R3 — Existing execution-mode controls (after T14/T15 as originally planned).** Once CLI/native adapters pass tests, extend per-entry run selection to controlled role cases, isolated Worker tasks, cumulative Worker projects and genuine native DSH integration. Keep same user-visible queue process/phase/governor root and explicit generated-code/owner-release safety controls; don't create a separate scheduler. Mark native/runtime modes and provenance in Results.
+- **T16-R3 — Existing queue integration.** Connect Results selections to the existing saved queue item and exact run directory identities. Reuse queue persistence, recovery, workbook access and execution controls without changing execution or rebuilding persistence. Do not add native DSH routing. Results loading must not start inference, resume a queue or execute artifacts.
 - **T16-R4 — Deterministic UI/interaction coverage.** Use actual Tk widgets plus fake runners/stored report fixtures (no model, no new browser/dashboard) for grouped-bar selection, role-matrix cell selection, filters, resizing/scrolling, missing legacy reports, untested vision, pending review, blocked downstream tasks, conflicting comparability keys, correct Tester FAIL on bad code, first-pass/repaired display and exact case/evidence navigation. Re-run old GUI/pause/stop/recovery and native PowerShell forwarding tests.
 
 **Acceptance:** The Results tab renders supported historic/per-case/role evidence **without fabricating** capability percentages, absent data, universality or human approval. Every eligible bar is tied to a released T13 metric definition, distinct-case numerator/positive denominator and clickable exact-case/evidence references; `Not tested` shows no bar; case count appears alongside rate; Provisional suitability has role evidence and human review gate; filters never blend incomparable suites/tracks/configurations. Selecting a bar/matrix cell drills to its exact run, case IDs and actual evidence hash or reports unavailable honestly. Legacy reports and queue functions behave exactly as before; no second web app, backend, database, state store or orchestrator is created. CI exercises GUI/report fixtures without inference.
 
-**Change from the earlier backlog:** Broadens T16 from a track selector into a **chart-first Results experience** in the existing GUI, with an explicitly **early, read-only MVP** after T13 and the original T14/T15-gated execution-mode selector later. The new capability expansion T19 is **not a prerequisite**.
+**Architecture correction:** T13 supplies the accepted reporting foundation for all R0–R4 phases. Native DSH integration and unrelated execution-harness development are not prerequisites. The first usable Results tab uses existing reports before any new model tests. Record the exact verified phase; unfinished GUI work must not be called full T16 completion. T19 is optional and nonblocking.
 
 ### T17 — Pilot real models and reconcile Results against actual run evidence
 **Status:** NOT STARTED — no real model runs for this change · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T15, T16  
-**Where:** User's Windows benchmark/DSH host; disposable workloads; existing `local-state` run evidence and Results view only.
+**Where:** User-authorized standalone Benchmark Lab host; disposable workloads; existing `local-state` run evidence and Results view only.
 
-**Reuse:** Existing Screen/Qualification model queue, frozen role/project packets, independent assessments, actual native DSH owner-release and Tester/Reviewer records, and T13/T16 read-only Reports/Results wiring.
+**Reuse:** Existing Screen/Qualification model queue, frozen role/project packets, independent assessments, Benchmark Lab execution authorization and Tester/Reviewer records, and T13/T16 read-only Reports/Results wiring.
 
-**Bounded work:** Perform real two-configuration independent Planner/Governor screens against matching references and provenance, then one isolated Worker task, a full cumulative Worker chain, controlled Tester/Reviewer good/bad cases and a bounded two-task native DSH pipeline. Compare actual case-by-case raw model/tool/output/test evidence, normalized T13 JSON/CSV/XLSX rows, visible T16 grouped bars, suitability matrix and selected-result drilldown **by exact case ID, ordinal and assessed artifact hash**. Independently recompute each category numerator/denominator and status from source cases; verify every visible claim, filter and comparison eligibility/exclusion reason. Document absent runs, unreviewed cases, historical missing metadata and unavailable/unverified modalities as **Not tested/Unknown/Provisional**, not zero or PASS. Distinguish correct Tester FAIL from underlying code failure, blocked downstream from executed failure, first-pass from repaired and genuine model recovery from implementation replay correctness. Preserve raw evidence, time/performance and human intervention records; use disposable VM for untrusted code and operator-approved native releases.
+**Bounded work:** Perform real two-configuration independent Planner/Governor screens against matching references and provenance, then one isolated Worker task, a full cumulative Worker chain, controlled Tester/Reviewer good/bad cases and standalone sequential Worker handoffs in the existing harness. Compare actual case-by-case raw model/tool/output/test evidence, normalized T13 JSON/CSV/XLSX rows, visible T16 grouped bars, suitability matrix and selected-result drilldown **by exact case ID, ordinal and assessed artifact hash**. Independently recompute each category numerator/denominator and status from source cases; verify every visible claim, filter and comparison eligibility/exclusion reason. Document absent runs, unreviewed cases, historical missing metadata and unavailable/unverified modalities as **Not tested/Unknown/Provisional**, not zero or PASS. Distinguish correct Tester FAIL from underlying code failure, blocked downstream from executed failure, first-pass from repaired and genuine model recovery from implementation replay correctness. Preserve raw evidence, time/performance and human intervention records; use disposable VM for untrusted code and model-specific operator-approved scope, hardware and containment.
 
-**Acceptance:** Pilot case raw evidence, normalized writer artifacts and displayed Results agree for every sampled model/category/role/Assistant metric and exact evidence link; independently recomputed case numerator/denominator and count of repeats/acceptance checks match chart labels with no duplicate inflation. Incompatible model/runtime/track/Worker-mode versions are clearly excluded, and clicking the chart opens the exact supporting case. Real model tool use/DSH provenance is verified separately; human adjudication is visibly provisional until reviewed and no role is automatically assigned. A missing capability battery remains Not tested, and a missing external run report never becomes zero. Regression suites continue passing.
+**Acceptance:** Pilot case raw evidence, normalized writer artifacts and displayed Results agree for every sampled model/category/role/Assistant metric and exact evidence link; independently recomputed case numerator/denominator and count of repeats/acceptance checks match chart labels with no duplicate inflation. Incompatible model/runtime/track/Worker-mode versions are clearly excluded, and clicking the chart opens the exact supporting case. Real model tool use and standalone run provenance is verified separately; human adjudication is visibly provisional until reviewed and no role is automatically assigned. A missing capability battery remains Not tested, and a missing external run report never becomes zero. Regression suites continue passing.
 
 **Change from the earlier backlog:** Beyond genuine model qualification, T17 now explicitly **validates the Results UI numerically and evidentially against real run records** rather than accepting a passing synthetic visualization.
 
-### T18 — Freeze v2 qualification release with metric definitions, coverage and reviewed results
-**Status:** NOT STARTED · **Priority:** P1 · **Complexity:** Small–medium · **Dependencies:** T17  
+### T18 — Standalone Benchmark Lab release
+**Status:** NOT STARTED · **Priority:** P1 · **Complexity:** Small–medium · **Dependencies:** T15, T16, T17  
 **Where:** Existing `local-model-bench` docs, packet/metric/rubric manifests, CSV/JSON/XLSX output/release evidence and GUI usage guide.
 
 **Reuse:** T01 baseline, two v1 manifests and approved benchmark-reference designs, T02 evaluation/authority contract, T13 released metric catalog and report writer, T16 Results tab, T17 actual model/evidence audit.
 
-**Bounded work:** Freeze and document exact project/suite/case IDs, category membership and exclusions, `metric_id`/rubric/version/scoring source, first-pass versus final denominator policies, distinct cases vs repeated trials vs cumulative checks, role suitability **versioned criteria/minimum coverage/critical safety gates/human-review status**, model/runtime/transport/config comparability, not tested/unsupported/blocked/failed/not attempted/pending statuses, and how to inspect source evidence through the selected-result panel and original workbooks. Preserve canonical governance/owner release hashes without publishing private bytes. Publish a coverage map for **reasoning/coding/vision/tool use/instruction following/long-context recall** and five Assistant-specific dimensions, including clearly named unsupported/unmeasured areas and any T19 planned future tests. Preserve legacy schema read rules, chart limitations and original queue/CLI commands; no automatic model or component promotion.
+**Bounded work:** Release the standalone application, existing GUI, qualification methodology, case inventories, scoring rules and evidence exports. Actual DSH integration is not a release criterion. Freeze and document exact project/suite/case IDs, category membership and exclusions, `metric_id`/rubric/version/scoring source, first-pass versus final denominator policies, distinct cases vs repeated trials vs cumulative checks, role suitability **versioned criteria/minimum coverage/critical safety gates/human-review status**, model/runtime/transport/config comparability, not tested/unsupported/blocked/failed/not attempted/pending statuses, and how to inspect source evidence through the selected-result panel and original workbooks. Preserve canonical governance/owner release hashes without publishing private bytes. Publish a coverage map for **reasoning/coding/vision/tool use/instruction following/long-context recall** and five Assistant-specific dimensions, including clearly named unsupported/unmeasured areas and any T19 planned future tests. Preserve legacy schema read rules, chart limitations and original queue/CLI commands; no automatic model or component promotion.
 
 **Acceptance:** A reader can reproduce every released model-category bar and role-suitability label from stated suite/rubric versions, exact included case IDs, numerator/denominator, review/adjudication state and source artifacts. Documentation distinguishes zero from unknown and missing metrics, explains exclusion of incompatible trials, historical report limitations and separate first-pass/repaired outcomes. Unsupported/untested capabilities are **explicitly unlabeled by score**; Reviewer/Planner/Governor preliminary findings remain Provisional pending human review. Existing benchmark packet/version integrity, GUI queue/workbook access and raw results stay intact. **T19 capability expansion is not required** to release a useful honest Results tab.
 
@@ -316,7 +358,7 @@
 
 ## Optional capability-test expansion
 
-*New independent task T19; existing task IDs T01–T18 and their dependencies are preserved.*
+*Optional future work T19; existing task IDs and completed work are preserved, with dependencies corrected above.*
 
 ### T19 — Separately expand unsupported or uncalibrated capability tests (nonblocking)
 **Status:** NOT STARTED — initial existing-suite/runtime-input inventory documented, new cases and scoring not created · **Priority:** P2 · **Complexity:** Large · **Dependencies:** T02, T13  
@@ -337,25 +379,25 @@
 - The existing `localbench.assistant001.campaign`, `localbench.assistant002` packet adapter and V2 evidence writer are first-class reuse targets. Native DSH `release-pipeline` / verification dispatchers remain in their own repo/runtime.
 - The chart-focused Results tab belongs **inside** the existing Tkinter GUI. Continue writing scored/evidence outputs through the current V2 review-package writer and run folders; the tab is a read-only visualization and drilldown of those files. It must not create a second dashboard, execution agent, service, database or state store.
 - Score only versioned, case-linked and adjudication-eligible results. Preserve `unknown` for legacy-missing fields; distinguish `0/n` from untested/no denominator, and separate per-case pass rates from repeated attempts and cumulative acceptance checks. Never display bars for untested vision or long-context recall.
-- Capability coverage expansion T19 is optional and independent; initial Results-tab display, native pipeline qualification and v2 release **do not depend** on adding vision or long-context cases.
+- Capability coverage expansion T19 is optional and independent; initial Results-tab display and standalone v2 release **do not depend** on adding vision or long-context cases.
 - Generator output and reference oracle are separate. Candidate planners receive no `TASKS.md` via direct prompt, snapshot, filesystem read or file metadata. Governor references are fixed within comparison groups; Workers get a controller/human-reviewed reference, never a candidate's unconstrained output.
 - Simulated conditional permissions are **not** production authority. Private Law/State/General Intent content is loaded from the operator's governance root and hashed in restricted evidence; no owner identity is inferred from public GitHub access.
 - Accept natural-language Planner/Worker/Tester/Reviewer handoffs; evaluation records are structured independently. Include human review for semantic planning, correct governance rulings and Reviewer judgments.
 - Candidate Python execution remains **not OS/network sandboxed**. Record explicit approval and use disposable environments; no live cameras, KC writes, Home Assistant actions or production deployment.
-- The historical 23-case role screen, GUI queue persistence and existing A001/A002 screen/qualification commands must remain usable. New DSH qualification is additive and separately identifiable.
+- The historical 23-case role screen, GUI queue persistence and existing A001/A002 screen/qualification commands must remain usable. Any future DSH integration benchmark is deferred and separately proposed.
 
 ## Audit-derived changes to earlier assumptions
 
-- **Earlier:** Build a new full five-role pipeline in T14. **Now:** Reconcile the native DSH development branch with installed reality, reuse release/verification dispatchers and qualify the existing pipeline.
+- **Earlier:** Build a new full five-role pipeline in T14. **Corrected:** Native DSH integration is out of scope and deferred. Finish standalone Benchmark Lab using its existing harness.
 - **Earlier:** Remove a reference task list from the Planner prompt. **Now:** Remove both prompt and workspace exposure, including indirect file/metadata/tool routes.
 - **Earlier:** All Workers receiving one plan are fully comparable. **Now:** The isolated-task mode has identical source prerequisites; the cumulative-project mode separately reports model-specific prerequisite artifacts.
 - **Earlier:** Governor's plan review and handoff generation is largely missing. **Now:** It already generates advisory review; the missing elements are frozen scenario truth, comparative scoring, and a trusted, separately authorized reference handoff.
 - **Earlier:** Tester/Reviewer case sets need construction from scratch. **Now:** Extend proven historical fixtures and current project probes, preserving their originals.
-- **Earlier:** A new GUI project selector is necessary. **Now:** The GUI already selects the three benchmark types; only controlled role/track selection and native integration routing remain.
+- **Earlier:** A new GUI project selector is necessary. **Now:** The GUI already selects the three benchmark types; the remaining Results work extends that same GUI; native routing is out of scope.
 - **Earlier:** Existing review writer may need replacement. **Now:** Extend the existing artifact writer with reference hashes, mode IDs, reviewed metric definitions, eligible numerator/denominator, status attribution and exact case/evidence links without breaking v1 fields.
 - **New reporting-design decision:** Existing queue GUI needs an additional chart-first Results tab showing grouped horizontal capability bars, role suitability matrix, Assistant-specific metrics, filters and exact evidence drilldown. The tab is read-only and initially shows supported historical evidence only; no universal intelligence score or auto-assigned roles.
 - **New capability-gap decision:** Vision and true long-context recall are untested in the inspected batteries; T19 owns reviewed new cases, runtime-input support and calibration, without blocking Results MVP or the v2 release.
-- **Earlier:** Source CI implies native readiness. **Now:** Treat installed Windows DSH provenance and a genuine real-model full pipeline as unverified until T14/T17 provide evidence.
+- **Earlier:** Source CI implies native readiness. **Corrected:** DSH readiness is outside standalone qualification/release criteria. T17 validates only independently authorized Benchmark Lab runs.
 
 ## Next authorized implementation unit
 
@@ -365,4 +407,4 @@
 
 **Owner decision recorded:** The owner accepted both T03/T04 designs for **benchmark reference use** after the Batch 1 review. Their traceability metadata remains `OWNER_REVIEW_PENDING` until a trusted controlled-reference authorization/version record is created in T09; this does not require repeating the high-level project approval. It is **not** approval to execute generated Python outside authorized limits, invent Governor authority, deploy into the Assistant or automatically assign a role. T05 now provides blind Planner isolation; T07 can independently design Governor cases under T02's existing rules.
 
-**Results reporting handoff:** T13 establishes the score/status/comparability contract; the read-only T16-R0 Results MVP may begin against real existing reports after T13 (without waiting for native T14/T15). Full T16 still observes original dependencies T14/T15. The additional T19 capability inventory/expansion is independent and never a prerequisite for first charts, T17 pilots or T18 release.
+**Results reporting handoff:** T13 establishes the score/status/comparability contract; the read-only T16-R0 Results MVP may begin against real existing reports after T13 (without waiting for native T14/T15). All T16 Results phases now depend on T13 and preceding phase verification; T14 is deferred and T15 validates standalone release regressions. The additional T19 capability inventory/expansion is independent and never a prerequisite for first charts, T17 pilots or T18 release.
