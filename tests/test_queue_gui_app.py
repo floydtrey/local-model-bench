@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import os
+import gc
 from pathlib import Path
 from queue import Queue
 import tempfile
 import time
+import threading
+import weakref
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -110,6 +113,11 @@ class QueueGuiWidgetTests(unittest.TestCase):
         )
 
     def _create_app(self):
+        # Closed fixtures must release their Tcl interpreter on its owner thread,
+        # before a later discovery worker can trigger cyclic collection.
+        self.app = None
+        self.root = None
+        gc.collect()
         self.root = tk.Tk()
         self.root.withdraw()
         self.runner = FakeRunner()
@@ -128,6 +136,31 @@ class QueueGuiWidgetTests(unittest.TestCase):
             self.root.destroy()
         except tk.TclError:
             pass
+        self.app = None
+        self.root = None
+        gc.collect()
+
+    def test_discovery_does_not_retain_closed_app_on_worker_thread(self):
+        entered, release, finished = threading.Event(), threading.Event(), threading.Event()
+
+        def discover():
+            entered.set()
+            release.wait(5)
+            finished.set()
+            return "NAME ID SIZE MODIFIED\n"
+
+        self.app.discover_models = discover
+        ref = weakref.ref(self.app)
+        self.app.refresh_models()
+        self.assertTrue(entered.wait(5))
+        try:
+            self.app.request_close()
+            self.app = None
+            gc.collect()
+            self.assertIsNone(ref(), "Discovery must not own a closed Tk app")
+        finally:
+            release.set()
+            self.assertTrue(finished.wait(5))
 
     def _wait_until(self, predicate, description):
         deadline = time.monotonic() + 5

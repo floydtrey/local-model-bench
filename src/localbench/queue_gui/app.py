@@ -32,6 +32,14 @@ ADVANCED_FIELDS = (
 ANSI = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
 
 
+def _discover_models(discover, events):
+    """The background thread must never retain the app/Tcl interpreter."""
+    try:
+        events.put((True, discover()))
+    except Exception as exc:
+        events.put((False, str(exc)))
+
+
 class BenchmarkQueueApp:
     """The Tk thread owns every queue transition, including the next launch."""
 
@@ -272,12 +280,9 @@ class BenchmarkQueueApp:
         self.refresh_button.configure(state="disabled")
         self.model_message.set("Reading ollama list…")
 
-        def discover():
-            try:
-                self.discovery_events.put((True, self.discover_models()))
-            except Exception as exc:
-                self.discovery_events.put((False, str(exc)))
-        threading.Thread(target=discover, daemon=True, name="ollama-model-list").start()
+        threading.Thread(target=_discover_models,
+                         args=(self.discover_models, self.discovery_events),
+                         daemon=True, name="ollama-model-list").start()
 
     def add_selected_models(self):
         if self.runner.active or self.queue.status == "Running" or self._load_error:
