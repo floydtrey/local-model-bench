@@ -21,12 +21,14 @@
 
 ## Evidence from deterministic CI
 
-- [Batch 1 foundation tests, four OS/Python configurations — success](https://github.com/floydtrey/local-model-bench/actions/runs/37869157006). Matrix: Windows + Ubuntu, Python 3.10 + 3.12.
+- [Batch 1 foundation tests, four OS/Python configurations — success](https://github.com/floydtrey/local-model-bench/actions/runs/37869449877). Matrix: Windows + Ubuntu, Python 3.10 + 3.12.
 - Every matrix job ran the original `python -m localbench.assistant001 validate` and `python -m localbench.assistant002 validate` against their unchanged frozen manifests/dependencies.
-- Each matrix job then ran **11 new focused tests**, including positive mode selection, negative forged authority/forbidden-category cases, tampered metadata, immutable v1 Git blob check, source/requirement/assessor trace verification, mutation of plan trace, and both original `prepare` routines on disposable workspaces.
+- Each matrix job then ran **12 new focused tests**, including positive mode selection, negative forged authority/forbidden-category cases, tampered metadata, immutable v1 Git blob check, source/requirement/assessor trace verification, mutation of plan trace, and both original `prepare` routines on disposable workspaces.
 - The preparation tests specifically verify `REFERENCE_PLAN.md`, `TRACEABILITY.json`, and `assessor` are **absent** from the existing v1 starter workspace. The same tests explicitly acknowledge that old v1 workspace still **contains TASKS.md**; T05 must enforce the new blind Planner mode rather than pretending the old probe is blind.
-- The v1 source-protection test pins eight frozen packet/role-suite inputs; the packet CLI validates full v1 manifests. Executable infrastructure modules are **not** blanket-frozen, so additive v2 adapters can be implemented later.
+- The v1 source-protection test pins eight frozen packet/role-suite inputs **plus both historical source-manifest Git blobs**; the historical role case builder also checks all manifest-listed source bytes; the packet CLI validates full v1 manifests. Executable infrastructure modules are **not** blanket-frozen, so additive v2 adapters can be implemented later.
 - Tests used only standard-library static inspection, digest calculations, stored fixtures and disposable temporary directories. **No model, installed DSH, camera, KC, HA or production database was run.**
+
+**Baseline source-manifest identities:** `7088a0b5c437f4dea51d5b42cb4a7ac75c665d38` (historical local-model-bench snapshot, 62 listed files) and `e77af7d3db97754f8d94b6e00b84ff73f2d1722f` (historical DSH Reviewer snapshot, 7 listed files). These are protected **source snapshots**, not the current private DSH development checkout.
 
 ## Material design decisions
 

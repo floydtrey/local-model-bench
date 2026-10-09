@@ -115,6 +115,18 @@ class RegistryContractTests(unittest.TestCase):
         self.assertFalse(original["safety"]["private_governance_source_belongs_in_public_repo"])
 
     def test_historical_role_sources_remain_verified_and_complete(self):
+        # Pin the two historic corpus manifests as *original Git blobs* as well
+        # as verifying every source entry listed by each manifest. Otherwise a
+        # changed fixture and a recomputed manifest could wrongly look frozen.
+        manifests = {
+            "campaigns/flashnext-all-roles-v1/sources/local-model-bench/SOURCE_MANIFEST.json":
+                "7088a0b5c437f4dea51d5b42cb4a7ac75c665d38",
+            "campaigns/flashnext-all-roles-v1/sources/deepseek-lab/SOURCE_MANIFEST.json":
+                "e77af7d3db97754f8d94b6e00b84ff73f2d1722f",
+        }
+        for path, expected_blob in manifests.items():
+            with self.subTest(path=path):
+                self.assertEqual(git_blob_sha1((ROOT / path).read_bytes()), expected_blob)
         # Build packets with synthetic Governor docs only; this does not contact
         # the private canonical Governor repository or grant any real authority.
         from localbench.v2.flashnext_roles import build_role_cases

@@ -108,7 +108,7 @@ T05 will enforce real file/prompt disclosure; T07–T09 will add reviewed author
 2. Planner declared input cannot include `fixed_worker_tasks`, `reference_plan`, expected Governor decision, assessor checks/reference or hidden test. Missing project intent, contract or starter fails the pure manifest validator. **This does not close real byte-level leakage until T05.**
 3. Governor candidate cannot receive expected rulings, and Worker cannot receive hidden assessors or a candidate Governor verdict as authority. No candidate role obtains new authority by an output label.
 4. Mode registry says candidate Python is **not OS sandboxed**, production access and automatic promotion are false, and native execution requires installed-provenance check.
-5. Baseline guard verifies **frozen v1 documents/packet manifests and historical accepted role-suite bytes** against the T01 Git blob identities. It deliberately does **not** freeze executable implementation files that must be extended for v2.
+5. Baseline guard verifies **frozen v1 documents/packet manifests, historical accepted role-suite bytes, and both historical role-source manifest identities** against their original Git blobs. It also validates each manifest-referenced Planner/Governor/Worker/Tester/Reviewer source fixture with the existing source-verification functions. It deliberately does **not** freeze executable implementation files that must be extended for v2.
 6. All tests run without Ollama, DSH, production services, external network or created model trial. Only `tests/test_qualification_v2_contract.py` covers this phase; additional plan trace validation arrives in T03/T04.
 
 ## 9. Review/approval status
