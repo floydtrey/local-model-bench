@@ -292,7 +292,7 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
     catalog_path = Path(__file__).resolve().parents[3] / "docs" / "qualification-v2" / "METRIC_CATALOG_V1.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
     source_metadata = {**profile, **{k: v for k, v in summary.items() if k != "results"}}
-    normalized = normalize_rows(list(summary.get("results", [])), source_metadata)
+    normalized = normalize_rows(list(summary.get("results", [])), source_metadata, source_root=Path(output_dir))
     metrics = project_metrics(normalized, {}, catalog, evidence_root=Path(output_dir))
     metric_rows = [{
         "metric_id": item["metric_id"], "kind": item["kind"],
@@ -316,7 +316,8 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         "run_id", "trial_id", "trial_ordinal", "attempt_id", "attempt_index", "parent_attempt_id",
         "execution_status", "assessed_outcome", "normalized_assessed_outcome", "human_review_state",
         "normalized_status", "attempted", "first_pass_passed", "repair_attempted", "repair_passed",
-        "acceptance_check_count", "acceptance_check_unit", "assessment_check_score", "configuration", "track", "worker_mode", "input_sha256", "reference_sha256",
+        "acceptance_check_count", "acceptance_check_unit", "assessment_check_score", "configuration",
+        "effective_configuration_observations", "track", "worker_mode", "input_sha256", "reference_sha256",
         "rubric_sha256", "artifact_sha256", "verified_evidence_refs", "exclusion_reasons", "source_report",
         "evidence_directory", "assessment_file", "human_adjudication", "comparison_eligible", "comparison_note")
     detail_rows = _flat_rows([{k: row.get(k) for k in detail_keys} for row in metrics["case_details"]])

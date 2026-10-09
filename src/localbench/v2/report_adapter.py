@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 
-from .contracts import EvidenceRef, SealedEvidence
+from .contracts import EvidenceRef, SealedEvidence, sha256_json
 
 ADAPTER_VERSION = 'qualification-v2/legacy-read-adapter:v2'
 # These identities are emitted by the existing source adapters, not inferred from tags.
@@ -49,8 +49,7 @@ def bind_current_assessment(row, run, campaign):
                reference_sha256=row.get('reference_bundle_sha256') or row.get('rubric_sha256'),
                assessor_version=assessment.get('schema_version'),
                evidence_version=assessment.get('schema_version'),
-               authority_assumptions={'scope': 'benchmark_only_no_role_assignment',
-                                      'governance_sha256': row.get('governance_sha256')},
+               authority_assumptions={'scope': 'benchmark_only_no_role_assignment'},
                evidence_refs=[file_reference(path, 'assessment')])
     candidate = path.parent / 'candidate.txt'
     if candidate.is_file():
@@ -88,13 +87,53 @@ def _resolve_record_identity(row):
             row['effective_config_observations'] = config
             row['effective_settings'] = config.get('settings')
             row['context_tokens'] = (config.get('settings') or {}).get('generation', {}).get('context_tokens')
+        session_directory = row.get('session_evidence_directory') or row.get('evidence_directory')
+        events_path = Path(session_directory) / 'events.jsonl' if session_directory else None
+        if events_path and events_path.is_file():
+            observed = []
+            for ordinal, line in enumerate(events_path.read_bytes().splitlines(), 1):
+                event = json.loads(line)
+                digest = event.pop('event_sha256', None)
+                if event.get('sequence') != ordinal or sha256_json(event) != digest:
+                    raise ValueError('role event integrity mismatch')
+                if event.get('event_type') == 'assistant001_effective_config':
+                    config = load(event['payload'])
+                    if (runtime_ref and config['runtime'] != runtime_ref
+                            or isinstance(model_ref, dict) and model_ref.get('record_type') == 'model_identity'
+                            and config['model'] != model_ref):
+                        raise ValueError('effective configuration identity mismatch')
+                    observed.append(config)
+            if observed:
+                row['evidence_refs'].append(file_reference(events_path, 'role_events'))
+                row['effective_configuration_observations'] = observed
+                inputs_path = Path(directory).parent / 'runner-inputs.json'
+                inputs = _read(inputs_path) if inputs_path.is_file() else {}
+                budget = inputs.get('timeout_seconds')
+                normalized = []
+                for config in observed:
+                    # Same policy as the existing Governor comparison: observed
+                    # remaining call time is retained, while identity uses the
+                    # original case budget when that budget is actually recorded.
+                    value = json.loads(json.dumps(config))
+                    if type(budget) in (int, float) and budget > 0:
+                        value.get('limits', {})['timeout_seconds'] = budget
+                        value.get('settings', {}).get('adapter_resolution', {}).get('effective_request', {})['timeout_seconds'] = budget
+                    if value not in normalized:
+                        normalized.append(value)
+                row['effective_settings'] = normalized
+                contexts = {c.get('settings', {}).get('generation', {}).get('context_tokens') for c in observed}
+                row['context_tokens'] = next(iter(contexts)) if len(contexts) == 1 else None
+                if inputs_path.is_file():
+                    row['evidence_refs'].append(file_reference(inputs_path, 'runner_inputs'))
     except (ValueError, KeyError, TypeError, OSError) as exc:
         row['adapter_exclusion_reason'] = str(exc)
 
 
-def normalize_rows(rows, metadata=None, *, source_path=None):
+def normalize_rows(rows, metadata=None, *, source_path=None, source_root=None):
     """Keep original fields; add only documented aliases or verified source identities."""
     metadata = metadata or {}
+    if source_root is None and source_path:
+        source_root = Path(source_path).parent
     result = []
     for original in rows:
         if not isinstance(original, dict) or not isinstance(original.get('case_id'), str):
@@ -123,6 +162,11 @@ def normalize_rows(rows, metadata=None, *, source_path=None):
             row['worker_mode'] = row['worker_mode'].upper()
         if row.get('campaign') in ('assistant-001-v1', 'assistant-002-v1') and row.get('role') == 'worker':
             row.setdefault('acceptance_check_unit', 'cumulative_checks_at_task')
+            if source_root:
+                identity_path = Path(source_root) / 'runtime-identity.json'
+                if identity_path.is_file() and row.get('runtime_identity') is None:
+                    row['runtime_identity'] = _read(identity_path)
+                    row['configuration_evidence_directory'] = str(Path(source_root) / 'evidence')
         source = QUALIFICATION_SOURCES.get(row.get('campaign'))
         # A campaign string alone cannot retroactively supply an absent rubric.
         if source and row.get('rubric_version') == source[2]:

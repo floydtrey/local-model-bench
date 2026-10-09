@@ -40,7 +40,7 @@ All test references below are in `tests/test_qualification_v2_metrics.py` unless
 ## Verification record
 
 - Initial targeted baseline: 11 inherited metric/writer tests passed.
-- Final targeted reporting: 36 metric/writer tests plus 10 legacy/sealed-adapter tests passed, no skips/failures.
+- Final targeted reporting: 37 metric/writer tests plus 11 legacy/sealed-adapter tests passed, no skips/failures.
 - Initial full local Windows Python 3.12 regression: 514 tests, no failures, two existing platform skips.
 - Full local Windows Python 3.12 regression after final first-pass correction: **522 tests, 0 failures, 2 existing platform skips** (Windows symlink privilege and POSIX-only process groups). Real Tk tests all ran.
 - Local queue-specific run: 69 tests, no failures; one POSIX-only process-group skip.
@@ -49,7 +49,7 @@ All test references below are in `tests/test_qualification_v2_metrics.py` unless
 
 CI acceptance requires **Windows and Linux × Python 3.10 and 3.12**. The workflow now explicitly requires real Tk on both systems (Linux uses Xvfb), runs reporting fixtures first, runs the complete suite and existing calibration commands, and retains transcripts. No tests or Windows jobs were disabled to make the earlier failure disappear.
 
-CI links and final tested implementation commit: pending first acceptance push.
+Initial implementation `f43e484041fe6c94f6775ca89b95b60240b222a4` passed all four jobs in [run 37987551678](https://github.com/floydtrey/local-model-bench/actions/runs/37987551678), including Windows Python 3.10 and required Linux Tk. Final provenance/role-eligibility hardening is receiving a fresh complete matrix; completion remains pending that result.
 
 ## Role and capability limits
 

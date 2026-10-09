@@ -321,4 +321,13 @@ class MetricProjectionTests(unittest.TestCase):
         self.assertIsNone(m['first_pass_successes'])
         self.assertIsNone(m['repaired_successes'])
 
+    def test_role_claim_needs_matching_role_and_eligible_source_evidence(self):
+        self.catalog['metrics'][0].update(kind='role_suitability',role='tester',human_review=True,cases=['a'])
+        row=self.reviewed(self.case(role='reviewer'))
+        metric=self.metric([row])
+        self.assertEqual(metric['suitability'],'not_assessed')
+        self.assertIn('incompatible_role',metric['excluded'][0]['reasons'])
+        row=self.reviewed(self.case(role='tester',comparison_eligible=False))
+        self.assertEqual(self.metric([row])['suitability'],'provisional_evidence_eligibility')
+
 if __name__=='__main__': unittest.main()

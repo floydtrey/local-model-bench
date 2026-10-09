@@ -114,6 +114,33 @@ class AggregateAndQualificationAdapterTests(unittest.TestCase):
         path.write_text(json.dumps(raw))
         with self.assertRaises(ValueError): normalize_legacy_report(path,evidence_root=store.root)
 
+    def test_available_role_settings_are_resolved_from_sealed_events(self):
+        from localbench.v2.contracts import sha256_json, seal_evidence
+        path,store,run=self.aggregate()
+        identity={k:run.manifest.to_dict()['payload'][k] for k in ('model','runtime')}
+        (self.root/'runtime-identity.json').write_text(json.dumps(identity))
+        (self.root/'runner-inputs.json').write_text(json.dumps({'timeout_seconds':30}))
+        session=self.root/'session'; session.mkdir()
+        config=run.effective_configs[0]
+        def events(reference):
+            event={'sequence':1,'event_type':'assistant001_effective_config','payload':reference}
+            (session/'events.jsonl').write_text(json.dumps({**event,'event_sha256':sha256_json(event)})+'\n')
+        events(config.reference.to_dict())
+        summary=self.root/'summary.json'
+        summary.write_text(json.dumps({'campaign':'assistant-001-v1','results':[
+            {'case_id':'assistant001-t01','role':'worker','evidence_directory':str(session),'status':'success'}]}))
+        row=normalize_legacy_report(summary)['cases'][0]
+        self.assertEqual(row['model_identity']['name'],'synthetic-model')
+        self.assertEqual(row['context_tokens'],4096)
+        self.assertEqual(row['effective_configuration_observations'],[config.to_dict()['payload']])
+        self.assertEqual(row['effective_settings'][0]['limits']['timeout_seconds'],30)
+        self.assertIsNone(row['model_identity']['quantization'])
+        wrong=config.to_dict()['payload']; wrong['model']={**identity['model'],'sha256':'f'*64}
+        different=seal_evidence('effective_runtime_config','wrong-config',wrong); store.persist(different)
+        events(different.reference.to_dict())
+        row=normalize_legacy_report(summary)['cases'][0]
+        self.assertIn('identity mismatch',row['adapter_exclusion_reason'])
+
     def test_legacy_project_checks_and_workbook_path_are_preserved(self):
         for campaign,count in [('assistant-001-v1',79),('assistant-002-v1',96)]:
             path=self.root/(campaign+'.json')

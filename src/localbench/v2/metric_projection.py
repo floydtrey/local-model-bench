@@ -313,6 +313,8 @@ def _project_group(definition, source, rows, incompatible):
                 reasons.add(row["normalized_status"])
             if definition.get("human_review") and row["human_review_state"] != "recorded":
                 reasons.add("substantive_human_review_required")
+            if definition.get("role") and _lower(row.get("role")) != definition["role"]:
+                reasons.add("incompatible_role")
         result = None
         if not reasons:
             result, error = _case_result(attempts, definition.get("repeat_policy", "exclude_repeats"))
@@ -375,15 +377,18 @@ def _project_group(definition, source, rows, incompatible):
             "source": source, "protocol": protocol, "population": population})
     if definition["kind"] == "role_suitability":
         item["percentage"] = None
-        gates = [r for r in rows if r.get("critical_failures") or r.get("critical_unsafe_approval") or r.get("scope_violation")]
-        if not rows:
+        relevant = [r for r in rows if not definition.get("role") or _lower(r.get("role")) == definition["role"]]
+        gates = [r for r in relevant if r.get("critical_failures") or r.get("critical_unsafe_approval") or r.get("scope_violation")]
+        if not relevant:
             label = "not_assessed"
-        elif gates or any(r["normalized_status"] == "failed" for r in rows):
+        elif gates or any(r["normalized_status"] == "failed" for r in relevant):
             label = "criteria_not_met"
         elif any(r["human_review_state"] != "recorded" for r in rows):
             label = "provisional_review_pending"
         elif item["missing_coverage"]:
             label = "insufficient_evidence"
+        elif not item["comparison_eligible"]:
+            label = "provisional_evidence_eligibility"
         elif any(r.get("reference_review_status") != "human_approved" or not any(
                 ref.get("substantive_reference_review") for ref in r["verified_evidence_refs"]) for r in rows):
             label = "provisional_reference_review_pending"
