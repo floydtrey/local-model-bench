@@ -17,6 +17,7 @@ from xml.sax.saxutils import escape
 
 from .contracts import canonical_json_bytes
 from .metric_projection import project_metrics
+from .report_adapter import normalize_rows
 
 
 def _number(value: Any) -> float | int | None:
@@ -109,6 +110,9 @@ def _case_row(result: Mapping[str, Any], profile: Mapping[str, Any]) -> dict[str
         "comparison_note": result.get("comparison_note"),
         "output_origin": result.get("output_origin"),
         "metric_catalog_version": result.get("metric_catalog_version"),
+        "run_id": result.get("run_id"),
+        "trial_id": result.get("trial_id"),
+        "evidence_refs": json.dumps(result.get("evidence_refs"), sort_keys=True) if result.get("evidence_refs") is not None else None,
     }
 
 
@@ -148,6 +152,27 @@ def _csv_bytes(rows: list[dict[str, Any]]) -> bytes:
     writer.writeheader()
     writer.writerows(rows)
     return out.getvalue().encode("utf-8")
+
+
+def _flat_rows(rows):
+    """Use the same scalar/JSON cells in CSV and XLSX, including null blanks."""
+    scalar_rows = []
+    for row in rows:
+        scalar = {}
+        for key, value in row.items():
+            value = json.dumps(value, sort_keys=True) if isinstance(value, (dict, list)) else value
+            # Excel cannot display >32,767 UTF-16 units in one cell. Extend only
+            # oversized new projection cells, losslessly, in both tabular formats.
+            if isinstance(value, str) and len(value.encode("utf-16-le")) // 2 > 32767:
+                parts = [value[i:i + 15000] for i in range(0, len(value), 15000)]
+                scalar[key] = parts[0]
+                for index, part in enumerate(parts[1:], 2):
+                    scalar[f"{key}__part{index}"] = part
+            else:
+                scalar[key] = value
+        scalar_rows.append(scalar)
+    keys = list(dict.fromkeys(key for row in scalar_rows for key in row))
+    return [{key: row.get(key) for key in keys} for row in scalar_rows]
 
 
 def _col_name(index: int) -> str:
@@ -266,7 +291,9 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
     # Legacy cases without explicit suite/rubric identity remain unscored.
     catalog_path = Path(__file__).resolve().parents[3] / "docs" / "qualification-v2" / "METRIC_CATALOG_V1.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
-    metrics = project_metrics(case_rows, profile, catalog)
+    source_metadata = {**profile, **{k: v for k, v in summary.items() if k != "results"}}
+    normalized = normalize_rows(list(summary.get("results", [])), source_metadata)
+    metrics = project_metrics(normalized, {}, catalog, evidence_root=Path(output_dir))
     metric_rows = [{
         "metric_id": item["metric_id"], "kind": item["kind"],
         "suite_id": item["suite_id"], "suite_version": item["suite_version"],
@@ -277,7 +304,25 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         "review_status": item["review_status"],
         "case_refs_json": json.dumps(item["case_refs"], sort_keys=True),
         "excluded_json": json.dumps(item["excluded"], sort_keys=True),
+        "report_schema_version": metrics["schema_version"], "catalog_version": metrics["catalog_version"],
+        "catalog_sha256": metrics["catalog_sha256"],
+        **{key: value for key, value in item.items() if key not in (
+            "metric_id", "kind", "suite_id", "suite_version", "rubric_id", "rubric_version", "status",
+            "numerator", "denominator", "percentage", "distinct_cases", "attempt_count", "review_status",
+            "case_refs", "excluded")},
     } for item in metrics["metrics"]]
+    metric_rows = _flat_rows(metric_rows)
+    detail_keys = ("row_id", "case_id", "suite_id", "suite_version", "rubric_id", "rubric_version",
+        "run_id", "trial_id", "trial_ordinal", "attempt_id", "attempt_index", "parent_attempt_id",
+        "execution_status", "assessed_outcome", "normalized_assessed_outcome", "human_review_state",
+        "normalized_status", "attempted", "first_pass_passed", "repair_attempted", "repair_passed",
+        "acceptance_check_count", "acceptance_check_unit", "assessment_check_score", "configuration", "track", "worker_mode", "input_sha256", "reference_sha256",
+        "rubric_sha256", "artifact_sha256", "verified_evidence_refs", "exclusion_reasons", "source_report",
+        "evidence_directory", "assessment_file", "human_adjudication", "comparison_eligible", "comparison_note")
+    detail_rows = _flat_rows([{k: row.get(k) for k in detail_keys} for row in metrics["case_details"]])
+    metric_case_rows = _flat_rows([{"metric_id": item["metric_id"], "suite_id": item["suite_id"],
+        "configuration_id": item["configuration_id"], **ref} for item in metrics["metrics"] for ref in item["case_refs"]])
+    comparison_rows = _flat_rows(metrics["comparisons"])
     recovery_rows = [{
         "role": row["role"], "case_id": row["case_id"],
         "schema_normalizations": row["schema_normalizations"],
@@ -327,6 +372,9 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
     (output / "case-results.csv").write_bytes(_csv_bytes(case_rows))
     (output / "role-summary.csv").write_bytes(_csv_bytes(role_rows))
     (output / "metric-summary.csv").write_bytes(_csv_bytes(metric_rows))
+    (output / "normalized-cases.csv").write_bytes(_csv_bytes(detail_rows))
+    (output / "metric-cases.csv").write_bytes(_csv_bytes(metric_case_rows))
+    (output / "metric-comparisons.csv").write_bytes(_csv_bytes(comparison_rows))
     workbook = output / "review-package.xlsx"
     _write_xlsx(workbook, [
         ("Model Summary", metadata),
@@ -335,6 +383,9 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         ("Controller Recovery", recovery_rows),
         ("Performance", performance_rows),
         ("Metric Summary", metric_rows),
+        ("Normalized Cases", detail_rows),
+        ("Metric Cases", metric_case_rows),
+        ("Metric Comparisons", comparison_rows),
     ])
     return {
         "directory": str(output),
@@ -342,6 +393,9 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         "case_results_csv": str(output / "case-results.csv"),
         "role_summary_csv": str(output / "role-summary.csv"),
         "metric_summary_csv": str(output / "metric-summary.csv"),
+        "normalized_cases_csv": str(output / "normalized-cases.csv"),
+        "metric_cases_csv": str(output / "metric-cases.csv"),
+        "metric_comparisons_csv": str(output / "metric-comparisons.csv"),
         "xlsx": str(workbook),
         "raw_evidence_authoritative": True,
     }

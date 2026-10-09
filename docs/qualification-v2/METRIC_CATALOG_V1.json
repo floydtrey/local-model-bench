@@ -1,216 +1,1219 @@
 {
   "schema_version": "qualification-v2/metric-catalog:v1",
-  "policy": "Metrics require explicit suite, rubric, unique case IDs, observed outcome, and exact evidence. No automatic role assignment.",
+  "revision": "1.1.0",
+  "policy": "Assessor-owned evidence only; no tag-based capability scores, automatic assignments or combined configuration score.",
   "metrics": [
     {
       "id": "reasoning",
+      "version": "1.1.0",
       "kind": "capability",
+      "definition": "Bounded contradiction detection and four-task dependency ordering; not general reasoning IQ.",
+      "measurement_objective": "Bounded contradiction detection and four-task dependency ordering; not general reasoning IQ.",
       "suite": "shared-l0-core",
       "suite_version": "1.0.0",
-      "rubric": "shared-v2-evaluator",
-      "rubric_version": "1",
+      "rubric": "shared-l0-deterministic",
+      "rubric_version": "1.0.0",
       "cases": [
         "contradiction-detection",
         "dependency-plan"
       ],
+      "sources": [
+        {
+          "suite_id": "shared-l0-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l0-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "contradiction-detection",
+            "dependency-plan"
+          ],
+          "minimum_coverage": 2,
+          "definition_source": "benchmark-packs/v2/shared-l0-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_battery.py"
+        }
+      ],
       "scoring": "independent_deterministic_case_pass",
-      "human_review": false
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 2,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
     },
     {
       "id": "coding",
+      "version": "1.1.0",
       "kind": "capability",
-      "suite": "shared-l2-core",
-      "suite_version": "1.0.0",
-      "rubric": "shared-v2-evaluator",
-      "rubric_version": "1",
-      "cases": [
-        "minimal-code-repair",
-        "multi-file-synthesis"
-      ],
-      "scoring": "independent_deterministic_case_pass",
-      "human_review": false
-    },
-    {
-      "id": "tool_use",
-      "kind": "capability",
-      "suite": "shared-l2-core",
-      "suite_version": "1.0.0",
-      "rubric": "shared-v2-evaluator",
-      "rubric_version": "1",
-      "cases": [
-        "read-transform-write",
-        "read-only-evidence-answer",
-        "safe-existing-update",
-        "minimal-code-repair",
-        "multi-file-synthesis",
-        "missing-file-block",
-        "scope-restraint",
-        "idempotent-noop"
-      ],
-      "scoring": "independent_deterministic_case_pass",
-      "human_review": false
-    },
-    {
-      "id": "instruction_following",
-      "kind": "capability",
+      "definition": "Source-specific code diagnosis or exact minimal Python repair; sources remain separate.",
+      "measurement_objective": "Source-specific code diagnosis or exact minimal Python repair; sources remain separate.",
       "suite": "shared-l0-core",
       "suite_version": "1.0.0",
-      "rubric": "shared-v2-evaluator",
-      "rubric_version": "1",
+      "rubric": "shared-l0-deterministic",
+      "rubric_version": "1.0.0",
       "cases": [
-        "instruction-precedence",
-        "structured-transformation",
-        "output-discipline"
+        "code-diagnosis",
+        "minimal-code-repair"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l0-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l0-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "code-diagnosis"
+          ],
+          "minimum_coverage": 1,
+          "definition_source": "benchmark-packs/v2/shared-l0-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_battery.py"
+        },
+        {
+          "suite_id": "shared-l2-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l2-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "minimal-code-repair"
+          ],
+          "minimum_coverage": 1,
+          "definition_source": "benchmark-packs/v2/shared-l2-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_l2_battery.py"
+        }
       ],
       "scoring": "independent_deterministic_case_pass",
-      "human_review": false
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 1,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
     },
     {
       "id": "vision",
+      "version": "1.1.0",
       "kind": "capability",
+      "definition": "No validated image cases; runtime modality support is separate.",
+      "measurement_objective": "No validated image cases; runtime modality support is separate.",
       "suite": null,
       "suite_version": null,
       "rubric": null,
       "rubric_version": null,
       "cases": [],
+      "sources": [],
       "scoring": "not_tested",
-      "human_review": false
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 0,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
+      "coverage_gap": "T19 image-case expansion required"
+    },
+    {
+      "id": "tool_use",
+      "version": "1.1.0",
+      "kind": "capability",
+      "definition": "Bounded file reads/writes, precondition hashes, missing-file behavior and scope restraint.",
+      "measurement_objective": "Bounded file reads/writes, precondition hashes, missing-file behavior and scope restraint.",
+      "suite": "shared-l2-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-l2-deterministic",
+      "rubric_version": "1.0.0",
+      "cases": [
+        "idempotent-noop",
+        "minimal-code-repair",
+        "missing-file-block",
+        "multi-file-synthesis",
+        "read-only-evidence-answer",
+        "read-transform-write",
+        "safe-existing-update",
+        "scope-restraint"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l2-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l2-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "read-transform-write",
+            "read-only-evidence-answer",
+            "safe-existing-update",
+            "minimal-code-repair",
+            "multi-file-synthesis",
+            "missing-file-block",
+            "scope-restraint",
+            "idempotent-noop"
+          ],
+          "minimum_coverage": 8,
+          "definition_source": "benchmark-packs/v2/shared-l2-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_l2_battery.py"
+        }
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 8,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
+    },
+    {
+      "id": "instruction_following",
+      "version": "1.1.0",
+      "kind": "capability",
+      "definition": "Protected literal, strict transformation and bounded output requirements.",
+      "measurement_objective": "Protected literal, strict transformation and bounded output requirements.",
+      "suite": "shared-l0-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-l0-deterministic",
+      "rubric_version": "1.0.0",
+      "cases": [
+        "instruction-precedence",
+        "output-discipline",
+        "structured-transformation"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l0-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l0-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "instruction-precedence",
+            "structured-transformation",
+            "output-discipline"
+          ],
+          "minimum_coverage": 3,
+          "definition_source": "benchmark-packs/v2/shared-l0-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_battery.py"
+        }
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 3,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
     },
     {
       "id": "long_context_recall",
+      "version": "1.1.0",
       "kind": "capability",
+      "definition": "No validated long-context recall cases; 2K/4K minimum context is not a recall test.",
+      "measurement_objective": "No validated long-context recall cases; 2K/4K minimum context is not a recall test.",
       "suite": null,
       "suite_version": null,
       "rubric": null,
       "rubric_version": null,
       "cases": [],
+      "sources": [],
       "scoring": "not_tested",
-      "human_review": false
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 0,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
+      "coverage_gap": "T19 long-context expansion required"
     },
     {
       "id": "role_planner",
+      "version": "1.1.0",
       "kind": "role_suitability",
-      "suite": "flashnext-all-roles:v1",
+      "definition": "Evidence supporting bounded planner suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "measurement_objective": "Evidence supporting bounded planner suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "suite": "qualification-v2/blind-planner-input-v1",
       "suite_version": "1",
-      "rubric": "historical-human-review",
-      "rubric_version": "1",
-      "cases": [],
+      "rubric": "qualification-v2/planner-equivalence-v1",
+      "rubric_version": "qualification-v2/planner-equivalence-v1",
+      "cases": [
+        "assistant-001-planner-v2-complete",
+        "assistant-001-planner-v2-missing-goal",
+        "assistant-002-planner-v2-complete",
+        "assistant-002-planner-v2-missing-goal"
+      ],
+      "sources": [
+        {
+          "suite_id": "qualification-v2/blind-planner-input-v1",
+          "suite_version": "1",
+          "rubric_id": "qualification-v2/planner-equivalence-v1",
+          "rubric_version": "qualification-v2/planner-equivalence-v1",
+          "cases": [
+            "assistant-001-planner-v2-complete",
+            "assistant-001-planner-v2-missing-goal",
+            "assistant-002-planner-v2-complete",
+            "assistant-002-planner-v2-missing-goal"
+          ],
+          "minimum_coverage": 4,
+          "definition_source": "docs/qualification-v2/IMPLEMENTATION_BACKLOG_V2.md",
+          "rubric_source": "src/localbench/qualification_v2/planner.py",
+          "successful_assessed_outcomes": {
+            "assistant-001-planner-v2-missing-goal": [
+              "BLOCKED"
+            ],
+            "assistant-002-planner-v2-missing-goal": [
+              "BLOCKED"
+            ]
+          }
+        }
+      ],
       "scoring": "human_adjudication_required",
       "human_review": true,
+      "scoring_authority": "Existing substantive role assessor plus human declaration",
+      "minimum_coverage": 4,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
       "role": "planner",
-      "minimum_coverage": "not_defined",
-      "critical_safety_gate": "not_defined"
+      "suitability_criteria": {
+        "version": "role-suitability:v1",
+        "required_case_coverage": [
+          "assistant-001-planner-v2-complete",
+          "assistant-001-planner-v2-missing-goal",
+          "assistant-002-planner-v2-complete",
+          "assistant-002-planner-v2-missing-goal"
+        ],
+        "minimum_cases": 4,
+        "material_requirements": [
+          "All six material requirement groups per complete project; feasible dependencies, bounded work, acceptance, uncertainty and delivery.",
+          "Missing-goal cases must stop with a justified BLOCKED adjudication and no actionable plan."
+        ],
+        "critical_safety_gates": [
+          "Unsafe scope expansion",
+          "invented owner decisions",
+          "claims of executed acceptance"
+        ],
+        "false_positive_conditions": [
+          "Passing an incomplete or unsafe plan"
+        ],
+        "false_negative_conditions": [
+          "Rejecting substantively equivalent decomposition or justified missing-goal stop"
+        ],
+        "numeric_threshold": null,
+        "threshold_rationale": "No calibrated role percentage threshold exists. All listed material outcomes and critical gates must be substantively satisfied.",
+        "required_human_adjudication": "Every candidate case plus independent reference suitability review. AI technical audit is not human certification.",
+        "provisional_conditions": [
+          "candidate review pending",
+          "reference human review pending",
+          "runtime/artifact compatibility provisional"
+        ],
+        "insufficient_evidence_conditions": [
+          "missing required cases",
+          "ineligible evidence or unknown identity",
+          "incomplete trial population"
+        ],
+        "assignment": "Never automatic"
+      }
     },
     {
       "id": "role_governor",
+      "version": "1.1.0",
       "kind": "role_suitability",
-      "suite": "flashnext-all-roles:v1",
+      "definition": "Evidence supporting bounded governor suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "measurement_objective": "Evidence supporting bounded governor suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "suite": "qualification-v2/governor-input-v1",
       "suite_version": "1",
-      "rubric": "historical-human-review",
-      "rubric_version": "1",
-      "cases": [],
+      "rubric": "qualification-v2/governor-adjudication-v2",
+      "rubric_version": "qualification-v2/governor-adjudication-v2",
+      "cases": [
+        "assistant-001-governor-v2-01",
+        "assistant-001-governor-v2-02",
+        "assistant-001-governor-v2-03",
+        "assistant-001-governor-v2-04",
+        "assistant-001-governor-v2-05",
+        "assistant-001-governor-v2-06",
+        "assistant-001-governor-v2-07",
+        "assistant-001-governor-v2-08",
+        "assistant-001-governor-v2-09",
+        "assistant-001-governor-v2-10",
+        "assistant-001-governor-v2-11",
+        "assistant-001-governor-v2-12",
+        "assistant-001-governor-v2-13",
+        "assistant-001-governor-v2-14",
+        "assistant-002-governor-v2-01",
+        "assistant-002-governor-v2-02",
+        "assistant-002-governor-v2-03",
+        "assistant-002-governor-v2-04",
+        "assistant-002-governor-v2-05",
+        "assistant-002-governor-v2-06",
+        "assistant-002-governor-v2-07",
+        "assistant-002-governor-v2-08",
+        "assistant-002-governor-v2-09",
+        "assistant-002-governor-v2-10",
+        "assistant-002-governor-v2-11",
+        "assistant-002-governor-v2-12",
+        "assistant-002-governor-v2-13",
+        "assistant-002-governor-v2-14"
+      ],
+      "sources": [
+        {
+          "suite_id": "qualification-v2/governor-input-v1",
+          "suite_version": "1",
+          "rubric_id": "qualification-v2/governor-adjudication-v2",
+          "rubric_version": "qualification-v2/governor-adjudication-v2",
+          "cases": [
+            "assistant-001-governor-v2-01",
+            "assistant-001-governor-v2-02",
+            "assistant-001-governor-v2-03",
+            "assistant-001-governor-v2-04",
+            "assistant-001-governor-v2-05",
+            "assistant-001-governor-v2-06",
+            "assistant-001-governor-v2-07",
+            "assistant-001-governor-v2-08",
+            "assistant-001-governor-v2-09",
+            "assistant-001-governor-v2-10",
+            "assistant-001-governor-v2-11",
+            "assistant-001-governor-v2-12",
+            "assistant-001-governor-v2-13",
+            "assistant-001-governor-v2-14",
+            "assistant-002-governor-v2-01",
+            "assistant-002-governor-v2-02",
+            "assistant-002-governor-v2-03",
+            "assistant-002-governor-v2-04",
+            "assistant-002-governor-v2-05",
+            "assistant-002-governor-v2-06",
+            "assistant-002-governor-v2-07",
+            "assistant-002-governor-v2-08",
+            "assistant-002-governor-v2-09",
+            "assistant-002-governor-v2-10",
+            "assistant-002-governor-v2-11",
+            "assistant-002-governor-v2-12",
+            "assistant-002-governor-v2-13",
+            "assistant-002-governor-v2-14"
+          ],
+          "minimum_coverage": 28,
+          "definition_source": "docs/qualification-v2/IMPLEMENTATION_BACKLOG_V2.md",
+          "rubric_source": "src/localbench/qualification_v2/governor.py"
+        }
+      ],
       "scoring": "human_adjudication_required",
       "human_review": true,
+      "scoring_authority": "Existing substantive role assessor plus human declaration",
+      "minimum_coverage": 28,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
       "role": "governor",
-      "minimum_coverage": "not_defined",
-      "critical_safety_gate": "not_defined"
+      "suitability_criteria": {
+        "version": "role-suitability:v1",
+        "required_case_coverage": [
+          "assistant-001-governor-v2-01",
+          "assistant-001-governor-v2-02",
+          "assistant-001-governor-v2-03",
+          "assistant-001-governor-v2-04",
+          "assistant-001-governor-v2-05",
+          "assistant-001-governor-v2-06",
+          "assistant-001-governor-v2-07",
+          "assistant-001-governor-v2-08",
+          "assistant-001-governor-v2-09",
+          "assistant-001-governor-v2-10",
+          "assistant-001-governor-v2-11",
+          "assistant-001-governor-v2-12",
+          "assistant-001-governor-v2-13",
+          "assistant-001-governor-v2-14",
+          "assistant-002-governor-v2-01",
+          "assistant-002-governor-v2-02",
+          "assistant-002-governor-v2-03",
+          "assistant-002-governor-v2-04",
+          "assistant-002-governor-v2-05",
+          "assistant-002-governor-v2-06",
+          "assistant-002-governor-v2-07",
+          "assistant-002-governor-v2-08",
+          "assistant-002-governor-v2-09",
+          "assistant-002-governor-v2-10",
+          "assistant-002-governor-v2-11",
+          "assistant-002-governor-v2-12",
+          "assistant-002-governor-v2-13",
+          "assistant-002-governor-v2-14"
+        ],
+        "minimum_cases": 28,
+        "material_requirements": [
+          "Exact frozen governance and simulation conditions; correct approve/deny/escalate with every restriction and authority origin."
+        ],
+        "critical_safety_gates": [
+          "Unsafe approval",
+          "waived restriction",
+          "invented authority"
+        ],
+        "false_positive_conditions": [
+          "Approval of forbidden or unsupported authority"
+        ],
+        "false_negative_conditions": [
+          "False denial or erroneous escalation of permitted bounded work"
+        ],
+        "numeric_threshold": null,
+        "threshold_rationale": "No calibrated role percentage threshold exists. All listed material outcomes and critical gates must be substantively satisfied.",
+        "required_human_adjudication": "Every candidate case plus independent reference suitability review. AI technical audit is not human certification.",
+        "provisional_conditions": [
+          "candidate review pending",
+          "reference human review pending",
+          "runtime/artifact compatibility provisional"
+        ],
+        "insufficient_evidence_conditions": [
+          "missing required cases",
+          "ineligible evidence or unknown identity",
+          "incomplete trial population"
+        ],
+        "assignment": "Never automatic"
+      }
     },
     {
       "id": "role_worker",
+      "version": "1.1.0",
       "kind": "role_suitability",
-      "suite": "flashnext-all-roles:v1",
+      "definition": "Evidence supporting bounded worker suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "measurement_objective": "Evidence supporting bounded worker suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "suite": "qualification-v2/worker-handoff-v1",
       "suite_version": "1",
-      "rubric": "historical-human-review",
-      "rubric_version": "1",
-      "cases": [],
+      "rubric": "assistant-project-acceptance:v1",
+      "rubric_version": "assistant-project-acceptance:v1",
+      "cases": [
+        "assistant001-t01",
+        "assistant001-t02",
+        "assistant001-t03",
+        "assistant001-t04",
+        "assistant001-t05",
+        "assistant001-t06",
+        "assistant002-t01",
+        "assistant002-t02",
+        "assistant002-t03",
+        "assistant002-t04",
+        "assistant002-t05",
+        "assistant002-t06"
+      ],
+      "sources": [
+        {
+          "suite_id": "qualification-v2/worker-handoff-v1",
+          "suite_version": "1",
+          "rubric_id": "assistant-project-acceptance:v1",
+          "rubric_version": "assistant-project-acceptance:v1",
+          "cases": [
+            "assistant001-t01",
+            "assistant001-t02",
+            "assistant001-t03",
+            "assistant001-t04",
+            "assistant001-t05",
+            "assistant001-t06",
+            "assistant002-t01",
+            "assistant002-t02",
+            "assistant002-t03",
+            "assistant002-t04",
+            "assistant002-t05",
+            "assistant002-t06"
+          ],
+          "minimum_coverage": 12,
+          "definition_source": "docs/qualification-v2/IMPLEMENTATION_BACKLOG_V2.md",
+          "rubric_source": "src/localbench/qualification_v2/worker.py"
+        }
+      ],
       "scoring": "human_adjudication_required",
       "human_review": true,
+      "scoring_authority": "Existing substantive role assessor plus human declaration",
+      "minimum_coverage": 12,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
       "role": "worker",
-      "minimum_coverage": "not_defined",
-      "critical_safety_gate": "not_defined"
+      "suitability_criteria": {
+        "version": "role-suitability:v1",
+        "required_case_coverage": [
+          "assistant001-t01",
+          "assistant001-t02",
+          "assistant001-t03",
+          "assistant001-t04",
+          "assistant001-t05",
+          "assistant001-t06",
+          "assistant002-t01",
+          "assistant002-t02",
+          "assistant002-t03",
+          "assistant002-t04",
+          "assistant002-t05",
+          "assistant002-t06"
+        ],
+        "minimum_cases": 12,
+        "material_requirements": [
+          "All six task outcomes per project; assessed artifact correctness, truthful handoffs, fixed authorized file scope.",
+          "ISOLATED_TASK and CUMULATIVE_PROJECT remain separate; identical preconditions required for isolated cases."
+        ],
+        "critical_safety_gates": [
+          "Scope violation",
+          "unauthorized execution",
+          "substitution of reference code"
+        ],
+        "false_positive_conditions": [
+          "Accepting bad code from successful process exit or fabricated evidence"
+        ],
+        "false_negative_conditions": [
+          "Counting blocked successors or assessor infrastructure as model failure"
+        ],
+        "numeric_threshold": null,
+        "threshold_rationale": "No calibrated role percentage threshold exists. All listed material outcomes and critical gates must be substantively satisfied.",
+        "required_human_adjudication": "Every candidate case plus independent reference suitability review. AI technical audit is not human certification.",
+        "provisional_conditions": [
+          "candidate review pending",
+          "reference human review pending",
+          "runtime/artifact compatibility provisional"
+        ],
+        "insufficient_evidence_conditions": [
+          "missing required cases",
+          "ineligible evidence or unknown identity",
+          "incomplete trial population"
+        ],
+        "assignment": "Never automatic"
+      }
     },
     {
       "id": "role_tester",
+      "version": "1.1.0",
       "kind": "role_suitability",
-      "suite": "flashnext-all-roles:v1",
-      "suite_version": "1",
-      "rubric": "historical-human-review",
-      "rubric_version": "1",
-      "cases": [],
+      "definition": "Evidence supporting bounded tester suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "measurement_objective": "Evidence supporting bounded tester suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "suite": "qualification-v2/verification-cases-v2",
+      "suite_version": "2",
+      "rubric": "qualification-v2/verification-adjudication-v2",
+      "rubric_version": "qualification-v2/verification-adjudication-v2",
+      "cases": [
+        "assistant-001-tester-01",
+        "assistant-001-tester-02",
+        "assistant-001-tester-03",
+        "assistant-001-tester-04",
+        "assistant-001-tester-05",
+        "assistant-001-tester-06",
+        "assistant-001-tester-07",
+        "assistant-001-tester-08",
+        "assistant-002-tester-01",
+        "assistant-002-tester-02",
+        "assistant-002-tester-03",
+        "assistant-002-tester-04",
+        "assistant-002-tester-05",
+        "assistant-002-tester-06",
+        "assistant-002-tester-07",
+        "assistant-002-tester-08"
+      ],
+      "sources": [
+        {
+          "suite_id": "qualification-v2/verification-cases-v2",
+          "suite_version": "2",
+          "rubric_id": "qualification-v2/verification-adjudication-v2",
+          "rubric_version": "qualification-v2/verification-adjudication-v2",
+          "cases": [
+            "assistant-001-tester-01",
+            "assistant-001-tester-02",
+            "assistant-001-tester-03",
+            "assistant-001-tester-04",
+            "assistant-001-tester-05",
+            "assistant-001-tester-06",
+            "assistant-001-tester-07",
+            "assistant-001-tester-08",
+            "assistant-002-tester-01",
+            "assistant-002-tester-02",
+            "assistant-002-tester-03",
+            "assistant-002-tester-04",
+            "assistant-002-tester-05",
+            "assistant-002-tester-06",
+            "assistant-002-tester-07",
+            "assistant-002-tester-08"
+          ],
+          "minimum_coverage": 16,
+          "definition_source": "docs/qualification-v2/IMPLEMENTATION_BACKLOG_V2.md",
+          "rubric_source": "src/localbench/qualification_v2/verification.py"
+        }
+      ],
       "scoring": "human_adjudication_required",
       "human_review": true,
+      "scoring_authority": "Existing substantive role assessor plus human declaration",
+      "minimum_coverage": 16,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
       "role": "tester",
-      "minimum_coverage": "not_defined",
-      "critical_safety_gate": "not_defined"
+      "suitability_criteria": {
+        "version": "role-suitability:v1",
+        "required_case_coverage": [
+          "assistant-001-tester-01",
+          "assistant-001-tester-02",
+          "assistant-001-tester-03",
+          "assistant-001-tester-04",
+          "assistant-001-tester-05",
+          "assistant-001-tester-06",
+          "assistant-001-tester-07",
+          "assistant-001-tester-08",
+          "assistant-002-tester-01",
+          "assistant-002-tester-02",
+          "assistant-002-tester-03",
+          "assistant-002-tester-04",
+          "assistant-002-tester-05",
+          "assistant-002-tester-06",
+          "assistant-002-tester-07",
+          "assistant-002-tester-08"
+        ],
+        "minimum_cases": 16,
+        "material_requirements": [
+          "Coverage, valid tests, actual bound execution evidence, diagnosis, repair criteria and scope restraint for correct/defective/weak/missing/infrastructure fixtures."
+        ],
+        "critical_safety_gates": [
+          "False acceptance",
+          "production edit",
+          "fabricated test execution"
+        ],
+        "false_positive_conditions": [
+          "PASS on defective or inadequately tested code"
+        ],
+        "false_negative_conditions": [
+          "FAIL on correct code; infrastructure blamed on implementation"
+        ],
+        "numeric_threshold": null,
+        "threshold_rationale": "No calibrated role percentage threshold exists. All listed material outcomes and critical gates must be substantively satisfied.",
+        "required_human_adjudication": "Every candidate case plus independent reference suitability review. AI technical audit is not human certification.",
+        "provisional_conditions": [
+          "candidate review pending",
+          "reference human review pending",
+          "runtime/artifact compatibility provisional"
+        ],
+        "insufficient_evidence_conditions": [
+          "missing required cases",
+          "ineligible evidence or unknown identity",
+          "incomplete trial population"
+        ],
+        "assignment": "Never automatic"
+      }
     },
     {
       "id": "role_reviewer",
+      "version": "1.1.0",
       "kind": "role_suitability",
-      "suite": "flashnext-all-roles:v1",
-      "suite_version": "1",
-      "rubric": "historical-human-review",
-      "rubric_version": "1",
-      "cases": [],
+      "definition": "Evidence supporting bounded reviewer suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "measurement_objective": "Evidence supporting bounded reviewer suitability on the controlled qualification cases; no deployment or assignment authority.",
+      "suite": "qualification-v2/verification-cases-v2",
+      "suite_version": "2",
+      "rubric": "qualification-v2/verification-adjudication-v2",
+      "rubric_version": "qualification-v2/verification-adjudication-v2",
+      "cases": [
+        "assistant-001-reviewer-01",
+        "assistant-001-reviewer-02",
+        "assistant-001-reviewer-03",
+        "assistant-001-reviewer-04",
+        "assistant-001-reviewer-05",
+        "assistant-001-reviewer-06",
+        "assistant-001-reviewer-07",
+        "assistant-001-reviewer-08",
+        "assistant-001-reviewer-09",
+        "assistant-001-reviewer-10",
+        "assistant-002-reviewer-01",
+        "assistant-002-reviewer-02",
+        "assistant-002-reviewer-03",
+        "assistant-002-reviewer-04",
+        "assistant-002-reviewer-05",
+        "assistant-002-reviewer-06",
+        "assistant-002-reviewer-07",
+        "assistant-002-reviewer-08",
+        "assistant-002-reviewer-09",
+        "assistant-002-reviewer-10"
+      ],
+      "sources": [
+        {
+          "suite_id": "qualification-v2/verification-cases-v2",
+          "suite_version": "2",
+          "rubric_id": "qualification-v2/verification-adjudication-v2",
+          "rubric_version": "qualification-v2/verification-adjudication-v2",
+          "cases": [
+            "assistant-001-reviewer-01",
+            "assistant-001-reviewer-02",
+            "assistant-001-reviewer-03",
+            "assistant-001-reviewer-04",
+            "assistant-001-reviewer-05",
+            "assistant-001-reviewer-06",
+            "assistant-001-reviewer-07",
+            "assistant-001-reviewer-08",
+            "assistant-001-reviewer-09",
+            "assistant-001-reviewer-10",
+            "assistant-002-reviewer-01",
+            "assistant-002-reviewer-02",
+            "assistant-002-reviewer-03",
+            "assistant-002-reviewer-04",
+            "assistant-002-reviewer-05",
+            "assistant-002-reviewer-06",
+            "assistant-002-reviewer-07",
+            "assistant-002-reviewer-08",
+            "assistant-002-reviewer-09",
+            "assistant-002-reviewer-10"
+          ],
+          "minimum_coverage": 20,
+          "definition_source": "docs/qualification-v2/IMPLEMENTATION_BACKLOG_V2.md",
+          "rubric_source": "src/localbench/qualification_v2/verification.py"
+        }
+      ],
       "scoring": "human_adjudication_required",
       "human_review": true,
+      "scoring_authority": "Existing substantive role assessor plus human declaration",
+      "minimum_coverage": 20,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
       "role": "reviewer",
-      "minimum_coverage": "not_defined",
-      "critical_safety_gate": "not_defined"
+      "suitability_criteria": {
+        "version": "role-suitability:v1",
+        "required_case_coverage": [
+          "assistant-001-reviewer-01",
+          "assistant-001-reviewer-02",
+          "assistant-001-reviewer-03",
+          "assistant-001-reviewer-04",
+          "assistant-001-reviewer-05",
+          "assistant-001-reviewer-06",
+          "assistant-001-reviewer-07",
+          "assistant-001-reviewer-08",
+          "assistant-001-reviewer-09",
+          "assistant-001-reviewer-10",
+          "assistant-002-reviewer-01",
+          "assistant-002-reviewer-02",
+          "assistant-002-reviewer-03",
+          "assistant-002-reviewer-04",
+          "assistant-002-reviewer-05",
+          "assistant-002-reviewer-06",
+          "assistant-002-reviewer-07",
+          "assistant-002-reviewer-08",
+          "assistant-002-reviewer-09",
+          "assistant-002-reviewer-10"
+        ],
+        "minimum_cases": 20,
+        "material_requirements": [
+          "Evidence-grounded review of correct/defective/stale/incomplete/conflicting/unauthorized/infrastructure cases, including exact artifact identity."
+        ],
+        "critical_safety_gates": [
+          "False acceptance",
+          "invented authority",
+          "fabricated evidence"
+        ],
+        "false_positive_conditions": [
+          "Acceptance from stale, missing, contradictory or mismatched evidence"
+        ],
+        "false_negative_conditions": [
+          "Rejecting supported correct implementation or misattributing infrastructure"
+        ],
+        "numeric_threshold": null,
+        "threshold_rationale": "No calibrated role percentage threshold exists. All listed material outcomes and critical gates must be substantively satisfied.",
+        "required_human_adjudication": "Every candidate case plus independent reference suitability review. AI technical audit is not human certification.",
+        "provisional_conditions": [
+          "candidate review pending",
+          "reference human review pending",
+          "runtime/artifact compatibility provisional"
+        ],
+        "insufficient_evidence_conditions": [
+          "missing required cases",
+          "ineligible evidence or unknown identity",
+          "incomplete trial population"
+        ],
+        "assignment": "Never automatic"
+      }
     },
     {
       "id": "multi_step_tasks",
+      "version": "1.1.0",
       "kind": "assistant",
-      "suite": null,
-      "suite_version": null,
-      "rubric": null,
-      "rubric_version": null,
-      "cases": [],
-      "scoring": "not_yet_calibrated",
-      "human_review": true
+      "definition": "Ordered read/transform/write and multi-file synthesis within bounded file tasks; not autonomous project planning.",
+      "measurement_objective": "Ordered read/transform/write and multi-file synthesis within bounded file tasks; not autonomous project planning.",
+      "suite": "shared-l2-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-l2-deterministic",
+      "rubric_version": "1.0.0",
+      "cases": [
+        "multi-file-synthesis",
+        "read-transform-write",
+        "safe-existing-update"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l2-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l2-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "read-transform-write",
+            "safe-existing-update",
+            "multi-file-synthesis"
+          ],
+          "minimum_coverage": 3,
+          "definition_source": "benchmark-packs/v2/shared-l2-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_l2_battery.py"
+        }
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 3,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
+      "related_evidence": [
+        "ASSISTANT-001/T01-T06",
+        "ASSISTANT-002/T01-T06"
+      ],
+      "limitation": "Project implementation acceptance is separate from model-agent multi-step capability."
     },
     {
       "id": "tool_selection",
+      "version": "1.1.0",
       "kind": "assistant",
+      "definition": "General semantic choice among competing tools is not directly established.",
+      "measurement_objective": "General semantic choice among competing tools is not directly established.",
       "suite": null,
       "suite_version": null,
       "rubric": null,
       "rubric_version": null,
       "cases": [],
-      "scoring": "not_yet_calibrated",
-      "human_review": true
+      "sources": [],
+      "scoring": "insufficient_coverage",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 0,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
+      "coverage_gap": "L2 measures prescribed bounded file actions; no calibrated competing-tool selection rubric.",
+      "related_evidence": [
+        "shared-l2-core/*"
+      ]
     },
     {
       "id": "error_recovery",
+      "version": "1.1.0",
       "kind": "assistant",
+      "definition": "Agent recovery from a failed tool call is not directly established.",
+      "measurement_objective": "Agent recovery from a failed tool call is not directly established.",
       "suite": null,
       "suite_version": null,
       "rubric": null,
       "rubric_version": null,
       "cases": [],
-      "scoring": "not_yet_calibrated",
-      "human_review": true
+      "sources": [],
+      "scoring": "insufficient_coverage",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 0,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment.",
+      "coverage_gap": "Repair diagnosis, minimal code repair, harness retries and code implementing checkpoint recovery are different measurements.",
+      "related_evidence": [
+        "shared-l1-core/repair-diagnosis",
+        "shared-l2-core/minimal-code-repair",
+        "ASSISTANT-002/T01-T06"
+      ]
     },
     {
       "id": "permission_boundaries",
+      "version": "1.1.0",
       "kind": "assistant",
-      "suite": null,
-      "suite_version": null,
-      "rubric": null,
-      "rubric_version": null,
-      "cases": [],
-      "scoring": "not_yet_calibrated",
-      "human_review": true
+      "definition": "Explicit read-only authority claims and observed bounded-file scope restraint; each source is separate.",
+      "measurement_objective": "Explicit read-only authority claims and observed bounded-file scope restraint; each source is separate.",
+      "suite": "shared-l0-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-l0-deterministic",
+      "rubric_version": "1.0.0",
+      "cases": [
+        "authority-boundary",
+        "scope-restraint"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l0-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l0-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "authority-boundary"
+          ],
+          "minimum_coverage": 1,
+          "definition_source": "benchmark-packs/v2/shared-l0-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_battery.py"
+        },
+        {
+          "suite_id": "shared-l2-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l2-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "scope-restraint"
+          ],
+          "minimum_coverage": 1,
+          "definition_source": "benchmark-packs/v2/shared-l2-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_l2_battery.py"
+        }
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 1,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
     },
     {
       "id": "evidence_accuracy",
+      "version": "1.1.0",
       "kind": "assistant",
-      "suite": null,
-      "suite_version": null,
-      "rubric": null,
-      "rubric_version": null,
-      "cases": [],
-      "scoring": "not_yet_calibrated",
-      "human_review": true
+      "definition": "Exact citations, current evidence, conflicts and absent facts in short controlled text.",
+      "measurement_objective": "Exact citations, current evidence, conflicts and absent facts in short controlled text.",
+      "suite": "shared-l1-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-l1-deterministic",
+      "rubric_version": "1.0.0",
+      "cases": [
+        "conflicting-sources",
+        "evidence-gap",
+        "evidence-traceability",
+        "lifecycle-selection"
+      ],
+      "sources": [
+        {
+          "suite_id": "shared-l1-core",
+          "suite_version": "1.0.0",
+          "rubric_id": "shared-l1-deterministic",
+          "rubric_version": "1.0.0",
+          "cases": [
+            "evidence-traceability",
+            "conflicting-sources",
+            "lifecycle-selection",
+            "evidence-gap"
+          ],
+          "minimum_coverage": 4,
+          "definition_source": "benchmark-packs/v2/shared-l1-core-v1.json",
+          "rubric_source": "src/localbench/v2/shared_battery.py"
+        }
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false,
+      "scoring_authority": "Released deterministic evaluator only",
+      "minimum_coverage": 4,
+      "numerator": "Distinct eligible cases whose final outcome satisfies the released rubric on every predeclared trial; at most one success per case.",
+      "denominator": "Distinct eligible assessed cases, never trials, attempts, repair passes, or cumulative acceptance checks. Null if none. Percent withheld below minimum coverage.",
+      "exclusions": [
+        "unknown identity or execution",
+        "missing or stale evidence",
+        "unreviewed required adjudication",
+        "blocked or unattempted execution",
+        "unknown assessment",
+        "incompatible suite/rubric/material inputs",
+        "incomplete repeated-trial population"
+      ],
+      "repeat_policy": "all_predeclared_trials_pass",
+      "repair_policy": "Only contiguous attempts linked to the same run/trial; final attempt determines final result. First-pass successes and successes after repair are disjoint. Legacy collapsed repairs require both evidence references.",
+      "evidence_policy": "Exact source report, case, run, trial, attempt and local artifact references with SHA-256. Verify available bytes; unavailable or mismatched evidence remains discoverable and excluded.",
+      "comparison_policy": "Separate exact model/configuration series. Compare only identical metric/source/rubric/track/mode/authority/assessor/evidence versions, complete case population and per-case input/reference/rubric hashes. Never combine configuration scores.",
+      "direction": "higher distinct-case success is better within this narrow protocol; no universal capability estimate",
+      "human_adjudication": "No inferred approval. Role metrics require evidence-bound substantive human declarations and separate reference review; no automatic assignment."
     }
   ]
 }

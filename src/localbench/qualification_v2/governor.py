@@ -91,6 +91,8 @@ def assess_run(run, *, candidate_file=None, review_file=None, repo=None):
                                    and protocol is not None
                                    and bool(identity.get("model")) and not session.get("authority_violations", 0)),
            "comparison_note": "Require matching frozen inputs/rubric and verified effective runtime/configuration. Host facts must match. Imports and missing evidence are ineligible; human reference review remains pending."}
+    from localbench.v2.report_adapter import bind_current_assessment
+    bind_current_assessment(row, run, "qualification-v2-governor")
     summary = {"campaign": "qualification-v2-governor", "roles": ["governor"],
                "track": "controlled_role_qualification", "results": [row], "planned_cases": 1,
                "completed_cases": int(session["status"] == "success"),

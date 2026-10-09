@@ -45,5 +45,80 @@ class MetricWriterTests(unittest.TestCase):
             self.assertEqual(package["case_results"][1]["execution_status"], "prerequisite_blocked")
 
 
+class ExportParityTests(unittest.TestCase):
+    def test_relative_evidence_remains_resolvable_after_reexport(self):
+        import test_qualification_v2_metrics as fixtures
+        from localbench.v2.report_adapter import write_normalized_review
+        h=fixtures.MetricProjectionTests(); h.setUp(); self.addCleanup(h.doCleanups)
+        row=h.case('code-diagnosis',suite_id='shared-l0-core',suite_version='1.0.0',
+                   rubric_id='shared-l0-deterministic',rubric_version='1.0.0')
+        row['evidence_refs'][0]['path']=Path(row['assessment_file']).name
+        output=write_review_package(output_dir=h.root,summary={'results':[row]},profile={},shared_run=None,phase='fixture')
+        exported=write_normalized_review(Path(output['json']),h.root/'reexport')
+        data=json.loads(Path(exported['json']).read_text())['qualification_v2_metrics']
+        measured=next(m for m in data['metrics'] if m['metric_id']=='coding' and m['suite_id']=='shared-l0-core')
+        self.assertEqual(measured['percentage'],100)
+
+    def test_large_evidence_cells_are_lossless_and_excel_sized(self):
+        from localbench.v2.flashnext_review import _flat_rows, _sheet_xml
+        from xml.etree import ElementTree as ET
+        value=[{'evidence':'x'*2000} for _ in range(80)]
+        flat=_flat_rows([{'refs':value}])[0]
+        encoded=flat['refs']
+        for i in range(2,len(flat)+1): encoded+=flat[f'refs__part{i}']
+        self.assertEqual(json.loads(encoded),value)
+        self.assertTrue(all(len(v.encode('utf-16-le'))//2<=32767 for v in flat.values()))
+        ET.fromstring(_sheet_xml([flat]))
+
+    def test_scored_and_excluded_rows_have_exact_json_csv_xlsx_linkage(self):
+        import test_qualification_v2_metrics as fixtures
+        from xml.etree import ElementTree as ET
+        from localbench.v2.report_adapter import normalize_legacy_report
+        h=fixtures.MetricProjectionTests(); h.setUp(); self.addCleanup(h.doCleanups)
+        def shared(case, passed=True, **changes):
+            return h.case(case,passed,suite_id='shared-l0-core',suite_version='1.0.0',
+                rubric_id='shared-l0-deterministic',rubric_version='1.0.0',**changes)
+        rows=[shared('contradiction-detection'),shared('dependency-plan',False),
+              shared('code-diagnosis',human_review_required=True,human_review_status='pending')]
+        other=shared('contradiction-detection',model_digest='f'*64)
+        rows.append(other)
+        out=write_review_package(output_dir=h.root,summary={'results':rows,'roles':[]},
+                                 profile={},shared_run=None,phase='fixture')
+        package=json.loads(Path(out['json']).read_text())
+        metrics=package['qualification_v2_metrics']
+        reasoning=[m for m in metrics['metrics'] if m['metric_id']=='reasoning']
+        scored=next(m for m in reasoning if m['denominator']==2)
+        self.assertEqual((scored['numerator'],scored['percentage']),(1,50))
+        self.assertEqual(len(metrics['case_details']),4)
+        with Path(out['metric_summary_csv']).open(newline='',encoding='utf-8') as f:
+            csv_metrics=list(csv.DictReader(f))
+        self.assertEqual(len(csv_metrics),len(metrics['metrics']))
+        for source,flat in zip(metrics['metrics'],csv_metrics):
+            self.assertEqual(json.loads(flat['case_refs_json']),source['case_refs'])
+            self.assertEqual(json.loads(flat['excluded_json']),source['excluded'])
+            self.assertEqual(json.loads(flat['membership']),source['membership'])
+            self.assertEqual(flat['numerator'],'' if source['numerator'] is None else str(source['numerator']))
+        ns={'s':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+        with zipfile.ZipFile(out['xlsx']) as z:
+            for sheet,key in [(6,'metric_summary_csv'),(7,'normalized_cases_csv'),(8,'metric_cases_csv'),(9,'metric_comparisons_csv')]:
+                with Path(out[key]).open(newline='',encoding='utf-8') as f:
+                    expected=list(csv.reader(f))
+                root=ET.fromstring(z.read(f'xl/worksheets/sheet{sheet}.xml'))
+                actual=[]
+                for row in root.findall('s:sheetData/s:row',ns):
+                    cells=[]
+                    for c in row.findall('s:c',ns):
+                        text=''.join(c.itertext())
+                        if c.get('t')=='b': text='True' if text=='1' else 'False'
+                        cells.append(text)
+                    actual.append(cells)
+                self.assertEqual(actual,expected)
+        before=Path(out['json']).read_bytes()
+        loaded=normalize_legacy_report(Path(out['json']))
+        self.assertEqual(len(loaded['cases']),4)
+        self.assertEqual(Path(out['json']).read_bytes(),before)
+        self.assertEqual(loaded['cases'][0]['evidence_refs'],rows[0]['evidence_refs'])
+
+
 if __name__ == "__main__":
     unittest.main()

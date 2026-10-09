@@ -13,7 +13,10 @@ on:
       - 'src/localbench/assistant001/**'
       - 'src/localbench/assistant002/**'
       - 'src/localbench/v2/**'
+      - 'src/localbench/queue_gui/**'
+      - 'tests/test_queue_gui*.py'
       - 'tests/test_qualification_v2*.py'
+      - 'schemas/v2/metric-report.schema.json'
       - '.github/workflows/qualification-v2-foundation.yml'
   workflow_dispatch:
 permissions:
@@ -29,6 +32,7 @@ jobs:
     timeout-minutes: 12
     env:
       PYTHONPATH: src
+      LOCALBENCH_REQUIRE_TK: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -38,8 +42,29 @@ jobs:
         run: |
           python -m localbench.assistant001 validate
           python -m localbench.assistant002 validate
-      - name: Full deterministic regressions including T05-T12 and frozen sources
-        run: python -m unittest discover -s tests -v
+      - name: Install Linux virtual display for required Tk regression coverage
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb python3-tk
+      - name: Targeted T13 reporting regressions
+        run: |
+          python -m unittest discover -s tests -p 'test_qualification_v2_metric*.py' -v
+          python -m unittest discover -s tests -p 'test_qualification_v2_legacy_reports.py' -v
+      - name: Full deterministic regressions including T05-T12 and frozen sources (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tests -v *> deterministic-test-output.txt
+          $testExit = $LASTEXITCODE
+          Get-Content deterministic-test-output.txt
+          exit $testExit
+      - name: Full deterministic regressions including T05-T12 and frozen sources (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -o pipefail
+          xvfb-run -a python -m unittest discover -s tests -v 2>&1 | tee deterministic-test-output.txt
       - name: Validate Planner calibration record controls (no semantic auto-grading)
         run: python -m localbench.qualification_v2 calibrate
       - name: Validate Governor calibration records without private documents or inference
@@ -52,3 +77,11 @@ jobs:
         run: |
           python -m localbench.qualification_v2 verification validate
           python -m localbench.qualification_v2 verification calibrate
+      - name: Retain deterministic test transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t13-tests-${{ matrix.os }}-python-${{ matrix.python }}
+          path: deterministic-test-output.txt
+          if-no-files-found: warn
+          retention-days: 14

@@ -9,6 +9,7 @@ from localbench.assistant001.packet import write_json
 from localbench.assistant001.cli import review_package
 from .planner_packet import verify_run, read_regular, sha
 from .planner_assessment import assess, draft_review
+from localbench.v2.report_adapter import bind_current_assessment
 
 
 def run_planner(run, sessions, *, repo=None):
@@ -75,6 +76,7 @@ def assess_run(run, *, plan_file=None, review_file=None, repo=None, model="unkno
            "comparison_eligible": origin == "captured_session" and session["status"] == "success" and identity is not None,
            "comparison_note": "Require matching case/input/rubric, runtime, model identity and configuration; imports are ineligible.",
            "output_origin": origin}
+    bind_current_assessment(row, run, "qualification-v2-planner")
     summary = {"campaign": "qualification-v2-planner", "roles": ["planner"],
                "track": "controlled_role_qualification", "results": [row], "planned_cases": 1,
                "completed_cases": int(session["status"] == "success"), "qualification_status": row["qualification_status"],

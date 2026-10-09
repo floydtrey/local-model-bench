@@ -85,6 +85,8 @@ def assess_run(run, *, review_file=None, repo=None):
            "comparison_protocol": capture["identity"]["configuration"], "comparison_eligible": False,
            "output_origin": capture["identity"]["origin"], "assessment_file": str(target / "assessment.json"),
            "evidence_directory": str(target), "session_evidence_directory": str(run / "roles" / packet["role"])}
+    from localbench.v2.report_adapter import bind_current_assessment
+    bind_current_assessment(row, run, "qualification-v2-verification")
     summary = {"campaign": "qualification-v2-verification", "roles": [packet["role"]], "results": [row],
                "planned_cases": 1, "completed_cases": int(capture["status"] == "success"),
                "qualification_status": "human-review-pending", "project_execution_authorized": False}

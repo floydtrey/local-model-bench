@@ -1,76 +1,274 @@
-"""Read-only legacy run adapter for T13/T16. No new state store or scoring.
-
-Preserves the original result fields and evidence pointers. It intentionally
-does not infer suite versions, human verdicts, or model configurations.
-"""
+"""Read-only adapters into the existing review writer; source evidence is immutable."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, Mapping
 
+from .contracts import EvidenceRef, SealedEvidence
 
-SUPPORTED = frozenset(("flashnext-role-review-package:v1",
-                       "assistant-001-v1", "assistant-002-v1"))
+ADAPTER_VERSION = 'qualification-v2/legacy-read-adapter:v2'
+# These identities are emitted by the existing source adapters, not inferred from tags.
+QUALIFICATION_SOURCES = {
+    'qualification-v2-planner': ('qualification-v2/blind-planner-input-v1', '1', 'qualification-v2/planner-equivalence-v1'),
+    'qualification-v2-governor': ('qualification-v2/governor-input-v1', '1', 'qualification-v2/governor-adjudication-v2'),
+    'qualification-v2-verification': ('qualification-v2/verification-cases-v2', '2', 'qualification-v2/verification-adjudication-v2'),
+}
+NULL_FIELDS = ('suite_id', 'suite_version', 'rubric_id', 'rubric_version', 'model_identity',
+               'runtime_identity', 'human_adjudication', 'human_review_status', 'worker_mode',
+               'first_pass_passed', 'repair_attempted', 'repair_passed', 'assessed_outcome')
+JSON_FIELDS = ('model_identity', 'runtime_identity', 'comparison_protocol', 'artifact_sha256',
+               'critical_failures', 'failure_classifications', 'source_case_ids', 'evidence_refs')
 
 
-def _read(path: Path) -> dict[str, Any]:
+def _read(path):
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        value = json.loads(Path(path).read_text(encoding='utf-8'))
     except (OSError, ValueError, UnicodeError) as exc:
-        raise ValueError(f"invalid run report: {exc}") from exc
-    if not isinstance(data, dict):
-        raise ValueError("run report must be an object")
-    return data
+        raise ValueError(f'invalid run report: {exc}') from exc
+    if not isinstance(value, dict):
+        raise ValueError('run report must be an object')
+    return value
 
 
-def normalize_legacy_report(path: Path) -> dict[str, Any]:
-    """Preserve observed evidence without inventing missing scores or versions."""
-    path = Path(path)
-    raw = _read(path)
-    if raw.get("schema_version") == "flashnext-role-review-package:v1":
-        kind = "historical-role-review"
-        rows = raw.get("case_results")
-        metadata = raw.get("metadata") or {}
-        if not isinstance(rows, list) or not isinstance(metadata, dict):
-            raise ValueError("invalid historical role report shape")
-    elif raw.get("campaign") in ("assistant-001-v1", "assistant-002-v1"):
-        kind = "assistant-worker-project"
-        rows = raw.get("results")
-        metadata = {"campaign": raw["campaign"], "track": raw.get("track")}
-        if not isinstance(rows, list):
-            raise ValueError("invalid Assistant summary shape")
+def file_reference(path, kind, **fields):
+    path = Path(path).resolve()
+    return {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'kind': kind, **fields}
+
+
+def bind_current_assessment(row, run, campaign):
+    """Called only by an existing assessor immediately after writing its result."""
+    source = QUALIFICATION_SOURCES[campaign]
+    path = Path(row['assessment_file'])
+    assessment = _read(path)
+    row.update(suite_id=source[0], suite_version=source[1], rubric_id=source[2],
+               run_id=Path(run).name, trial_id=Path(run).name,
+               attempt_id=path.parent.name, attempt_index=1,
+               human_adjudication=assessment.get('human_adjudication'),
+               reference_sha256=row.get('reference_bundle_sha256') or row.get('rubric_sha256'),
+               assessor_version=assessment.get('schema_version'),
+               evidence_version=assessment.get('schema_version'),
+               authority_assumptions={'scope': 'benchmark_only_no_role_assignment',
+                                      'governance_sha256': row.get('governance_sha256')},
+               evidence_refs=[file_reference(path, 'assessment')])
+    candidate = path.parent / 'candidate.txt'
+    if candidate.is_file():
+        row['evidence_refs'].append(file_reference(candidate, 'candidate'))
+    return row
+
+
+def _resolve_record_identity(row):
+    """Resolve available sealed identities without replacing missing legacy facts."""
+    directory = row.get('configuration_evidence_directory')
+    if not directory:
+        return
+    def load(ref):
+        reference = EvidenceRef.from_dict(ref)
+        path = Path(directory) / 'records' / reference.record_type / (reference.sha256 + '.json')
+        record = SealedEvidence.from_dict(_read(path))
+        if record.reference != reference:
+            raise ValueError('identity evidence mismatch')
+        row['evidence_refs'] = list(row.get('evidence_refs') or []) + [file_reference(path, reference.record_type, sealed_reference=ref)]
+        return record.to_dict()['payload']
+    try:
+        original = row.get('runtime_identity')
+        wrapper = original if isinstance(original, dict) else {}
+        runtime_ref = wrapper.get('runtime') or (wrapper if wrapper.get('record_type') == 'runtime_profile' else None)
+        model_ref = wrapper.get('model') or row.get('model_identity')
+        if runtime_ref:
+            row['source_runtime_identity'] = original
+            row['runtime_identity'] = load(runtime_ref)
+        if isinstance(model_ref, dict) and model_ref.get('record_type') == 'model_identity':
+            row['source_model_identity'] = model_ref
+            row['model_identity'] = load(model_ref)
+        protocol = row.get('comparison_protocol')
+        if isinstance(protocol, dict) and isinstance(protocol.get('effective_config'), dict):
+            config = protocol['effective_config']
+            row['effective_config_observations'] = config
+            row['effective_settings'] = config.get('settings')
+            row['context_tokens'] = (config.get('settings') or {}).get('generation', {}).get('context_tokens')
+    except (ValueError, KeyError, TypeError, OSError) as exc:
+        row['adapter_exclusion_reason'] = str(exc)
+
+
+def normalize_rows(rows, metadata=None, *, source_path=None):
+    """Keep original fields; add only documented aliases or verified source identities."""
+    metadata = metadata or {}
+    result = []
+    for original in rows:
+        if not isinstance(original, dict) or not isinstance(original.get('case_id'), str):
+            raise ValueError('invalid case row in report')
+        row = {**metadata, **original}
+        if isinstance(row.get('evidence_refs'), list):
+            row['evidence_refs'] = list(row['evidence_refs'])
+        for key in NULL_FIELDS:
+            row.setdefault(key, None)
+        for key in JSON_FIELDS:
+            value = row.get(key)
+            if isinstance(value, str) and value[:1] in ('{', '['):
+                try:
+                    row[key] = json.loads(value)
+                except ValueError:
+                    pass
+        if row.get('execution_status') is None:
+            row['execution_status'] = row.get('status')
+        if row.get('assessed_outcome') is None:
+            row['assessed_outcome'] = row.get('assessment_outcome')
+        if row.get('track') is None:
+            row['track'] = row.get('evaluation_track')
+        if isinstance(row.get('track'), str):
+            row['track'] = row['track'].lower()
+        if isinstance(row.get('worker_mode'), str):
+            row['worker_mode'] = row['worker_mode'].upper()
+        if row.get('campaign') in ('assistant-001-v1', 'assistant-002-v1') and row.get('role') == 'worker':
+            row.setdefault('acceptance_check_unit', 'cumulative_checks_at_task')
+        source = QUALIFICATION_SOURCES.get(row.get('campaign'))
+        # A campaign string alone cannot retroactively supply an absent rubric.
+        if source and row.get('rubric_version') == source[2]:
+            row['suite_id'] = row.get('suite_id') or source[0]
+            row['suite_version'] = row.get('suite_version') or source[1]
+            row['rubric_id'] = row.get('rubric_id') or source[2]
+        if source_path:
+            row['source_report'] = str(source_path)
+            row.setdefault('source_evidence_root', str(Path(source_path).resolve().parent))
+        _resolve_record_identity(row)
+        result.append(row)
+    return result
+
+
+def _aggregate_rows(payload, evidence_root, source_path):
+    """Expand exact sealed case/evaluator/trial references, not aggregate percentages."""
+    root = Path(evidence_root) if evidence_root else None
+    def load(ref):
+        if root is None:
+            raise ValueError('sealed evidence root unavailable')
+        reference = EvidenceRef.from_dict(ref)
+        path = root / 'records' / reference.record_type / (reference.sha256 + '.json')
+        record = SealedEvidence.from_dict(_read(path))
+        if record.reference != reference:
+            raise ValueError('evidence reference mismatch')
+        return record.to_dict()['payload'], file_reference(path, reference.record_type, sealed_reference=ref)
+
+    results = []
+    for aggregate in payload['cases']:
+        fallback = {'case_id': aggregate['case_id'], 'source_aggregate': aggregate,
+                    'planned_trial_count': aggregate.get('planned_trials'),
+                    'observed_trial_count': aggregate.get('observed_trials'),
+                    'repeat_group': aggregate.get('repeat_group'), 'source_report': str(source_path),
+                    'execution_status': None, 'assessed_outcome': None, 'evidence_refs': []}
+        try:
+            case_rows = []
+            benchmark, benchmark_ref = load(payload['benchmark'])
+            manifest, manifest_ref = load(payload['manifest'])
+            model, model_ref = load(manifest['model'])
+            runtime, runtime_ref = load(manifest['runtime'])
+            evaluations = [load(ref) for ref in aggregate['evidence']['evaluation_results']]
+            cases = [load(ref) for ref in aggregate['evidence']['case_results']]
+            bindings = [load(ref) for ref in manifest.get('execution_bindings', [])]
+            for case, case_ref in cases:
+                if case['case_id'] != aggregate['case_id'] or case['manifest'] != payload['manifest'] or case['benchmark'] != payload['benchmark']:
+                    raise ValueError('aggregate case binding mismatch')
+                trial, trial_ref = load(case['trial'])
+                if trial['case_id'] != case['case_id'] or trial['benchmark'] != payload['benchmark']:
+                    raise ValueError('trial binding mismatch')
+                config, config_ref = load(trial['effective_config'])
+                if config['model'] != manifest['model'] or config['runtime'] != manifest['runtime']:
+                    raise ValueError('configuration binding mismatch')
+                bound = [(b, ref) for b, ref in bindings if b['trial'] == case['trial']]
+                if len(bound) != 1:
+                    raise ValueError('missing or ambiguous execution binding')
+                binding, binding_ref = bound[0]
+                execution_refs = []
+                execution = case.get('execution_evidence') or {}
+                if execution.get('primary'):
+                    _, execution_ref = load(execution['primary'])
+                    execution_refs.append(execution_ref)
+                else:
+                    raise ValueError('missing primary execution evidence')
+                matched = [(ev, ref) for ev, ref in evaluations if ev['case'] == case_ref['sealed_reference']]
+                # Preserve unevaluated cases as unknown, and different evaluators separately.
+                for ev, evref in matched or [(None, None)]:
+                    rubric, rubref = load(ev['evaluator']) if ev else ({}, None)
+                    refs = [benchmark_ref, manifest_ref, model_ref, runtime_ref, case_ref, trial_ref, config_ref, binding_ref] + execution_refs
+                    if evref:
+                        refs += [evref, rubref]
+                    suite_version = None
+                    locator = benchmark.get('source_locator')
+                    if locator:
+                        candidate = Path(locator)
+                        if not candidate.is_absolute():
+                            candidate = Path(__file__).resolve().parents[3] / candidate
+                        if candidate.is_file() and hashlib.sha256(candidate.read_bytes()).hexdigest() == benchmark['source_sha256']:
+                            pack = _read(candidate)
+                            suite_version = pack.get('pack_version')
+                            refs.append(file_reference(candidate, 'suite'))
+                    case_rows.append({**fallback, 'source_aggregate': None, 'suite_id': benchmark['suite_id'],
+                        'suite_version': suite_version, 'rubric_id': rubric.get('evaluator_id'),
+                        'rubric_version': rubric.get('version'), 'rubric_sha256': ev['evaluator']['sha256'] if ev else None,
+                        'assessor_version': rubric.get('implementation_sha256'), 'evidence_version': 'benchmark-lab-evidence:v2',
+                        'execution_status': case['status'], 'assessed_outcome': ev.get('verdict') if ev else None,
+                        'human_review_required': rubric.get('requires_human_review'),
+                        'model_identity': model, 'runtime_identity': runtime,
+                        'effective_settings': config['settings'], 'context_tokens': config['settings'].get('generation', {}).get('context_tokens'),
+                        'track': trial['layer'], 'comparison_protocol': {'repetition_phase': payload['repetition_phase'], 'harness_source': manifest['harness_source']},
+                        'authority_assumptions': {'layer': trial['layer'], 'execution_mode': binding['execution_mode'],
+                                                  'containment': binding.get('containment')},
+                        'execution_binding': binding, 'run_id': payload['manifest']['logical_id'],
+                        'trial_id': case['trial']['logical_id'], 'trial_ordinal': trial['ordinal'], 'ordinal': trial['ordinal'],
+                        'attempt_id': case_ref['sealed_reference']['logical_id'], 'attempt_index': 1,
+                        'input_sha256': benchmark['source_sha256'], 'reference_sha256': benchmark['source_sha256'],
+                        'artifact_sha256': case_ref['sealed_reference']['sha256'], 'evidence_refs': refs,
+                        'acceptance_check_count': len(ev.get('checks', [])) if ev else None,
+                        'acceptance_check_unit': 'evaluator_checks_in_trial',
+                        'assessment_check_score': {k: ev.get(k) for k in ('score', 'maximum_score', 'checks')} if ev else None,
+                        'critical_failures': ev.get('hard_failures') if ev else None})
+            results.extend(case_rows)
+        except (ValueError, KeyError, TypeError, OSError) as exc:
+            results.append({**fallback, 'adapter_exclusion_reason': str(exc)})
+    return normalize_rows(results)
+
+
+def normalize_legacy_report(path: Path, *, evidence_root=None) -> dict[str, Any]:
+    """Read historical, Assistant, qualification and sealed V2 aggregate reports."""
+    path, raw = Path(path), _read(path)
+    sealed = raw.get('schema_version') == 'benchmark-lab-evidence:v2'
+    if sealed:
+        record = SealedEvidence.from_dict(raw)
+        if record.record_type != 'aggregate_report':
+            raise ValueError('unsupported sealed report type')
+        payload = record.to_dict()['payload']
     else:
-        raise ValueError("unsupported legacy report schema")
-    result_rows = []
-    for row in rows:
-        if not isinstance(row, dict) or not isinstance(row.get("case_id"), str):
-            raise ValueError("invalid case row in legacy report")
-        result_rows.append({
-            "case_id": row["case_id"],
-            "role": row.get("role"),
-            "ordinal": row.get("ordinal"),
-            "execution_status": row.get("execution_status") or row.get("status"),
-            "assessed_outcome": row.get("assessed_outcome"),
-            "human_adjudication": row.get("human_adjudication"),
-            "human_review_status": row.get("human_review_status"),
-            "deterministic_passed": row.get("deterministic_passed"),
-            "first_pass_passed": row.get("first_pass_passed"),
-            "repair_attempted": row.get("repair_attempted"),
-            "repair_passed": row.get("repair_passed"),
-            "suite_id": row.get("suite_id"),
-            "suite_version": row.get("suite_version"),
-            "rubric_id": row.get("rubric_id"),
-            "rubric_version": row.get("rubric_version"),
-            "model_identity": row.get("model_identity"),
-            "runtime_identity": row.get("runtime_identity"),
-            "worker_mode": row.get("worker_mode"),
-            "evidence_directory": row.get("evidence_directory"),
-            "assessment_file": row.get("assessment_file"),
-            "artifact_sha256": row.get("artifact_sha256"),
-            "source_report": str(path),
-        })
-    return {"schema_version": "qualification-v2/legacy-read-adapter:v1",
-            "source_kind": kind, "source_path": str(path),
-            "metadata": metadata, "cases": result_rows,
-            "legacy_fields_unknown": True, "role_qualification": None}
+        payload = raw
+    if payload.get('report_version') == 'benchmark-lab-aggregate-report:v1':
+        kind, metadata = 'v2-aggregate-report', {'repetition_phase': payload.get('repetition_phase')}
+        rows = _aggregate_rows(payload, evidence_root, path)
+    elif raw.get('schema_version') == 'flashnext-role-review-package:v1':
+        kind, metadata = 'historical-role-review', raw.get('metadata') or {}
+        normalized = raw.get('qualification_v2_metrics', {})
+        rows = normalized.get('case_details', raw.get('case_results'))
+    elif raw.get('campaign') in ('assistant-001-v1', 'assistant-002-v1', *QUALIFICATION_SOURCES):
+        kind = 'qualification-role' if raw['campaign'] in QUALIFICATION_SOURCES else 'assistant-worker-project'
+        metadata = {k: v for k, v in raw.items() if k not in ('results', 'review_package')}
+        rows = raw.get('results')
+    else:
+        raise ValueError('unsupported legacy report schema')
+    if not isinstance(rows, list) or not isinstance(metadata, dict):
+        raise ValueError('invalid report shape')
+    rows = normalize_rows(rows, metadata, source_path=path)
+    return {'schema_version': ADAPTER_VERSION, 'source_kind': kind, 'source_path': str(path),
+            'source_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+            'metadata': metadata, 'cases': rows, 'raw_report': raw,
+            'review_package': raw.get('review_package'),
+            'legacy_fields_unknown': True, 'role_qualification': None}
+
+
+def write_normalized_review(source: Path, output_dir: Path, *, evidence_root=None):
+    """Export through the original writer into a new directory; never edit the input."""
+    from .flashnext_review import write_review_package
+    normalized = normalize_legacy_report(source, evidence_root=evidence_root)
+    if Path(source).resolve().is_relative_to(Path(output_dir).resolve() / 'review'):
+        raise ValueError('source report must remain outside the new review output')
+    return write_review_package(output_dir=Path(output_dir),
+        summary={**normalized['metadata'], 'results': normalized['cases']},
+        profile=normalized['metadata'], shared_run=None, phase='read-only-normalization')

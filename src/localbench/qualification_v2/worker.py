@@ -287,6 +287,20 @@ def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=N
         row["execution_status"] = "blocked" if row["status"] == "blocked" else "failed" if row["status"] == "error" else "completed"
         row["assessed_outcome"] = row["assessment_outcome"]
         row["human_review_status"] = "pending"
+        row.update(suite_id=VERSION, suite_version="1", rubric_id="assistant-project-acceptance:v1",
+                   rubric_version="assistant-project-acceptance:v1", run_id=run.name,
+                   trial_id=run.name, attempt_id=run.name + "-" + row["case_id"], attempt_index=1,
+                   reference_sha256=control["bundle_sha256"],
+                   authority_assumptions={"scope": "bounded_worker_benchmark", "worker_mode": control["worker_mode"]},
+                   assessor_version="assistant-project-acceptance:v1", evidence_version=VERSION)
+        assessment_path = Path(row["assessment_file"]) if row.get("assessment_file") else None
+        if assessment_path and assessment_path.is_file():
+            from localbench.v2.report_adapter import file_reference
+            assessment_record = json.loads(read_regular(assessment_path))
+            row["evidence_refs"] = [file_reference(assessment_path, "assessment")]
+            row["artifact_sha256"] = assessment_record.get("candidate_sha256")
+            row["candidate_sha256"] = assessment_record.get("candidate_sha256")
+            row["acceptance_check_count"] = assessment_record.get("executed")
         row["reference_review_status"] = "operator-reviewed-for-this-release"
         if row["failure_attribution"] == "infrastructure":
             row["deterministic_passed"] = row["first_pass_passed"] = None

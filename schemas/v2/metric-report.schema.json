@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-model-bench.invalid/schemas/v2/metric-report.schema.json",
+  "title": "T13 additive reporting projection; existing evidence remains authoritative",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "catalog_version",
+    "catalog_sha256",
+    "metrics",
+    "case_details",
+    "comparisons",
+    "automatic_role_assignment",
+    "universal_intelligence_score"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "qualification-v2/metrics:v2"
+    },
+    "catalog_version": {
+      "type": "string"
+    },
+    "catalog_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "metric_id",
+          "metric_version",
+          "kind",
+          "membership",
+          "numerator",
+          "denominator",
+          "percentage",
+          "configuration",
+          "protocol",
+          "case_refs",
+          "excluded",
+          "comparison_eligible",
+          "comparison_exclusion_reasons"
+        ],
+        "properties": {
+          "metric_id": {
+            "type": "string"
+          },
+          "metric_version": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "capability",
+              "assistant",
+              "role_suitability"
+            ]
+          },
+          "membership": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "numerator": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "denominator": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "percentage": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "configuration": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "protocol": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "case_refs": {
+            "type": "array"
+          },
+          "excluded": {
+            "type": "array"
+          },
+          "comparison_eligible": {
+            "type": "boolean"
+          },
+          "comparison_exclusion_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "case_details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_id",
+          "case_id",
+          "normalized_assessed_outcome",
+          "normalized_status",
+          "human_review_state",
+          "verified_evidence_refs",
+          "exclusion_reasons"
+        ],
+        "properties": {
+          "normalized_status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "not_attempted",
+              "not_tested",
+              "unsupported",
+              "pending_review",
+              "unknown"
+            ]
+          }
+        }
+      }
+    },
+    "comparisons": {
+      "type": "array"
+    },
+    "automatic_role_assignment": {
+      "const": false
+    },
+    "universal_intelligence_score": {
+      "type": "null"
+    }
+  }
+}

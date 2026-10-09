@@ -55,6 +55,15 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                        assessment_file=str(path / "assessment.json"),
                        correctness="deterministic-pass-review-pending" if accepted else "not-accepted-review-pending",
                        assessment_status=acceptance["status"], handoff_present=bool(handoff.strip()))
+            # Additive observations; cumulative checks are not independent cases.
+            from localbench.v2.report_adapter import file_reference
+            row.update(run_id=run.name, trial_id=run.name, attempt_id=run.name + "-" + task["id"],
+                       attempt_index=1, acceptance_check_count=acceptance.get("executed"),
+                       acceptance_check_unit="cumulative_checks_at_task",
+                       artifact_sha256=acceptance.get("candidate_sha256"),
+                       candidate_sha256=acceptance.get("candidate_sha256"))
+            if (path / "assessment.json").is_file():
+                row["evidence_refs"] = [file_reference(path / "assessment.json", "assessment")]
             # Same workspace; hash-link each actual predecessor to its successor.
             write_json(evidence / "handoff-link.json", {"before_sha256": before,
                 "after_sha256": snapshot(run / "workspace"), "accepted": accepted,
