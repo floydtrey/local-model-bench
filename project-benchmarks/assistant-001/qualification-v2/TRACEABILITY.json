@@ -1,0 +1,372 @@
+{
+  "schema_version": "qualification-v2/reference-trace-v1",
+  "source_packet_id": "assistant-001-v1",
+  "source_packet_version": 1,
+  "reference_version": "draft-1",
+  "distribution": "ASSESSOR_ONLY_HIDE_FROM_INDEPENDENT_PLANNER",
+  "approval_status": "OWNER_REVIEW_PENDING",
+  "qualified_role_assignment": false,
+  "baseline_repo_commit": "79d422ee4c037ac305fd2f15c06eadf5302d0972",
+  "source_git_blobs_sha1": {
+    "project-benchmarks/assistant-001/v1/PROJECT_INTENT.md": "28cb8a5bd98912d7a642ffa8fefc2b6ad548c94b",
+    "project-benchmarks/assistant-001/v1/CONTRACT.md": "ed44da87d7da5ecb9739121e279d07d496dba924",
+    "project-benchmarks/assistant-001/v1/TASKS.md": "ab9a26ae5bba02e442e430bdc56c5976d944678b",
+    "project-benchmarks/assistant-001/v1/packet.json": "9bbb0b13a43ed58dedceeba3ad80509d65f4aaf4",
+    "project-benchmarks/assistant-001/v1/assessor/checks.py": "95cb7761ea38a1946ba57d743893115cecbff640",
+    "project-benchmarks/assistant-001/v1/REVIEW_RUBRICS.md": "a0e1b30f39ff3c6fd5efe4620bf4ea7a6f7d6e81"
+  },
+  "requirement_groups": [
+    {
+      "id": "R01",
+      "name": "Package and validation",
+      "task": "T01",
+      "positive": "Exact event schema, identifiers, aware UTC timestamp normalization, finite confidence, bounded TTL and JSON depth/size; detached normalized copies and canonical identity.",
+      "negative": "Reject unknown/missing fields, coercion, invalid offsets/date, NaN/recursive/oversized data, overflow, mutable aliases and payload-as-command execution."
+    },
+    {
+      "id": "R02",
+      "name": "Durable journal",
+      "task": "T02",
+      "positive": "Real SQLite, global event_id uniqueness; append True new, False identical canonical duplicate, conflicting duplicate raises without overwriting; immediate commit and detached get/count/closed lifecycle.",
+      "negative": "Reject data replacement, reset-on-corrupt, dropped write on process exit, noncommitted append, path substitution, invalid input causing writes, and bool/number identity normalization mistakes."
+    },
+    {
+      "id": "R03",
+      "name": "Bounded history",
+      "task": "T03",
+      "positive": "Validate and filter before paging, ascending (UTC timestamp,event_id), exact source/entity/type and half-open since/until; bounded offsets/limits, include expired/future evidence.",
+      "negative": "Reject invalid query arguments even when empty; no arrival-order paging, off-by-one time windows, query-time deletion, or mutable returned references."
+    },
+    {
+      "id": "R04",
+      "name": "Explicit current observations",
+      "task": "T04",
+      "positive": "Require as_of, choose largest (timestamp,event_id) eligible event per (source,entity,type), exclude winners expired at exact boundary, never resurrect older after latest expired; deterministic replay and clock.",
+      "negative": "Reject future suppression, stale resurrection, arrival/confidence precedence, cross-source fusion, inferred absence/identity, sleeps or system-clock dependency."
+    },
+    {
+      "id": "R05",
+      "name": "Atomic bounded ingestion",
+      "task": "T05",
+      "positive": "0–1000 event list, ordered bool results; database transaction rolls back entire batch if later invalid/conflicting input; prior commits and connection remain intact.",
+      "negative": "Reject partial batches, broken transactions after rollback, inconsistent duplicate flags, silent conflicts or changed state after rejection."
+    },
+    {
+      "id": "R06",
+      "name": "Local CLI, tests and delivery",
+      "task": "T06",
+      "positive": "Real python -m entrypoint with append/ingest/get/count/history/state, one JSON response on stdout/empty stderr on success; UTF-8 JSONL atomic ingest; README and meaningful candidate tests.",
+      "negative": "Reject leaking raw payloads/secrets/tracebacks, non-JSON errors, wrong exit 2, non-atomic invalid JSONL, network/deployment, hidden benchmark imports or false test claims."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Validate and normalize events",
+      "introduced_requirement": "R01",
+      "cumulative_requirements": [
+        "R01"
+      ],
+      "predecessor_task_ids": [],
+      "writable_paths": [
+        "assistant_journal/validation.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_defaults_and_exact_normalized_fields",
+          "requirement_tag": "R01"
+        },
+        {
+          "name": "test_equivalent_timezone_and_fraction",
+          "requirement_tag": "R01"
+        },
+        {
+          "name": "test_no_mutation_and_nested_detachment",
+          "requirement_tag": "R01"
+        },
+        {
+          "name": "test_valid_boundaries_and_json_types",
+          "requirement_tag": "R01"
+        },
+        {
+          "name": "test_data_byte_boundary",
+          "requirement_tag": "R01"
+        },
+        {
+          "name": "test_depth_boundary_and_cycle",
+          "requirement_tag": "R01"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "Persist observations and duplicates",
+      "introduced_requirement": "R02",
+      "cumulative_requirements": [
+        "R01",
+        "R02"
+      ],
+      "predecessor_task_ids": [
+        "T01"
+      ],
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_duplicate_is_idempotent_and_conflict_immutable",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_duplicate_normalization_and_json_key_order",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_canonical_data_numbers_remain_distinct",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_id_uniqueness_is_global_not_per_source",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_restart_preserves_commits_and_real_sqlite",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_process_exit_after_successful_append_is_durable",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_two_connections_observe_sequential_commits",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_get_returns_detached_values",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_invalid_append_changes_nothing",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_corrupt_file_is_not_reset",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_closed_journal_and_id_validation",
+          "requirement_tag": "R02"
+        },
+        {
+          "name": "test_untrusted_data_is_inert",
+          "requirement_tag": "R01/R02"
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "Query bounded ordered history",
+      "introduced_requirement": "R03",
+      "cumulative_requirements": [
+        "R01",
+        "R02",
+        "R03"
+      ],
+      "predecessor_task_ids": [
+        "T02"
+      ],
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_history_orders_by_time_then_id",
+          "requirement_tag": "R03"
+        },
+        {
+          "name": "test_all_filters_precede_pagination",
+          "requirement_tag": "R03"
+        },
+        {
+          "name": "test_history_inclusive_since_exclusive_until",
+          "requirement_tag": "R03"
+        },
+        {
+          "name": "test_history_invalid_parameters_even_when_empty",
+          "requirement_tag": "R03"
+        },
+        {
+          "name": "test_history_keeps_expired_and_future_events",
+          "requirement_tag": "R03"
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "Project current state with replay time",
+      "introduced_requirement": "R04",
+      "cumulative_requirements": [
+        "R01",
+        "R02",
+        "R03",
+        "R04"
+      ],
+      "predecessor_task_ids": [
+        "T03"
+      ],
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_late_arrival_never_overwrites_newer_observation",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_expiry_is_half_open_and_does_not_resurrect",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_future_event_cannot_suppress_current_event",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_timestamp_tie_breaks_by_id_not_arrival",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_source_entity_and_type_remain_distinct",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_confidence_does_not_override_time",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_replay_permutation_and_restart",
+          "requirement_tag": "R04"
+        },
+        {
+          "name": "test_state_detachment_and_invalid_clock",
+          "requirement_tag": "R04"
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "Ingest batches atomically",
+      "introduced_requirement": "R05",
+      "cumulative_requirements": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05"
+      ],
+      "predecessor_task_ids": [
+        "T04"
+      ],
+      "writable_paths": [
+        "assistant_journal/journal.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_batch_conflict_rolls_back_all_new_rows",
+          "requirement_tag": "R05"
+        },
+        {
+          "name": "test_batch_invalid_late_record_rolls_back",
+          "requirement_tag": "R05"
+        },
+        {
+          "name": "test_batch_conflict_inside_batch_is_atomic",
+          "requirement_tag": "R05"
+        },
+        {
+          "name": "test_batch_flags_existing_and_internal_duplicates",
+          "requirement_tag": "R05"
+        },
+        {
+          "name": "test_bounded_batch_and_history_pagination",
+          "requirement_tag": "R05"
+        },
+        {
+          "name": "test_rollback_does_not_poison_current_state",
+          "requirement_tag": "R05/R04"
+        }
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "Deliver the CLI, tests and documentation",
+      "introduced_requirement": "R06",
+      "cumulative_requirements": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "predecessor_task_ids": [
+        "T05"
+      ],
+      "writable_paths": [
+        "assistant_journal/cli.py",
+        "tests/test_candidate.py",
+        "README.md"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_cli_append_duplicate_count_get",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_history_and_state",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_jsonl_failure_is_atomic_and_does_not_echo_data",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_jsonl_success_with_blank_lines_and_duplicates",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_conflict_is_error_and_preserves_original",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_invalid_arguments_are_json_errors",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_cli_unicode_path_and_payload",
+          "requirement_tag": "R06"
+        },
+        {
+          "name": "test_public_and_candidate_tests_execute",
+          "requirement_tag": "R06"
+        }
+      ]
+    }
+  ],
+  "named_assessor_methods_count": 45,
+  "frozen_cumulative_assessor_checks_count": 79,
+  "unenumerated_assessor_cases": "Assessor dynamically generates invalid-event variants; decorated methods alone do not equal cumulative result count. Frozen check inventory remains authoritative.",
+  "reference_status_message": "Reference proposal for owner/human review, not authorization or an instruction injected into the existing v1 Planner.",
+  "scenario_fixtures": [],
+  "withheld_from_planner": [
+    "REFERENCE_PLAN.md",
+    "TRACEABILITY.json",
+    "v1/TASKS.md",
+    "v1/assessor",
+    "any cached copy of fixed task solutions"
+  ]
+}
