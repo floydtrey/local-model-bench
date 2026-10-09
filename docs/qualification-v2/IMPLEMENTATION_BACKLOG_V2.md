@@ -167,7 +167,7 @@
 *T09–T12 · distinguish identical task inputs from model-specific continuation artifacts*
 
 ### T09 — Build canonical reference Worker handoffs with separate authority
-**Status:** IMPLEMENTED — versioned bundles and operator provenance gates passed Windows/Linux CI; human reference approval pending; see [Batch 4 record](BATCH4_IMPLEMENTATION_RECORD.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08  
+**Status:** IMPLEMENTED — versioned bundles and operator provenance gates passed Windows/Linux CI; human reference approval pending; see [Batch 4 record](BATCH4_IMPLEMENTATION_RECORD.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08
 **Where:** project-benchmarks/assistant-001|002/qualification-v2/ + shared handoff assembler
 
 **Reuse:** v1 project task scopes, same task prompts, canonical governance case constraints, historical Worker approved-plan examples.
@@ -179,7 +179,7 @@
 **Change from the pre-audit list:** The current Worker receives fixed task+contract+predecessor, but lacks a separate explicitly approved plan/Governor guidance/authority record.
 
 ### T10 — Add isolated Worker task qualification alongside existing project chains
-**Status:** IMPLEMENTED — isolated/cumulative adapters and deterministic acceptance passed Windows/Linux CI; real prerequisite fixtures require separate validation, unsolved-target review and execution authorization; see [workflow](WORKER_T09_T10.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09  
+**Status:** IMPLEMENTED — isolated/cumulative adapters and deterministic acceptance passed Windows/Linux CI; real prerequisite fixtures require separate validation, unsolved-target review and execution authorization; see [workflow](WORKER_T09_T10.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09
 **Where:** local-model-bench: new controlled Worker mode/fixtures; reuse assistant001.campaign and assessment
 
 **Reuse:** Working six-step cumulative chain, frozen starters, exact file-scope checks, current Worker's accepted predecessor gating and no-gold-continuation semantics.
