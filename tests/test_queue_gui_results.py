@@ -6,7 +6,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from localbench.queue_gui.results import load_report, read_evidence, discover_reports
+from localbench.queue_gui.results import load_report, read_evidence, discover_reports, filter_value
 from results_fixtures import ReportFixture
 from test_queue_gui_app import QueueGuiWidgetTests as _QueueTests
 
@@ -140,6 +140,111 @@ class ResultsWidgetTests(unittest.TestCase):
         self.assertIn("role-suitability:v1", detail)
         self.assertIn("critical_safety_gates", detail)
         self.assertIn("Unsafe scope expansion", detail)
+
+    def test_r2_repair_attempts_preserve_denominator_and_exact_artifact(self):
+        fixture = ReportFixture(self.repo / "repair")
+        first = fixture.case(assessed_outcome="FAIL", attempt_id="first")
+        repair = fixture.case(attempt_index=2, parent_attempt_id="first", attempt_id="repair")
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        item = view.capabilities.bar_items[0]
+        self.click_canvas_item(view.capabilities, item)
+        metric = view.selected_metric
+        self.assertEqual((metric["numerator"], metric["denominator"], metric["attempt_count"]), (1, 1, 2))
+        self.assertEqual(metric["first_pass"], {"numerator": 0, "denominator": 1})
+        self.assertEqual(metric["after_repair"], {"numerator": 1, "denominator": 1})
+        for key, (report, row) in view.case_rows.items():
+            view.cases.selection_set(key)
+            view.cases.event_generate("<<TreeviewSelect>>")
+            self.root.update()
+            self.assertEqual(view.selected_row["attempt_id"], row["attempt_id"])
+            ref = next(iter(view.artifact_refs.values()))
+            evidence = read_evidence(report, row, ref)
+            expected = first if row["attempt_id"] == "first" else repair
+            self.assertEqual(evidence[0], Path(expected["assessment_file"]).resolve())
+            self.assertIn(expected["assessed_outcome"], evidence[3])
+
+    def test_r2_review_filter_never_recalculates_partial_population(self):
+        fixture = ReportFixture(self.repo / "mixed-review")
+        fixture.case("contradiction-detection", metric="reasoning")
+        fixture.case("dependency-plan", metric="reasoning", human_review_required=True, human_review_status="pending")
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        view.filter_vars["review"].set("not_required")
+        view.filter_widgets["review"].event_generate("<<ComboboxSelected>>")
+        self.root.update()
+        self.assertEqual(len(view.case_rows), 1)
+        self.assertFalse(any(m["metric_id"] == "reasoning" for _, m in view.capabilities.targets.values()))
+        self.assertEqual(view.capabilities.bar_items, [])
+        view.reset_filters()
+        self.assertEqual(len(view.case_rows), 2)
+
+    def test_r2_all_seven_filters_select_exact_case_population(self):
+        left = ReportFixture(self.repo / "left", "alpha")
+        left.case(role="worker", worker_mode="ISOLATED_TASK")
+        right = ReportFixture(self.repo / "right", "beta")
+        right.case(role="tester", track="different-track", runtime_identity={"name": "other", "version": "2", "transport": "fake"},
+                   human_review_required=True, human_review_status="pending")
+        view = self.app.results
+        view.load_paths([left.write(), right.write()])
+        report = next(report for report in view.reports.values() if report.run_dir.name == "left")
+        row = report.rows["row-1"]
+        for key in view.filter_vars:
+            view.filter_vars[key].set(filter_value(row, key))
+            view.filter_widgets[key].event_generate("<<ComboboxSelected>>")
+            self.root.update()
+        self.assertEqual(len(view.case_rows), 1)
+        self.assertEqual(next(iter(view.case_rows.values()))[0].run_dir.name, "left")
+        self.assertEqual(len(view.capabilities.bar_items), 1)
+
+    def test_r2_comparison_exclusions_use_t13_protocol_and_exact_sides(self):
+        paths = []
+        for name, mode in (("a", "ISOLATED_TASK"), ("b", "CUMULATIVE_PROJECT")):
+            fixture = ReportFixture(self.repo / name, name)
+            fixture.case(role="worker", worker_mode=mode)
+            paths.append(fixture.write())
+        view = self.app.results
+        view.load_paths(paths)
+        key = next(iter(view.comparison_targets))
+        left, right, comparison = view.comparison_targets[key]
+        self.assertFalse(comparison["eligible"])
+        self.assertIn("different_worker_mode", comparison["exclusion_reasons"])
+        view.comparisons.selection_set(key)
+        view.comparisons.event_generate("<<TreeviewSelect>>")
+        self.root.update()
+        self.assertIn("Combined score: none", view.detail.get("1.0", "end"))
+        view.comparison_side(1)
+        self.assertEqual(view.selected_report.path, right[0].path)
+        self.assertEqual(view.selected_metric["protocol"]["worker_mode"], right[1]["protocol"]["worker_mode"])
+
+    def test_r2_assistant_measures_only_qualified_coverage(self):
+        fixture = ReportFixture(self.repo / "assistant")
+        fixture.case("authority-boundary", metric="permission_boundaries")
+        fixture.case("minimal-code-repair", metric="coding", source_index=1)
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        self.assertEqual({view.assistant.targets[i][1]["metric_id"] for i in view.assistant.bar_items}, {"permission_boundaries"})
+        recovery = next(m for r in view.reports.values() for m in r.metrics if m["metric_id"] == "error_recovery")
+        self.assertIsNone(recovery["percentage"])
+        self.assertIsNone(recovery["denominator"])
+        self.click_canvas_item(view.assistant, view.assistant.bar_items[0])
+        self.assertEqual(view.selected_metric["metric_id"], "permission_boundaries")
+
+    def test_r2_correct_tester_fail_and_blocked_worker_remain_distinct(self):
+        fixture = ReportFixture(self.repo / "roles")
+        fixture.case("assistant-001-tester-02", metric="role_tester", role="tester", candidate_decision="FAIL",
+            implementation_truth="defective", human_review_required=True, human_review_status="recorded")
+        fixture.case("assistant001-t02", metric="role_worker", role="worker", worker_mode="CUMULATIVE_PROJECT",
+            execution_status="prerequisite_blocked", assessed_outcome=None)
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        statuses = {row["case_id"]: row["normalized_status"] for _, row in view.case_rows.values()}
+        self.assertEqual(statuses["assistant-001-tester-02"], "passed")
+        self.assertEqual(statuses["assistant001-t02"], "blocked")
+        worker = next(m for r in view.reports.values() for m in r.metrics if m["metric_id"] == "role_worker")
+        self.assertIsNone(worker["denominator"])
+        self.assertEqual(worker["attempt_count"], 0)
+        self.assertEqual(worker["failed_cases"], [])
 
     def test_r0_cases_exact_evidence_and_workbook_in_existing_app(self):
         fixture = ReportFixture(self.repo / "local-state" / "synthetic-run")

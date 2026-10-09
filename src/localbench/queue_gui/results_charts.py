@@ -64,7 +64,7 @@ class MetricChart(ScrollCanvas):
         super().__init__(parent, select)
         self.categories = categories
 
-    def render(self, series):
+    def render(self, series, *, filtered=False):
         self.reset()
         y = 14
         for category in self.categories:
@@ -72,7 +72,8 @@ class MetricChart(ScrollCanvas):
             y += 29
             members = [(report, metric) for report, metric in series if metric["metric_id"] == category]
             if not members:
-                self.text(28, y, "Not tested · no qualifying versioned measurements in this selection")
+                self.text(28, y, "No complete population matches filters" if filtered else
+                          "Not tested · no qualifying versioned measurements in this selection")
                 y += 36
                 continue
             # Each exported population stays a separate row, including repeats

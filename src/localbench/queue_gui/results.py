@@ -9,7 +9,7 @@ from pathlib import Path
 
 from ..v2.metric_projection import (
     REPORT_VERSION, SOURCE_FIELDS, case_status, configuration_identity,
-    human_review_state,
+    human_review_state, compare_series,
 )
 from ..v2.report_adapter import normalize_legacy_report, normalize_rows
 
@@ -21,6 +21,53 @@ def display(value):
     if isinstance(value, (dict, list)):
         return json.dumps(value, sort_keys=True, ensure_ascii=False)
     return str(value)
+
+
+FILTERS = (("suite", "Benchmark suite"), ("role", "Role"), ("track", "Evaluation track"),
+           ("worker_mode", "Worker mode"), ("configuration", "Model configuration"),
+           ("runtime", "Runtime"), ("review", "Human review status"))
+
+
+def filter_value(row, key):
+    config = row.get("configuration") or {}
+    if key == "suite":
+        return f"{display(row.get('suite_id'))} @ {display(row.get('suite_version'))}"
+    if key == "configuration":
+        identity = json.dumps(config, sort_keys=True, separators=(",", ":"))
+        digest = hashlib.sha256(identity.encode()).hexdigest()
+        return f"{display(config.get('model_name'))} · {digest}"
+    if key == "runtime":
+        return display({k: config.get(k) for k in ("runtime", "runtime_version", "transport", "runtime_identity")})
+    return display(row.get("human_review_state" if key == "review" else key))
+
+
+def row_matches(row, filters):
+    return all(value == "All" or filter_value(row, key) == value for key, value in filters.items())
+
+
+def metric_matches(report, metric, filters):
+    if all(value == "All" for value in filters.values()):
+        return True
+    rows = [report.rows[ref["row_id"]] for ref in metric["case_refs"]]
+    # A filter selects complete published populations. It never changes a
+    # denominator by removing inconvenient failures, blocks or pending reviews.
+    return bool(rows) and all(row_matches(row, filters) for row in rows)
+
+
+def compare_reports(series):
+    """Use T13's existing compatibility rules; never calculate a combined score."""
+    result = compare_series([metric for _, metric in series])
+    for comparison in result:
+        left_report, left = series[comparison["left_series"] - 1]
+        right_report, right = series[comparison["right_series"] - 1]
+        reasons = set(comparison["exclusion_reasons"])
+        if left.get("metric_version") != right.get("metric_version"):
+            reasons.add("different_metric_version")
+        if left_report.projection.get("catalog_sha256") != right_report.projection.get("catalog_sha256"):
+            reasons.add("different_catalog_sha256")
+        comparison["eligible"] = not reasons
+        comparison["exclusion_reasons"] = sorted(reasons)
+    return result
 
 
 def validate_projection(projection):

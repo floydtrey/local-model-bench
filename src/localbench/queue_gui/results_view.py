@@ -6,8 +6,9 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, ttk
 
-from .results import discover_reports, display, load_report, read_evidence
-from .results_charts import MetricChart, RoleMatrix
+from .results import (FILTERS, compare_reports, discover_reports, display, filter_value,
+                      load_report, metric_matches, read_evidence, row_matches)
+from .results_charts import ASSISTANT, MetricChart, RoleMatrix, configuration_label
 
 
 def tree(parent, columns, *, height=8):
@@ -45,7 +46,7 @@ class ResultsView(ttk.Frame):
         self.selected_report = None
         self.selected_row = None
         self.selected_metric = None
-        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
         self.columnconfigure(0, weight=1)
         toolbar = ttk.Frame(self)
         toolbar.grid(row=0, sticky="ew")
@@ -57,20 +58,50 @@ class ResultsView(ttk.Frame):
             ("cases", "Case rows", 80), ("version", "Metric contract", 240)], height=3)
         frame.grid(row=2, sticky="ew")
         self.report_tree.bind("<<TreeviewSelect>>", lambda e: self.refresh())
+        filters = ttk.LabelFrame(self, text="Filters select whole published metric populations; case rows filter independently", padding=5)
+        filters.grid(row=3, sticky="ew", pady=5)
+        self.filter_vars, self.filter_widgets = {}, {}
+        for index, (key, title) in enumerate(FILTERS):
+            column, row = (index % 4) * 2, (index // 4) * 2
+            ttk.Label(filters, text=title).grid(row=row, column=column, sticky="w")
+            variable = tk.StringVar(value="All")
+            widget = ttk.Combobox(filters, textvariable=variable, state="readonly", width=27)
+            widget.grid(row=row + 1, column=column, sticky="ew", padx=(0, 8))
+            widget.bind("<<ComboboxSelected>>", lambda e: self.refresh())
+            filters.columnconfigure(column, weight=1)
+            self.filter_vars[key], self.filter_widgets[key] = variable, widget
+        ttk.Button(filters, text="Reset filters", command=self.reset_filters).grid(row=3, column=6, sticky="w")
         panes = ttk.Panedwindow(self, orient="horizontal")
-        panes.grid(row=3, sticky="nsew", pady=6)
+        panes.grid(row=4, sticky="nsew", pady=6)
         self.views = ttk.Notebook(panes)
         self.capabilities = MetricChart(self.views, self.select_metric)
         self.roles = RoleMatrix(self.views, self.select_metric)
+        self.assistant = MetricChart(self.views, self.select_metric, ASSISTANT)
         self.views.add(self.capabilities, text="Capabilities")
         self.views.add(self.roles, text="Role suitability")
+        self.views.add(self.assistant, text="Assistant")
         case_frame, self.cases = tree(self.views, [("model", "Model configuration", 180),
             ("case", "Suite / case", 280), ("status", "Outcome / status", 130),
-            ("review", "Human review", 100), ("attempt", "Run / trial / attempt", 260)])
+            ("review", "Human review", 100), ("attempt", "Run / trial / attempt", 260),
+            ("membership", "Selected metric membership", 220)])
         self.views.add(case_frame, text="Cases")
         self.case_frame = case_frame
         self.cases.configure(selectmode="browse")
         self.cases.bind("<<TreeviewSelect>>", self.select_case)
+        comparisons = ttk.Frame(self.views)
+        comparisons.rowconfigure(0, weight=1)
+        comparisons.columnconfigure(0, weight=1)
+        cf, self.comparisons = tree(comparisons, [("metric", "Metric", 130), ("left", "Left configuration / run", 240),
+            ("right", "Right configuration / run", 240), ("eligible", "Comparable", 85), ("reasons", "Exclusions", 350)])
+        cf.grid(row=0, sticky="nsew")
+        self.comparisons.configure(selectmode="browse")
+        self.comparisons.bind("<<TreeviewSelect>>", self.select_comparison)
+        cb = ttk.Frame(comparisons)
+        cb.grid(row=1, sticky="w")
+        ttk.Button(cb, text="Inspect left result", command=lambda: self.comparison_side(0)).pack(side="left")
+        ttk.Button(cb, text="Inspect right result", command=lambda: self.comparison_side(1)).pack(side="left", padx=5)
+        self.views.add(comparisons, text="Comparisons")
+        self.comparison_targets = {}
         panes.add(self.views, weight=3)
         details = ttk.LabelFrame(panes, text="Selected result · exact source evidence", padding=6)
         details.rowconfigure(1, weight=1)
@@ -122,14 +153,56 @@ class ResultsView(ttk.Frame):
 
     def refresh(self):
         reports = self.visible_reports()
+        for key, _ in FILTERS:
+            choices = ["All"] + sorted({filter_value(row, key) for report in reports for row in report.rows.values()})
+            if self.filter_vars[key].get() not in choices:
+                choices.append(self.filter_vars[key].get())
+            self.filter_widgets[key].configure(values=choices)
+        filters = {key: var.get() for key, var in self.filter_vars.items()}
+        filtered = any(value != "All" for value in filters.values())
         self.selected_metric = None
-        self.show_cases([(report, row) for report in reports for row in report.rows.values()])
-        series = [(report, metric) for report in reports for metric in report.metrics]
-        self.capabilities.render(series)
+        self.show_cases([(report, row) for report in reports for row in report.rows.values() if row_matches(row, filters)])
+        series = [(report, metric) for report in reports for metric in report.metrics if metric_matches(report, metric, filters)]
+        self.capabilities.render(series, filtered=filtered)
         self.roles.render(reports, series)
+        self.assistant.render(series, filtered=filtered)
+        self.comparisons.delete(*self.comparisons.get_children())
+        self.comparison_targets.clear()
+        # Empty, unmeasured placeholders do not constitute a comparison pair.
+        series = [(report, metric) for report, metric in series if metric.get("case_refs")]
+        for index, comparison in enumerate(compare_reports(series)):
+            left, right = series[comparison["left_series"] - 1], series[comparison["right_series"] - 1]
+            key = f"comparison-{index}"
+            self.comparison_targets[key] = (left, right, comparison)
+            self.comparisons.insert("", "end", iid=key, values=(comparison["metric_id"],
+                configuration_label(left[1].get("configuration")) + " / " + left[0].run_dir.name,
+                configuration_label(right[1].get("configuration")) + " / " + right[0].run_dir.name,
+                comparison["eligible"], ", ".join(comparison["exclusion_reasons"])))
+
+    def reset_filters(self):
+        for var in self.filter_vars.values():
+            var.set("All")
+        self.refresh()
+
+    def select_comparison(self, _event=None):
+        selection = self.comparisons.selection()
+        if not selection or selection[0] not in self.comparison_targets:
+            return
+        left, right, comparison = self.comparison_targets[selection[0]]
+        self.clear_detail()
+        self.selected_metric = None
+        set_text(self.detail, f"Comparison: {comparison['metric_id']}\nEligible: {comparison['eligible']}\n"
+            f"Exclusions: {display(comparison['exclusion_reasons'])}\nCombined score: none\n\n"
+            + "LEFT\n" + self.metric_detail(*left) + "\nRIGHT\n" + self.metric_detail(*right))
+
+    def comparison_side(self, side):
+        selection = self.comparisons.selection()
+        if selection and selection[0] in self.comparison_targets:
+            self.select_metric(*self.comparison_targets[selection[0]][side])
+            self.views.select(self.case_frame)
 
     def select_metric(self, report, metric):
-        self.show_cases([(report, row) for row in report.metric_rows(metric)])
+        self.show_cases([(report, row) for row in report.metric_rows(metric)], metric)
         self.selected_report, self.selected_metric = report, metric
         set_text(self.detail, self.metric_detail(report, metric) +
             "\nSelect Case rows to inspect each exact attempt and artifact.\n\n" + json.dumps(metric, indent=2, ensure_ascii=False))
@@ -140,11 +213,13 @@ class ResultsView(ttk.Frame):
                 f"Measured outcome: {display(metric.get('suitability') or metric.get('status'))}\n"
                 f"Numerator / denominator: {display(metric.get('numerator'))} / {display(metric.get('denominator'))}\n"
                 f"Review: {display(metric.get('review_status'))}\n"
+                f"First pass: {display(metric.get('first_pass'))}\nAfter repair: {display(metric.get('after_repair'))}\n"
+                f"Failed cases: {display(metric.get('final_failed_cases'))}\nBlocked cases: {display(metric.get('blocked_cases'))}\n"
                 f"Comparison eligible: {display(metric.get('comparison_eligible'))}\n"
                 f"Exclusions: {display(metric.get('comparison_exclusion_reasons'))}\n"
                 "Counts are distinct cases; attempts and cumulative acceptance checks remain separate.\n")
 
-    def show_cases(self, rows):
+    def show_cases(self, rows, metric=None):
         self.cases.delete(*self.cases.get_children())
         self.case_rows.clear()
         self.clear_detail()
@@ -152,10 +227,14 @@ class ResultsView(ttk.Frame):
             key = f"case-{index}"
             self.case_rows[key] = (report, row)
             config = row.get("configuration") or {}
+            member = "Source report row"
+            if metric:
+                refs = [ref for ref in metric["case_refs"] if ref["row_id"] == row["row_id"]]
+                member = "Included" if refs and refs[0]["included"] else "Excluded · see reasons in result"
             self.cases.insert("", "end", iid=key, values=(display(config.get("model_name")),
                 f"{display(row.get('suite_id'))} / {row['case_id']}", display(row.get("normalized_status")),
                 display(row.get("human_review_state")),
-                " / ".join(display(row.get(k)) for k in ("run_id", "trial_id", "attempt_id"))))
+                " / ".join(display(row.get(k)) for k in ("run_id", "trial_id", "attempt_id")), member))
 
     def clear_detail(self):
         self.selected_report = self.selected_row = None
@@ -170,7 +249,15 @@ class ResultsView(ttk.Frame):
         report, row = self.case_rows[selection[0]]
         self.selected_report, self.selected_row = report, row
         prefix = self.metric_detail(report, self.selected_metric) if self.selected_metric else ""
+        if self.selected_metric:
+            refs = [ref for ref in self.selected_metric["case_refs"] if ref["row_id"] == row["row_id"]]
+            excluded = [ref for ref in self.selected_metric.get("excluded", []) if row["row_id"] in ref.get("row_ids", [])]
+            prefix += "Selected metric membership: " + display(refs or excluded) + "\n"
         set_text(self.detail, prefix + f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
+                 f"Human review: {display(row.get('human_review_state'))}\n"
+                 f"Technical/reference review: {display(row.get('technical_review_status') or row.get('reference_review_status'))}\n"
+                 f"First pass: {display(row.get('first_pass_passed'))}\nRepair attempted: {display(row.get('repair_attempted'))}\n"
+                 f"Repair passed: {display(row.get('repair_passed'))}\n"
                  "Missing fields: Unknown. Assessment and execution are separate.\n\n" + json.dumps(row, indent=2, ensure_ascii=False))
         self.artifacts.delete(*self.artifacts.get_children())
         self.artifact_refs.clear()
