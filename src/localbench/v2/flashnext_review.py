@@ -16,6 +16,7 @@ from typing import Any, Iterable, Mapping
 from xml.sax.saxutils import escape
 
 from .contracts import canonical_json_bytes
+from .metric_projection import project_metrics
 
 
 def _number(value: Any) -> float | int | None:
@@ -35,6 +36,13 @@ def _case_row(result: Mapping[str, Any], profile: Mapping[str, Any]) -> dict[str
         "candidate_id": profile.get("candidate_id"),
         "candidate_name": profile.get("candidate_name"),
         "role": result.get("role"),
+        "suite_id": result.get("suite_id"),
+        "suite_version": result.get("suite_version"),
+        "rubric_id": result.get("rubric_id"),
+        "evaluation_track": result.get("evaluation_track"),
+        "human_adjudication": result.get("human_adjudication"),
+        "acceptance_check_count": result.get("acceptance_check_count"),
+        "attempt_id": result.get("attempt_id"),
         "case_id": result.get("case_id"),
         "ordinal": result.get("ordinal"),
         "status": result.get("status"),
@@ -100,6 +108,7 @@ def _case_row(result: Mapping[str, Any], profile: Mapping[str, Any]) -> dict[str
         "comparison_eligible": result.get("comparison_eligible"),
         "comparison_note": result.get("comparison_note"),
         "output_origin": result.get("output_origin"),
+        "metric_catalog_version": result.get("metric_catalog_version"),
     }
 
 
@@ -254,6 +263,21 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
     output.mkdir(parents=True, exist_ok=False)
     case_rows = [_case_row(result, profile) for result in summary.get("results", [])]
     role_rows = _role_rows(case_rows)
+    # Legacy cases without explicit suite/rubric identity remain unscored.
+    catalog_path = Path(__file__).resolve().parents[3] / "docs" / "qualification-v2" / "METRIC_CATALOG_V1.json"
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    metrics = project_metrics(case_rows, profile, catalog)
+    metric_rows = [{
+        "metric_id": item["metric_id"], "kind": item["kind"],
+        "suite_id": item["suite_id"], "suite_version": item["suite_version"],
+        "rubric_id": item["rubric_id"], "rubric_version": item["rubric_version"],
+        "status": item["status"], "numerator": item["numerator"],
+        "denominator": item["denominator"], "percentage": item["percentage"],
+        "distinct_cases": item["distinct_cases"], "attempt_count": item["attempt_count"],
+        "review_status": item["review_status"],
+        "case_refs_json": json.dumps(item["case_refs"], sort_keys=True),
+        "excluded_json": json.dumps(item["excluded"], sort_keys=True),
+    } for item in metrics["metrics"]]
     recovery_rows = [{
         "role": row["role"], "case_id": row["case_id"],
         "schema_normalizations": row["schema_normalizations"],
@@ -297,10 +321,12 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         "case_results": case_rows,
         "recovery": recovery_rows,
         "performance": performance_rows,
+        "qualification_v2_metrics": metrics,
     }
     (output / "review-package.json").write_bytes(canonical_json_bytes(package) + b"\n")
     (output / "case-results.csv").write_bytes(_csv_bytes(case_rows))
     (output / "role-summary.csv").write_bytes(_csv_bytes(role_rows))
+    (output / "metric-summary.csv").write_bytes(_csv_bytes(metric_rows))
     workbook = output / "review-package.xlsx"
     _write_xlsx(workbook, [
         ("Model Summary", metadata),
@@ -308,12 +334,14 @@ def write_review_package(*, output_dir: Path, summary: Mapping[str, Any], profil
         ("Case Results", case_rows),
         ("Controller Recovery", recovery_rows),
         ("Performance", performance_rows),
+        ("Metric Summary", metric_rows),
     ])
     return {
         "directory": str(output),
         "json": str(output / "review-package.json"),
         "case_results_csv": str(output / "case-results.csv"),
         "role_summary_csv": str(output / "role-summary.csv"),
+        "metric_summary_csv": str(output / "metric-summary.csv"),
         "xlsx": str(workbook),
         "raw_evidence_authoritative": True,
     }

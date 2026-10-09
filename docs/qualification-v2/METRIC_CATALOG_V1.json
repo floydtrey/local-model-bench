@@ -1,0 +1,216 @@
+{
+  "schema_version": "qualification-v2/metric-catalog:v1",
+  "policy": "Metrics require explicit suite, rubric, unique case IDs, observed outcome, and exact evidence. No automatic role assignment.",
+  "metrics": [
+    {
+      "id": "reasoning",
+      "kind": "capability",
+      "suite": "shared-l0-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-v2-evaluator",
+      "rubric_version": "1",
+      "cases": [
+        "contradiction-detection",
+        "dependency-plan"
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false
+    },
+    {
+      "id": "coding",
+      "kind": "capability",
+      "suite": "shared-l2-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-v2-evaluator",
+      "rubric_version": "1",
+      "cases": [
+        "minimal-code-repair",
+        "multi-file-synthesis"
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false
+    },
+    {
+      "id": "tool_use",
+      "kind": "capability",
+      "suite": "shared-l2-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-v2-evaluator",
+      "rubric_version": "1",
+      "cases": [
+        "read-transform-write",
+        "read-only-evidence-answer",
+        "safe-existing-update",
+        "minimal-code-repair",
+        "multi-file-synthesis",
+        "missing-file-block",
+        "scope-restraint",
+        "idempotent-noop"
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false
+    },
+    {
+      "id": "instruction_following",
+      "kind": "capability",
+      "suite": "shared-l0-core",
+      "suite_version": "1.0.0",
+      "rubric": "shared-v2-evaluator",
+      "rubric_version": "1",
+      "cases": [
+        "instruction-precedence",
+        "structured-transformation",
+        "output-discipline"
+      ],
+      "scoring": "independent_deterministic_case_pass",
+      "human_review": false
+    },
+    {
+      "id": "vision",
+      "kind": "capability",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_tested",
+      "human_review": false
+    },
+    {
+      "id": "long_context_recall",
+      "kind": "capability",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_tested",
+      "human_review": false
+    },
+    {
+      "id": "role_planner",
+      "kind": "role_suitability",
+      "suite": "flashnext-all-roles:v1",
+      "suite_version": "1",
+      "rubric": "historical-human-review",
+      "rubric_version": "1",
+      "cases": [],
+      "scoring": "human_adjudication_required",
+      "human_review": true,
+      "role": "planner",
+      "minimum_coverage": "not_defined",
+      "critical_safety_gate": "not_defined"
+    },
+    {
+      "id": "role_governor",
+      "kind": "role_suitability",
+      "suite": "flashnext-all-roles:v1",
+      "suite_version": "1",
+      "rubric": "historical-human-review",
+      "rubric_version": "1",
+      "cases": [],
+      "scoring": "human_adjudication_required",
+      "human_review": true,
+      "role": "governor",
+      "minimum_coverage": "not_defined",
+      "critical_safety_gate": "not_defined"
+    },
+    {
+      "id": "role_worker",
+      "kind": "role_suitability",
+      "suite": "flashnext-all-roles:v1",
+      "suite_version": "1",
+      "rubric": "historical-human-review",
+      "rubric_version": "1",
+      "cases": [],
+      "scoring": "human_adjudication_required",
+      "human_review": true,
+      "role": "worker",
+      "minimum_coverage": "not_defined",
+      "critical_safety_gate": "not_defined"
+    },
+    {
+      "id": "role_tester",
+      "kind": "role_suitability",
+      "suite": "flashnext-all-roles:v1",
+      "suite_version": "1",
+      "rubric": "historical-human-review",
+      "rubric_version": "1",
+      "cases": [],
+      "scoring": "human_adjudication_required",
+      "human_review": true,
+      "role": "tester",
+      "minimum_coverage": "not_defined",
+      "critical_safety_gate": "not_defined"
+    },
+    {
+      "id": "role_reviewer",
+      "kind": "role_suitability",
+      "suite": "flashnext-all-roles:v1",
+      "suite_version": "1",
+      "rubric": "historical-human-review",
+      "rubric_version": "1",
+      "cases": [],
+      "scoring": "human_adjudication_required",
+      "human_review": true,
+      "role": "reviewer",
+      "minimum_coverage": "not_defined",
+      "critical_safety_gate": "not_defined"
+    },
+    {
+      "id": "multi_step_tasks",
+      "kind": "assistant",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_yet_calibrated",
+      "human_review": true
+    },
+    {
+      "id": "tool_selection",
+      "kind": "assistant",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_yet_calibrated",
+      "human_review": true
+    },
+    {
+      "id": "error_recovery",
+      "kind": "assistant",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_yet_calibrated",
+      "human_review": true
+    },
+    {
+      "id": "permission_boundaries",
+      "kind": "assistant",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_yet_calibrated",
+      "human_review": true
+    },
+    {
+      "id": "evidence_accuracy",
+      "kind": "assistant",
+      "suite": null,
+      "suite_version": null,
+      "rubric": null,
+      "rubric_version": null,
+      "cases": [],
+      "scoring": "not_yet_calibrated",
+      "human_review": true
+    }
+  ]
+}
