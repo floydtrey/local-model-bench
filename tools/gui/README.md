@@ -1,10 +1,10 @@
 # Local benchmark queue GUI
 
-A small, standard-library Tkinter front end for sequential Ollama role campaigns.
-Each queue item invokes the existing `tools/campaigns/run-all-roles.ps1` once,
-through a small PowerShell proxy that makes terminal output consistently UTF-8.
-That CLI still owns the Planner, Governor, Worker, Tester, Reviewer, evidence,
-and review-workbook behavior.
+A small, standard-library Tkinter front end for three existing Ollama campaigns:
+the original five-role battery, ASSISTANT-001 Persistent Event Journal and
+ASSISTANT-002 Event Simulator and Replay. The GUI does not contain a benchmark
+runner or assessment logic. Each queued item invokes the original PowerShell
+campaign launcher through a checked-in UTF-8 output proxy.
 
 ## Launch on Windows
 
@@ -41,12 +41,19 @@ path. An editable install is unnecessary. An installed package also supports
    default even if your shell's `OLLAMA_HOST` points elsewhere.
 2. Click model rows to toggle selection; Ctrl is unnecessary. **Select all**
    and **Clear selection** are available.
-3. Click **Add selected to queue**. The list order becomes queue order.
-   Select a Waiting queue row and use **Move up** / **Move down** to reorder it.
-   **Remove waiting** removes that row. Duplicate tags in one queue are ignored.
-4. Choose `screen` or `qualification`, check the governor root, and leave
-   advanced fields blank unless you want to override the CLI.
-5. Click **Start Queue**. If the queue is empty, Start first adds the selected
+3. Choose **Benchmark**: `roles`, `assistant-001` or `assistant-002`.
+   Project tasks are read from that project's frozen `packet.json`, not defined
+   in GUI code. Set **Through task** to T01–T06 as displayed, and choose `screen`
+   or `qualification`. A through task runs ALL tasks from T01 through it.
+4. For projects, read the **host-execution** warning. Generated Python is NOT
+   OS/network sandboxed. Explicitly check the acknowledgement and confirm the
+   queue-add dialog. Without both steps, no project item is queued.
+5. Click **Add selected to queue**. The list order becomes queue order. You can
+   select another benchmark, model, phase or task and add it to the SAME queue.
+   Exact duplicate model/settings pairs are ignored; different configurations of
+   the same model are separate rows. Use **Move up** / **Move down** to reorder
+   Waiting rows, or **Remove waiting** to delete one.
+6. Click **Start Queue**. If the queue is empty, Start first adds the selected
    model rows. One process runs at a time, from the checkout's root directory.
    The next model starts only after the previous process has exited and its
    result has been handled and saved.
@@ -57,25 +64,29 @@ stdout/stderr as the child writes it, including partial lines. It retains the
 most recent 300,000 characters and follows new output when already scrolled to
 the bottom. Scroll up to inspect earlier output without being pulled back down.
 
-Settings are saved with the queue and fixed once its first item starts, including
-while Paused or Stopped. Use **New Queue** to change settings for another batch
-or deliberately rerun a completed, failed, or interrupted model. New Queue clears
-only the queue list; the CLI's benchmark evidence stays in place.
+**Each queue row snapshots its own benchmark, phase, through-task selection,
+host-execution consent and overrides.** Editing the controls later does not
+change any existing row, including after a pause, stop or app restart. Controls
+are disabled during active execution. New Queue clears the rows but not benchmark
+evidence. A completed/failed/interrupted exact item is never silently retried.
 
 ### Settings and defaults
 
 | Setting | Initial value / authoritative CLI default | Forwarded argument |
 |---|---|---|
-| Runtime | `ollama`, fixed in V1 | `-Runtime ollama` |
+| Benchmark | `roles` or a released Assistant project | GUI routes to checked-in runner |
+| Project through | Packet-defined task ID (T01–T06 in current projects) | `-Through` |
+| Host-execution acknowledgment | Off; explicitly enabled for project code | `-AllowHostExecution` |
+| Runtime | `ollama` on all three campaigns | `-Runtime ollama` (roles only) |
 | Phase | `screen`; also accepts `qualification` | `-Phase` |
-| Governor root | `C:\Projects\governor` | `-GovernorRoot` |
+| Governor root | `C:\Projects\governor` | `-GovernorRoot` (roles only) |
 | Context tokens | Blank uses `32768` | `-ContextTokens` |
 | Max output tokens | Blank uses `8192` | `-MaxOutputTokens` |
 | Timeout seconds | Blank uses `600` | `-TimeoutSeconds` |
 | Keep-alive seconds | Blank uses `3600` | `-KeepAliveSeconds` |
 
-These are the current defaults in `run-all-roles.ps1`. Blank advanced fields
-**omit the argument**, so the runner remains authoritative if its defaults change.
+These are the current defaults in all three campaign launchers. Blank advanced
+fields **omit the argument**, so the selected runner remains authoritative.
 Context and output overrides must be positive 32-bit integers. Timeout must be a
 finite positive number. Keep-alive accepts finite values, including `0` and `-1`,
 and forwards them unchanged. The queue does not impose an additional total-model
@@ -91,9 +102,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -GovernorRoot C:\Projects\governor
 ```
 
-`run-queue-item.ps1` sets only console/pipe output encoding, forwards all arguments
-to `tools/campaigns/run-all-roles.ps1` using PowerShell's `@args` proxy support,
-and returns its exit code. It defines no benchmark parameters or defaults.
+For project rows, the GUI adds a private `-QueueBenchmark assistant-001` or
+`assistant-002` selector. The parameterless proxy removes that selector and
+forwards the unchanged remaining args to the chosen checked-in
+`tools/campaigns/run-assistant-001.ps1` or `run-assistant-002.ps1`
+entrypoint. Project argv includes `-Action run -Model ... -Phase ... -Through
+... -AllowHostExecution`, and excludes role-only `-GovernorRoot` and
+`-Runtime` flags. The original `roles` argv is forwarded unchanged.
+
+`run-queue-item.ps1` selects only the three allowlisted launcher names, sets
+console output to UTF-8 and returns the CLI exit code. It defines no duplicate
+benchmark parameters or defaults.
 This preserves Unicode paths in live output and `RUN_DIR` without changing the
 existing CLI. See Microsoft's [parameter forwarding documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-5.1#splatting-command-parameters).
 
@@ -141,8 +160,11 @@ State is saved atomically in:
 <checkout>\local-state\queue-gui\queue.json
 ```
 
-It contains queue order, settings, item states, timestamps, PIDs, exit codes,
-errors, and captured run directories. It does not save credentials, an environment
+It contains queue order, per-item immutable settings (benchmark, phase, through
+task, overrides, and explicit project consent), editor defaults, item states,
+timestamps, PIDs, exit codes, errors, and captured run directories. Version 1
+saved queues are upgraded in memory to version 2: each old item keeps the exact
+original five-role settings and previous evidence. It does not save credentials, an environment
 dump, or the terminal transcript. `local-state/` is already ignored by Git.
 An OS-held instance lock allows only one GUI per checkout, even with a custom
 state-file path. This does not lock out a separately launched CLI or another
@@ -169,7 +191,14 @@ py -3 .\tools\gui\benchmark-queue.py --state-file C:\BenchQueue\queue.json
 
 ## Development and deterministic validation
 
-The implementation is separate from the benchmark engine:
+The implementation is separate from the benchmark engine. Project packet task
+metadata is discovered from `project-benchmarks/assistant-00x/v1/packet.json`;
+the project runner still validates and executes its frozen benchmark. The GUI
+does not select or run project probes (Planner, Governor, Tester, Reviewer) or
+automatically authorize a full autonomous pipeline. Project GUI rows are the
+published fixed-plan Worker chains.
+
+The implementation is separate from benchmark evaluation code:
 
 - `src/localbench/queue_gui/core.py`: settings, argv, parsing, queue transitions,
   and JSON persistence.
@@ -193,5 +222,12 @@ Widget tests create actual Tk widgets; they skip on hosts without a display.
 The dedicated Windows CI job sets `LOCALBENCH_REQUIRE_TK=1`, requiring actual
 Tk startup rather than accepting that skip, and checks the checkout launchers.
 
-No role packets, accepted benchmark batteries, evaluation rules, or workbook
-generation are implemented here. The existing CLI remains independently usable.
+CI covers the original GUI regressions, Tk item selection with real widgets,
+mixed-benchmark queue scheduling and state restoration, legacy-state migration,
+packet-defined tasks, consent gating and native Windows PowerShell argument
+forwarding with harmless stubs. It runs no actual models. No frozen test packets,
+role prompts, evaluation rules or workbook generation were changed.
+
+**Safety:** A GUI consent flag is acknowledgment only, never a process sandbox.
+Model-generated Python can access the host during project acceptance. For
+untrusted models/code, run the entire benchmark inside a disposable VM.

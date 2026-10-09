@@ -368,5 +368,100 @@ class QueueGuiWidgetTests(unittest.TestCase):
         self._wait_until(lambda: not self.runner.active, "reordering test completion")
 
 
+    def _install_project_fixtures(self):
+        for project in ("assistant-001", "assistant-002"):
+            packet = self.repo / "project-benchmarks" / project / "v1" / "packet.json"
+            packet.parent.mkdir(parents=True, exist_ok=True)
+            packet.write_text(__import__("json").dumps({
+                "packet_id": project + "-v1",
+                "tasks": [{"id": "T01", "title": "Normalize"},
+                          {"id": "T02", "title": "Persist"}],
+            }), encoding="utf-8")
+            (self.repo / "tools/campaigns" / ("run-" + project + ".ps1")).write_text(
+                "# Fake project runner; FakeRunner prevents execution.\\n", encoding="utf-8")
+
+    def test_project_selector_reflects_packet_tasks_and_requires_consent(self):
+        self._install_project_fixtures()
+        self.app.refresh_models()
+        self._wait_until(lambda: self.app.models.size() == len(self.tags), "model list")
+        self.app.models.selection_set(0)
+        self.app.benchmark_var.set("assistant-001")
+        self.app._on_benchmark_change()
+        self.assertEqual(self.app.through_widget.cget("values"), ("T01", "T02"))
+        self.assertEqual(self.app.through_var.get(), "T01")
+        with patch("localbench.queue_gui.app.messagebox.showerror") as show:
+            self.app.add_selected_models()
+        self.assertTrue(show.called)
+        self.assertEqual(len(self.app.queue.items), 0)
+        self.app.host_ack_var.set(True)
+        self.app.through_var.set("T02")
+        with patch("localbench.queue_gui.app.messagebox.askyesno", return_value=False):
+            self.app.add_selected_models()
+        self.assertEqual(self.app.queue.items, [])
+        with patch("localbench.queue_gui.app.messagebox.askyesno", return_value=True):
+            self.app.add_selected_models()
+        self.assertEqual(len(self.app.queue.items), 1)
+        item = self.app.queue.items[0]
+        self.assertEqual((item.settings.benchmark, item.settings.through,
+                          item.settings.allow_host_execution),
+                         ("assistant-001", "T02", True))
+        self.assertEqual(self.app.queue_tree.set(item.id, "benchmark"), "assistant-001")
+        self.assertEqual(self.app.queue_tree.set(item.id, "through"), "T02")
+
+    def test_mixed_benchmarks_launch_the_correct_item_snapshot(self):
+        self._install_project_fixtures()
+        self.app.refresh_models()
+        self._wait_until(lambda: self.app.models.size() == len(self.tags), "model list")
+        self.app.models.selection_set(0)
+        self.app.add_selected_models()
+        self.app.models.selection_clear(0, "end")
+        self.app.models.selection_set(0)
+        self.app.benchmark_var.set("assistant-002")
+        self.app._on_benchmark_change()
+        self.app.phase_var.set("qualification")
+        self.app.through_var.set("T02")
+        self.app.host_ack_var.set(True)
+        with patch("localbench.queue_gui.app.messagebox.askyesno", return_value=True):
+            self.app.add_selected_models()
+        self.assertEqual(len(self.app.queue.items), 2)
+        self.assertEqual(self.app.queue.items[0].settings.benchmark, "roles")
+        self.assertEqual(self.app.queue.items[1].settings.benchmark, "assistant-002")
+        self.app.start_queue()
+        self._wait_until(lambda: len(self.runner.started) == 1, "role item")
+        first_cmd = self.runner.started[0][1]
+        self.assertNotIn("-QueueBenchmark", first_cmd)
+        self.runner.finish(0)
+        self._wait_until(lambda: len(self.runner.started) == 2, "assistant item")
+        second_cmd = self.runner.started[1][1]
+        self.assertEqual(second_cmd[second_cmd.index("-QueueBenchmark") + 1], "assistant-002")
+        self.assertEqual(second_cmd[second_cmd.index("-Through") + 1], "T02")
+        self.assertEqual(second_cmd[second_cmd.index("-Phase") + 1], "qualification")
+        self.assertIn("-AllowHostExecution", second_cmd)
+        self.app.stop_after_current()
+        self.runner.finish(0)
+        self._wait_until(lambda: not self.runner.active, "project completion")
+        restored = load_state(self.state_path)
+        self.assertEqual([i.settings.benchmark for i in restored.items], ["roles", "assistant-002"])
+
+    def test_recovered_project_queue_keeps_consent_and_through_selection(self):
+        self._install_project_fixtures()
+        self.app.refresh_models()
+        self._wait_until(lambda: self.app.models.size() == len(self.tags), "model list")
+        self.app.models.selection_set(0)
+        self.app.benchmark_var.set("assistant-001")
+        self.app._on_benchmark_change()
+        self.app.host_ack_var.set(True)
+        self.app.through_var.set("T02")
+        with patch("localbench.queue_gui.app.messagebox.askyesno", return_value=True):
+            self.app.add_selected_models()
+        self.app.request_close()
+        self._create_app()
+        self.assertEqual(self.app.benchmark_var.get(), "assistant-001")
+        self.assertEqual(self.app.through_var.get(), "T02")
+        self.assertEqual(len(self.app.queue.items), 1)
+        self.assertEqual(self.app.queue.items[0].settings.benchmark, "assistant-001")
+        self.assertEqual(self.runner.started, [])
+
+
 if __name__ == "__main__":
     unittest.main()

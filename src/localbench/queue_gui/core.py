@@ -17,7 +17,38 @@ from typing import Any, Iterable
 from uuid import UUID, uuid4
 
 
-STATE_VERSION = 1
+STATE_VERSION = 2
+
+# Only these pre-existing benchmark entrypoints may be launched by the GUI.
+BENCHMARKS = {
+    "roles": ("Five-role battery", "run-all-roles.ps1"),
+    "assistant-001": ("ASSISTANT-001 · Persistent Event Journal", "run-assistant-001.ps1"),
+    "assistant-002": ("ASSISTANT-002 · Event Simulator and Replay", "run-assistant-002.ps1"),
+}
+
+
+def benchmark_tasks(repo_root: Path, benchmark: str) -> list[tuple[str, str]]:
+    """Read each project's released task list; the GUI does not define case IDs."""
+    if benchmark not in BENCHMARKS:
+        raise ValueError("Unknown benchmark: " + str(benchmark))
+    if benchmark == "roles":
+        return []
+    packet_path = Path(repo_root) / "project-benchmarks" / benchmark / "v1" / "packet.json"
+    try:
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"Cannot read {benchmark} packet.json: {exc}") from exc
+    if packet.get("packet_id") != benchmark + "-v1" or not isinstance(packet.get("tasks"), list):
+        raise ValueError(f"Invalid {benchmark} packet.json metadata.")
+    tasks = []
+    for entry in packet["tasks"]:
+        if not isinstance(entry, dict) or not isinstance(entry.get("id"), str) or not re.fullmatch(r"T[0-9]{2,4}", entry["id"]) or not isinstance(entry.get("title"), str):
+            raise ValueError(f"Invalid task metadata in {benchmark} packet.")
+        tasks.append((entry["id"], entry["title"]))
+    if not tasks or len({id for id, _ in tasks}) != len(tasks):
+        raise ValueError(f"Empty or duplicate task IDs in {benchmark} packet.")
+    return tasks
+
 DEFAULT_GOVERNOR_ROOT = r"C:\Projects\governor"
 ITEM_STATUSES = {"Waiting", "Running", "Complete", "Failed", "Interrupted"}
 QUEUE_STATUSES = {"Idle", "Running", "Paused", "Stopped", "Complete"}
@@ -83,11 +114,24 @@ class BenchmarkSettings:
     max_output_tokens: int | None = None
     timeout_seconds: float | None = None
     keep_alive_seconds: float | None = None
+    benchmark: str = "roles"
+    through: str | None = None
+    allow_host_execution: bool = False
 
     def __post_init__(self) -> None:
         self.validate()
 
     def validate(self) -> None:
+        if self.benchmark not in BENCHMARKS:
+            raise ValueError("Select an available benchmark.")
+        if self.benchmark == "roles" and self.through is not None:
+            raise ValueError("The five-role battery has no project task range.")
+        if self.benchmark != "roles" and (not isinstance(self.through, str) or not re.fullmatch(r"T[0-9]{2,4}", self.through)):
+            raise ValueError("Select a project task from the packet.")
+        if type(self.allow_host_execution) is not bool:
+            raise ValueError("Host-execution consent must be a boolean.")
+        if self.benchmark == "roles" and self.allow_host_execution:
+            raise ValueError("Host-execution consent applies only to project benchmarks.")
         if self.phase not in ("screen", "qualification"):
             raise ValueError("Phase must be 'screen' or 'qualification'.")
         if (not isinstance(self.governor_root, str)
@@ -113,10 +157,13 @@ class BenchmarkSettings:
         cls, phase: str = "screen", governor_root: str = DEFAULT_GOVERNOR_ROOT,
         context_tokens: Any = None, max_output_tokens: Any = None,
         timeout_seconds: Any = None, keep_alive_seconds: Any = None,
+        benchmark: str = "roles", through: str | None = None,
+        allow_host_execution: bool = False,
     ) -> BenchmarkSettings:
         """Convert entry-field strings; blank overrides use the CLI's defaults."""
         return cls(
             phase=phase,
+            benchmark=benchmark, through=through, allow_host_execution=allow_host_execution,
             governor_root=governor_root.strip() if isinstance(governor_root, str) else governor_root,
             context_tokens=_optional_integer(context_tokens, "Context tokens"),
             max_output_tokens=_optional_integer(max_output_tokens, "Max output tokens"),
@@ -132,12 +179,23 @@ def build_command(
     """Build argv for the UTF-8 proxy, which forwards unchanged args to the CLI."""
     validate_model(model)
     settings.validate()
+    root = Path(repo_root)
     command = [
         powershell_exe, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-        str(Path(repo_root) / "tools" / "gui" / "run-queue-item.ps1"),
-        "-Runtime", "ollama", "-Model", model, "-Phase", settings.phase,
-        "-GovernorRoot", settings.governor_root,
+        str(root / "tools" / "gui" / "run-queue-item.ps1"),
     ]
+    if settings.benchmark == "roles":
+        command.extend(("-Runtime", "ollama", "-Model", model, "-Phase", settings.phase,
+                        "-GovernorRoot", settings.governor_root))
+    else:
+        task_ids = [task for task, _ in benchmark_tasks(root, settings.benchmark)]
+        if settings.through not in task_ids:
+            raise ValueError(f"Task {settings.through!r} is not in the selected project's packet.")
+        if not settings.allow_host_execution:
+            raise ValueError("Project benchmarks execute model-generated Python. Explicit host-execution consent is required.")
+        command.extend(("-QueueBenchmark", settings.benchmark, "-Action", "run",
+                        "-Model", model, "-Phase", settings.phase,
+                        "-Through", settings.through, "-AllowHostExecution"))
     for flag, value in (
         ("-ContextTokens", settings.context_tokens),
         ("-MaxOutputTokens", settings.max_output_tokens),
@@ -193,6 +251,7 @@ class QueueItem:
     started_at: str | None = None
     finished_at: str | None = None
     error: str | None = None
+    settings: BenchmarkSettings = field(default_factory=BenchmarkSettings)
 
 
 @dataclass
@@ -210,18 +269,20 @@ class QueueState:
     def waiting(self) -> list[QueueItem]:
         return [item for item in self.items if item.status == "Waiting"]
 
-    def add_models(self, models: Iterable[str]) -> list[QueueItem]:
+    def add_models(self, models: Iterable[str], settings: BenchmarkSettings | None = None) -> list[QueueItem]:
         if self.status == "Running" or self.active is not None:
             raise ValueError("The queue cannot be edited while it is running.")
         models = [validate_model(model) for model in models]
-        known = {item.model for item in self.items}
+        selected = settings if settings is not None else self.settings
+        selected.validate()
+        known = {(item.model, item.settings) for item in self.items}
         added = []
         for model in models:
-            if model not in known:
-                item = QueueItem(model=model)
+            if (model, selected) not in known:
+                item = QueueItem(model=model, settings=selected)
                 self.items.append(item)
                 added.append(item)
-                known.add(model)
+                known.add((model, selected))
         if added and self.status == "Complete":
             self.status = "Idle"
         return added
@@ -309,8 +370,16 @@ def _optional_text(value: Any, label: str, *, timestamp: bool = False) -> None:
 
 def _state_from_payload(payload: Any, *, recover: bool) -> QueueState:
     _exact_fields(payload, {"version", "items", "settings", "status", "pending_action"}, "document")
-    if type(payload["version"]) is not int or payload["version"] != STATE_VERSION:
+    if type(payload["version"]) is not int or payload["version"] not in (1, STATE_VERSION):
         raise ValueError("Invalid queue state: unsupported version.")
+    if payload["version"] == 1:
+        # V1 used one global configuration; copy its exact historical values into
+        # every row before validating as V2. Never drop or restart previous runs.
+        old = payload["settings"]
+        _exact_fields(old, set(BenchmarkSettings.__dataclass_fields__) - {"benchmark", "through", "allow_host_execution"}, "legacy settings")
+        legacy_settings = dict(old, benchmark="roles", through=None, allow_host_execution=False)
+        payload = {**payload, "version": STATE_VERSION, "settings": legacy_settings,
+                   "items": [dict(row, settings=dict(legacy_settings)) for row in payload["items"]]}
     _exact_fields(payload["settings"], set(BenchmarkSettings.__dataclass_fields__), "settings")
     settings = BenchmarkSettings(**payload["settings"])
     if not isinstance(payload["status"], str) or payload["status"] not in QUEUE_STATUSES:
@@ -324,6 +393,8 @@ def _state_from_payload(payload: Any, *, recover: bool) -> QueueState:
     for raw in payload["items"]:
         _exact_fields(raw, set(QueueItem.__dataclass_fields__), "item")
         validate_model(raw["model"])
+        _exact_fields(raw["settings"], set(BenchmarkSettings.__dataclass_fields__), "item settings")
+        row_settings = BenchmarkSettings(**raw["settings"])
         try:
             if not isinstance(raw["id"], str) or str(UUID(raw["id"])) != raw["id"]:
                 raise ValueError
@@ -355,7 +426,7 @@ def _state_from_payload(payload: Any, *, recover: bool) -> QueueState:
                 raise ValueError("Invalid queue state: complete item needs exit code zero and no error.")
             if raw["status"] == "Failed" and raw["exit_code"] == 0 and raw["error"] is None:
                 raise ValueError("Invalid queue state: failed item needs a failure result.")
-        items.append(QueueItem(**raw))
+        items.append(QueueItem(**{**raw, "settings": row_settings}))
     state = QueueState(items=items, settings=settings, status=payload["status"],
                        pending_action=payload["pending_action"])
     running = [item for item in items if item.status == "Running"]

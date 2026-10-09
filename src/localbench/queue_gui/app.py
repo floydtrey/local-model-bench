@@ -1,4 +1,4 @@
-"""Small Tk front end for the existing all-role PowerShell launcher."""
+"""Sequential Tk front end for supported campaign launchers."""
 from __future__ import annotations
 
 import argparse
@@ -14,7 +14,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 
 from .core import (
-    BenchmarkSettings, QueueState, build_command, load_state, parse_ollama_list,
+    BENCHMARKS, BenchmarkSettings, QueueState, benchmark_tasks, build_command, load_state, parse_ollama_list,
     parse_run_dir, save_state,
 )
 from .process import (
@@ -73,8 +73,8 @@ class BenchmarkQueueApp:
     def _build_widgets(self):
         root = self.root
         root.title("Model Benchmark Queue")
-        root.geometry("1100x850")
-        root.minsize(880, 680)
+        root.geometry("1210x900")
+        root.minsize(990, 720)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
         outer = ttk.Frame(root, padding=12)
@@ -111,17 +111,33 @@ class BenchmarkQueueApp:
         settings = ttk.LabelFrame(setup, text="Benchmark settings · runtime: ollama", padding=8)
         settings.grid(row=0, column=1, sticky="nsew")
         settings.columnconfigure(1, weight=1)
+
+        self.benchmark_var = tk.StringVar(value=self.queue.settings.benchmark)
+        self.through_var = tk.StringVar(value=self.queue.settings.through or "")
         self.phase_var = tk.StringVar(value=self.queue.settings.phase)
         self.governor_var = tk.StringVar(value=self.queue.settings.governor_root)
-        ttk.Label(settings, text="Phase").grid(row=0, column=0, sticky="w")
+        self.host_ack_var = tk.BooleanVar(value=self.queue.settings.allow_host_execution)
+        ttk.Label(settings, text="Benchmark").grid(row=0, column=0, sticky="w")
+        self.benchmark_widget = ttk.Combobox(
+            settings, values=tuple(BENCHMARKS), textvariable=self.benchmark_var,
+            state="readonly", width=20,
+        )
+        self.benchmark_widget.grid(row=0, column=1, columnspan=2, sticky="ew", pady=2)
+        self.benchmark_widget.bind("<<ComboboxSelected>>", self._on_benchmark_change)
+        ttk.Label(settings, text="Through task").grid(row=1, column=0, sticky="w")
+        self.through_widget = ttk.Combobox(settings, textvariable=self.through_var, state="readonly", width=20)
+        self.through_widget.grid(row=1, column=1, columnspan=2, sticky="ew", pady=2)
+        self.task_description = tk.StringVar()
+        ttk.Label(settings, textvariable=self.task_description, wraplength=440).grid(row=2, columnspan=3, sticky="w", pady=(0, 3))
+        ttk.Label(settings, text="Phase").grid(row=3, column=0, sticky="w")
         self.phase_widget = ttk.Combobox(settings, values=("screen", "qualification"), textvariable=self.phase_var, state="readonly", width=20)
-        self.phase_widget.grid(row=0, column=1, sticky="ew", pady=2)
-        ttk.Label(settings, text="Governor root").grid(row=1, column=0, sticky="w", padx=(0, 8))
-        governor = ttk.Entry(settings, textvariable=self.governor_var)
-        governor.grid(row=1, column=1, columnspan=2, sticky="ew", pady=2)
-        self.settings_widgets = [governor]
+        self.phase_widget.grid(row=3, column=1, sticky="ew", pady=2)
+        ttk.Label(settings, text="Governor root (roles)").grid(row=4, column=0, sticky="w", padx=(0, 8))
+        self.governor_widget = ttk.Entry(settings, textvariable=self.governor_var)
+        self.governor_widget.grid(row=4, column=1, columnspan=2, sticky="ew", pady=2)
+        self.settings_widgets = [self.governor_widget]
         self.advanced_vars = {}
-        for row, (key, label, default) in enumerate(ADVANCED_FIELDS, start=2):
+        for row, (key, label, default) in enumerate(ADVANCED_FIELDS, start=5):
             value = getattr(self.queue.settings, key)
             variable = tk.StringVar(value="" if value is None else str(value))
             self.advanced_vars[key] = variable
@@ -130,7 +146,17 @@ class BenchmarkQueueApp:
             entry.grid(row=row, column=1, sticky="ew", pady=2)
             self.settings_widgets.append(entry)
             ttk.Label(settings, text="CLI: " + default).grid(row=row, column=2, sticky="w", padx=6)
-        ttk.Label(settings, text="Blank advanced fields use CLI defaults.\nSettings are fixed once the queue starts; use New Queue to change them.", wraplength=450).grid(row=6, columnspan=3, sticky="w", pady=(6, 0))
+        self.host_ack_widget = ttk.Checkbutton(
+            settings, text="I authorize executing model-generated Python on this host (NOT sandboxed)",
+            variable=self.host_ack_var,
+        )
+        self.host_ack_widget.grid(row=9, columnspan=3, sticky="w", pady=(7, 0))
+        ttk.Label(
+            settings, text="Each queued model retains its own benchmark, phase, task and overrides. "
+                           "Blank advanced fields use the chosen CLI's defaults.",
+            wraplength=460,
+        ).grid(row=10, columnspan=3, sticky="w", pady=(6, 0))
+        self._sync_project_tasks()
 
         controls = ttk.Frame(outer)
         controls.grid(row=3, sticky="ew", pady=10)
@@ -150,9 +176,14 @@ class BenchmarkQueueApp:
         queue_frame = ttk.LabelFrame(panes, text="Queue · Complete means CLI exit 0; review model results separately", padding=6)
         queue_frame.columnconfigure(0, weight=1)
         queue_frame.rowconfigure(0, weight=1)
-        columns = ("model", "status", "exit", "elapsed", "run_dir")
+        columns = ("model", "benchmark", "phase", "through", "status", "exit", "elapsed", "run_dir")
         self.queue_tree = ttk.Treeview(queue_frame, columns=columns, show="headings", selectmode="browse", height=7)
-        for key, label, width in (("model", "Model", 230), ("status", "State", 95), ("exit", "Exit code", 70), ("elapsed", "Elapsed", 85), ("run_dir", "RUN_DIR", 410)):
+        for key, label, width in (
+            ("model", "Model", 160), ("benchmark", "Benchmark", 130),
+            ("phase", "Phase", 90), ("through", "Through", 65),
+            ("status", "State", 90), ("exit", "Exit", 52),
+            ("elapsed", "Elapsed", 73), ("run_dir", "RUN_DIR", 350),
+        ):
             self.queue_tree.heading(key, text=label)
             self.queue_tree.column(key, width=width, minwidth=60, stretch=key in ("model", "run_dir"))
         self.queue_tree.grid(row=0, sticky="nsew")
@@ -183,11 +214,39 @@ class BenchmarkQueueApp:
         ttk.Label(outer, textvariable=self.error_var, foreground="#a32626", wraplength=1040).grid(row=5, sticky="ew", pady=(5, 0))
 
     def _settings_locked(self):
-        return any(item.started_at is not None for item in self.queue.items)
+        # Frozen per queued item, not globally after the first run.
+        return False
+
+    def _on_benchmark_change(self, _event=None):
+        self._sync_project_tasks()
+        self.host_ack_var.set(False)
+        self._render()
+
+    def _sync_project_tasks(self):
+        benchmark = self.benchmark_var.get()
+        if benchmark == "roles":
+            self.through_var.set("")
+            self.through_widget.configure(values=(), state="disabled")
+            self.task_description.set("Existing five-role Planner / Governor / Worker / Tester / Reviewer battery")
+            return
+        try:
+            tasks = benchmark_tasks(self.repo_root, benchmark)
+        except ValueError as exc:
+            self.through_widget.configure(values=(), state="disabled")
+            self.task_description.set(str(exc))
+            return
+        ids = [task for task, _ in tasks]
+        if self.through_var.get() not in ids:
+            self.through_var.set(ids[0])
+        self.through_widget.configure(values=ids, state="readonly")
+        self.task_description.set(" / ".join(f"{task}: {title}" for task, title in tasks))
 
     def _read_settings(self):
         return BenchmarkSettings.from_fields(
             phase=self.phase_var.get(), governor_root=self.governor_var.get(),
+            benchmark=self.benchmark_var.get(),
+            through=self.through_var.get() if self.benchmark_var.get() != "roles" else None,
+            allow_host_execution=self.host_ack_var.get() if self.benchmark_var.get() != "roles" else False,
             **{key: variable.get() for key, variable in self.advanced_vars.items()},
         )
 
@@ -227,9 +286,23 @@ class BenchmarkQueueApp:
         if not selected:
             return
         try:
-            if not self._settings_locked():
-                self.queue.settings = self._read_settings()
-            self.queue.add_models(selected)
+            chosen = self._read_settings()
+            if chosen.benchmark != "roles":
+                if not chosen.allow_host_execution:
+                    raise ValueError("Project benchmarks execute model-generated Python. Check the explicit host-execution acknowledgement before adding.")
+                if not messagebox.askyesno(
+                    "Execute model-generated Python?",
+                    f"Add {len(selected)} model(s) for {chosen.benchmark} through {chosen.through} "
+                    f"({chosen.phase})?\\n\\nBounded file tools are NOT an OS/network sandbox. "
+                    "The generated Python runs on this computer. Prefer a disposable VM. "
+                    "Confirm authorization for these queued tasks.",
+                    parent=self.root,
+                ):
+                    return
+            # Validate the chosen packet and its task before queuing any item.
+            build_command(self.repo_root, selected[0], chosen)
+            self.queue.settings = chosen
+            self.queue.add_models(selected, settings=chosen)
         except ValueError as exc:
             messagebox.showerror("Queue settings", str(exc), parent=self.root)
             return
@@ -263,10 +336,11 @@ class BenchmarkQueueApp:
         if not self.queue.waiting or not self._check_recovery():
             return
         try:
-            if not self._settings_locked():
-                self.queue.settings = self._read_settings()
-            if not (self.repo_root / "tools" / "campaigns" / "run-all-roles.ps1").is_file():
-                raise ValueError("Cannot find tools/campaigns/run-all-roles.ps1 in this checkout.")
+            for item in self.queue.waiting:
+                script = BENCHMARKS[item.settings.benchmark][1]
+                if not (self.repo_root / "tools" / "campaigns" / script).is_file():
+                    raise ValueError(f"Cannot find tools/campaigns/{script} in this checkout.")
+                build_command(self.repo_root, item.model, item.settings)
             if not (self.repo_root / "tools" / "gui" / "run-queue-item.ps1").is_file():
                 raise ValueError("Cannot find tools/gui/run-queue-item.ps1 in this checkout.")
             self.queue.start()
@@ -313,8 +387,8 @@ class BenchmarkQueueApp:
             return
         self._line_buffer = ""
         try:
-            command = build_command(self.repo_root, item.model, self.queue.settings)
-            self._append_terminal(f"\n[{datetime.now().astimezone().isoformat(timespec='seconds')}] Starting {item.model}\n")
+            command = build_command(self.repo_root, item.model, item.settings)
+            self._append_terminal(f"\n[{datetime.now().astimezone().isoformat(timespec='seconds')}] Starting {item.model} · {item.settings.benchmark} · {item.settings.phase} · {item.settings.through or 'all roles'}\n")
             self._append_terminal(subprocess.list2cmdline(command) + "\n")
             item.pid = self.runner.start(item.id, command, self.repo_root)
         except (OSError, ValueError, RuntimeError) as exc:
@@ -428,7 +502,12 @@ class BenchmarkQueueApp:
         self.status_var.set(f"Queue: {self.queue.status}{pending}   |   Current: {current}   |   Finished: {finished}/{len(self.queue.items)}   |   Waiting: {len(self.queue.waiting)}")
         existing = set(self.queue_tree.get_children())
         for index, item in enumerate(self.queue.items):
-            values = (item.model, item.status, "" if item.exit_code is None else item.exit_code, self._elapsed(item), item.run_dir or "")
+            values = (
+                item.model, item.settings.benchmark, item.settings.phase,
+                item.settings.through or "all", item.status,
+                "" if item.exit_code is None else item.exit_code,
+                self._elapsed(item), item.run_dir or "",
+            )
             if item.id in existing:
                 self.queue_tree.item(item.id, values=values)
                 existing.remove(item.id)
@@ -443,10 +522,14 @@ class BenchmarkQueueApp:
         for button in self.edit_buttons:
             button.configure(state="disabled" if busy else "normal")
         self.add_button.configure(state="normal" if can_edit else "disabled")
-        locked = busy or self._settings_locked() or self._load_error
+        locked = busy or self._load_error or self._close_after_current
         self.phase_widget.configure(state="disabled" if locked else "readonly")
+        self.benchmark_widget.configure(state="disabled" if locked else "readonly")
+        self.through_widget.configure(state="disabled" if locked or self.benchmark_var.get() == "roles" else "readonly")
+        self.host_ack_widget.configure(state="disabled" if locked or self.benchmark_var.get() == "roles" else "normal")
         for widget in self.settings_widgets:
             widget.configure(state="disabled" if locked else "normal")
+        self.governor_widget.configure(state="normal" if not locked and self.benchmark_var.get() == "roles" else "disabled")
         enabled = {
             "start": can_edit and self.queue.status not in ("Paused", "Stopped") and (bool(self.queue.waiting) or not self.queue.items),
             "pause": running and self.queue.pending_action != "stop",
@@ -582,7 +665,7 @@ class BenchmarkQueueApp:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Local Tkinter queue for the existing Ollama five-role CLI.")
+    parser = argparse.ArgumentParser(description="Local Tkinter queue for supported Ollama benchmark campaigns.")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument("--state-file", type=Path, help="Default: <repo>/local-state/queue-gui/queue.json")
     args = parser.parse_args(argv)

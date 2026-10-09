@@ -7,5 +7,18 @@ $QueueUtf8 = [System.Text.UTF8Encoding]::new($false)
 $OutputEncoding = $QueueUtf8
 $env:PYTHONIOENCODING = 'utf-8'
 
-& (Join-Path $PSScriptRoot '..\campaigns\run-all-roles.ps1') @args
+# GUI-only dispatch selector, limited to approved checked-in scripts.
+$Forwarded = @($args)
+$Campaign = 'roles'
+if ($Forwarded.Count -ge 2 -and $Forwarded[0] -eq '-QueueBenchmark') {
+    $Campaign = [string]$Forwarded[1]
+    $Forwarded = @($Forwarded | Select-Object -Skip 2)
+}
+switch ($Campaign) {
+    'roles'         { $Runner = 'run-all-roles.ps1' }
+    'assistant-001' { $Runner = 'run-assistant-001.ps1' }
+    'assistant-002' { $Runner = 'run-assistant-002.ps1' }
+    default { throw "Unsupported GUI benchmark: $Campaign" }
+}
+& (Join-Path $PSScriptRoot ('..\campaigns\' + $Runner)) @Forwarded
 exit $LASTEXITCODE
