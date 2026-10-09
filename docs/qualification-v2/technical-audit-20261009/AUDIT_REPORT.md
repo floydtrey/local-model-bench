@@ -39,7 +39,7 @@ of hashes. The 12 Worker units are six handoff task slots per project, not twelv
 executions. The 108 Batch 5 controls are 36 cases × good/wrong/shallow responses;
 they are not 108 independent projects. Final material counts: 214 approved,
 0 CORRECTION_REQUIRED, 0 provisional, 0 blocked. Separate readiness/evidence gates:
-**14 BLOCKED** (12 absent validated seeds, Tester containment, future execution
+**14 BLOCKED** (12 absent validated seeds, Worker/Tester containment, future execution
 release) and **2 PROVISIONAL** (real Worker artifact compatibility, one per
 project). Their individual reasons are in the same inventory.
 
@@ -229,6 +229,11 @@ compatibility; their frozen digest identifies the revision. Never pool old/new
 rubric or input hashes as comparable trials. Earlier materials are recoverable
 at Batch 5 commit `331ec1a`; no historical run result is rewritten.
 
+Comparisons must also retain the adjudication schema version. An unchanged
+Tester assignment can retain its case-specification hash while the v2 execution
+gate changes; that does not make v1/v2 judgments interchangeable. The v2 review
+validator rejects a v1 adjudication record rather than silently reusing it.
+
 Legacy `HUMAN_REVIEW_PENDING` / `OWNER_REVIEW_PENDING` fields were not forged into
 human or Owner signoff. This audit is the explicit AI technical approval record,
 bound to current hashes. Future captured responses still need substantive
@@ -258,16 +263,25 @@ artifact hashes are attached to every ledger record.
 
 Earlier Batch 5 CI at the exact starting commit passed:
 [run 37927004587](https://github.com/floydtrey/local-model-bench/actions/runs/37927004587).
-Corrected-branch CI, combined staging validation and permanent-installation
-verification will be appended below with exact revisions before completion.
+Corrected-branch CI and combined integration CI passed on Windows/Linux Python
+3.10/3.12. Staging and the permanent installation each passed 475 tests with two
+local platform skips. The initial Windows 3.10 timing failure and unchanged
+successful retry are retained in the [completion record](INTEGRATION_RECORD.md).
 
-## Integration checkpoint
+## Completed integration
 
-Review branch: `development/t05-t12-technical-audit-20261009`.
-Staging/permanent update: pending at this report checkpoint. The existing permanent
-checkout remains unchanged at `da2fb72` until the combined staging tests and a
-new rollback point are verified. Final integration evidence is appended in the
-completion record; a pending checkpoint is not a claim of successful installation.
+Final audited executable commit: `40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487`
+on `development/t05-t12-integration-20261009`, merging the reviewed corrections
+`394276e7bb7a8a634f51ee7cbeb9c9b033bc0b49` with the preserved machine repair
+history. The permanent installation was directly fast-forwarded and validated;
+its existing local branch, four repair files, external runtime artifacts, queue
+and 6,845 historical files were preserved. The final documentation-only commit
+records this evidence without changing tested executable/fixture bytes.
+
+See [the final integration/validation/rollback record](INTEGRATION_RECORD.md) for
+exact ancestry, CI links and counts, hashes, installation verification, rollback
+location and remaining trial gates. All audit statuses remain AI technical review,
+not independent human certification or Owner execution authorization.
 
 ## Remaining Owner-only decisions
 

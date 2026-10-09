@@ -111,5 +111,12 @@
     "tests/test_qualification_v2_verification.py": "43fdeb2d574a8dd384d1ded62fa76c697b1746d46b19250642e0117020641ecb",
     "tests/test_qualification_v2_worker.py": "aaaa53f5d2adb4ea3406cb9f3f83445f9040704c38a23420afdb2ab1e1c4a246",
     "tools/build-verification-fixtures.py": "be8131e2798478b09e401e4b9550d9c35b9971f01445241e656799e21645e3fb"
-  }
+  },
+  "integration_preserved_machine_files": {
+    "campaigns/flashnext-all-roles-v1/README.md": "03f976d645ef05c1007e0358d6167145fbaf6e1452842a0879b584a2f150fe5e",
+    "campaigns/flashnext-all-roles-v1/runtime-profile.json": "f1c95ed6d8714b533bdb69e4801c42df3ade926e51d8e4abae9cfd64089cd1ec",
+    "src/localbench/v2/flashnext_runtime.py": "2226e33589f28ce098c48f8ad254b71c47ddefbbd3b289b1c107fb77bd78725d",
+    "tests/test_v2_flashnext_runtime.py": "f8b9325212f169ebf4ce7967777e13d0ea06e589c2e75053dc4e210e9c13fdb5"
+  },
+  "integration_commit": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487"
 }

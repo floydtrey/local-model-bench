@@ -27,6 +27,28 @@
       "errors": 0,
       "log_filename": "full-review.log",
       "log_sha256": "2ca527fd289541a3c6c72f46915ecd050c0136b92eadf7a5e0e10ccaa557c57d"
+    },
+    {
+      "phase": "staging",
+      "command": "python -m unittest discover -s tests -v",
+      "source_commit": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+      "tests": 475,
+      "skipped": 2,
+      "failures": 0,
+      "errors": 0,
+      "log_filename": "full-staging.log",
+      "log_sha256": "8cbf09f8323bc69d26945142179e684e6dbf037710eddf8badc6bd00172315b2"
+    },
+    {
+      "phase": "permanent",
+      "command": "python -m unittest discover -s tests -v",
+      "source_commit": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+      "tests": 475,
+      "skipped": 2,
+      "failures": 0,
+      "errors": 0,
+      "log_filename": "full-permanent.log",
+      "log_sha256": "e2064353058caf7ee1f3118df6be7bfd93774b7b13a088dafa876e61d1a953e4"
     }
   ],
   "offline_commands": [
@@ -126,5 +148,321 @@
     "reviewer": 60,
     "all_validated": true
   },
-  "ci_pending": true
+  "corrections_commit": "394276e7bb7a8a634f51ee7cbeb9c9b033bc0b49",
+  "integration_commit": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+  "ci_status": "all four jobs passed for correction and integration; initial integration Windows 3.10 timing failure retained",
+  "ci_jobs": [
+    {
+      "phase": "audit",
+      "attempt": 1,
+      "environment": "windows312",
+      "job_id": 113824799704,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932017544/job/113824799704",
+      "tests": 474,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "b213dc77cb312cd7cc5f49c728bf298740d8e5f526ce1599384c90683738698f"
+    },
+    {
+      "phase": "audit",
+      "attempt": 1,
+      "environment": "windows310",
+      "job_id": 113824799999,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932017544/job/113824799999",
+      "tests": 474,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "2368193496bacbef18b45ae31aa7f1af140aeb2d2ba195404d8388eca27bac1a"
+    },
+    {
+      "phase": "audit",
+      "attempt": 1,
+      "environment": "linux310",
+      "job_id": 113824799951,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932017544/job/113824799951",
+      "tests": 459,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "8a6442fc86f38a2e966945e1551e506d05e3575ade9db43a2ed781d2b3ca4754"
+    },
+    {
+      "phase": "audit",
+      "attempt": 1,
+      "environment": "linux312",
+      "job_id": 113824800044,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932017544/job/113824800044",
+      "tests": 459,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "51de96b8858b2b97c72b7f28697dd8804244428672a9c0f196466c6662c6b548"
+    },
+    {
+      "phase": "integration",
+      "attempt": 1,
+      "environment": "windows312",
+      "job_id": 113825117257,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932114240/job/113825117257",
+      "tests": 475,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "1029ecca158e6a9ce8bb526d620964c99bdc7da4a17553906461b7383906bc8a"
+    },
+    {
+      "phase": "integration",
+      "attempt": 1,
+      "environment": "linux310",
+      "job_id": 113825117027,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932114240/job/113825117027",
+      "tests": 460,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "2988dd7ce3744b246979d7747bbabcbeedcc5bb38381525f8ecd7d5d74dc7f0e"
+    },
+    {
+      "phase": "integration",
+      "attempt": 1,
+      "environment": "linux312",
+      "job_id": 113825117254,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932114240/job/113825117254",
+      "tests": 460,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "23c7afe5219c8893d87846ad8822b6857383d1e961f59e965532cfea1d34ad13"
+    },
+    {
+      "phase": "integration",
+      "attempt": 1,
+      "environment": "windows310",
+      "job_id": 113825117271,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932114240/job/113825117271",
+      "tests": 475,
+      "skipped": 1,
+      "failures": 1,
+      "errors": 0,
+      "log_sha256": "bbf9a9ac13692ea195f84cc105da1303ede82c22d4f0f1865673068e97e6f210"
+    },
+    {
+      "phase": "integration",
+      "attempt": 2,
+      "environment": "windows310",
+      "job_id": 113827097335,
+      "url": "https://github.com/floydtrey/local-model-bench/actions/runs/37932114240/job/113827097335",
+      "tests": 475,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "5a2ca54a3f0c8a0c515da8075fdb412f095e0d84e133c9e9e31bea70543fb8df"
+    }
+  ],
+  "permanent_offline_commands": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.assistant001",
+        "validate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e764f62ae0cd4bd807003adbd3605bf8153b604786ad9694e4b8417a7305b9fb"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.assistant002",
+        "validate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "ead9719fb24fee0722ce076a9254b32cd5fb66bbec2c8f4d1a67920b556adbf2"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "calibrate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "9a8edb84fd4fbf706be39c5feb048f1ff6fbf7b0f604b6ee27b3c8dac54b7cc6"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2.governor",
+        "calibrate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "dc544b3bdb767d7b551f96d63f6bf190ddcb1270020693ec5b27ce0f01a50584"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "worker",
+        "validate",
+        "--project",
+        "assistant-001"
+      ],
+      "exit_code": 0,
+      "log_sha256": "bd58e5271b1dc460b411b77cd8f4bfb25d3e367cc10b74f90bdd7f9a42e18371"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "worker",
+        "validate",
+        "--project",
+        "assistant-002"
+      ],
+      "exit_code": 0,
+      "log_sha256": "bd58e5271b1dc460b411b77cd8f4bfb25d3e367cc10b74f90bdd7f9a42e18371"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "verification",
+        "validate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "db8417dba3e4db1c142fc777700a2482a6b8c0ef4b56d3fe83b1544c657b810d"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "verification",
+        "calibrate"
+      ],
+      "exit_code": 0,
+      "log_sha256": "0494ef1786662311c58c7db255b40c8f47bfb7573b4755ba29bbee257949b27d"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench",
+        "--help"
+      ],
+      "exit_code": 0,
+      "help_present": true
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.queue_gui",
+        "--help"
+      ],
+      "exit_code": 0,
+      "help_present": true
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "localbench.qualification_v2",
+        "--help"
+      ],
+      "exit_code": 0,
+      "help_present": true
+    }
+  ],
+  "permanent_update": {
+    "updated_utc": "2026-10-09T12:55:06.976133+00:00",
+    "before": "da2fb728135b58370e87cb91711f44f5225f8a62",
+    "after": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+    "branch": "local/flashnext-startup-safe-20261009",
+    "method": "git merge --ff-only",
+    "tracked_status": "clean",
+    "rollback_branch": "safety/t05-t12-preintegration-20261009-124633z",
+    "backup_directory": "C:\\Projects\\benchmark-backups\\t05-t12-preintegration-20261009-124633Z"
+  },
+  "permanent_integrity": {
+    "protected_files": {
+      "checked": 129,
+      "mismatches": []
+    },
+    "machine_repair_files": {
+      "checked": 4,
+      "mismatches": []
+    },
+    "runtime_repair_files": {
+      "checked": 2,
+      "mismatches": []
+    },
+    "historical_result_state": {
+      "checked": 6845,
+      "mismatches": [],
+      "additional_files": []
+    },
+    "head": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+    "branch": "local/flashnext-startup-safe-20261009",
+    "verified_utc": "2026-10-09T12:58:07.700540+00:00",
+    "tracked_status": "clean"
+  },
+  "queue_read_only_validation": {
+    "files_checked": 6845,
+    "mismatches": [],
+    "queue_load": "success (read only; no state saved)",
+    "queue_item_count": 14,
+    "queue_status_in_memory": "Paused"
+  },
+  "rollback": {
+    "created_utc": "20261009-124633Z",
+    "permanent_directory": "C:\\Projects\\local-model-bench-flashnext",
+    "branch": "local/flashnext-startup-safe-20261009",
+    "head": "da2fb728135b58370e87cb91711f44f5225f8a62",
+    "rollback_branch": "safety/t05-t12-preintegration-20261009-124633z",
+    "backup_directory": "C:\\Projects\\benchmark-backups\\t05-t12-preintegration-20261009-124633Z",
+    "staging_commit": "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487",
+    "status": "clean before update",
+    "existing_safety_branch": "ef07fd6b61caf143802c8c74a4ca5133ff932d1f",
+    "backup_file_sha256": {
+      "bundle-verification.txt": "740f815bb0a28fe54a4a46171847ae6ce0f530172816c2e75f13dfeb69cd2008",
+      "index.patch": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "permanent-before.bundle": "f1267373bfb4fe9aa0e2864add595da98775f50249bd6b9b1e259dc5d524e19c",
+      "permanent-evidence-before.json": "d6a2a0e3c09ffd18664347bb6da5e75979bc331332792cd74a48c39eff71af39",
+      "permanent-tracked-before.zip": "88068c65e19aff0e4407b9b7037ca6d48e5b025d9865fa8de65657b6fdc44f5a",
+      "queue-before.json": "5feceaea68c0ae778715d59aa368c1f0b629e5f90cd9318dd8a70a4fdbd4460f",
+      "source-baseline.json": "7b55fc0709f56962b0aa3576e538af5042af1167ee491630fae268732dbf98e8",
+      "working-tree.patch": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "source_ancestry": [
+    "40a2c8d292f5b6ebfbb9c317e3c068e8ef1cf487 394276e7bb7a8a634f51ee7cbeb9c9b033bc0b49 da2fb728135b58370e87cb91711f44f5225f8a62 Integrate audited T05-T12 with preserved machine startup repair",
+    "394276e7bb7a8a634f51ee7cbeb9c9b033bc0b49 331ec1a2c37cc030e7eb3636f3d0cc35df7b1e8d Audit and correct T05-T12 qualification cases, calibration and execution gates",
+    "331ec1a2c37cc030e7eb3636f3d0cc35df7b1e8d 16e0b19bfeb86ffbbcf78bd1357b0acf7ffada8d Clarify conflicting-capture assumptions and record Batch 5 CI acceptance",
+    "16e0b19bfeb86ffbbcf78bd1357b0acf7ffada8d dbee96628d6ed9248f0ed747d02aeed940a8ddd5 Implement controlled Tester and Reviewer qualification cases and adjudication",
+    "dbee96628d6ed9248f0ed747d02aeed940a8ddd5 ceaf217aa2d52968235c6c2bec2d5a3499602660 Remove trailing whitespace from Batch 4 status lines",
+    "ceaf217aa2d52968235c6c2bec2d5a3499602660 065579d5fa5418efd52aebcacd145664d5e474cd Record Batch 4 Windows Linux acceptance and pending human gates",
+    "065579d5fa5418efd52aebcacd145664d5e474cd 1d52238139785ad14e5e34efb25d57e9dba93a14 Implement canonical Worker handoffs and isolated qualification adapters",
+    "1d52238139785ad14e5e34efb25d57e9dba93a14 dd04a8883ea18fc49f135320b65a7f4551f98c7d Add frozen controlled Governor qualification and adjudication",
+    "da2fb728135b58370e87cb91711f44f5225f8a62 ef07fd6b61caf143802c8c74a4ca5133ff932d1f dd04a8883ea18fc49f135320b65a7f4551f98c7d Merge commit 'dd04a8883ea18fc49f135320b65a7f4551f98c7d' into local/flashnext-startup-safe-20261009",
+    "ef07fd6b61caf143802c8c74a4ca5133ff932d1f 79d422ee4c037ac305fd2f15c06eadf5302d0972 Preserve local Windows Flash-Next startup repair before upstream reconciliation",
+    "dd04a8883ea18fc49f135320b65a7f4551f98c7d c5cd427a94af453fdaf13ce31bb302a9b0dbd255 Make deterministic lifecycle tests independent of host CUDA installation",
+    "c5cd427a94af453fdaf13ce31bb302a9b0dbd255 370e8e03422452108b6f97c66e3e2cb672a8f3d4 Implement blind Planner packets and outcome-based qualification review",
+    "370e8e03422452108b6f97c66e3e2cb672a8f3d4 478c158ed48709a4a4ede2f8541c9bafb980596d Expand qualification-v2 backlog for chart-focused GUI Results tab",
+    "478c158ed48709a4a4ede2f8541c9bafb980596d c756834e05c816c116fa86c2a30a9dda18e9276c Pin historical source-manifest identities in T02 protection tests",
+    "c756834e05c816c116fa86c2a30a9dda18e9276c d67495a6a06bd35dade5905ff01f1647df5d3854 Cover frozen v1 and historical role sources in qualification CI trigger",
+    "d67495a6a06bd35dade5905ff01f1647df5d3854 7e66a8074c2ed113e4338decd234d34791466990 Close T02-T04 batch with verified acceptance record and backlog statuses"
+  ],
+  "limitations": [
+    "Independent human certification is not claimed.",
+    "Astra Extra High setting could not be independently verified or changed through the available tools.",
+    "Existing Windows 3.10 loopback deadline test exceeded 0.8 seconds once (3.235); one unchanged retry passed. Root cause not established; no runtime/test change."
+  ]
 }
