@@ -1,0 +1,220 @@
+{
+  "schema_version": "qualification-v2/evaluation-modes-v1",
+  "implementation_status": "CONTRACT_ONLY_NOT_CONNECTED_TO_LAUNCHERS",
+  "candidate_response_policy": "NATURAL_LANGUAGE_NO_NEW_JSON_HANDOFF_REQUIREMENT",
+  "tracks": {
+    "controlled_role_qualification": {
+      "purpose": "Independent capability of each role against separately reviewed cases and input sources.",
+      "roles": [
+        "planner",
+        "governor",
+        "worker",
+        "tester",
+        "reviewer"
+      ],
+      "transports": [
+        "direct_ollama",
+        "native_dsh"
+      ],
+      "worker_modes": [
+        "isolated_task",
+        "cumulative_project"
+      ],
+      "upstream_candidate_output_as_authority": false,
+      "reference_substitution_on_failure": false
+    },
+    "native_pipeline_integration": {
+      "purpose": "Actual DSH release-bound chain; upstream artifacts may influence downstream outcomes.",
+      "roles": [
+        "pipeline"
+      ],
+      "transports": [
+        "native_dsh"
+      ],
+      "worker_modes": [],
+      "upstream_candidate_output_as_authority": false,
+      "reference_substitution_on_failure": false
+    }
+  },
+  "worker_modes": {
+    "isolated_task": {
+      "input_equivalence": "IDENTICAL_CONTRACT_TASK_AND_PREVALIDATED_PREREQUISITE_WORKSPACE_HASH",
+      "predecessor_policy": "FROZEN_APPROVED_SEED_NOT_TARGET_TASK_SOLUTION",
+      "acceptance_policy": "INDEPENDENT_TASK_ASSESSMENT"
+    },
+    "cumulative_project": {
+      "input_equivalence": "IDENTICAL_INITIAL_STARTER_REFERENCE_PLAN_AND_TASKS_ONLY",
+      "predecessor_policy": "ACTUAL_SAME_MODEL_PRIOR_CODE_AND_FREE_PROSE_HANDOFF",
+      "acceptance_policy": "CUMULATIVE_ASSESSMENT_AND_BLOCK_FAILED_SUCCESSORS"
+    }
+  },
+  "role_inputs": {
+    "planner": {
+      "required": [
+        "project_intent",
+        "candidate_contract",
+        "starter_readonly"
+      ],
+      "optional": [
+        "released_nonanswer_facts"
+      ],
+      "prohibited": [
+        "fixed_worker_tasks",
+        "reference_plan",
+        "governor_expected_decision",
+        "governor_case_oracle",
+        "assessor_checks",
+        "assessor_reference",
+        "reference_solution",
+        "mutation_labels",
+        "hidden_tests",
+        "prior_candidate_solutions"
+      ]
+    },
+    "governor": {
+      "required": [
+        "project_intent",
+        "candidate_contract",
+        "frozen_plan_case",
+        "governance_snapshot",
+        "simulation_conditions"
+      ],
+      "optional": [
+        "declared_authority_grant"
+      ],
+      "prohibited": [
+        "governor_expected_decision",
+        "governor_case_oracle",
+        "assessor_checks",
+        "assessor_reference",
+        "reference_solution",
+        "hidden_tests",
+        "owner_approval_forgery"
+      ]
+    },
+    "worker": {
+      "required": [
+        "project_intent",
+        "candidate_contract",
+        "approved_reference_plan",
+        "canonical_governor_guidance",
+        "assigned_task",
+        "candidate_workspace",
+        "scope_policy"
+      ],
+      "optional": [
+        "prior_worker_handoff",
+        "approved_prerequisite_provenance",
+        "operator_authorization_record"
+      ],
+      "prohibited": [
+        "assessor_checks",
+        "assessor_reference",
+        "reference_solution",
+        "hidden_tests",
+        "candidate_governor_verdict_as_authority",
+        "unapproved_exceptions"
+      ]
+    },
+    "tester": {
+      "required": [
+        "project_intent",
+        "candidate_contract",
+        "assigned_task",
+        "candidate_workspace",
+        "scope_policy"
+      ],
+      "optional": [
+        "approved_reference_plan",
+        "prior_worker_handoff",
+        "actual_execution_evidence",
+        "public_tests"
+      ],
+      "prohibited": [
+        "assessor_checks",
+        "assessor_reference",
+        "reference_solution",
+        "hidden_tests",
+        "expected_tester_verdict",
+        "mutation_labels"
+      ]
+    },
+    "reviewer": {
+      "required": [
+        "project_intent",
+        "candidate_contract",
+        "assigned_task",
+        "candidate_workspace",
+        "actual_execution_evidence",
+        "artifact_hashes"
+      ],
+      "optional": [
+        "approved_reference_plan",
+        "canonical_governor_guidance",
+        "prior_worker_handoff",
+        "tester_report",
+        "repair_history"
+      ],
+      "prohibited": [
+        "assessor_checks",
+        "assessor_reference",
+        "reference_solution",
+        "hidden_tests",
+        "expected_reviewer_verdict",
+        "mutation_labels"
+      ]
+    }
+  },
+  "authority_origins": [
+    "approved_benchmark_fixture",
+    "native_owner_release_receipt"
+  ],
+  "human_verdicts": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_ASSESSED"
+  ],
+  "observed_failure_types": [
+    "candidate_requirement_failure",
+    "candidate_tool_authority_violation",
+    "governor_unsafe_approval",
+    "governor_false_denial",
+    "governor_failed_escalation",
+    "planner_reference_leak",
+    "prerequisite_blocked",
+    "harness_or_transport_error",
+    "test_infrastructure_error",
+    "assessment_evidence_mismatch",
+    "scope_or_artifact_violation",
+    "authority_or_release_missing",
+    "canonical_governance_drift",
+    "insufficient_evidence",
+    "human_review_pending"
+  ],
+  "required_evidence_fields": [
+    "project_packet_id",
+    "evaluation_track",
+    "role_or_pipeline",
+    "worker_mode_if_worker",
+    "case_id",
+    "source_commit_or_packet_hash",
+    "role_input_manifest_sha256",
+    "runtime_transport",
+    "runtime_provenance",
+    "model_identity_and_settings",
+    "governance_snapshot_hash_if_governor",
+    "starting_workspace_hash_if_worker",
+    "outcome_and_failure_attribution",
+    "human_review_state"
+  ],
+  "safety": {
+    "model_governor_verdict_is_authority": false,
+    "governor_simulation_is_real_owner_approval": false,
+    "candidate_python_os_sandboxed": false,
+    "production_services_authorized": false,
+    "automatic_role_promotion": false,
+    "native_execution_requires_installed_provenance": true,
+    "private_governance_source_belongs_in_public_repo": false
+  }
+}

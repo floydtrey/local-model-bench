@@ -1,0 +1,36 @@
+name: Qualification v2 Foundation and Frozen-Source Guard
+on:
+  push:
+    branches: [benchmark/flashnext-all-roles-v1]
+    paths:
+      - 'docs/qualification-v2/**'
+      - 'project-benchmarks/assistant-001/qualification-v2/**'
+      - 'project-benchmarks/assistant-002/qualification-v2/**'
+      - 'src/localbench/qualification_v2/**'
+      - 'tests/test_qualification_v2*.py'
+      - '.github/workflows/qualification-v2-foundation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Validate original Assistant packets without Ollama
+        run: |
+          python -m localbench.assistant001 validate
+          python -m localbench.assistant002 validate
+      - name: Audit controlled-mode registry and frozen sources
+        run: python -m unittest discover -s tests -p 'test_qualification_v2*.py' -v
