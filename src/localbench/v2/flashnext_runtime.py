@@ -92,8 +92,9 @@ def validate_profile(profile: Mapping[str, Any]) -> None:
             raise FlashNextBlocked(f"campaign requires {key}={value!r}")
     if tuple(profile.get("server_args", ())) != SERVER_ARGS:
         raise FlashNextBlocked("server flags differ from the pinned verified configuration; version the campaign before retuning")
-    if profile.get("environment") != {"GGML_CUDA_REGISTER_HOST": "1", "HF_HUB_OFFLINE": "1"}:
-        raise FlashNextBlocked("the two pinned offline/CUDA environment settings must be preserved")
+    if profile.get("environment") != {"GGML_CUDA_REGISTER_HOST": "1", "HF_HUB_OFFLINE": "1",
+                                       "LLAMA_WIN32_PREFETCH": "0"}:
+        raise FlashNextBlocked("the pinned offline/CUDA settings and Windows bulk-prefetch opt-out must be preserved")
     port = profile.get("port")
     if not isinstance(port, int) or isinstance(port, bool) or not 1024 <= port <= 65535:
         raise FlashNextBlocked("port must be an unprivileged TCP port")

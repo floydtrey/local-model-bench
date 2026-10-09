@@ -118,13 +118,24 @@ class FlashNextRuntimeTests(unittest.TestCase):
             "--timeout", "-1", "--jinja", "--reasoning", "auto", "--reasoning-format",
             "deepseek", "--metrics",
         ])
-        self.assertEqual(config["environment"], {"GGML_CUDA_REGISTER_HOST": "1", "HF_HUB_OFFLINE": "1"})
+        self.assertEqual(config["environment"], {"GGML_CUDA_REGISTER_HOST": "1", "HF_HUB_OFFLINE": "1",
+                                                "LLAMA_WIN32_PREFETCH": "0"})
         self.assertEqual(config["cuda_runtime_path"], r"C:\AI\FlashNext-Lab\tools\cuda-13.3\bin\x64")
         for change in ({"candidate_id": "other"}, {"context_tokens": 32768}, {"fork_revision": "0" * 40},
                        {"parallel_slots": 2}, {"host": "0.0.0.0"}, {"server_args": []},
                        {"environment": {"HF_HUB_OFFLINE": "0"}}):
             with self.subTest(change=change), self.assertRaises(runtime.FlashNextBlocked):
                 runtime.server_command({**config, **change})
+
+    def test_bulk_prefetch_cannot_be_reenabled_or_omitted(self) -> None:
+        for value in (None, "1", "false", 0):
+            config = profile()
+            if value is None:
+                del config["environment"]["LLAMA_WIN32_PREFETCH"]
+            else:
+                config["environment"]["LLAMA_WIN32_PREFETCH"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(runtime.FlashNextBlocked, "bulk-prefetch"):
+                runtime.server_command(config)
 
     def test_all_three_model_shards_are_required_and_header_checked(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -165,6 +176,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
             popen.assert_not_called()
             self.assertEqual(run.call_args.args[0], [config["server_executable"], "--version"])
             self.assertEqual(run.call_args.kwargs["env"]["HF_HUB_OFFLINE"], "1")
+            self.assertEqual(run.call_args.kwargs["env"]["LLAMA_WIN32_PREFETCH"], "0")
             self.assertEqual(run.call_args.kwargs["env"]["GGML_CUDA_REGISTER_HOST"], "1")
             self.assertEqual(run.call_args.kwargs["env"]["PATH"].split(os.pathsep)[0], config["cuda_runtime_path"])
             return result

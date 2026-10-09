@@ -3,7 +3,7 @@
   "candidate_id": "C01",
   "candidate_name": "Qwen3.8-Flash-Next UD-IQ3_XXS",
   "model_entry": "C:\\AI\\FlashNext-Lab\\models\\Qwen3.8-Flash-Next\\UD-IQ3_XXS\\Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00003.gguf",
-  "server_executable": "C:\\AI\\FlashNext-Lab\\build\\cuda-13.3\\bin\\llama-server.exe",
+  "server_executable": "C:\\AI\\FlashNext-Lab\\build\\startup-safe-20261008\\bin\\llama-server.exe",
   "cuda_runtime_path": "C:\\AI\\FlashNext-Lab\\tools\\cuda-13.3\\bin\\x64",
   "fork_revision": "27c54b4bbcefadedcec6397477cc2e866c1db716",
   "host": "127.0.0.1",
@@ -44,7 +44,8 @@
   ],
   "environment": {
     "GGML_CUDA_REGISTER_HOST": "1",
-    "HF_HUB_OFFLINE": "1"
+    "HF_HUB_OFFLINE": "1",
+    "LLAMA_WIN32_PREFETCH": "0"
   },
   "generation": {
     "max_output_tokens": 8192,
@@ -77,6 +78,9 @@
     "No claim that --reasoning auto forces reasoning on each response. The client preserves server_default behavior; enabled means no disable override.",
     "One explicit parallel slot prevents dividing the requested 262144 context among concurrent sequences.",
     "All three GGUF shards, the executable, adjacent llama.cpp DLLs, and the pinned CUDA runtime DLLs are hashed locally before launch. No model/runtime download or backend fallback.",
-    "The campaign prepends the pinned CUDA runtime directory to PATH for both the version probe and the owned server process; no manual shell PATH mutation is required."
+    "The campaign prepends the pinned CUDA runtime directory to PATH for both the version probe and the owned server process; no manual shell PATH mutation is required.",
+    "Windows startup repair: LLAMA_WIN32_PREFETCH=0 disables bulk PrefetchVirtualMemory only in the locally patched build; memory mapping and all model/context/sampling flags are retained.",
+    "fork_revision is the base revision. Local llama-mmap.cpp patch source SHA-256: 68a509522b767c4b9c61363ee5e3c453f8bc01d558375b6353e76e84089f4477; repaired llama.dll SHA-256: 7a27f666827e1ac006bcf0b240cc6ba58fc37de3451daf855ffb5117a3458e49. The binary version remains the base revision; the recorded installation/profile fingerprints distinguish this patched build.",
+    "Runtime/profile identity has changed. Obtain a fresh smoke before using progression stages; earlier result and gate files remain historical evidence."
   ]
 }
