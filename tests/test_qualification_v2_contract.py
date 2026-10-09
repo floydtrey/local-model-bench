@@ -114,6 +114,26 @@ class RegistryContractTests(unittest.TestCase):
         self.assertTrue(original["safety"]["native_execution_requires_installed_provenance"])
         self.assertFalse(original["safety"]["private_governance_source_belongs_in_public_repo"])
 
+    def test_historical_role_sources_remain_verified_and_complete(self):
+        # Build packets with synthetic Governor docs only; this does not contact
+        # the private canonical Governor repository or grant any real authority.
+        from localbench.v2.flashnext_roles import build_role_cases
+        suite = ROOT / "campaigns" / "flashnext-all-roles-v1"
+        with tempfile.TemporaryDirectory(prefix="qualification-v2-gov-") as tmp:
+            governor = Path(tmp)
+            docs = governor / "docs"
+            docs.mkdir()
+            for name in ("LAW.md", "STATE.md", "GENERAL_INTENT.md"):
+                (docs / name).write_text("Synthetic fixture for source integrity only.\\n", encoding="utf-8")
+            for role, expected in [
+                ("planner", 6), ("governor", 4), ("worker", 4),
+                ("tester", 3), ("reviewer", 6),
+            ]:
+                with self.subTest(role=role):
+                    cases = build_role_cases(suite, role, governor_root=governor)
+                    self.assertEqual(len(cases), expected)
+                    self.assertEqual(len(set(case["case_id"] for case in cases)), expected)
+
     def test_baseline_guard_pins_frozen_packets_but_not_extendable_implementation(self):
         lock = __import__("json").loads((ROOT / "docs/qualification-v2/T01_BASELINE_LOCK.json").read_text(encoding="utf-8"))
         fixed = [
