@@ -1,9 +1,10 @@
 # T13 acceptance — 2026-10-09
 
-**State: PENDING final CI.** Implementation and local deterministic verification are complete; the backlog will be marked COMPLETE only after the supported Windows/Linux matrix passes. No actual model qualification is claimed.
+**State: COMPLETE.** All material T13 reporting conditions, local deterministic verification and the supported Windows/Linux matrix passed. This accepts the reporting contract; no actual model qualification is claimed.
 
 Development branch: `development/t13-reporting-contract-20261009`.
 Inspected starting commit: `f0dbb035e5c03c2e9fb8f2dee9572f15e5cb7660`.
+Verified implementation commit: `e1c41b6ceb55dbff7825066ff56a01b9f036329f`; the following acceptance commit changes documentation only.
 Separate workspace: the task's `development` clone. Permanent installation was inspected read-only at `6624945ba7f9cca99071b4fc07a37e958770bca1`, branch `local/flashnext-startup-safe-20261009`, clean.
 
 The [implementation contract](T13_REPORTING_IMPLEMENTATION.md), [versioned catalog](METRIC_CATALOG_V1.json), and [metric report schema](../../schemas/v2/metric-report.schema.json) define the delivered behavior. Existing `metric_projection`, `report_adapter`, `flashnext_review`, V2 sealed reports and T05–T12 assessment outputs were extended. No alternative reporting system was built.
@@ -30,9 +31,9 @@ All test references below are in `tests/test_qualification_v2_metrics.py` unless
 | 16. Stale evidence / changed artifact | `test_stale_hash_and_changed_artifact_are_excluded`, `test_rehashed_changed_artifact_cannot_match_original_identity`; sealed-record tampering fixtures |
 | 17. Missing evidence | `test_missing_evidence_is_discoverable_and_not_zero`, `test_unrelated_hashed_file_is_not_an_assessment`; missing raw aggregate execution fixture |
 | 18. Contradictory outcomes | `test_contradictions_preserve_execution_and_assessment`, `test_changed_summary_cannot_override_assessment` |
-| 19. Role coverage / provisional review | `test_role_suitability_requires_coverage_and_review_and_no_automatic_assignment`, `test_expected_planner_block_is_success_only_with_review_and_executed_case` |
+| 19. Role coverage / provisional review | `test_role_suitability_requires_coverage_and_review_and_no_automatic_assignment`, `test_expected_planner_block_is_success_only_with_review_and_executed_case`; source-eligibility and role-identity gate fixtures |
 | 20. Exact JSON/CSV/XLSX links | `ExportParityTests` in `test_qualification_v2_metric_writer.py`: all new sheets/cells compared with CSV and JSON, relative-reference re-export, oversized-cell preservation |
-| Existing source identity and membership | `test_catalog_uses_real_evaluator_and_case_memberships`; actual sealed V2 repetition fixture in `test_qualification_v2_legacy_reports.py` |
+| Existing source identity and membership | `test_catalog_uses_real_evaluator_and_case_memberships`; actual sealed V2 repetition and hash-checked role event/configuration fixtures in `test_qualification_v2_legacy_reports.py` |
 | Historical formats and no overwrite | Historical role / A001 / A002 / qualification / sealed aggregate adapter tests; original bytes and workbook paths preserved |
 | GUI lifecycle / existing queue | New close-during-discovery ownership regression plus all existing real Tk/queue/process tests |
 | Frozen v1 and T05–T12 | Full existing regression suite, both packet validators, Planner/Governor/Worker/Tester/Reviewer validation/calibration commands |
@@ -42,14 +43,23 @@ All test references below are in `tests/test_qualification_v2_metrics.py` unless
 - Initial targeted baseline: 11 inherited metric/writer tests passed.
 - Final targeted reporting: 37 metric/writer tests plus 11 legacy/sealed-adapter tests passed, no skips/failures.
 - Initial full local Windows Python 3.12 regression: 514 tests, no failures, two existing platform skips.
-- Full local Windows Python 3.12 regression after final first-pass correction: **522 tests, 0 failures, 2 existing platform skips** (Windows symlink privilege and POSIX-only process groups). Real Tk tests all ran.
+- Final full local Windows Python 3.12 regression at `e1c41b6`: **524 tests, 0 failures, 2 existing platform skips** (Windows symlink privilege and POSIX-only process groups), 145.350 seconds. Real Tk tests all ran.
 - Local queue-specific run: 69 tests, no failures; one POSIX-only process-group skip.
 - Separate validations: A001/A002 frozen manifests passed; Planner 10 and Governor 16 authored annotation controls passed; both Worker handoffs validated; 36 Tester/Reviewer cases and 108 annotation controls passed. These validate authored material and record consistency, not independent human certification or live model outcomes.
 - No benchmark providers, Flash-Next runtime, production services or actual model inference were used. Runtime tests use deterministic fakes; approved authored candidate fixtures are exercised locally.
 
 CI acceptance requires **Windows and Linux × Python 3.10 and 3.12**. The workflow now explicitly requires real Tk on both systems (Linux uses Xvfb), runs reporting fixtures first, runs the complete suite and existing calibration commands, and retains transcripts. No tests or Windows jobs were disabled to make the earlier failure disappear.
 
-Initial implementation `f43e484041fe6c94f6775ca89b95b60240b222a4` passed all four jobs in [run 37987551678](https://github.com/floydtrey/local-model-bench/actions/runs/37987551678), including Windows Python 3.10 and required Linux Tk. Final provenance/role-eligibility hardening is receiving a fresh complete matrix; completion remains pending that result.
+Initial implementation `f43e484041fe6c94f6775ca89b95b60240b222a4` passed all four jobs in [run 37987551678](https://github.com/floydtrey/local-model-bench/actions/runs/37987551678). Final provenance/role-eligibility hardening at `e1c41b6ceb55dbff7825066ff56a01b9f036329f` then passed the entire matrix in [run 37988938887](https://github.com/floydtrey/local-model-bench/actions/runs/37988938887):
+
+| Supported configuration | Targeted reporting | Full suite | Failures | Existing platform skips |
+|---|---:|---:|---:|---:|
+| [Windows / Python 3.10](https://github.com/floydtrey/local-model-bench/actions/runs/37988938887/job/114017872081) | 48 | 524 | 0 | 1 |
+| [Windows / Python 3.12](https://github.com/floydtrey/local-model-bench/actions/runs/37988938887/job/114017872424) | 48 | 524 | 0 | 1 |
+| [Linux / Python 3.10](https://github.com/floydtrey/local-model-bench/actions/runs/37988938887/job/114017872318) | 48 | 524 | 0 | 3 |
+| [Linux / Python 3.12](https://github.com/floydtrey/local-model-bench/actions/runs/37988938887/job/114017872258) | 48 | 524 | 0 | 3 |
+
+Windows skips the POSIX process-group test. Linux skips the Windows junction, actual Windows PowerShell wrapper and native PowerShell routing tests. The corresponding platform executes each test; **no Tk tests are skipped**. All packet validation, calibration and canonical-handoff steps also passed. CI artifacts retain full test transcripts for 14 days; Actions job logs provide the linked verification record. The final documentation-only branch commit receives the same complete matrix, reported in the task completion message.
 
 ## Role and capability limits
 
@@ -59,9 +69,9 @@ Vision and long-context are Not tested. Tool selection and agent error recovery 
 
 ## Installation boundary and safe later integration
 
-No file in `C:\Projects\local-model-bench-flashnext` was changed. Its startup repair is preserved. The development history includes permanent commit `6624945`; the final reporting diff must show no changes to frozen packets, role source packets or Flash-Next runtime/startup files.
+No file in `C:\Projects\local-model-bench-flashnext` was changed. Its startup repair is preserved. A final read-only inspection confirmed the same clean branch and HEAD. The development history includes permanent commit `6624945`; the complete diff from that commit confirms no changes to frozen packets, role source packets or Flash-Next runtime/startup files.
 
-After this acceptance record is complete, integration can be performed separately by the owner:
+Integration can be performed separately by the owner:
 
 1. Inspect the permanent branch and `git status --short --branch`. If there are local changes or new commits, preserve and review them first.
 2. Save a safety branch at its current HEAD, then fetch the development branch from origin.

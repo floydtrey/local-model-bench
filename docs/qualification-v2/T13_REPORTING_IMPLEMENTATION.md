@@ -1,6 +1,6 @@
 # T13 — Reporting contract and metric normalization
 
-**State:** Implementation completed; acceptance verification is recorded in `T13_ACCEPTANCE_20261009.md`. The acceptance record, not this description alone, determines completion.
+**State:** COMPLETE. All material reporting conditions and the supported Windows/Linux Python 3.10/3.12 matrix passed; see the [acceptance record](T13_ACCEPTANCE_20261009.md) for the exact implementation commit, 524-test regressions and CI links. This completes the reporting contract, not model qualification or additional capability coverage.
 
 **Ownership:** The existing runners execute, the existing assessors decide outcomes, and `flashnext_review.write_review_package` exports authoritative review packages. `metric_projection` derives declared aggregations only. `report_adapter` reads existing files. No GUI Results tab, dashboard, database, backend, scheduler, inference, new agent capability battery, or role assignment was added.
 
