@@ -100,7 +100,8 @@ class MetricChart(ScrollCanvas):
                 target = (report, metric)
                 config = metric.get("configuration")
                 measured = metric.get("status") == "measured" and metric.get("percentage") is not None
-                config_text = self.text(28, y, configuration_label(config) if config else "No measured configuration", target=target, width=label_width)
+                config_text = self.text(28, y, configuration_label(config) if config else
+                    f"{report.run_dir.name} · No measured configuration", target=target, width=label_width)
                 state = label(metric.get("status"))
                 if measured:
                     value = metric["percentage"]
@@ -145,7 +146,7 @@ class RoleMatrix(ScrollCanvas):
             self.text(14, y, "Not assessed · no qualifying role measurements in the selected reports")
             y += 50
         for report, config, metrics in groups.values():
-            height = max((len(values) for values in metrics.values()), default=1) * 155
+            height = max((len(values) for values in metrics.values()), default=1) * 192
             self.text(14, y, configuration_label(config) + "\n" + report.run_dir.name, width=235)
             for index, role in enumerate(ROLES):
                 x = 270 + index * 190
@@ -153,13 +154,18 @@ class RoleMatrix(ScrollCanvas):
                 if not items:
                     self.text(x + 6, y + 8, "Not assessed", width=175)
                 for offset, metric in enumerate(items):
-                    top = y + offset * 155
+                    top = y + offset * 192
                     target = (report, metric)
                     status = metric.get("suitability")
                     color = "#f9e1dd" if status == "criteria_not_met" else "#fff0cc" if status and status.startswith("provisional") else "#e3eaf1"
-                    item = self.canvas.create_rectangle(x, top, x + 183, top + 148, fill=color, outline="#c5cfdb")
+                    item = self.canvas.create_rectangle(x, top, x + 183, top + 185, fill=color, outline="#c5cfdb")
                     self.targets[item] = target
+                    rows = [report.rows[ref["row_id"]] for ref in metric["case_refs"]]
+                    critical = {row["case_id"] for row in rows if row.get("critical_failures")
+                                or row.get("critical_unsafe_approval") or row.get("scope_violation")}
                     self.text(x + 6, top + 5, f"{label(status)}\nCoverage: {display(metric.get('denominator'))}/{display(metric.get('coverage_required'))}\n"
-                        f"Review: {display(metric.get('review_status'))}\n{display((metric.get('criteria') or {}).get('version'))}", target=target, width=172)
+                        f"Failed: {len(metric.get('final_failed_cases', []))} · Blocked: {len(metric.get('blocked_cases', []))}\n"
+                        f"Critical cases: {len(critical)}\nReview: {display(metric.get('review_status'))}\n"
+                        f"{display((metric.get('criteria') or {}).get('version'))}\nSelect for safety conditions", target=target, width=172)
             y += height + 14
         self.canvas.configure(scrollregion=(0, 0, 1230, y))

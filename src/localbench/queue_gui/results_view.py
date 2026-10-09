@@ -116,6 +116,7 @@ class ResultsView(ttk.Frame):
         ttk.Button(controls, text="Review workbook", command=self.open_workbook).grid(row=0, column=1, sticky="ew", padx=4)
         ttk.Button(controls, text="Case rows", command=lambda: self.views.select(self.case_frame)).grid(row=1, column=0, sticky="ew", pady=3)
         ttk.Button(controls, text="Queue entry", command=self.reveal_queue).grid(row=1, column=1, sticky="ew", padx=4, pady=3)
+        ttk.Button(controls, text="Case evidence folder", command=self.open_case_folder).grid(row=2, column=0, columnspan=2, sticky="w")
         self.detail = tk.Text(details, wrap="word", state="disabled", width=48, height=14)
         self.detail.grid(row=1, sticky="nsew")
         scroll = ttk.Scrollbar(details, command=self.detail.yview)
@@ -299,6 +300,17 @@ class ResultsView(ttk.Frame):
             refs = [ref for ref in self.selected_metric["case_refs"] if ref["row_id"] == row["row_id"]]
             excluded = [ref for ref in self.selected_metric.get("excluded", []) if row["row_id"] in ref.get("row_ids", [])]
             prefix += "Selected metric membership: " + display(refs or excluded) + "\n"
+        else:
+            memberships = [metric for metric in report.metrics if any(ref["row_id"] == row["row_id"] for ref in metric["case_refs"])
+                or any(row["row_id"] in ref.get("row_ids", []) for ref in metric.get("excluded", []))]
+            contexts = []
+            for metric in memberships:
+                refs = [ref for ref in metric["case_refs"] if ref["row_id"] == row["row_id"]]
+                excluded = [ref for ref in metric.get("excluded", []) if row["row_id"] in ref.get("row_ids", [])]
+                contexts.append(self.metric_detail(report, metric) + "Case membership: " + display(refs or excluded))
+            prefix = "Published metric populations for this case:\n" + (
+                "\n".join(contexts) if contexts else
+                "No versioned metric membership. Numerator / denominator: Unknown / Unknown. Comparison eligibility: Unknown.\n")
         set_text(self.detail, self.queue_detail(report) + prefix + f"Source: {report.path}\nReport SHA-256: {report.sha256}\n"
                  f"Human review: {display(row.get('human_review_state'))}\n"
                  f"Technical/reference review: {display(row.get('technical_review_status') or row.get('reference_review_status'))}\n"
@@ -335,6 +347,20 @@ class ResultsView(ttk.Frame):
     def open_run(self):
         if self.selected_report:
             self.open_output(self.selected_report.run_dir, False)
+
+    def open_case_folder(self):
+        row = self.selected_row or {}
+        value = row.get("evidence_directory") or row.get("session_evidence_directory")
+        if not value:
+            self.message.set("This case has no recorded evidence directory; use its exact artifact references.")
+            return
+        path = Path(value)
+        if not path.is_absolute():
+            if not row.get("source_evidence_root"):
+                self.message.set("Case evidence directory has no recorded path root.")
+                return
+            path = Path(row["source_evidence_root"]) / path
+        self.open_output(path.resolve(), False)
 
     def open_workbook(self):
         if self.selected_report:

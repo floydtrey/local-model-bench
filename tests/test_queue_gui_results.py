@@ -433,6 +433,23 @@ class ResultsWidgetTests(unittest.TestCase):
         error.assert_called_once()
         self.assertEqual(self.runner.started, [])
 
+    def test_r4_direct_case_selection_has_metric_context_and_original_case_folder(self):
+        fixture = ReportFixture(self.repo / "direct-case")
+        fixture.case(evidence_directory=str(fixture.root))
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        view.cases.selection_set(view.cases.get_children()[0])
+        view.cases.event_generate("<<TreeviewSelect>>")
+        self.root.update()
+        detail = view.detail.get("1.0", "end")
+        self.assertIn("Published metric populations", detail)
+        self.assertIn("Numerator / denominator: 1 / 1", detail)
+        self.assertIn("Comparison eligible: True", detail)
+        self.assertIn("First pass:", detail)
+        with patch.object(view, "open_output") as opened:
+            view.open_case_folder()
+            opened.assert_called_once_with(fixture.root.resolve(), False)
+
     def test_r0_cases_exact_evidence_and_workbook_in_existing_app(self):
         fixture = ReportFixture(self.repo / "local-state" / "synthetic-run")
         fixture.case()
