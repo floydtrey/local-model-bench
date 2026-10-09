@@ -67,6 +67,31 @@ class MetricProjectionTests(unittest.TestCase):
         self.assertEqual(case_status({"role": "tester", "implementation_truth": "defective",
             "candidate_decision": "FAIL", "assessed_outcome": "PASS"}), "passed")
 
+    def test_first_pass_and_repair_are_distinct(self):
+        rows = [
+            self.case("minimal-code-repair", True, first_pass_passed=False,
+                      repair_attempted=True, repair_passed=True),
+            self.case("multi-file-synthesis", True, first_pass_passed=True,
+                      repair_attempted=False, repair_passed=False,
+                      evidence_directory="/run/case2"),
+        ]
+        result = project_metrics(rows, self.metadata, self.catalog)["metrics"][0]
+        self.assertEqual(result["first_pass"], {"numerator": 1, "denominator": 2})
+        self.assertEqual(result["after_repair"], {"numerator": 1, "denominator": 1})
+        self.assertEqual(result["numerator"], 2)
+
+    def test_human_review_pending_is_not_implicitly_approved(self):
+        row = self.case("minimal-code-repair", True, human_review_required=True,
+                        human_review_status="recorded")
+        self.assertEqual(case_status(row), "pending_review")
+        result = project_metrics([row], self.metadata, self.catalog)["metrics"][0]
+        self.assertIsNone(result["denominator"])
+        self.assertEqual(result["pending_review_cases"], ["minimal-code-repair"])
+
+    def test_execution_error_does_not_inherit_deterministic_pass(self):
+        self.assertEqual(case_status({"execution_status": "protocol_failure",
+                                      "deterministic_passed": True}), "unknown")
+
     def test_legacy_unknown_identity_is_not_comparable(self):
         result = project_metrics([{"case_id": "minimal-code-repair", "suite_id": "shared-l2-core",
             "suite_version": "1.0.0", "rubric_version": "1", "deterministic_passed": True,
