@@ -1,5 +1,7 @@
 # Standalone Results delivery — T15 / T16
 
+**Acceptance: COMPLETE within the standalone deterministic implementation scope.** R0–R4 and T15 regression validation passed locally and on all four supported CI configurations. This is GUI/reporting acceptance, not actual model qualification or a T18 release.
+
 Benchmark Lab is an independent model evaluation application. The operational DSH Lab is separate. The [corrected backlog and dependency graph](IMPLEMENTATION_BACKLOG_V2.md) preserve T01–T13 and visibly defer T14. T16 depends on accepted T13 reporting; T15 validates standalone regressions. T17 model runs retain their own authorization, hardware and containment gates. Neither native DSH integration nor optional T19 capability expansion gates the GUI or standalone release.
 
 ## Delivered phases
@@ -10,9 +12,9 @@ Benchmark Lab is an independent model evaluation application. The operational DS
 | R1 | Six capability groups, separate horizontal bars per configuration/population, five-role suitability matrix using T13 criteria | 79 tests passed before R2; commit `3e8b99b` |
 | R2 | Five Assistant dimensions, seven filters, T13 comparison exclusions, exact case/attempt/artifact drill-down | 85 tests passed before R3; commit `39601ba` |
 | R3 | Queue-to-Results and Results-to-queue navigation using exact saved run directories; recovery and persistence unchanged | 88 tests passed before R4; commit `cc77046` |
-| R4 | Actual Tk clicks, resize/scroll, report validation, legacy/repair/repetition/coverage fixtures, required Tk in Windows/Linux CI | 96 targeted tests and 551 full local tests passed; final CI acceptance recorded separately |
+| R4 | Actual Tk clicks, resize/scroll, report validation, legacy/repair/repetition/coverage fixtures, required Tk in Windows/Linux CI | 97 targeted tests and 552 full regressions passed locally and in all four CI configurations; code `5c81a6f` |
 
-The targeted Windows suite has one existing POSIX-only skip. The full local Windows Python 3.12 suite has two existing platform skips: the POSIX process-group test and a symlink privilege test (Windows junction coverage still runs). No Results widget test is skipped. New tests fail on Tk callback exceptions. The final layout correction was followed by another 96-test pass; the supported CI matrix runs the full final revision.
+The targeted Windows suite has one existing POSIX-only skip. The full local Windows Python 3.12 suite has two existing platform skips: the POSIX process-group test and a symlink privilege test (Windows junction coverage still runs). No Results widget test is skipped. New tests fail on Tk callback exceptions. The final layout and direct-case context corrections passed 97 targeted queue/GUI tests, including 28 Results tests with no skips. The supported CI matrix runs the full final revision.
 
 ## Reused implementation and boundaries
 
@@ -30,9 +32,9 @@ Use the existing `tools/gui/benchmark-queue.py` / Windows launcher and select **
 2. Select one or several report rows. An unselected report list shows all loaded reports. Each saved metric population and model configuration keeps its own row and denominator. Selecting a queue run with no report shows no results for that run.
 3. Select a capability bar, a role cell or an Assistant metric label. The selected-result panel shows the exact versioned metric, suite/rubric, configuration, numerator/denominator, first-pass/repair outcomes, failures/blocks, review and comparison exclusions. **Case rows** lists its contributing and excluded rows separately; select a row for its full case/run/trial/attempt/artifact identity.
 4. **Inspect selected artifact** reads only the exact recorded file and verifies its current SHA-256. It displays text inside Tk, including generated source, without executing or shell-opening it. Missing paths are reported; no similarly named file is substituted. A changed file is marked stale. Large previews are truncated at 2 MB while hashing the whole file.
-5. **Review workbook** opens the original XLSX through the existing application opener. **Run folder** opens the original directory. **Queue entry** selects the unique saved queue item with the same resolved run directory. Ambiguous or absent links remain unavailable; model names never identify a queue item.
+5. **Review workbook** opens the original XLSX through the existing application opener. **Run folder** opens the original run directory; **Case evidence folder** uses the selected case's exact recorded evidence directory. **Queue entry** selects the unique saved queue item with the same resolved run directory. Ambiguous or absent links remain unavailable; model names never identify a queue item.
 
-Filters cover suite/version, role, evaluation track, Worker mode, exact model configuration, runtime identity and human review. They select **whole exported metric populations**. If a filter matches only part of a population, that metric is hidden rather than recomputed; matching case rows remain inspectable. Reset filters to restore all populations. The Comparisons view explains incompatibilities and provides separate left/right evidence navigation. Matrix and case tables support horizontal scrolling; capability bars adapt to available width.
+Filters cover suite/version, role, evaluation track, Worker mode, exact model configuration, runtime identity and human review. They select **whole exported metric populations**. If a filter matches only part of a population, that metric is hidden rather than recomputed; matching case rows remain inspectable. Reset filters to restore all populations. Direct case selection also lists each applicable published metric and its inclusion/exclusion context. The Comparisons view explains incompatibilities and provides separate left/right evidence navigation. Matrix and case tables support horizontal scrolling; capability bars adapt to available width.
 
 ## Truthful coverage and historical limits
 
@@ -48,11 +50,26 @@ Charts show saved report-time measurements. Artifact inspection separately repor
 
 The full inherited suite supplies standalone T15 coverage: independent Planner disclosure (`test_qualification_v2_planner`), Governor boundaries (`test_qualification_v2_governor`), canonical/sequential Worker inputs and failure propagation (`test_qualification_v2_worker`), Tester/Reviewer evidence (`test_qualification_v2_verification`), runtime/tool compatibility (`test_v2_*`), reporting/export parity (`test_qualification_v2_metric*`, `test_qualification_v2_legacy_reports`), and existing CLI/queue/process behavior. Both frozen packet validators and the Planner/Governor/Worker/Tester/Reviewer validation/calibration commands passed. These are deterministic implementation checks, not new human semantic certification or execution authorization.
 
+Verified code commit: `5c81a6f63e0386fabe5827dbb973ebc148d2a876`.
+The final acceptance commit changes documentation only.
+[Complete CI run and retained transcripts](https://github.com/floydtrey/local-model-bench/actions/runs/37996460544).
+
+| CI configuration | Targeted reporting | Targeted queue/GUI | Full regressions | Outcome |
+|---|---|---|---|---|
+| [Windows / Python 3.10](https://github.com/floydtrey/local-model-bench/actions/runs/37996460544/job/114043686739) | 48 | 97 (one existing platform skip) | 552 (one existing platform skip) | PASS |
+| [Windows / Python 3.12](https://github.com/floydtrey/local-model-bench/actions/runs/37996460544/job/114043687096) | 48 | 97 (one existing platform skip) | 552 (one existing platform skip) | PASS |
+| [Linux / Python 3.10](https://github.com/floydtrey/local-model-bench/actions/runs/37996460544/job/114043687103) | 48 | 97 (two existing platform skips) | 552 (three existing platform skips) | PASS |
+| [Linux / Python 3.12](https://github.com/floydtrey/local-model-bench/actions/runs/37996460544/job/114043687104) | 48 | 97 (two existing platform skips) | 552 (three existing platform skips) | PASS |
+
+Real Tk is required (`LOCALBENCH_REQUIRE_TK=1`); Linux uses Xvfb. All 28 new Results tests run on every configuration. Platform-specific process/PowerShell/junction checks remain unchanged. No failed GUI tests were disabled. The final local full suite ran 552 tests in 148.211 seconds, passed with its two existing platform skips. The frozen Assistant v1 Git trees remain `83beb2a0ebcb938128f8a519a69f4b7c6fb573ee` and `cc4e8f50e33c95bc2fa0890730cdf1880ed2053c`; the historical role campaign tree remains `a1b8ca0279e1b8e1a81b92e1164fa62d641026b0`, identical to T13.
+
 ## Permanent installation and future integration
 
 The work is in a separate clone on `development/t16-standalone-results-20261009`, based on verified T13 `7f9b25c56a4cdd000cc94a8fbf31b50a30310ac1`. Architecture correction was committed first as `7f1b51cc93ed8dc69a52ebe57e774e4ecc308e61` and its dependency graph checked before GUI work.
 
 `C:\Projects\local-model-bench-flashnext` remains on `local/flashnext-startup-safe-20261009` at `6624945ba7f9cca99071b4fc07a37e958770bca1`, clean and unmodified. That commit is an ancestor of T13 and this branch, preserving the machine-specific startup repair. No Flash-Next launch, tuning, repair or inference was performed.
+
+The four recorded startup-repair files were also directly compared with `6624945`: the campaign README, runtime profile, `flashnext_runtime.py` and its tests have no diff. Queue `core.py`/`process.py`, all T13 reporting implementation files and the metric catalog likewise have no diff from T13.
 
 A separate safe installation stage should first recheck its status and ancestry, preserve its machine branch and local queue/run evidence, and make a recovery ref/backup before integration. Only after review should it integrate the verified Results branch while retaining the startup repair. Use the deterministic fixture/GUI regressions and saved-report inspection for smoke testing; keep Flash-Next suspended and do not start any model. Do not reset, clean or overwrite machine-specific state. Reassess ancestry if the installation advances rather than assuming the recorded fast-forward relationship still holds.
 
