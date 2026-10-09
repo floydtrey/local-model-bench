@@ -6,7 +6,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, ttk
 
-from .results import (FILTERS, compare_reports, discover_reports, display, filter_value,
+from .results import (FILTERS, case_evidence_refs, compare_reports, discover_reports, display, filter_value,
                       load_report, metric_matches, queue_matches, queue_run_path, read_evidence, row_matches)
 from .results_charts import ASSISTANT, MetricChart, RoleMatrix, configuration_label
 
@@ -77,7 +77,7 @@ class ResultsView(ttk.Frame):
         ttk.Button(filters, text="Reset filters", command=self.reset_filters).grid(row=3, column=6, sticky="w")
         panes = ttk.Panedwindow(self, orient="horizontal")
         panes.grid(row=4, sticky="nsew", pady=6)
-        self.views = ttk.Notebook(panes)
+        self.views = ttk.Notebook(panes, width=700)
         self.capabilities = MetricChart(self.views, self.select_metric)
         self.roles = RoleMatrix(self.views, self.select_metric)
         self.assistant = MetricChart(self.views, self.select_metric, ASSISTANT)
@@ -112,10 +112,10 @@ class ResultsView(ttk.Frame):
         details.columnconfigure(0, weight=1)
         controls = ttk.Frame(details)
         controls.grid(row=0, sticky="ew")
-        ttk.Button(controls, text="Run folder", command=self.open_run).pack(side="left")
-        ttk.Button(controls, text="Review workbook", command=self.open_workbook).pack(side="left", padx=4)
-        ttk.Button(controls, text="Case rows", command=lambda: self.views.select(self.case_frame)).pack(side="left")
-        ttk.Button(controls, text="Queue entry", command=self.reveal_queue).pack(side="left", padx=4)
+        ttk.Button(controls, text="Run folder", command=self.open_run).grid(row=0, column=0, sticky="ew")
+        ttk.Button(controls, text="Review workbook", command=self.open_workbook).grid(row=0, column=1, sticky="ew", padx=4)
+        ttk.Button(controls, text="Case rows", command=lambda: self.views.select(self.case_frame)).grid(row=1, column=0, sticky="ew", pady=3)
+        ttk.Button(controls, text="Queue entry", command=self.reveal_queue).grid(row=1, column=1, sticky="ew", padx=4, pady=3)
         self.detail = tk.Text(details, wrap="word", state="disabled", width=48, height=14)
         self.detail.grid(row=1, sticky="nsew")
         scroll = ttk.Scrollbar(details, command=self.detail.yview)
@@ -248,14 +248,20 @@ class ResultsView(ttk.Frame):
 
     @staticmethod
     def metric_detail(report, metric):
-        return (f"{metric['metric_id']} @ {display(metric.get('metric_version'))}\nSource: {report.path}\n"
+        return (f"{metric['metric_id']} @ {display(metric.get('metric_version'))}\n"
+                f"Model: {configuration_label(metric.get('configuration'))}\n"
+                f"Configuration ID: {display(metric.get('configuration_id'))}\n"
                 f"Measured outcome: {display(metric.get('suitability') or metric.get('status'))}\n"
                 f"Numerator / denominator: {display(metric.get('numerator'))} / {display(metric.get('denominator'))}\n"
+                f"Distinct cases: {display(metric.get('distinct_cases'))} · Attempts: {display(metric.get('attempt_count'))}\n"
+                f"Suite: {display(metric.get('suite_id'))} @ {display(metric.get('suite_version'))}\n"
+                f"Rubric: {display(metric.get('rubric_id'))} @ {display(metric.get('rubric_version'))}\n"
                 f"Review: {display(metric.get('review_status'))}\n"
                 f"First pass: {display(metric.get('first_pass'))}\nAfter repair: {display(metric.get('after_repair'))}\n"
                 f"Failed cases: {display(metric.get('final_failed_cases'))}\nBlocked cases: {display(metric.get('blocked_cases'))}\n"
                 f"Comparison eligible: {display(metric.get('comparison_eligible'))}\n"
                 f"Exclusions: {display(metric.get('comparison_exclusion_reasons'))}\n"
+                f"Definition: {display(metric.get('definition'))}\nSource: {report.path}\n"
                 "Counts are distinct cases; attempts and cumulative acceptance checks remain separate.\n")
 
     def show_cases(self, rows, metric=None):
@@ -270,7 +276,8 @@ class ResultsView(ttk.Frame):
             if metric:
                 refs = [ref for ref in metric["case_refs"] if ref["row_id"] == row["row_id"]]
                 member = "Included" if refs and refs[0]["included"] else "Excluded · see reasons in result"
-            self.cases.insert("", "end", iid=key, values=(display(config.get("model_name")),
+            model = configuration_label(config) if config.get("model_name") else display(row.get("candidate_name"))
+            self.cases.insert("", "end", iid=key, values=(model,
                 f"{display(row.get('suite_id'))} / {row['case_id']}", display(row.get("normalized_status")),
                 display(row.get("human_review_state")),
                 " / ".join(display(row.get(k)) for k in ("run_id", "trial_id", "attempt_id")), member))
@@ -300,7 +307,7 @@ class ResultsView(ttk.Frame):
                  "Missing fields: Unknown. Assessment and execution are separate.\n\n" + json.dumps(row, indent=2, ensure_ascii=False))
         self.artifacts.delete(*self.artifacts.get_children())
         self.artifact_refs.clear()
-        for index, ref in enumerate(row.get("verified_evidence_refs") or row.get("evidence_refs") or []):
+        for index, ref in enumerate(case_evidence_refs(row)):
             key = f"artifact-{index}"
             self.artifact_refs[key] = ref
             self.artifacts.insert("", "end", iid=key, values=(display(ref.get("kind")),

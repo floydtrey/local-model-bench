@@ -15,6 +15,7 @@ on:
       - 'src/localbench/v2/**'
       - 'src/localbench/queue_gui/**'
       - 'tests/test_queue_gui*.py'
+      - 'tests/results_fixtures.py'
       - 'tests/test_qualification_v2*.py'
       - 'schemas/v2/metric-report.schema.json'
       - '.github/workflows/qualification-v2-foundation.yml'
@@ -51,6 +52,12 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_qualification_v2_metric*.py' -v
           python -m unittest discover -s tests -p 'test_qualification_v2_legacy_reports.py' -v
+      - name: Targeted real Tk Results and existing queue regressions (Windows)
+        if: runner.os == 'Windows'
+        run: python -m unittest discover -s tests -p 'test_queue_gui*.py' -v
+      - name: Targeted real Tk Results and existing queue regressions (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python -m unittest discover -s tests -p 'test_queue_gui*.py' -v
       - name: Full deterministic regressions including T05-T12 and frozen sources (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -81,7 +88,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: t13-tests-${{ matrix.os }}-python-${{ matrix.python }}
+          name: t16-tests-${{ matrix.os }}-python-${{ matrix.python }}
           path: deterministic-test-output.txt
           if-no-files-found: warn
           retention-days: 14

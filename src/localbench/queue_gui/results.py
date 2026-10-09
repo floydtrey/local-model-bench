@@ -5,6 +5,7 @@ import csv
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 from pathlib import Path
 
 from ..v2.metric_projection import (
@@ -65,6 +66,15 @@ def compare_reports(series):
             reasons.add("different_metric_version")
         if left_report.projection.get("catalog_sha256") != right_report.projection.get("catalog_sha256"):
             reasons.add("different_catalog_sha256")
+        if left_report is right_report:
+            # Retain any exclusions already published in the source package.
+            left_index = next(i for i, item in enumerate(left_report.metrics, 1) if item is left)
+            right_index = next(i for i, item in enumerate(right_report.metrics, 1) if item is right)
+            for saved in left_report.projection["comparisons"]:
+                if {saved["left_series"], saved["right_series"]} == {left_index, right_index}:
+                    reasons.update(saved.get("exclusion_reasons", []))
+                    if saved.get("eligible") is False and not saved.get("exclusion_reasons"):
+                        reasons.add("source_comparison_ineligible")
         comparison["eligible"] = not reasons
         comparison["exclusion_reasons"] = sorted(reasons)
     return result
@@ -75,6 +85,12 @@ def validate_projection(projection):
         raise ValueError("Unsupported metric report version; use its matching reporting reader")
     if not all(isinstance(projection.get(k), list) for k in ("case_details", "metrics", "comparisons")):
         raise ValueError("Invalid T13 report collections")
+    if (not isinstance(projection.get("catalog_version"), str)
+            or not isinstance(projection.get("catalog_sha256"), str)
+            or len(projection["catalog_sha256"]) != 64
+            or projection.get("automatic_role_assignment") is not False
+            or projection.get("universal_intelligence_score") is not None):
+        raise ValueError("Invalid T13 catalog or reporting policy")
     rows = {}
     for row in projection["case_details"]:
         if not isinstance(row, dict) or not row.get("row_id") or not row.get("case_id"):
@@ -83,12 +99,32 @@ def validate_projection(projection):
             raise ValueError("Duplicate case row identity")
         rows[row["row_id"]] = row
     for metric in projection["metrics"]:
-        if not isinstance(metric, dict) or not isinstance(metric.get("case_refs"), list):
+        if (not isinstance(metric, dict) or not isinstance(metric.get("case_refs"), list)
+                or not isinstance(metric.get("metric_id"), str)
+                or not isinstance(metric.get("metric_version"), str)
+                or metric.get("kind") not in ("capability", "assistant", "role_suitability")):
             raise ValueError("Invalid metric case references")
+        if (not all(isinstance(metric.get(k), list) for k in ("membership", "excluded", "comparison_exclusion_reasons"))
+                or not isinstance(metric.get("scored_population"), dict)
+                or metric.get("protocol") is not None and not isinstance(metric["protocol"], dict)):
+            raise ValueError("Invalid metric population or protocol")
+        n, d, percent = (metric.get(k) for k in ("numerator", "denominator", "percentage"))
+        if any(value is not None and (type(value) is not int or value < 0) for value in (n, d)):
+            raise ValueError("Invalid metric numerator/denominator")
+        if n is not None and (d is None or n > d):
+            raise ValueError("Invalid metric numerator/denominator")
+        if percent is not None and (type(percent) not in (int, float) or not math.isfinite(percent)
+                or not 0 <= percent <= 100 or not d or n is None
+                or metric.get("status") != "measured" or abs(percent - 100 * n / d) > 1e-8):
+            raise ValueError("Invalid published percentage; no score can be inferred")
+        if metric.get("status") == "measured" and (not d or n is None):
+            raise ValueError("Measured metric needs a positive case denominator")
         for ref in metric["case_refs"]:
+            if not isinstance(ref, dict):
+                raise ValueError("Invalid metric case reference")
             row = rows.get(ref.get("row_id"))
             if row is None or any(ref.get(k) != row.get(k) for k in (
-                    "case_id", "run_id", "trial_id", "attempt_id", "artifact_sha256")):
+                    "case_id", "run_id", "trial_id", "attempt_id", "ordinal", "artifact_sha256")):
                 raise ValueError("Metric-to-case identity mismatch")
             if any(metric.get(k) != row.get(k) for k in SOURCE_FIELDS):
                 raise ValueError("Metric-to-case suite/rubric mismatch")
@@ -214,11 +250,26 @@ def evidence_path(report, row, ref):
 def read_evidence(report, row, ref):
     """Read bytes, never shell-open generated programs or guess moved artifacts."""
     path = evidence_path(report, row, ref)
-    data = path.read_bytes()
-    observed = hashlib.sha256(data).hexdigest()
+    digest = hashlib.sha256()
+    preview_bytes = bytearray()
+    size = 0
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+            size += len(block)
+            preview_bytes.extend(block[:max(0, 2_000_000 - len(preview_bytes))])
+    observed = digest.hexdigest()
     expected = ref.get("sha256")
     integrity = "verified" if expected == observed else "stale" if expected else "unknown (no recorded hash)"
-    preview = data[:2_000_000].decode("utf-8", errors="replace")
-    if len(data) > 2_000_000:
+    preview = preview_bytes.decode("utf-8", errors="replace")
+    if size > 2_000_000:
         preview += "\n[Preview truncated; SHA-256 covers the entire file.]"
     return path, integrity, observed, preview
+
+
+def case_evidence_refs(row):
+    refs = row.get("verified_evidence_refs") or row.get("evidence_refs") or []
+    if not refs and row.get("assessment_file"):
+        # A historical exact path is useful, but does not establish a hash.
+        return [{"path": row["assessment_file"], "kind": "assessment", "integrity": "unknown"}]
+    return refs

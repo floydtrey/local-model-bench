@@ -1,6 +1,6 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T12 implementation and the delegated AI technical review of T05–T12 are complete within the authored/synthetic benchmark scope. The audit reviewed 80 case/task units and all 134 controls, corrected 40 case records and 120 controls, and approved the revised materials for benchmark use. This is not independent human certification, model qualification or Owner execution authority. Real isolated Worker seeds remain BLOCKED; real Worker artifact compatibility remains PROVISIONAL; untrusted Worker/Tester Python needs a separately authorized isolated environment. T13 reporting is COMPLETE with all material conditions and the four-configuration Windows/Linux CI matrix verified; T14 native DSH integration is DEFERRED / OUT OF SCOPE; T15–T18 remain NOT STARTED; T19 expansion remains optional and NOT STARTED. **Updated:** 2026-10-09; see [versioned technical audit](technical-audit-20261009/AUDIT_REPORT.md), [case decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md), its integration/validation completion record, and [T13 acceptance](T13_ACCEPTANCE_20261009.md).
+**Status:** T01–T12 implementation and the delegated AI technical review of T05–T12 are complete within the authored/synthetic benchmark scope. The audit reviewed 80 case/task units and all 134 controls, corrected 40 case records and 120 controls, and approved the revised materials for benchmark use. This is not independent human certification, model qualification or Owner execution authority. Real isolated Worker seeds remain BLOCKED; real Worker artifact compatibility remains PROVISIONAL; untrusted Worker/Tester Python needs a separately authorized isolated environment. T13 reporting is COMPLETE with all material conditions and the four-configuration Windows/Linux CI matrix verified; T14 native DSH integration is DEFERRED / OUT OF SCOPE; T15 standalone regressions and T16 R0–R4 are implemented with local verification complete and final CI pending; T17–T18 remain NOT STARTED; T19 expansion remains optional and NOT STARTED. **Updated:** 2026-10-09; see [versioned technical audit](technical-audit-20261009/AUDIT_REPORT.md), [case decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md), its integration/validation completion record, and [T13 acceptance](T13_ACCEPTANCE_20261009.md).
 **Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T19 IDs and completed T01–T13 records are preserved. The 2026-10-09 architecture correction below supersedes the original T14–T19 dependencies: Benchmark Lab is a standalone application, separate from the operational DSH Lab. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
@@ -39,8 +39,8 @@
 | T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | APPROVED_FOR_BENCHMARK — 20 authored cases/60 controls reviewed and corrected; real-artifact compatibility PROVISIONAL |
 | T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | COMPLETE — all reporting conditions; 524-test regressions and Windows/Linux Python 3.10/3.12 CI verified |
 | T14 | Deferred native DSH integration research | Future / out of scope | None for this release | DEFERRED — not implemented or qualified |
-| T15 | Standalone execution, evaluation and report regression validation | P0 · Large | T05, T08, T10, T11, T12, T13 | NOT STARTED |
-| T16 | Complete existing GUI with chart-focused Results tab | P0 · Large | T13 | NOT STARTED — R0–R4 proceed incrementally; no DSH dependency |
+| T15 | Standalone execution, evaluation and report regression validation | P0 · Large | T05, T08, T10, T11, T12, T13 | IN VALIDATION — 551 local regressions passed; final CI pending |
+| T16 | Complete existing GUI with chart-focused Results tab | P0 · Large | T13 | IN VALIDATION — R0–R4 delivered; 96 targeted local tests; final CI pending |
 | T17 | Independently authorized standalone model benchmarks and Results validation | P0 · Medium | T15, T16 | NOT STARTED — no real model runs for this change |
 | T18 | Standalone Benchmark Lab release with GUI, methodology and evidence exports | P1 · Small–medium | T15, T16, T17 | NOT STARTED |
 | T19 | Expand capability cases for vision, long-context, reasoning and instruction following | P2 · Large | T02, T13 | NOT STARTED — existing-case/runtime inventory recorded; optional and nonblocking |
@@ -299,7 +299,7 @@ flowchart LR
 **Acceptance of architecture correction:** T15–T18 have no dependency on this deferred item. If standalone sequential role/Worker handoffs need more validation, extend tests of the existing Benchmark Lab harness under T15. No new engine, service, state store or orchestration layer is authorized.
 
 ### T15 — Standalone benchmark regression validation
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T05, T08, T10, T11, T12, T13  
+**Status:** IN VALIDATION — local deterministic regressions passed; final supported CI pending · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T05, T08, T10, T11, T12, T13
 **Where:** existing `local-model-bench` test suites/workflows only; report fixtures exercise the **existing** writer/reader and provenance boundaries.
 
 **Reuse:** Prior Windows/Linux Python suites, existing standalone role/handoff tests, GUI fake runner and native PowerShell launch tests, historic role fixtures, A001/A002 assessor calibration, and new T13 versioned metric definitions.
@@ -310,12 +310,14 @@ flowchart LR
 
 **Change from the earlier backlog:** Expands the existing regression gate to catch false reporting and chart-denominator bugs alongside incremental T16 user-interface verification; T16 still owns **real Tk click-to-evidence** tests.
 
+**Validation record:** [Standalone Results implementation and phase evidence](T16_RESULTS_IMPLEMENTATION.md). Existing harness/report/CLI/GUI tests are reused; no model execution or DSH release is needed.
+
 ## GUI, real-model pilots and release
 
 *T16–T18 · extend existing queue and existing review writer; a read-only Results slice can begin after T13 without starting a second app or waiting for T19*
 
 ### T16 — Complete the existing GUI and chart-focused Results tab
-**Status:** NOT STARTED — existing GUI already queues three benchmarks, opens workbooks and persists model/settings; **there is no Results tab yet** · **Priority:** P1 · **Complexity:** Large · **Dependencies:** T13  
+**Status:** IN VALIDATION — R0–R4 implemented and locally verified; final supported CI pending · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T13
 **Where:** `src/localbench/queue_gui/app.py`, existing queue state/controller, Tkinter widgets and project launchers; consume JSON/CSV/review writer outputs and run evidence **read-only**, with no second dashboard, back-end service, database, state store or orchestration.
 
 **Reuse:** Existing Ollama-model selection, mixed benchmark queue, dynamic T01–T06 tasks, screen/qualification phases, live terminal, subprocess custody, pause/stop/emergency stop, atomic queue persistence/recovery and `Open review workbook`. Read stored legacy role/package/Assistant reports plus T13 normalized metric exports; report writer remains the source of authoritative scoring.
@@ -345,7 +347,7 @@ flowchart LR
 **Change from the earlier backlog:** Beyond genuine model qualification, T17 now explicitly **validates the Results UI numerically and evidentially against real run records** rather than accepting a passing synthetic visualization.
 
 ### T18 — Standalone Benchmark Lab release
-**Status:** NOT STARTED · **Priority:** P1 · **Complexity:** Small–medium · **Dependencies:** T15, T16, T17  
+**Status:** NOT STARTED · **Priority:** P1 · **Complexity:** Small–medium · **Dependencies:** T15, T16, T17
 **Where:** Existing `local-model-bench` docs, packet/metric/rubric manifests, CSV/JSON/XLSX output/release evidence and GUI usage guide.
 
 **Reuse:** T01 baseline, two v1 manifests and approved benchmark-reference designs, T02 evaluation/authority contract, T13 released metric catalog and report writer, T16 Results tab, T17 actual model/evidence audit.
@@ -407,4 +409,6 @@ flowchart LR
 
 **Owner decision recorded:** The owner accepted both T03/T04 designs for **benchmark reference use** after the Batch 1 review. Their traceability metadata remains `OWNER_REVIEW_PENDING` until a trusted controlled-reference authorization/version record is created in T09; this does not require repeating the high-level project approval. It is **not** approval to execute generated Python outside authorized limits, invent Governor authority, deploy into the Assistant or automatically assign a role. T05 now provides blind Planner isolation; T07 can independently design Governor cases under T02's existing rules.
 
-**Results reporting handoff:** T13 establishes the score/status/comparability contract; the read-only T16-R0 Results MVP may begin against real existing reports after T13 (without waiting for native T14/T15). All T16 Results phases now depend on T13 and preceding phase verification; T14 is deferred and T15 validates standalone release regressions. The additional T19 capability inventory/expansion is independent and never a prerequisite for first charts, T17 pilots or T18 release.
+**Current Results delivery:** R0–R4 implementation and sequential local phase tests are complete; see [implementation/usage and verification record](T16_RESULTS_IMPLEMENTATION.md). Final supported CI is pending.
+
+**Results reporting handoff (architecture):** T13 establishes the score/status/comparability contract; the read-only T16-R0 Results MVP may begin against real existing reports after T13 (without waiting for native T14/T15). All T16 Results phases now depend on T13 and preceding phase verification; T14 is deferred and T15 validates standalone release regressions. The additional T19 capability inventory/expansion is independent and never a prerequisite for first charts, T17 pilots or T18 release.

@@ -72,21 +72,66 @@ class ResultsReaderTests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             read_evidence(report, row, ref)
 
+    def test_invalid_published_percentages_are_rejected_without_repairing_scores(self):
+        fixture = ReportFixture(self.root / "invalid")
+        fixture.case()
+        path = fixture.write()
+        original = path.read_text()
+        for change in ({"percentage": float("nan")}, {"denominator": 0}, {"percentage": 42},
+                       {"status": "not_tested"}, {"numerator": True}):
+            with self.subTest(change=change):
+                raw = json.loads(original)
+                metric = next(m for m in raw["qualification_v2_metrics"]["metrics"] if m["percentage"] is not None)
+                metric.update(change)
+                path.write_text(json.dumps(raw))
+                with self.assertRaises(ValueError):
+                    load_report(path)
+
+    def test_case_csv_uses_original_package_and_unpaired_legacy_stays_unknown(self):
+        fixture = ReportFixture(self.root / "csv")
+        fixture.case()
+        path = fixture.write()
+        self.assertEqual(load_report(path.parent / "case-results.csv").path, path.resolve())
+        legacy = self.root / "case-results.csv"
+        legacy.write_text("case_id,status,deterministic_passed\nsame,success,\n")
+        result = load_report(legacy)
+        self.assertEqual(result.rows["legacy-1"]["normalized_status"], "unknown")
+        self.assertEqual(result.metrics, [])
+
+    def test_original_legacy_workbook_path_is_retained(self):
+        path = self.root / "summary.json"
+        workbook = self.root / "original.xlsx"
+        workbook.write_bytes(b"fixture")
+        path.write_text(json.dumps({"campaign": "assistant-001-v1", "results": [{"case_id": "a"}],
+                                   "review_package": {"xlsx": str(workbook)}}))
+        self.assertEqual(load_report(path).workbook.resolve(), workbook.resolve())
+
 
 class ResultsWidgetTests(unittest.TestCase):
     # Reuse the existing real-Tk fixture lifecycle without inheriting its tests.
     setUpClass = classmethod(_QueueTests.setUpClass.__func__)
     setUp = _QueueTests.setUp
-    tearDown = _QueueTests.tearDown
-    _create_app = _QueueTests._create_app
+    _base_teardown = _QueueTests.tearDown
+    _base_create_app = _QueueTests._create_app
     _discover = _QueueTests._discover
 
+    def _create_app(self):
+        self._base_create_app()
+        self.tk_errors = getattr(self, "tk_errors", [])
+        self.root.report_callback_exception = lambda kind, error, tb: self.tk_errors.append((kind, str(error)))
+
+    def tearDown(self):
+        self._base_teardown()
+        self.assertEqual(self.tk_errors, [], "Tk callback exceptions must fail the tests")
+
     def click_canvas_item(self, chart, item):
+        target = chart.targets[item]
         self.app.notebook.select(self.app.results)
         self.app.results.views.select(chart)
         self.root.deiconify()
         self.root.update()
         canvas = chart.canvas
+        item = next(i for i, pair in chart.targets.items() if pair == target and canvas.type(i) == "rectangle")
         x0, y0, x1, y1 = canvas.bbox(item)
         bounds = list(map(float, canvas.cget("scrollregion").split()))
         canvas.xview_moveto(max(0, x0 - 20) / bounds[2])
@@ -309,6 +354,84 @@ class ResultsWidgetTests(unittest.TestCase):
         self.assertEqual(len(view.case_rows), 0)
         self.assertIsNone(view.selected_report)
         self.assertIn("No supported reports", view.message.get())
+
+    def test_r4_same_case_name_other_suite_is_explicitly_excluded_and_exact(self):
+        fixture = ReportFixture(self.repo / "similar")
+        fixture.case(ordinal=1, artifact_sha256="a" * 64)
+        fixture.case(suite_id="different-suite", ordinal=2, artifact_sha256="b" * 64)
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        self.click_canvas_item(view.capabilities, view.capabilities.bar_items[0])
+        self.assertEqual(view.selected_metric["denominator"], 1)
+        self.assertEqual(len(view.case_rows), 2)
+        for key, (report, row) in view.case_rows.items():
+            view.cases.selection_set(key)
+            view.cases.event_generate("<<TreeviewSelect>>")
+            self.root.update()
+            expected = "Included" if row["ordinal"] == 1 else "Excluded"
+            self.assertTrue(view.cases.item(key, "values")[-1].startswith(expected))
+            self.assertEqual(view.selected_row["artifact_sha256"], row["artifact_sha256"])
+            self.assertIn(row["suite_id"], view.detail.get("1.0", "end"))
+            ref = next(iter(view.artifact_refs.values()))
+            self.assertEqual(read_evidence(report, row, ref)[0].name, f"assessment-{row['ordinal']}.json")
+
+    def test_r4_missing_evidence_unsupported_and_not_attempted_never_gain_scores(self):
+        paths = []
+        for name, change in (("missing", {}), ("unsupported", {"execution_status": "unsupported", "assessed_outcome": None}),
+                             ("not-attempted", {"execution_status": "not_attempted", "assessed_outcome": None})):
+            fixture = ReportFixture(self.repo / name)
+            row = fixture.case(**change)
+            if name == "missing":
+                Path(row["assessment_file"]).unlink()
+            paths.append(fixture.write())
+        view = self.app.results
+        view.load_paths(paths)
+        self.assertEqual(view.capabilities.bar_items, [])
+        metrics = [m for r in view.reports.values() for m in r.metrics if m["metric_id"] == "coding" and m["case_refs"]]
+        self.assertEqual({m["status"] for m in metrics}, {"insufficient_evidence", "unsupported", "not_attempted"})
+        self.assertTrue(all(m["denominator"] is None for m in metrics))
+
+    def test_r4_repeated_trials_and_acceptance_checks_never_inflate_case_count(self):
+        fixture = ReportFixture(self.repo / "repeated")
+        for ordinal in (1, 2, 3):
+            fixture.case(trial_id=f"trial-{ordinal}", trial_ordinal=ordinal, planned_trial_count=3,
+                         repeat_group="declared", acceptance_check_count=79, acceptance_check_unit="cumulative_checks_at_task")
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        self.click_canvas_item(view.capabilities, view.capabilities.bar_items[0])
+        m = view.selected_metric
+        self.assertEqual((m["denominator"], m["distinct_cases"], m["attempt_count"], m["repeated_trials"]), (1, 1, 3, 2))
+        self.assertEqual(len(view.case_rows), 3)
+        self.assertIn("cumulative_checks_at_task", view.detail.get("1.0", "end"))
+
+    def test_r4_resize_scroll_and_stale_evidence_preview(self):
+        fixture = ReportFixture(self.repo / "resize")
+        row = fixture.case("assistant-001-reviewer-01", metric="role_reviewer", role="reviewer",
+                           assessed_outcome="FAIL", critical_failures=["fabricated evidence"])
+        view = self.app.results
+        view.load_paths([fixture.write()])
+        self.root.geometry("1000x750")
+        item = next(i for i, (_, metric) in view.roles.targets.items() if metric["metric_id"] == "role_reviewer")
+        self.click_canvas_item(view.roles, item)
+        self.assertEqual(view.selected_metric["suitability"], "criteria_not_met")
+        key = view.cases.get_children()[0]
+        view.cases.selection_set(key)
+        view.cases.event_generate("<<TreeviewSelect>>")
+        self.root.update()
+        self.assertIn("fabricated evidence", view.detail.get("1.0", "end"))
+        Path(row["assessment_file"]).write_text("stale bytes")
+        view.artifacts.selection_set(view.artifacts.get_children()[0])
+        window = view.preview_artifact()
+        self.assertIn("Current integrity: stale", window.winfo_children()[0].get("1.0", "end"))
+        window.destroy()
+
+    def test_r4_workbook_open_cannot_execute_a_recorded_program(self):
+        path = self.repo / "untrusted.py"
+        path.write_text("raise AssertionError('must not run')")
+        with patch("localbench.queue_gui.app.messagebox.showerror") as error:
+            self.app._open_output(path, True)
+        error.assert_called_once()
+        self.assertEqual(self.runner.started, [])
 
     def test_r0_cases_exact_evidence_and_workbook_in_existing_app(self):
         fixture = ReportFixture(self.repo / "local-state" / "synthetic-run")
