@@ -11,4 +11,8 @@ campaigns/flashnext-all-roles-v1/sources/** -text
 campaigns/flashnext-all-roles-v1/*.json text eol=lf
 src/localbench/v2/*.py text eol=lf
 schemas/v2/*.json text eol=lf
+project-benchmarks/*/qualification-v2/planner-input-v1/** text eol=lf
+project-benchmarks/*/qualification-v2/PLANNER_PACKET.json text eol=lf
+docs/qualification-v2/planner-calibration/** text eol=lf
+src/localbench/qualification_v2/*.py text eol=lf
 tools/campaigns/*.ps1 text eol=lf

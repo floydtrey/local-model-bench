@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "scenario_id": "quiet-room",
+  "start_at": "2026-10-08T12:00:00.000000Z",
+  "duration_ms": 60000,
+  "events": [],
+  "checkpoints": [
+    {
+      "at_ms": 0,
+      "expected_ids": []
+    },
+    {
+      "at_ms": 60000,
+      "expected_ids": []
+    }
+  ]
+}

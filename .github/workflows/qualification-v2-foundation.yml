@@ -10,6 +10,9 @@ on:
       - 'project-benchmarks/assistant-002/v1/**'
       - 'campaigns/flashnext-all-roles-v1/**'
       - 'src/localbench/qualification_v2/**'
+      - 'src/localbench/assistant001/**'
+      - 'src/localbench/assistant002/**'
+      - 'src/localbench/v2/**'
       - 'tests/test_qualification_v2*.py'
       - '.github/workflows/qualification-v2-foundation.yml'
   workflow_dispatch:
@@ -37,3 +40,5 @@ jobs:
           python -m localbench.assistant002 validate
       - name: Audit controlled-mode registry and frozen sources
         run: python -m unittest discover -s tests -p 'test_qualification_v2*.py' -v
+      - name: Validate Planner calibration record controls (no semantic auto-grading)
+        run: python -m localbench.qualification_v2 calibrate

@@ -147,11 +147,17 @@ class FlashNextGateClosureTests(unittest.TestCase):
             result = verify_gate(self.chain[key], stage=stage, fingerprint=self.fingerprint, repo_root=ROOT)
             self.assertEqual(result["status"], "pass")
             self.assertFalse(result["role_or_model_qualified"])
-        # Four equivalent foundation copies are legitimate, unlike trials.
+        # Four execution-host copies plus the independent BL-3 stability capture
+        # are legitimate. The second capture has a distinct identity but same facts.
         refs = self.chain["smoke_gate"]["evidence"]
         hosts = [item for item in refs if item["reference"]["record_type"] == "host_profile"]
-        self.assertEqual(len(hosts), 4)
-        self.assertEqual(len({item["reference"]["sha256"] for item in hosts}), 1)
+        self.assertEqual(len(hosts), 5)
+        self.assertEqual(len({item["reference"]["sha256"] for item in hosts}), 2)
+        self.assertEqual(sum(item["reference"]["logical_id"] == "flashnext-host-capture-1" for item in hosts), 4)
+        self.assertEqual(sum(item["reference"]["logical_id"] == "flashnext-host-capture-2" for item in hosts), 1)
+        self.assertEqual({
+            _json(self.chain["smoke_dir"] / item["path"])["payload"]["facts_sha256"] for item in hosts
+        }, {self.fingerprint["host_facts_sha256"]})
 
     def test_gate_rejects_unsupported_stage_and_wrong_fingerprint(self):
         with self.assertRaises(FlashNextBlocked):

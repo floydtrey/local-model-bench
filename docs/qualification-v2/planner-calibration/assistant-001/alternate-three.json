@@ -1,0 +1,192 @@
+{
+  "schema_version": "qualification-v2/planner-equivalence-v1",
+  "case_id": "assistant-001-planner-v2-complete",
+  "input_sha256": "699d2590d28fa18c299e7ccb92b1a0eaa281536dcbd849a47801bc503c84580b",
+  "candidate_sha256": "0542444054986559a1caf1a31f100b8afa5036adf1723d3639753768900264c2",
+  "rubric_sha256": "d0d60e1a3b1371354f5676d34de3ebcddde6654c69756f6e475df8bd71cc41a0",
+  "reviewer": "Authored calibration fixture; not a human signoff",
+  "reviewed_at": "2026-10-08T00:00:00Z",
+  "review_origin": "calibration_fixture",
+  "verdict": "PASS",
+  "disposition": "plan",
+  "rationale": "Expected substantive judgment for this authored control; pending independent human calibration.",
+  "requirements": [
+    {
+      "id": "R01",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 825,
+          "end": 1112,
+          "quote": "Normalize a detached event under the complete R01 schema: exact identifiers, aware UTC timestamps, finite confidence, bounded TTL and canonical JSON size/depth. Reject coercions, unknown fields, cycles, overflow and invalid nested values without mutating input; payload text stays inert."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    },
+    {
+      "id": "R02",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 1113,
+          "end": 1458,
+          "quote": "Use the explicit SQLite path and commit every accepted append before return. Global event IDs distinguish new events, canonical identical duplicates and immutable conflicting content. Implement detached get/count and idempotent close; retain committed evidence across reopening and immediate process exit, propagate corruption rather than reset."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    },
+    {
+      "id": "R03",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 1521,
+          "end": 1796,
+          "quote": "Implement bounded history by validating every parameter even on an empty database, applying exact filters and half-open time bounds before pagination, and sorting by timestamp then event ID. Return detached observations including expired and future evidence without deletion."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    },
+    {
+      "id": "R04",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 1797,
+          "end": 2149,
+          "quote": "Implement current_state with mandatory as_of and separate source/entity/type keys. Pick the latest eligible timestamp/event-ID winner, then exclude it at exact TTL expiry without resurrecting an older event. Future events cannot suppress eligible ones; confidence never controls precedence, and unknown presence is not absence. No wall clock or fusion."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    },
+    {
+      "id": "R05",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 2150,
+          "end": 2442,
+          "quote": "Implement append_many over zero to 1000 events with ordered insertion flags in one transaction. Any late invalid event or conflicting ID rolls back the entire batch without losing prior commits or breaking the connection. Cover within-batch duplicates, rollback, subsequent reuse and restart."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    },
+    {
+      "id": "R06",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 2505,
+          "end": 2997,
+          "quote": "Deliver the standalone python -m assistant_journal CLI for append, ingest, get, count, history and state, with atomic bounded UTF-8 JSONL ingestion. Follow the complete contract output rules: one JSON stdout value and empty stderr on success; exit 2 and a nonempty JSON error on stderr with empty stdout on failure, never raw payloads or tracebacks. Include runnable README examples, duplicate/conflict and source-separated TTL behavior, restart guidance, tests and the no-sandbox limitation."
+        }
+      ],
+      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "dependencies",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "bounded_tasks",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "acceptance",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "scope",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "risks",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "uncertainty",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    },
+    {
+      "id": "delivery",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 810,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+        }
+      ],
+      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+    }
+  ],
+  "blocker": {
+    "justified": false,
+    "no_actionable_tasks": false,
+    "evidence": [],
+    "rationale": ""
+  }
+}

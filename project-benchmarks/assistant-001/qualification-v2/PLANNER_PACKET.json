@@ -1,0 +1,56 @@
+{
+  "schema_version": "qualification-v2/blind-planner-input-v1",
+  "project": "assistant-001",
+  "source_manifest_sha256": "377ee1d5f94fd4e3d66748c668955dcc9fc5e208c59db252f64684d366e3b779",
+  "files": {
+    "CONTRACT.md": "8eb2aff2ea572e2775e02b874259332e2d48cdaee4908bd6d5eff2bfd307e7b8",
+    "PROJECT_INTENT.md": "951f100286b99784a68e3a03fb1c677e61f74d54ebbad1ca64295ad47be56ca7",
+    "README.md": "bd5df62abd4bbe369c715ae08636e5f70dd7b92ba6373c33ad577e395b2fae17",
+    "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
+    "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_journal/cli.py": "08694332c29e8f709bcbbf9158464e8692a974c1a86d7a6c9217c8459cfb5a59",
+    "assistant_journal/journal.py": "52ce958cdb83ba1afdd6f6a56801d0d938d32d2565af4b11cbc3cd160907fdfe",
+    "assistant_journal/validation.py": "b43b5f32676636e952e6a41255beff85900fc0ccc6d2a082dce7d0fe34b5f4bc",
+    "tests/test_candidate.py": "3366c7100f19bae042e4b46533e37155f3b0dfbb2e73a2517079ca945407f85d",
+    "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
+  },
+  "lineage": {
+    "PROJECT_INTENT.md": {
+      "source": "project-benchmarks/assistant-001/v1/PROJECT_INTENT.md",
+      "source_sha256": "951f100286b99784a68e3a03fb1c677e61f74d54ebbad1ca64295ad47be56ca7"
+    },
+    "CONTRACT.md": {
+      "source": "project-benchmarks/assistant-001/v1/CONTRACT.md",
+      "source_sha256": "f511a4d881da7307e62f1298f8254afc6d90ad43361deb477c8bf8268ba9b3be"
+    },
+    "assistant_journal/__init__.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/assistant_journal/__init__.py",
+      "source_sha256": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e"
+    },
+    "assistant_journal/__main__.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/assistant_journal/__main__.py",
+      "source_sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    "assistant_journal/cli.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/assistant_journal/cli.py",
+      "source_sha256": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e"
+    },
+    "assistant_journal/journal.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/assistant_journal/journal.py",
+      "source_sha256": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2"
+    },
+    "assistant_journal/validation.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/assistant_journal/validation.py",
+      "source_sha256": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac"
+    },
+    "tests/test_candidate.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/tests/test_candidate.py",
+      "source_sha256": "bb37efc1187f35f6b6949eae8bcbe1e216d8d18777c1da6c26d1650ccb37215f"
+    },
+    "tests/test_public_contract.py": {
+      "source": "project-benchmarks/assistant-001/v1/starter/tests/test_public_contract.py",
+      "source_sha256": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
+    }
+  },
+  "transformation": "Remove task numbering/scaffold instructions and assessor provenance pointers only; preserve public interfaces, problem outcomes and supplied helper. README is planning-specific. This metadata is controller-only."
+}

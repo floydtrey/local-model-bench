@@ -1,7 +1,7 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-08 after [Results inventory](RESULTS_TAB_COVERAGE_INVENTORY.md).  
-**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs, prerequisites, and implementation progress remain unchanged except for recording the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. This revision **updates tasks and acceptance criteria only**; no Results-tab implementation, runner/writer change, actual model test, or production authority is claimed.
+**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-08 after [T05–T06 implementation](PLANNER_T05_T06.md); Results inventory and dependencies retained.
+**Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. This batch adds the independent Planner adapter, semantic review workflow and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
 
@@ -27,8 +27,8 @@
 | T02 | Freeze evaluation-mode, authority and disclosure contracts | P0 · Medium | T01 | COMPLETE — specification, validator and CI |
 | T03 | Derive ASSISTANT-001 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED FOR BENCHMARK — artifact signoff pending |
 | T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED FOR BENCHMARK — artifact signoff pending |
-| T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | NOT STARTED |
-| T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | NOT STARTED |
+| T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | IMPLEMENTED — deterministic isolation checks |
+| T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | IMPLEMENTED — human substantive calibration/signoff pending |
 | T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | NOT STARTED |
 | T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | NOT STARTED |
 | T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | NOT STARTED |
@@ -115,7 +115,7 @@
 *T05–T08 · prevent answer contamination, pin governance inputs and evaluate decisions*
 
 ### T05 — Make project Planner qualification genuinely independent
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04  
+**Status:** IMPLEMENTED — allowlisted versioned inputs, fresh no-tools role sessions, disclosure regressions; see [implementation and limits](PLANNER_T05_T06.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04
 **Where:** local-model-bench: new qualification packet adapter/fixtures/tests, not v1 packet mutation
 
 **Reuse:** role_prompt and task_prompt conventions, existing project starter source and project intent/contract.
@@ -127,7 +127,7 @@
 **Change from the pre-audit list:** CRITICAL correction: T01 demonstrated TASKS.md was included both directly in DOCS and indirectly in the candidate workspace snapshot.
 
 ### T06 — Build semantic Planner equivalence assessment
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T05  
+**Status:** IMPLEMENTED — requirement-level human adjudication, evidence validation and ten authored controls; **human substantive calibration/signoff pending**; see [workflow](PLANNER_T05_T06.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T05
 **Where:** local-model-bench: additive qualification rubric/assessor/review records
 
 **Reuse:** v1 outcome-based acceptance criteria, six historical Planner intent cases and human-review writer.
@@ -353,8 +353,10 @@
 
 ## Next authorized implementation unit
 
-**Next implementation batch: T05 → T06 (independent Planner).** Use the T02 visibility categories and T03/T04 reference drafts to build a truly blind Planner input packet. First prove that neither direct prompt, copied workspace, tool files/metadata nor retained session state can disclose v1 `TASKS.md` or the v2 assessor-only reference. Then implement outcome-equivalence review against R01–R06 and S01–S06. The **existing scaffolded Planner probe must remain available unchanged**.
+**T05 → T06 implementation batch delivered:** Blind Planner inputs, an additive CLI over the existing role engine, outcome-based human-review records, calibration controls, frozen-source guards and Windows/Linux CI are implemented. The historical scaffolded probe remains unchanged. T06 is not fully accepted until human substantive calibration is recorded; deterministic record validation is not semantic signoff. See [T05–T06 implementation and validation commands](PLANNER_T05_T06.md).
 
-**Owner decision recorded:** The owner accepted both T03/T04 designs for **benchmark reference use** after the Batch 1 review. Their traceability metadata remains `OWNER_REVIEW_PENDING` until a trusted controlled-reference authorization/version record is created in T09; this does not require repeating the high-level project approval. It is **not** approval to execute generated Python outside authorized limits, invent Governor authority, deploy into the Assistant or automatically assign a role. T05 can implement blind Planner isolation now; T07 can independently design Governor cases under T02's existing rules.
+**Next implementation dependency:** T07 → T08 Governor case design and assessment. Existing prerequisites and all Results-tab requirements remain unchanged; this status update does not authorize that next batch or project execution.
+
+**Owner decision recorded:** The owner accepted both T03/T04 designs for **benchmark reference use** after the Batch 1 review. Their traceability metadata remains `OWNER_REVIEW_PENDING` until a trusted controlled-reference authorization/version record is created in T09; this does not require repeating the high-level project approval. It is **not** approval to execute generated Python outside authorized limits, invent Governor authority, deploy into the Assistant or automatically assign a role. T05 now provides blind Planner isolation; T07 can independently design Governor cases under T02's existing rules.
 
 **Results reporting handoff:** T13 establishes the score/status/comparability contract; the read-only T16-R0 Results MVP may begin against real existing reports after T13 (without waiting for native T14/T15). Full T16 still observes original dependencies T14/T15. The additional T19 capability inventory/expansion is independent and never a prerequisite for first charts, T17 pilots or T18 release.

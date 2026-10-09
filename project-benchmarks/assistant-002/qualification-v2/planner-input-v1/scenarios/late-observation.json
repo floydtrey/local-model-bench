@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "scenario_id": "late-observation",
+  "start_at": "2026-10-08T12:00:00.000000Z",
+  "duration_ms": 60000,
+  "events": [
+    {
+      "key": "new",
+      "at_ms": 20000,
+      "event": {
+        "event_id": "new",
+        "source": "observer",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:20.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "present": true
+        },
+        "ttl_seconds": 30
+      }
+    },
+    {
+      "key": "late",
+      "at_ms": 30000,
+      "event": {
+        "event_id": "late",
+        "source": "observer",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:10.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "present": true
+        },
+        "ttl_seconds": 30
+      }
+    }
+  ],
+  "checkpoints": [
+    {
+      "at_ms": 20000,
+      "expected_ids": [
+        "new"
+      ]
+    },
+    {
+      "at_ms": 30000,
+      "expected_ids": [
+        "new"
+      ]
+    },
+    {
+      "at_ms": 50000,
+      "expected_ids": []
+    }
+  ]
+}

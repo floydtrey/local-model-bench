@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "scenario_id": "dropped-presence",
+  "start_at": "2026-10-08T12:00:00.000000Z",
+  "duration_ms": 60000,
+  "events": [
+    {
+      "key": "seen",
+      "at_ms": 0,
+      "event": {
+        "event_id": "seen",
+        "source": "observer",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:00.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "present": true
+        },
+        "ttl_seconds": 30
+      }
+    },
+    {
+      "key": "lost",
+      "at_ms": 15000,
+      "event": {
+        "event_id": "lost",
+        "source": "observer",
+        "type": "presence",
+        "entity": "door",
+        "timestamp": "2026-10-08T12:00:15.000000Z",
+        "confidence": 0.9,
+        "data": {
+          "present": true
+        },
+        "ttl_seconds": 30
+      },
+      "drop": true,
+      "duplicate_after_ms": [
+        1000
+      ]
+    }
+  ],
+  "checkpoints": [
+    {
+      "at_ms": 15000,
+      "expected_ids": [
+        "seen"
+      ]
+    },
+    {
+      "at_ms": 30000,
+      "expected_ids": []
+    }
+  ]
+}

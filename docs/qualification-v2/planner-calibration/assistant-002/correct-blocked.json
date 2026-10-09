@@ -1,0 +1,198 @@
+{
+  "schema_version": "qualification-v2/planner-equivalence-v1",
+  "case_id": "assistant-002-planner-v2-missing-goal",
+  "input_sha256": "1ccf5750d14fe434c7b0aa6b9c9e9c5136891965ff273ab152d34fb4c69c0c3a",
+  "candidate_sha256": "4ff1f3f6ee416999c7b4dcff56964ff1e1f3533963d74e581ce64ef4875edabb",
+  "rubric_sha256": "48ed9b4e21637f59091b175bf00225d79f77d175f6ab57342fae45b54b2c08e1",
+  "reviewer": "Authored calibration fixture; not a human signoff",
+  "reviewed_at": "2026-10-08T00:00:00Z",
+  "review_origin": "calibration_fixture",
+  "verdict": "BLOCKED",
+  "disposition": "blocked",
+  "rationale": "Expected substantive judgment for this authored control; pending independent human calibration.",
+  "requirements": [
+    {
+      "id": "S01",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    },
+    {
+      "id": "S02",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    },
+    {
+      "id": "S03",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    },
+    {
+      "id": "S04",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    },
+    {
+      "id": "S05",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    },
+    {
+      "id": "S06",
+      "status": "blocked",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "No work order was supplied, so this requirement cannot be planned."
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "dependencies",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "bounded_tasks",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "acceptance",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "scope",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "risks",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "uncertainty",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    },
+    {
+      "id": "delivery",
+      "status": "covered",
+      "severity": "none",
+      "evidence": [
+        {
+          "start": 0,
+          "end": 227,
+          "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+        }
+      ],
+      "rationale": "The blocking response makes no actionable commitments."
+    }
+  ],
+  "blocker": {
+    "justified": true,
+    "no_actionable_tasks": true,
+    "evidence": [
+      {
+        "start": 0,
+        "end": 227,
+        "quote": "BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.\n"
+      }
+    ],
+    "rationale": "Goal is deliberately absent in this case; stopping avoids inventing the requested project."
+  }
+}

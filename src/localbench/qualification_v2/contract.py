@@ -1,8 +1,9 @@
 """Pure, non-executable validation for the qualification-v2 DESIGN registry.
 
-The registry is not wired to any runner, does not approve a release and does not
-authorize source access. Actual prompt, workspace, symlink and tool disclosures
-must be checked by a trusted adapter in T05 before inference.
+The frozen registry describes metadata only, does not approve a release and does
+not authorize source access. The additive T05 Planner adapter uses these label
+validators and separately checks actual prompt, workspace, link and tool
+disclosures before inference. Registry status is not a launcher permission.
 """
 from __future__ import annotations
 

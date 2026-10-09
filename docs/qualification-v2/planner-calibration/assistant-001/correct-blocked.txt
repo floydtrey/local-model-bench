@@ -1,0 +1,1 @@
+BLOCKED: The intended goal or requested change is absent. Source interfaces alone do not select a work order. Please supply the desired outcome and applicable behavior before planning; I cannot safely produce actionable tasks.

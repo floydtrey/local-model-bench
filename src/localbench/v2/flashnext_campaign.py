@@ -146,7 +146,7 @@ class SharedDriverRouter:
         case_dir = self.output_dir / "observations" / f"{request.case_id}-{ordinal:02d}"
         self.driver = self.driver_class(config, case_dir / "raw")
         self.current = {"case_id": request.case_id, "ordinal": ordinal, "trial": trial.reference.to_dict(),
-                        "started_at": utc_now(), "started_monotonic": time.monotonic(),
+                        "started_at": utc_now(), "started_monotonic": time.perf_counter(),
                         "effective_config": config.reference.to_dict(), "observations": [], "case_directory": str(case_dir)}
         self.progress(f"{self.pack['level']} {request.case_id} trial {ordinal}: started")
         if self.server is not None:
@@ -195,7 +195,7 @@ class SharedDriverRouter:
     def close(self):
         if self.current is None:
             return
-        finished_monotonic, finished_at = time.monotonic(), utc_now()
+        finished_monotonic, finished_at = time.perf_counter(), utc_now()
         if self.timer is not None:
             self.timer.cancel()
             self.timer = None
