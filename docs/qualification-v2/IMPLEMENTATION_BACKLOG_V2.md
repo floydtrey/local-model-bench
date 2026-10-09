@@ -37,7 +37,7 @@
 | T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | IMPLEMENTED/VERIFIED — cumulative identity and isolation checked; real isolated seeds BLOCKED |
 | T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | APPROVED_FOR_BENCHMARK — 16 authored cases/48 controls reviewed; real-artifact compatibility PROVISIONAL, untrusted execution BLOCKED |
 | T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | APPROVED_FOR_BENCHMARK — 20 authored cases/60 controls reviewed and corrected; real-artifact compatibility PROVISIONAL |
-| T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | NOT STARTED |
+| T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | IN PROGRESS — additive metric writer and initial case fixtures; full normalization pending |
 | T14 | Verify and adapt the existing native DSH full pipeline for integration trials | P0 · Large | T02, T09, T13 | NOT STARTED — native source exists; installed state unverified |
 | T15 | Regression-test authority, data/report truthfulness and failure propagation | P0 · Large | T05, T08, T10, T11, T12, T13, T14 | NOT STARTED |
 | T16 | Extend existing GUI with chart-first Results tab and track/role selection | P1 · Large | T14, T15 | NOT STARTED — read-only Results MVP can follow T13 |
@@ -223,7 +223,7 @@
 *T13–T15 · extend known tooling, do not build a second orchestrator*
 
 ### T13 — Define traceable capability/report metrics and extend existing writer
-**Status:** NOT STARTED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T06, T08, T10, T11, T12  
+**Status:** IN PROGRESS — initial versioned metric catalog, case-level projection and additive JSON/CSV/XLSX writer; not yet full T13 acceptance · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T06, T08, T10, T11, T12  
 **Where:** local-model-bench: `src/localbench/v2/flashnext_review.py`, existing V2 `reporting.py`, role/project run summaries, JSON/CSV/XLSX and additive v2 report contract/tests; **no new results backend or database**
 
 **Reuse:** Existing review-package JSON, case-results CSV, role-summary CSV, XLSX, raw case/evaluator evidence, planned/observed trial aggregates, first-pass/repair flags, tool telemetry and preserved model/runtime provenance. [Source inventory](RESULTS_TAB_COVERAGE_INVENTORY.md) distinguishes actual available fields from desired new metrics. The GUI will **read** the writer's metric exports, not invent a second scorer.

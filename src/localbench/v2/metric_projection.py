@@ -82,6 +82,7 @@ def project_metrics(
         candidates = [r for r in rows
                       if r.get("suite_id") == definition["suite"]
                       and r.get("suite_version") == definition["suite_version"]
+                      and r.get("rubric_id") == definition["rubric"]
                       and r.get("rubric_version") == definition["rubric_version"]
                       and r.get("case_id") in case_ids]
         if not candidates:

@@ -17,7 +17,7 @@ class MetricProjectionTests(unittest.TestCase):
              "cases": [], "scoring": "not_tested"}]}
         self.metadata = {}
         self.base = {"suite_id": "shared-l2-core", "suite_version": "1.0.0",
-                     "rubric_version": "1", "candidate_id": "m1",
+                     "rubric_id": "shared-v2-evaluator", "rubric_version": "1", "candidate_id": "m1",
                      "model_identity": "m1-q4", "runtime_identity": "ollama-1",
                      "track": "controlled_role_qualification",
                      "worker_mode": None, "comparison_protocol": "p1",
@@ -94,7 +94,7 @@ class MetricProjectionTests(unittest.TestCase):
 
     def test_legacy_unknown_identity_is_not_comparable(self):
         result = project_metrics([{"case_id": "minimal-code-repair", "suite_id": "shared-l2-core",
-            "suite_version": "1.0.0", "rubric_version": "1", "deterministic_passed": True,
+            "suite_version": "1.0.0", "rubric_id": "shared-v2-evaluator", "rubric_version": "1", "deterministic_passed": True,
             "evidence_directory": "/old"}], {}, self.catalog)["metrics"][0]
         self.assertIsNone(result["denominator"])
         self.assertEqual(result["excluded"][0]["reason"], "unknown_model_or_runtime_identity")
