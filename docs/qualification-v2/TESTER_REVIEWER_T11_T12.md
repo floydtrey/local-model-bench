@@ -1,5 +1,7 @@
 # Controlled Tester and Reviewer qualification — T11–T12
 
+> **2026-10-09 technical audit supersedes the earlier review-pending checkpoint below.** All 16 Tester/20 Reviewer cases and 108 controls have now received delegated AI technical review and correction. Reviewer deliveries include required README/public tests; test captures match response-control artifacts. Real Worker compatibility is PROVISIONAL and untrusted Python containment remains BLOCKED. This is AI technical approval, not independent human certification, model qualification or Owner execution authorization. See the [audit report](technical-audit-20261009/AUDIT_REPORT.md) and [complete decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md).
+
 Batch 5 adds 16 Tester and 20 Reviewer cases to the existing qualification
 package. It reuses the historical Tester A/C/D and six Reviewer contrast designs,
 the two project reference implementations and mutation controls, the original
@@ -183,16 +185,9 @@ runs the full deterministic suite on Windows/Linux with Python 3.10/3.12, plus
 frozen packet, Planner/Governor calibration and Worker handoff validation.
 See [Batch 5 acceptance record](BATCH5_IMPLEMENTATION_RECORD.md) for actual results.
 
-For a later update, first fetch and inspect the permanent machine checkout's
-branch, status and local commits. Preserve its repair branch and any new work with
-a backup branch and a saved patch/commit. Review Batch 5 in another checkout.
-First reconcile the Batch 3/4 prerequisites through the approved Batch 4 baseline
-`dbee96628d6ed9248f0ed747d02aeed940a8ddd5`; do not assume the older permanent
-checkout contains them. Its current history only shows the earlier Planner update
-and local startup-repair reconciliation, and it does not have that Batch 4 commit
-object. Validate the reconciled staging checkout while retaining those repairs.
-Only after deliberate integration approval, cherry-pick the Batch 5 commits in order
-onto the existing machine branch, preserving startup/runtime repairs in conflicts.
-Do not reset it to this development branch, overwrite its configuration, or copy
-the checkout wholesale. Run offline validation and deterministic tests only;
-Flash-Next remains suspended. No merge or permanent-checkout update was done here.
+The audit's integration record supersedes the earlier prospective merge instructions.
+Batch 5 already contains Batch 3 and Batch 4 by ancestry. Use a separate staging
+checkout and integrate only missing history; preserve machine-specific startup
+repairs and create a fresh rollback point before updating the permanent checkout.
+Do not blindly cherry-pick batches, reset the machine checkout or launch Flash-Next.
+The exact verified installation state and CI revisions belong to that audit record.

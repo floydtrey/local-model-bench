@@ -42,10 +42,10 @@
   "infrastructure_error": null,
   "source_inspection": null,
   "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "stderr_sha256": "d42e896932859ff243f6b163ac0e8ddfbe4d8969dbf4a29385b6a8c078aa7241",
+  "stderr_sha256": "f0f6fa23a7681916272594406332123147a8b444210132043cc70278781eb2d6",
   "stdout_bytes": 0,
   "stderr_bytes": 894,
   "stdout": "",
-  "stderr": "test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\r\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\r\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\r\n\r\n======================================================================\r\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-u7oxk15v\\workspace\\tests\\test_candidate.py\", line 14, in test_boolean_number\r\n    with self.assertRaises(ValueError): normalize_scenario(value)\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: ValueError not raised\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nFAILED (failures=1)\r\n",
+  "stderr": "test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\r\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\r\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\r\n\r\n======================================================================\r\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-nvnlsl3r\\workspace\\tests\\test_candidate.py\", line 14, in test_boolean_number\r\n    with self.assertRaises(ValueError): normalize_scenario(value)\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: ValueError not raised\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nFAILED (failures=1)\r\n",
   "origin": "trusted_authored_fixture_capture"
 }

@@ -1,5 +1,7 @@
 # Controlled Governor qualification: T07–T08
 
+> **2026-10-09 technical audit supersedes the earlier review-pending checkpoint below.** All 28 synthetic scenarios and 16 controls have now received delegated AI technical review against locally read, hash-matching canonical documents. Four controls were corrected for ambiguous grant incorporation and contradictory unsafe approval; no production authority is certified. This is AI technical approval, not independent human certification, model qualification or Owner execution authorization. See the [audit report](technical-audit-20261009/AUDIT_REPORT.md) and [complete decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md).
+
 **Implementation status:** frozen authored scenarios, text-only role adapter,
 semantic adjudication records and calibration controls are implemented.
 **Independent substantive scenario review and human calibration/signoff remain

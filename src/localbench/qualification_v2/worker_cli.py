@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 from localbench.assistant001.packet import repository_root, snapshot, write_json
-from .worker import APIS, MODES, load_canonical, prepare_worker, verify_worker, validate_seed, authorize, run_worker
+from .worker import APIS, MODES, load_canonical, prepare_worker, verify_worker, validate_seed, authorize_run, run_worker
 
 
 def main(argv=None):
@@ -46,7 +46,7 @@ def main(argv=None):
             control = verify_worker(args.run_dir, args.repo_root)
             if control["project"] != args.project:
                 raise ValueError("Project/run mismatch")
-            authorize(control, args.authorization_file, args.trusted_authorization_sha256)
+            authorize_run(args.run_dir, control, args.authorization_file, args.trusted_authorization_sha256)
             if (args.run_dir / "summary.json").exists() or (args.run_dir / "roles").exists():
                 raise ValueError("Use a fresh run")
             if snapshot(args.run_dir / "workspace") != control["initial_workspace_sha256"]:

@@ -26,7 +26,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... FAIL\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-t87xa0pr\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... FAIL\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\ntest_boolean_duration_is_invalid (test_public_contract.PublicContractTests.test_boolean_duration_is_invalid) ... ok\\r\\ntest_explicit_defaults (test_public_contract.PublicContractTests.test_explicit_defaults) ... ok\\r\\ntest_identity_does_not_depend_on_object_key_order (test_public_contract.PublicContractTests.test_identity_does_not_depend_on_object_key_order) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-zv2vo1wh\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-zv2vo1wh\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 6 tests in 0.003s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
     },
     {
       "case_id": "test_checkpoint_boundary_delivers_before_query",
@@ -386,7 +386,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_bool_checkpoint_time",
@@ -394,7 +394,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_bool_delay",
@@ -402,7 +402,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_bool_drop",
@@ -418,7 +418,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_bool_duration",
@@ -426,7 +426,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_bool_version",
@@ -434,7 +434,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_checkpoint_after_end",
@@ -482,7 +482,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_duplicate_keys",
@@ -770,7 +770,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 322, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    with self.assertRaises(ValueError): API.Replay(bad,sink)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 322, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    with self.assertRaises(ValueError): API.Replay(bad,sink)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     }
   ],
   "os_sandbox": false,

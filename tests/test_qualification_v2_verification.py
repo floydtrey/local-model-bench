@@ -70,6 +70,73 @@ class VerificationTests(unittest.TestCase):
         self.assertFalse(result["model_qualification_complete"])
         self.assertFalse(result["project_execution_authorized"])
 
+    def test_response_contrasts_use_the_same_executed_artifacts(self):
+        from localbench.qualification_v2.verification_assessment import test_execution_diagnostics
+        for project in ("assistant-001", "assistant-002"):
+            for index in range(1, 9):
+                final_hashes = []
+                for kind in ("good", "wrong", "shallow"):
+                    _, capture, artifacts, _ = self.material(index=index, project=project, kind=kind)
+                    execution = test_execution_diagnostics(capture, artifacts)[0]
+                    self.assertTrue(execution["matching"], (project, index, kind))
+                    self.assertTrue(execution["logs_match"])
+                    self.assertTrue(execution["tests_observed"])
+                    final_hashes.append(capture["artifact_after_sha256"])
+                self.assertEqual(final_hashes[0], final_hashes[1])
+                self.assertEqual(final_hashes[0], final_hashes[2])
+
+    def test_full_delivery_is_present_and_scope_evidence_is_neutral(self):
+        for project in ("assistant-001", "assistant-002"):
+            packet = build_packet(f"{project}-reviewer-01", REPO)
+            self.assertIn("README.md", packet["files"])
+            self.assertIn("tests/test_public_contract.py", packet["files"])
+            self.assertIn("python -m", packet["files"]["README.md"])
+            packet = build_packet(f"{project}-reviewer-05", REPO)
+            self.assertEqual(packet["files"]["notes.txt"], "Local development notes.\n")
+            self.assertEqual(evidence_diagnostics(packet)["unauthorized_changes"], ["notes.txt"])
+            captures = build_packet(f"{project}-reviewer-10", REPO)["evidence"]["captures"]
+            self.assertTrue(all("raw_result_sha256" not in c for c in captures))
+            self.assertTrue(all(c["origin"] == "stipulated_independent_observation" for c in captures))
+
+    def test_empty_successful_test_run_cannot_receive_role_pass(self):
+        packet, capture, artifacts, _ = self.material(index=1)
+        key = "execution/tool-tests/test-001.json"
+        record = json.loads(artifacts[key])
+        record.update(exit_code=0, stdout="", stderr="Ran 0 tests in 0.000s\n\nOK\n")
+        for name in ("stdout", "stderr"):
+            record[name + "_sha256"] = sha(record[name].encode())
+        artifacts[key] = json.dumps(record, sort_keys=True)
+        review = draft_review(packet, capture, artifacts, REPO)
+        # Even a fresh, favorable annotation cannot waive the execution gate.
+        review.update(review_origin="calibration_fixture", reviewer="test-only", reviewed_at="2026-10-09T00:00:00Z",
+            candidate_decision="PASS", rationale="Deliberately incorrect favorable annotation",
+            decision_evidence=[{"start": 0, "end": len(capture["final_response"]), "quote": capture["final_response"]}])
+        for row in review["dimensions"]:
+            row.update(status="covered", rationale="Test-only optimistic annotation",
+                response_evidence=review["decision_evidence"],
+                artifact_evidence=[{"path": key, "sha256": sha(artifacts[key].encode()), "quote": artifacts[key]}])
+        result = assess(packet, capture, artifacts, review, REPO, calibration=True)
+        self.assertEqual(result["assessed_outcome"], "FAIL")
+        self.assertIn("missing_test_observations", result["failure_classifications"])
+
+    def test_critical_failures_are_not_erased_by_session_faults(self):
+        from localbench.v2.contracts import sha256_json
+        for role in ("tester", "reviewer"):
+            packet, capture, artifacts, review = self.material(role, kind="wrong")
+            capture["status"] = "error"
+            review["capture_sha256"] = sha256_json(capture)
+            result = assess(packet, capture, artifacts, review, REPO, calibration=True)
+            self.assertEqual(result["assessed_outcome"], "FAIL")
+            self.assertIn("false_acceptance", result["critical_failures"])
+
+    def test_observed_test_actions_do_not_require_checklist_recitation(self):
+        packet, capture, artifacts, review = self.material()
+        for row in review["dimensions"]:
+            if row["id"] in ("coverage", "test_validity", "execution_evidence", "scope_restraint"):
+                self.assertEqual(row["response_evidence"], [])
+                self.assertTrue(row["artifact_evidence"])
+        self.assertEqual(assess(packet, capture, artifacts, review, REPO, calibration=True)["assessed_outcome"], "PASS")
+
     def test_reviewer_stale_fabrication_missing_failure_repair_conflicts(self):
         for project in ("assistant-001", "assistant-002"):
             for index, decision in ((1, "PASS"), (2, "FAIL"), (3, "BLOCKED"), (4, "BLOCKED"),

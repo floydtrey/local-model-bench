@@ -5,12 +5,14 @@
   "prior_captures": [],
   "changed_paths": [],
   "allowed_changed_paths": [
+    "README.md",
     "assistant_journal/__init__.py",
     "assistant_journal/__main__.py",
     "assistant_journal/cli.py",
     "assistant_journal/journal.py",
     "assistant_journal/validation.py",
-    "tests/test_candidate.py"
+    "tests/test_candidate.py",
+    "tests/test_public_contract.py"
   ],
   "expected_check_ids": [
     "test_all_filters_precede_pagination",

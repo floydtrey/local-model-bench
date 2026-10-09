@@ -190,6 +190,20 @@ class BlindPlannerTests(unittest.TestCase):
 
 
 class PlannerReviewTests(unittest.TestCase):
+    def test_corrected_controls_ground_tasks_in_outcomes_and_scopes(self):
+        for project in PACKETS:
+            for name in ("alternate-three", "alternate-eight"):
+                text, review = fixture(project, name)
+                self.assertEqual(review["verdict"], "PASS")
+                if project == "assistant-001":
+                    self.assertNotIn("supplied helper", text)
+                for row in review["requirements"]:
+                    self.assertTrue(any("Scope:" in e["quote"] and "Gate:" in e["quote"] for e in row["evidence"]))
+                mapped = {tuple(e["quote"] for e in row["evidence"]) for row in review["dimensions"]}
+                self.assertGreater(len(mapped), 4)  # The former repeated intro gave all dimensions one citation.
+            _, omission = fixture(project, "critical-omission")
+            self.assertTrue(any(r["status"] == "missing" and r["severity"] == "critical" for r in omission["requirements"]))
+
     def test_calibration_different_decompositions_failures_blockers_and_historical_inventory(self):
         result = calibrate(ROOT)
         self.assertEqual(len(result["fixtures"]), 10)

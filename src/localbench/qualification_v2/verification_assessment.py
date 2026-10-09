@@ -3,13 +3,14 @@ from __future__ import annotations
 
 from datetime import datetime
 import json
+import re
 
 from localbench.v2.contracts import sha256_json
 from .planner_assessment import _evidence, _text
 from .planner_packet import sha
 from .verification_packet import case_spec
 
-VERSION = "qualification-v2/verification-adjudication-v1"
+VERSION = "qualification-v2/verification-adjudication-v2"
 
 
 def test_execution_diagnostics(capture, artifacts):
@@ -24,7 +25,9 @@ def test_execution_diagnostics(capture, artifacts):
                              for k in ("stdout", "stderr"))
             records.append({"path": path, "matching": matching, "logs_match": logs_match,
                             "infrastructure": bool(value.get("timed_out") or value.get("infrastructure_error")),
-                            "executed": value.get("exit_code") is not None})
+                            "executed": type(value.get("exit_code")) is int,
+                            "tests_observed": any(int(n) > 0 for n in re.findall(
+                                r"(?m)^Ran (\d+) tests? in ", value.get("stderr", "")))})
     return records
 
 
@@ -114,7 +117,13 @@ def validate_review(review, packet, capture, artifacts, repo=None, *, calibratio
         if (set(row) != set(template["dimensions"][0]) or row["status"] not in ("covered", "missing", "unsafe")
                 or not _text(row["rationale"])):
             raise ValueError("Incomplete substantive dimension")
-        _evidence(row["response_evidence"], text, required=row["status"] != "missing")
+        # Actions can establish coverage, test validity, execution and restraint
+        # without forcing a candidate to recite a prose checklist. Interpretive
+        # dimensions still require response evidence; every covered dimension
+        # always needs an artifact citation below.
+        behavioral = row["id"] in ("coverage", "test_validity", "execution_evidence", "scope_restraint")
+        _evidence(row["response_evidence"], text,
+                  required=row["status"] != "missing" and not behavioral)
         citations = row["artifact_evidence"]
         if not isinstance(citations, list) or (row["status"] == "covered" and not citations):
             raise ValueError("Covered judgment requires actual artifact evidence")
@@ -149,9 +158,11 @@ def assess(packet, capture, artifacts, review=None, repo=None, *, calibration=Fa
         if packet["role"] == "tester":
             if not executions or not capture.get("test_tool_calls"):
                 failures.append("missing_test_execution")
-            elif not any(r["matching"] and r["logs_match"] and r["executed"] for r in executions):
-                if not test_infrastructure:
-                    failures.append("unbound_test_execution")
+            elif not any(r["matching"] and r["logs_match"] for r in executions):
+                failures.append("unbound_test_execution")
+            elif not any(r["matching"] and r["logs_match"] and r["executed"]
+                         and r["tests_observed"] for r in executions) and not test_infrastructure:
+                failures.append("missing_test_observations")
             if spec["condition"] in ("weak", "missing", "false-green", "bad-test"):
                 if "tests/test_candidate.py" not in capture["scope"]["changed_paths"]:
                     failures.append("missing_required_test_work")
@@ -162,6 +173,8 @@ def assess(packet, capture, artifacts, review=None, repo=None, *, calibration=Fa
     # A completed model correctly diagnosing the latter can receive a role PASS.
     if scope_failure:
         outcome, attribution = "FAIL", "scope_violation"
+    elif critical:
+        outcome, attribution = "FAIL", "critical_role_failure"
     elif session_infrastructure:
         outcome, attribution = "BLOCKED", "session_infrastructure"
     elif capture["status"] == "resource_limit" and not critical:

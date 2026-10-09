@@ -2,14 +2,14 @@
   "schema_version": "qualification-v2/planner-equivalence-v1",
   "case_id": "assistant-002-planner-v2-complete",
   "input_sha256": "0d0c93ea6a8acbfd9ae3e4861c94fcfe1d3ff5a95031487915d7a7033acd8157",
-  "candidate_sha256": "9795aa9c4a164aa380e98c70434fe5949157d02c3279e73b473d9d426cf5a6b3",
+  "candidate_sha256": "06c47877b6de423a6d8833b68ddbab37baa1c49e1c6e50f7e602a719d284bdf6",
   "rubric_sha256": "82bc3f6b1e398bff963adb9d163c23ea35426b54a87e1160e21ad0f6a54bc683",
   "reviewer": "Authored calibration fixture; not a human signoff",
   "reviewed_at": "2026-10-08T00:00:00Z",
   "review_origin": "calibration_fixture",
   "verdict": "FAIL",
   "disposition": "plan",
-  "rationale": "Expected substantive judgment for this authored control; pending independent human calibration.",
+  "rationale": "AI technical calibration correction: specific source scopes, dependency gates and whole-response evidence; expected role judgment only, not human certification.",
   "requirements": [
     {
       "id": "S01",
@@ -17,12 +17,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 825,
-          "end": 1217,
+          "start": 1021,
+          "end": 1413,
           "quote": "Normalize the complete S01 scenario schema without mutation: exact version and IDs, normalized start, bounded duration/events/checkpoints/transforms, valid dropped events and strict checkpoint order. Preserve authored order, default values and expected IDs in the canonical whole-scenario SHA256 identity. Reject bool-as-int, unknown fields, invalid events, overflow and excessive deliveries."
+        },
+        {
+          "start": 1901,
+          "end": 2154,
+          "quote": "Scope: assistant_simulator/scenario.py and tests/test_candidate.py; event_contract stays read-only. Gate: equivalent defaults yield the same digest, changed expectations change it, and invalid dropped entries, bool fields and unordered checkpoints fail."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "S01 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "S02",
@@ -30,12 +35,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 1218,
-          "end": 1583,
+          "start": 1414,
+          "end": 1779,
           "quote": "Validate the whole scenario then compile deliveries using primary and duplicate offsets, dropping all copies of dropped entries. Keep event content and event time unchanged. Use key/copy delivery IDs and order by delivery time, authored index and copy index. Return detached records and copies with repeatable canonical output; never suppress conflicting event IDs."
+        },
+        {
+          "start": 2155,
+          "end": 2380,
+          "quote": "Scope: assistant_simulator/schedule.py and tests/test_candidate.py. Gate: equal-time deliveries retain authored and copy order; drop removes every copy, delays preserve original timestamps, and duplicate records are detached."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "S02 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "S03",
@@ -43,19 +53,24 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 1646,
-          "end": 2079,
+          "start": 2439,
+          "end": 2872,
           "quote": "Replay against the injected sink, validating before calls and never owning or inspecting it. Advance virtual time monotonically; append each due detached delivery and accept only exact bool results. Commit each successful cursor/count/clock step; deliver same-time events before querying state. Preserve partial progress on append failure, and do not reappend after state-query failure. No wall clock, sleeps or filesystem in replay."
+        },
+        {
+          "start": 3487,
+          "end": 3713,
+          "quote": "Scope: assistant_simulator/replay.py and tests/test_candidate.py. Gate: a spy sink observes all due calls before state, exact bool acknowledgements, partial append failure progress, and no reappend after a state-query failure."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "S03 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "S04",
       "status": "missing",
       "severity": "critical",
       "evidence": [],
-      "rationale": "The fourth material behavior is explicitly omitted; other headings cannot compensate."
+      "rationale": "Required S04 behavior is explicitly deferred; contract-wide promises do not cure the omission."
     },
     {
       "id": "S05",
@@ -63,12 +78,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 2198,
-          "end": 2594,
+          "start": 2969,
+          "end": 3365,
           "quote": "Evaluate every authored checkpoint via fresh replay; validate observed IDs and reject duplicate observations. Compare sorted missing and unexpected sets against unchanged declared expectations. Continue after mismatches and drain deliveries to duration after the last check. Derive counts from actual replay; propagate errors and never fabricate success or replace expectations with observations."
+        },
+        {
+          "start": 3714,
+          "end": 3944,
+          "quote": "Scope: assistant_simulator/evaluate.py and tests/test_candidate.py. Gate: independently vary missing and unexpected IDs, reject duplicate observed IDs, preserve authored expectations and drain deliveries after the last checkpoint."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "S05 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "S06",
@@ -76,27 +96,26 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 2657,
-          "end": 3261,
+          "start": 4003,
+          "end": 4607,
           "quote": "Deliver python -m assistant_simulator validate, schedule and jsonl without importing a journal; run lazily owns and always closes the explicit Journal dependency. Preserve duplicate JSONL events and final newlines. Complete work before stdout; exit 0 for success, 1 with complete report for mismatches, 2 with JSON stderr and empty stdout for invalid inputs or sink errors, without payloads or traceback. Document CLI usage, virtual/event time, dependency, transforms, at-least-once restart, caller checkpoint duties, partial failures and no OS sandbox; preserve public examples and add meaningful tests."
+        },
+        {
+          "start": 4608,
+          "end": 4836,
+          "quote": "Scope: assistant_simulator/cli.py, tests/test_candidate.py and README.md. Gate: validate/schedule/jsonl work without a Journal; run uses an explicit dependency and DB, closes it, and distinguishes exit 0, mismatch 1 and error 2."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "S06 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     }
   ],
   "dimensions": [
     {
       "id": "dependencies",
-      "status": "covered",
-      "severity": "none",
-      "evidence": [
-        {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
-        }
-      ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "status": "missing",
+      "severity": "major",
+      "evidence": [],
+      "rationale": "Deferring the fourth requirement leaves its acceptance, recovery/time risk and dependent delivery unresolved."
     },
     {
       "id": "bounded_tasks",
@@ -104,25 +123,29 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 972,
+          "end": 2380,
+          "quote": "Work unit 1: No unfinished project prerequisite. Normalize the complete S01 scenario schema without mutation: exact version and IDs, normalized start, bounded duration/events/checkpoints/transforms, valid dropped events and strict checkpoint order. Preserve authored order, default values and expected IDs in the canonical whole-scenario SHA256 identity. Reject bool-as-int, unknown fields, invalid events, overflow and excessive deliveries. Validate the whole scenario then compile deliveries using primary and duplicate offsets, dropping all copies of dropped entries. Keep event content and event time unchanged. Use key/copy delivery IDs and order by delivery time, authored index and copy index. Return detached records and copies with repeatable canonical output; never suppress conflicting event IDs. Complete the listed internal steps in order and pass each gate before starting the next; a failing step stops this unit.\nScope: assistant_simulator/scenario.py and tests/test_candidate.py; event_contract stays read-only. Gate: equivalent defaults yield the same digest, changed expectations change it, and invalid dropped entries, bool fields and unordered checkpoints fail.\nScope: assistant_simulator/schedule.py and tests/test_candidate.py. Gate: equal-time deliveries retain authored and copy order; drop removes every copy, delays preserve original timestamps, and duplicate records are detached."
+        },
+        {
+          "start": 2382,
+          "end": 3944,
+          "quote": "Work unit 2: Requires accepted results from work unit 1. Replay against the injected sink, validating before calls and never owning or inspecting it. Advance virtual time monotonically; append each due detached delivery and accept only exact bool results. Commit each successful cursor/count/clock step; deliver same-time events before querying state. Preserve partial progress on append failure, and do not reappend after state-query failure. No wall clock, sleeps or filesystem in replay. Defer checkpoint and from_checkpoint entirely; this delivery will not implement crash recovery. Evaluate every authored checkpoint via fresh replay; validate observed IDs and reject duplicate observations. Compare sorted missing and unexpected sets against unchanged declared expectations. Continue after mismatches and drain deliveries to duration after the last check. Derive counts from actual replay; propagate errors and never fabricate success or replace expectations with observations. Complete the listed internal steps in order and pass each gate before starting the next; a failing step stops this unit.\nScope: assistant_simulator/replay.py and tests/test_candidate.py. Gate: a spy sink observes all due calls before state, exact bool acknowledgements, partial append failure progress, and no reappend after a state-query failure.\nScope: assistant_simulator/evaluate.py and tests/test_candidate.py. Gate: independently vary missing and unexpected IDs, reject duplicate observed IDs, preserve authored expectations and drain deliveries after the last checkpoint."
+        },
+        {
+          "start": 3946,
+          "end": 4836,
+          "quote": "Work unit 3: Requires accepted results from work unit 2. Deliver python -m assistant_simulator validate, schedule and jsonl without importing a journal; run lazily owns and always closes the explicit Journal dependency. Preserve duplicate JSONL events and final newlines. Complete work before stdout; exit 0 for success, 1 with complete report for mismatches, 2 with JSON stderr and empty stdout for invalid inputs or sink errors, without payloads or traceback. Document CLI usage, virtual/event time, dependency, transforms, at-least-once restart, caller checkpoint duties, partial failures and no OS sandbox; preserve public examples and add meaningful tests.\nScope: assistant_simulator/cli.py, tests/test_candidate.py and README.md. Gate: validate/schedule/jsonl work without a Journal; run uses an explicit dependency and DB, closes it, and distinguishes exit 0, mismatch 1 and error 2."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Named files and independently reviewable internal steps bound each unit; task count alone is not a quality rule."
     },
     {
       "id": "acceptance",
-      "status": "covered",
-      "severity": "none",
-      "evidence": [
-        {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
-        }
-      ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "status": "missing",
+      "severity": "major",
+      "evidence": [],
+      "rationale": "Deferring the fourth requirement leaves its acceptance, recovery/time risk and dependent delivery unresolved."
     },
     {
       "id": "scope",
@@ -131,24 +154,18 @@
       "evidence": [
         {
           "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "end": 970,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations. File scopes below are proposed Planner units, not a request to change any already assigned Worker scope. Tests are planned acceptance, not claims of execution."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "The stated local scope preserves supplied interfaces and excludes external authority."
     },
     {
       "id": "risks",
-      "status": "covered",
-      "severity": "none",
-      "evidence": [
-        {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
-        }
-      ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "status": "missing",
+      "severity": "major",
+      "evidence": [],
+      "rationale": "Deferring the fourth requirement leaves its acceptance, recovery/time risk and dependent delivery unresolved."
     },
     {
       "id": "uncertainty",
@@ -156,25 +173,19 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 631,
+          "end": 738,
+          "quote": "Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Only existing facts may be discovered; missing policy is not invented."
     },
     {
       "id": "delivery",
-      "status": "covered",
-      "severity": "none",
-      "evidence": [
-        {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
-        }
-      ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "status": "missing",
+      "severity": "major",
+      "evidence": [],
+      "rationale": "Deferring the fourth requirement leaves its acceptance, recovery/time risk and dependent delivery unresolved."
     }
   ],
   "blocker": {

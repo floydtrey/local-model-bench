@@ -1,5 +1,7 @@
 # Independent Planner qualification: T05–T06
 
+> **2026-10-09 technical audit supersedes the earlier review-pending checkpoint below.** All ten controls and both project packet variants have now received delegated AI technical review. Eight controls were corrected for bounded task evidence, project-specific helper scope and material omission/expansion judgments. Alternative valid decompositions remain acceptable. This is AI technical approval, not independent human certification, model qualification or Owner execution authorization. See the [audit report](technical-audit-20261009/AUDIT_REPORT.md) and [complete decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md).
+
 This additive interface uses the existing `assistant001.runtime.OllamaSessions`,
 `RoleConversation`, Ollama identity/configuration evidence, and
 `flashnext_review` JSON/CSV/XLSX writer. It does not introduce an execution engine,

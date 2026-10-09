@@ -5,12 +5,14 @@
     {
       "origin": "trusted_authored_fixture_capture",
       "code_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "status": "completed",
       "exit_code": 1,
@@ -207,7 +209,7 @@
           "case_id": "test_invalid_append_changes_nothing",
           "requirement": "R02",
           "passed": false,
-          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 203, in test_invalid_append_changes_nothing\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 203, in test_invalid_append_changes_nothing\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
         },
         {
           "case_id": "test_late_arrival_never_overwrites_newer_observation",
@@ -231,7 +233,7 @@
           "case_id": "test_public_and_candidate_tests_execute",
           "requirement": "R06",
           "passed": false,
-          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-lo1m4o4e\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=1)\\r\\n'\n"
+          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\ntest_boolean_confidence_is_not_a_probability (test_public_contract.PublicContractTests.test_boolean_confidence_is_not_a_probability) ... FAIL\\r\\ntest_normalizes_without_changing_input (test_public_contract.PublicContractTests.test_normalizes_without_changing_input) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-03b2t0u8\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_confidence_is_not_a_probability (test_public_contract.PublicContractTests.test_boolean_confidence_is_not_a_probability)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-03b2t0u8\\\\workspace\\\\tests\\\\test_public_contract.py\", line 21, in test_boolean_confidence_is_not_a_probability\\r\\n    with self.assertRaises(ValueError):\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 5 tests in 0.001s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
         },
         {
           "case_id": "test_reject_bad_offset",
@@ -255,7 +257,7 @@
           "case_id": "test_reject_boolean_confidence",
           "requirement": "R01",
           "passed": false,
-          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 500, in method\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+          "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 500, in method\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
         },
         {
           "case_id": "test_reject_empty_id",
@@ -511,19 +513,21 @@
       "stderr": "",
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "raw_result_sha256": "2f0f1d66d2aa4c528f21ac13522898af21d3b66c2e09325ec94164b848e0067e",
+      "raw_result_sha256": "02a38bb8e0e5062a206c779733573fa5919fd48adc3529ac40694a965eb8f43a",
       "path_redaction": "temporary root replaced with <fixture-temp> in check diagnostics"
     }
   ],
   "prior_captures": [],
   "changed_paths": [],
   "allowed_changed_paths": [
+    "README.md",
     "assistant_journal/__init__.py",
     "assistant_journal/__main__.py",
     "assistant_journal/cli.py",
     "assistant_journal/journal.py",
     "assistant_journal/validation.py",
-    "tests/test_candidate.py"
+    "tests/test_candidate.py",
+    "tests/test_public_contract.py"
   ],
   "expected_check_ids": [
     "test_all_filters_precede_pagination",

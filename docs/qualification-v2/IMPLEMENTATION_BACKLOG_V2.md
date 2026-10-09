@@ -1,6 +1,6 @@
 # Controlled Role Qualification v2 — Audited Task Backlog
 
-**Status:** T01–T02 complete. T03–T04 plans are constructed and validated; the owner has accepted their **benchmark-reference design** (not deployment or native execution authority). The v2 reference trace files still carry `OWNER_REVIEW_PENDING` until formal authorization/versioning in T09. T05 is implemented with deterministic isolation tests. T06 implementation and authored calibration controls are present; human substantive calibration remains pending. T07–T08 are implemented with frozen authored Governor scenarios and semantic review controls; independent substantive scenario review and human calibration/signoff remain pending. T09–T10 are implemented with deterministic Windows/Linux acceptance; formal Worker reference review, real seed validation/review and separate execution authorization remain pending. T11–T12 are implemented with frozen controlled cases, authored calibration and passing Windows/Linux Python 3.10/3.12 CI; independent human substantive case review and calibration remain pending. T13–T18 have not started. T19 is newly scoped; the source inventory is documented but expansion tests are not built. **Updated:** 2026-10-09 after [Batch 5 deterministic acceptance](BATCH5_IMPLEMENTATION_RECORD.md); human gates, Results inventory and dependencies retained.
+**Status:** T01–T12 implementation and the delegated AI technical review of T05–T12 are complete within the authored/synthetic benchmark scope. The audit reviewed 80 case/task units and all 134 controls, corrected 40 case records and 120 controls, and approved the revised materials for benchmark use. This is not independent human certification, model qualification or Owner execution authority. Real isolated Worker seeds remain BLOCKED; real Worker artifact compatibility remains PROVISIONAL; untrusted Worker/Tester Python needs a separately authorized isolated environment. T13–T18 remain NOT STARTED; T19 expansion remains NOT STARTED. **Updated:** 2026-10-09; see [versioned technical audit](technical-audit-20261009/AUDIT_REPORT.md), [case decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md), and its integration/validation completion record.
 **Authoritative implementation backlog:** This file supersedes the earlier chat-only task outline. Original T01–T18 IDs and prerequisites remain unchanged. Progress now records T05–T06 implementation as well as the user's approval to use A001/A002 as **benchmark reference designs**. T19 is an independent, nonblocking capability-test expansion item. The earlier Results revision updated tasks and acceptance criteria only. T05–T06 added the independent Planner adapter. T07–T08 add controlled Governor cases, semantic review, calibration records and narrow writer projections; no Results tab, actual model test or production authority is claimed.
 
 ## Key audit decisions (binding to the proposed implementation)
@@ -17,6 +17,8 @@
 10. **Evidence coverage is not intelligence coverage.** Shared L0/L1/L2 and the historical five-role suite offer useful reasoning, coding-diagnosis, instruction, evidence and bounded-tool cases; A001/A002 are real-project implementation tasks. The present inventory has **no validated vision or long-context-recall battery** and no general open-ended tool-selector qualification. Render `Not tested` without a score until versioned calibrated cases exist. T19 may add them later but must never block a useful initial Results tab.
 11. **Reference-plan acceptance is limited.** The owner approved ASSISTANT-001 and ASSISTANT-002 as worthwhile benchmark references. Do not interpret this as approval of any generated code, unrestricted host execution, forged Governor grant, production integration, model promotion, or bypass of T09's approved Worker authorization record.
 
+**Review identity clarification:** The 2026-10-09 delegated technical audit is the current case/reference suitability decision. Earlier serialized HUMAN_REVIEW_PENDING / OWNER_REVIEW_PENDING fields retain their original certification/authority meaning; they do not erase this separate AI technical review or grant execution. Future live responses still require substantive adjudication. No T13/T16/T19 work is included.
+
 **Definition of complete:** Each task needs its described acceptance evidence, not a model's self-report. Implementation code must pass its relevant regressions and support human review. Real-model tests are T17, not implied by earlier deterministic CI.
 
 ## Updated scope and dependency overview
@@ -25,16 +27,16 @@
 |---|---|---|---|---|
 | T01 | Source audit and baseline evidence | P0 · Completed | — | COMPLETE |
 | T02 | Freeze evaluation-mode, authority and disclosure contracts | P0 · Medium | T01 | COMPLETE — specification, validator and CI |
-| T03 | Derive ASSISTANT-001 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED FOR BENCHMARK — artifact signoff pending |
-| T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED FOR BENCHMARK — artifact signoff pending |
-| T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | IMPLEMENTED — deterministic isolation checks |
-| T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | IMPLEMENTED — human substantive calibration/signoff pending |
-| T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | IMPLEMENTED — independent substantive scenario review pending |
-| T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | IMPLEMENTED — human substantive calibration/signoff pending |
-| T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | IMPLEMENTED — deterministic CI passed; formal reference/release review pending |
-| T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | IMPLEMENTED — deterministic CI passed; real seed validation/review and execution authorization pending |
-| T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | IMPLEMENTED — 16 cases; human substantive review/calibration pending |
-| T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | IMPLEMENTED — 20 cases; human substantive review/calibration pending |
+| T03 | Derive ASSISTANT-001 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED — AI technical reference review complete; execution release separate |
+| T04 | Derive ASSISTANT-002 reference plan from existing tasks | P0 · Small | T02 | DESIGN ACCEPTED — AI technical reference review complete; execution release separate |
+| T05 | Make project Planner qualification genuinely independent | P0 · Medium | T03, T04 | APPROVED_FOR_BENCHMARK — blind disclosure and fresh-session isolation verified |
+| T06 | Build semantic Planner equivalence assessment | P0 · Medium | T05 | APPROVED_FOR_BENCHMARK — ten controls substantively reviewed; eight corrected |
+| T07 | Create frozen project Governor decisions and authority conditions | P0 · Large | T02, T03, T04 | APPROVED_FOR_BENCHMARK — all 28 synthetic rulings reviewed against matching canonical bytes |
+| T08 | Evaluate Governor rulings and constraint extraction independently | P0 · Medium | T07 | APPROVED_FOR_BENCHMARK — all 16 controls reviewed; four corrected; advisory only |
+| T09 | Build canonical reference Worker handoffs with separate authority | P0 · Medium | T03, T04, T08 | APPROVED_FOR_BENCHMARK — both bundles/all 12 task slots technically reviewed; no execution authority |
+| T10 | Add isolated Worker task qualification alongside existing project chains | P0 · Large | T09 | IMPLEMENTED/VERIFIED — cumulative identity and isolation checked; real isolated seeds BLOCKED |
+| T11 | Extend Tester qualification with controlled implementation fixtures | P1 · Medium | T02, T10 | APPROVED_FOR_BENCHMARK — 16 authored cases/48 controls reviewed; real-artifact compatibility PROVISIONAL, untrusted execution BLOCKED |
+| T12 | Extend Reviewer qualification with evidence-grounded cases | P1 · Medium | T10, T11 | APPROVED_FOR_BENCHMARK — 20 authored cases/60 controls reviewed and corrected; real-artifact compatibility PROVISIONAL |
 | T13 | Define traceable capability/report metrics and extend existing writer | P0 · Large | T06, T08, T10, T11, T12 | NOT STARTED |
 | T14 | Verify and adapt the existing native DSH full pipeline for integration trials | P0 · Large | T02, T09, T13 | NOT STARTED — native source exists; installed state unverified |
 | T15 | Regression-test authority, data/report truthfulness and failure propagation | P0 · Large | T05, T08, T10, T11, T12, T13, T14 | NOT STARTED |
@@ -48,7 +50,7 @@
 | Milestone | Included tasks | Go/no-go evidence |
 |---|---|---|
 | M0 · Baseline | T01 | Source implementation map + prior CI and Git blob snapshot recorded; installed DSH still unverified |
-| M1 · Ground truth and independent comparisons | T02–T08 | v2 mode/authority matrix; separate reference plans; blind Planner leakage tests; human-reviewed Governor case outcomes |
+| M1 · Ground truth and independent comparisons | T02–T08 | v2 mode/authority matrix; separate reference plans; blind Planner leakage tests; technically reviewed Governor case outcomes (AI review explicitly identified) |
 | M2 · Canonical Worker and downstream roles | T09–T13 | reviewed reference Worker handoffs; independent-isolated vs cumulative Worker separation; Tester/Reviewer oracles; inherited evidence writer |
 | M3 · Native pipeline and safety proof | T14–T15 | installed DSH provenance verified; existing DSH releases/dispatchers exercised with fakes; old v1 and GUI regressions pass |
 | M4 · Interface and genuine model results | T16–T18 | new modes and a chart-focused Results tab **in the same GUI**; measured case-level comparisons/evidence links verified against actual runs; released metric/rubric docs |
@@ -87,7 +89,7 @@
 **Change from the pre-audit list:** Originally a generic track definition. Expanded to handle transport provenance, per-task vs chained-worker comparability, private governance and simulated vs real authority.
 
 ### T03 — Derive ASSISTANT-001 reference plan from existing tasks
-**Status:** BENCHMARK REFERENCE DESIGN ACCEPTED by owner; draft trace still `OWNER_REVIEW_PENDING` pending controlled authorization/provenance in T09; requirement validation passed · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
+**Status:** DESIGN ACCEPTED — AI technical reference review complete; execution release separate · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02
 **Where:** project-benchmarks/assistant-001/qualification-v2/
 
 **Reuse:** ASSISTANT-001/v1 PROJECT_INTENT, CONTRACT R01–R06, TASKS T01–T06 and existing independent acceptance tests.
@@ -99,7 +101,7 @@
 **Change from the pre-audit list:** Reduced from writing a new plan to organizing and independently reviewing the plan already embodied in v1. Owner subsequently accepted use as a **benchmark reference**, not permission for unrestricted generated-code execution or actual Assistant deployment.
 
 ### T04 — Derive ASSISTANT-002 reference plan from existing tasks
-**Status:** BENCHMARK REFERENCE DESIGN ACCEPTED by owner; draft trace still `OWNER_REVIEW_PENDING` pending controlled authorization/provenance in T09; requirement validation passed · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02  
+**Status:** DESIGN ACCEPTED — AI technical reference review complete; execution release separate · **Priority:** P0 · **Complexity:** Small · **Dependencies:** T02
 **Where:** project-benchmarks/assistant-002/qualification-v2/
 
 **Reuse:** ASSISTANT-002/v1 PROJECT_INTENT, CONTRACT S01–S06, TASKS T01–T06, 96 checks, eight scenarios and pinned A001 dependency.
@@ -115,7 +117,7 @@
 *T05–T08 · prevent answer contamination, pin governance inputs and evaluate decisions*
 
 ### T05 — Make project Planner qualification genuinely independent
-**Status:** IMPLEMENTED — allowlisted versioned inputs, fresh no-tools role sessions, disclosure regressions; see [implementation and limits](PLANNER_T05_T06.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04
+**Status:** APPROVED_FOR_BENCHMARK — blind disclosure and fresh-session isolation verified · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04
 **Where:** local-model-bench: new qualification packet adapter/fixtures/tests, not v1 packet mutation
 
 **Reuse:** role_prompt and task_prompt conventions, existing project starter source and project intent/contract.
@@ -127,7 +129,7 @@
 **Change from the pre-audit list:** CRITICAL correction: T01 demonstrated TASKS.md was included both directly in DOCS and indirectly in the candidate workspace snapshot.
 
 ### T06 — Build semantic Planner equivalence assessment
-**Status:** IMPLEMENTED — requirement-level human adjudication, evidence validation and ten authored controls; **human substantive calibration/signoff pending**; see [workflow](PLANNER_T05_T06.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T05
+**Status:** APPROVED_FOR_BENCHMARK — ten controls substantively reviewed; eight corrected · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T05
 **Where:** local-model-bench: additive qualification rubric/assessor/review records
 
 **Reuse:** v1 outcome-based acceptance criteria, six historical Planner intent cases and human-review writer.
@@ -139,7 +141,7 @@
 **Change from the pre-audit list:** Existing historical Planner evaluation is manual and cannot serve as a project-specific equivalence oracle.
 
 ### T07 — Create frozen project Governor decisions and authority conditions
-**Status:** IMPLEMENTED — frozen authored cases and private snapshot binding; independent substantive human review pending; see [implementation and limits](GOVERNOR_T07_T08.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T02, T03, T04
+**Status:** APPROVED_FOR_BENCHMARK — all 28 synthetic rulings reviewed against matching canonical bytes · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T02, T03, T04
 **Where:** local-model-bench: project-specific v2 case metadata; private run evidence for canonical governance bytes
 
 **Reuse:** Historical four Governor packets, source-backed LAW/STATE/GENERAL_INTENT loader and separate Governor authority corpus.
@@ -151,7 +153,7 @@
 **Change from the pre-audit list:** The existing project Governor probe accepts arbitrary plan/doc inputs, not a frozen project decision oracle; no simulation decision may be confused with production permission.
 
 ### T08 — Evaluate Governor rulings and constraint extraction independently
-**Status:** IMPLEMENTED — semantic adjudication, sixteen authored controls and evidence-based comparison; human substantive calibration/signoff pending; see [implementation and limits](GOVERNOR_T07_T08.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T07
+**Status:** APPROVED_FOR_BENCHMARK — all 16 controls reviewed; four corrected; advisory only · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T07
 **Where:** local-model-bench: additive Governor assessment and review records
 
 **Reuse:** Actual governor cases from historical role campaign; project run_probe and evidence writer.
@@ -167,7 +169,7 @@
 *T09–T12 · distinguish identical task inputs from model-specific continuation artifacts*
 
 ### T09 — Build canonical reference Worker handoffs with separate authority
-**Status:** IMPLEMENTED — versioned bundles and operator provenance gates passed Windows/Linux CI; human reference approval pending; see [Batch 4 record](BATCH4_IMPLEMENTATION_RECORD.md) · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08
+**Status:** APPROVED_FOR_BENCHMARK — both bundles/all 12 task slots technically reviewed; no execution authority · **Priority:** P0 · **Complexity:** Medium · **Dependencies:** T03, T04, T08
 **Where:** project-benchmarks/assistant-001|002/qualification-v2/ + shared handoff assembler
 
 **Reuse:** v1 project task scopes, same task prompts, canonical governance case constraints, historical Worker approved-plan examples.
@@ -179,7 +181,7 @@
 **Change from the pre-audit list:** The current Worker receives fixed task+contract+predecessor, but lacks a separate explicitly approved plan/Governor guidance/authority record.
 
 ### T10 — Add isolated Worker task qualification alongside existing project chains
-**Status:** IMPLEMENTED — isolated/cumulative adapters and deterministic acceptance passed Windows/Linux CI; real prerequisite fixtures require separate validation, unsolved-target review and execution authorization; see [workflow](WORKER_T09_T10.md) · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09
+**Status:** IMPLEMENTED/VERIFIED — cumulative identity and isolation checked; real isolated seeds BLOCKED · **Priority:** P0 · **Complexity:** Large · **Dependencies:** T09
 **Where:** local-model-bench: new controlled Worker mode/fixtures; reuse assistant001.campaign and assessment
 
 **Reuse:** Working six-step cumulative chain, frozen starters, exact file-scope checks, current Worker's accepted predecessor gating and no-gold-continuation semantics.
@@ -191,7 +193,7 @@
 **Change from the pre-audit list:** A common plan does NOT imply common starting code for later sequential tasks. Both measurements are necessary to avoid unfairly attributing upstream implementation differences.
 
 ### T11 — Extend Tester qualification with controlled implementation fixtures
-**Status:** IMPLEMENTED — 16 frozen cases; human substantive review/calibration pending · **Priority:** P1 · **Complexity:** Medium · **Dependencies:** T02, T10
+**Status:** APPROVED_FOR_BENCHMARK — 16 authored cases/48 controls reviewed; real-artifact compatibility PROVISIONAL, untrusted execution BLOCKED · **Priority:** P1 · **Complexity:** Medium · **Dependencies:** T02, T10
 **Where:** local-model-bench: additive v2 Tester fixtures and evaluation; historical cases preserved
 
 **Reuse:** Historical Tester cases A/C/D, reference-correct/defective fixtures, project Tester run_probe and captured independent acceptance.
@@ -203,7 +205,7 @@
 **Change from the pre-audit list:** Project Tester probe uses arbitrary Worker artifacts without frozen known-good/bad comparison; historical controlled cases already provide a reusable precedent.
 
 ### T12 — Extend Reviewer qualification with evidence-grounded cases
-**Status:** IMPLEMENTED — 20 frozen cases; human substantive review/calibration pending · **Priority:** P1 · **Complexity:** Medium · **Dependencies:** T10, T11
+**Status:** APPROVED_FOR_BENCHMARK — 20 authored cases/60 controls reviewed and corrected; real-artifact compatibility PROVISIONAL · **Priority:** P1 · **Complexity:** Medium · **Dependencies:** T10, T11
 **Where:** local-model-bench: additive Reviewer fixtures and rubric
 
 **Reuse:** Historical six Reviewer contrast packets, DSH final Reviewer prompt, project Reviewer probe's existing code-hash matching metadata.

@@ -10,7 +10,7 @@ from .contract import CONTROLLED, validate_disclosure, validate_selection
 from .planner_packet import read_regular, sha
 
 VERSION = "qualification-v2/governor-input-v1"
-FREEZE_SHA256 = "5ec7f5d7b041a075671c0f18a49da87baa3341686082f497bd9a8c20001c96ad"
+FREEZE_SHA256 = "b988d25522bff6217c31a7b2dd910c425d48b6858f93cf2fc13c49fd72385293"
 PROJECTS = ("assistant-001", "assistant-002")
 CASES = tuple(f"{i:02}" for i in range(1, 15))
 DOCUMENTS = ("LAW.md", "STATE.md", "GENERAL_INTENT.md")

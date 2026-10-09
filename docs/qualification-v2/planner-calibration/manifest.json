@@ -8,32 +8,32 @@
       "case": "complete",
       "name": "alternate-three",
       "expected_verdict": "PASS",
-      "candidate_sha256": "0542444054986559a1caf1a31f100b8afa5036adf1723d3639753768900264c2",
-      "review_sha256": "28b2a8d868f6b7708f5cce19750182460afca5ddecede0e4a28c85e070545ba4"
+      "candidate_sha256": "b505f7950c2bd08fc3beb631da1806f4c60052c887073359437a038320a74a4e",
+      "review_sha256": "8f531cb497ece9a1fe35b0d89054bb5cbd967218fb1a414d276268693fb661b7"
     },
     {
       "project": "assistant-001",
       "case": "complete",
       "name": "alternate-eight",
       "expected_verdict": "PASS",
-      "candidate_sha256": "9a129fba7dc170cbb24a16ba1512243531d33837b44ceeaaf352678a105a6ae5",
-      "review_sha256": "21eaa8b3e03cdf84e5f8f8c43332fc6ebafd3e52d3444241b29b74675eaa4ffb"
+      "candidate_sha256": "7bc0e1c7af7e0f224c85456a71c64b7467a4d348d7a4a323f48b670ccf96f319",
+      "review_sha256": "f2d9380cf118e49f43e84a5c62e3f94e58d24a875714716a92b69c5d0aee0716"
     },
     {
       "project": "assistant-001",
       "case": "complete",
       "name": "critical-omission",
       "expected_verdict": "FAIL",
-      "candidate_sha256": "418d51a4d878ef144761a1533919e871189ec1f2403ce907d6af4d9d1f09753c",
-      "review_sha256": "f3b01a8aa190f67eb303112bd0e1b004a9010d120b6434f17538430c546b636b"
+      "candidate_sha256": "f60028360f2aa56869f9d803f57e736cd40321e1a2d68d13b2e1800f3e3adaef",
+      "review_sha256": "ea29eac361fca32fad8d080121cb04702108c4021e9221fdbd71871b785f8f51"
     },
     {
       "project": "assistant-001",
       "case": "complete",
       "name": "scope-expansion",
       "expected_verdict": "FAIL",
-      "candidate_sha256": "94ebbc068cd2114b76d7ef1e27bd281dd59bc095ea2953cd37c2723cf22b0f54",
-      "review_sha256": "bf034d60a0604da6bf5406f102214d0deb723ec4c8eb2d7b5af22ecd327ed1e4"
+      "candidate_sha256": "d7736dbea50959ab4e8934cf45d4d34d492d946e31a989c6271340447683138d",
+      "review_sha256": "f0db015b4b7e405ba6513606b0aa215d1f2049b799633336a4b4250a905f9649"
     },
     {
       "project": "assistant-001",
@@ -48,32 +48,32 @@
       "case": "complete",
       "name": "alternate-three",
       "expected_verdict": "PASS",
-      "candidate_sha256": "cb30efff79ea12c21bd7d470ae63f241d8d637c5c599032b291938a1adf33dfb",
-      "review_sha256": "4573113cee6ee0ce44dd0f55969bcd940ebc5b696b656858e780ac90237608a0"
+      "candidate_sha256": "38c7f5e6dd5b75a1bbc344a78b1501cfe8703fbf032b293abe3765d59253672d",
+      "review_sha256": "8dc4d1bd51c44766e22a526c3a061ff4c3e640885b5b538a0ead71031c638bf6"
     },
     {
       "project": "assistant-002",
       "case": "complete",
       "name": "alternate-eight",
       "expected_verdict": "PASS",
-      "candidate_sha256": "14782848db2d1a37f667243e71d809fdab42a2778709e54bc4677ada6727e095",
-      "review_sha256": "299e37a488c16e451b580d7a42a70695d4559e9dec7520203b5a4254ff849c40"
+      "candidate_sha256": "6a12f4ba598cde5cde3ecdfa6c06f33cc4645cc8b6777352b6109344533559b0",
+      "review_sha256": "08c20746b6fa79845e510536cb608ad43584723e5ff28a5f4239fd7f5a15de56"
     },
     {
       "project": "assistant-002",
       "case": "complete",
       "name": "critical-omission",
       "expected_verdict": "FAIL",
-      "candidate_sha256": "9795aa9c4a164aa380e98c70434fe5949157d02c3279e73b473d9d426cf5a6b3",
-      "review_sha256": "c061cfa6fcc0e4ee39899090b43b33ef48cdcfe4ee7cfd7bad2f96a698447434"
+      "candidate_sha256": "06c47877b6de423a6d8833b68ddbab37baa1c49e1c6e50f7e602a719d284bdf6",
+      "review_sha256": "a57fb13afe92543214232d66689c041ac2b3b12f5614641a3d4b466e98441a46"
     },
     {
       "project": "assistant-002",
       "case": "complete",
       "name": "scope-expansion",
       "expected_verdict": "FAIL",
-      "candidate_sha256": "1aad6b20ad9c4ba7311d4fe62f8efc96be2aa0c807e2e6df2b809d326ea21ed3",
-      "review_sha256": "1746259f24f6ce5c3f31f8d50083a1cd251da3ace1c104edf6e94d71702ed37b"
+      "candidate_sha256": "3593fde744c6c29cbbde5cd19f96ddf5cafa9bdcdf85ea51f75597693271a186",
+      "review_sha256": "ece9e7471ce18e7689368158d002fce1f7c9d976220c7c635cc394cd3c8e9ffa"
     },
     {
       "project": "assistant-002",
@@ -83,5 +83,7 @@
       "candidate_sha256": "4ff1f3f6ee416999c7b4dcff56964ff1e1f3533963d74e581ce64ef4875edabb",
       "review_sha256": "8803c101c9401692c49612d1e74fe28e61582004562fa9201eecf62522711d2c"
     }
-  ]
+  ],
+  "revision": "technical-correction-20261009",
+  "technical_review_origin": "AI_TECHNICAL_REVIEW_NOT_HUMAN_CERTIFICATION"
 }

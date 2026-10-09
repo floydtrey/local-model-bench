@@ -113,6 +113,8 @@ def validate_seed(project, task, seed_run, *, repo, allow_host_execution=False, 
 def prepare_worker(project, mode, output_root, *, repo, task="T01", seed_run=None):
     if mode not in MODES:
         raise ValueError("Unknown Worker mode")
+    if mode == "CUMULATIVE_PROJECT" and task != "T01":
+        raise ValueError("Cumulative qualification starts at T01; select its end with through")
     protected = (Path(repo) / "project-benchmarks").resolve()
     output = Path(output_root).resolve()
     if output == protected or protected in output.parents:
@@ -201,6 +203,16 @@ def authorize(control, authorization_file, trusted_sha256):
             "provenance_reference": grant["provenance_reference"]}
 
 
+def authorize_run(run, control, authorization_file, trusted_sha256):
+    """Apply the same placement boundary before provider construction and dispatch."""
+    if authorization_file is not None:
+        auth = Path(authorization_file).resolve()
+        workspace = (Path(run) / "workspace").resolve()
+        if auth == workspace or workspace in auth.parents:
+            raise ValueError("Authorization must be outside the candidate workspace")
+    return authorize(control, authorization_file, trusted_sha256)
+
+
 class WorkerPacket:
     """Add canonical context to original task prompts; reuse original run loader."""
     def __init__(self, api, control):
@@ -233,12 +245,7 @@ def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=N
         raise ValueError("Separate model inference and host execution consent required")
     control = verify_worker(run, repo)
     run = Path(run)
-    if authorization_file is not None:
-        auth = Path(authorization_file).resolve()
-        workspace = (run / "workspace").resolve()
-        if auth == workspace or workspace in auth.parents:
-            raise ValueError("Authorization must be outside the candidate workspace")
-    control["release"] = authorize(control, authorization_file, trusted_sha256)
+    control["release"] = authorize_run(run, control, authorization_file, trusted_sha256)
     if (run / "summary.json").exists() or (run / "roles").exists():
         raise ValueError("Every Worker trial requires a fresh prepared run")
     if snapshot(run / "workspace") != control["initial_workspace_sha256"]:

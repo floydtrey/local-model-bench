@@ -203,6 +203,27 @@ class WorkerTests(unittest.TestCase):
             self.assertEqual(main(["worker", "run", "--project", "assistant-001", "--model", "fake",
                                    "--run-dir", str(self.prepare())]), 2)
 
+    def test_cumulative_identity_cannot_claim_a_later_starting_task(self):
+        for project in APIS:
+            with self.assertRaisesRegex(ValueError, "T01"):
+                self.prepare(project, task="T04")
+
+    def test_candidate_visible_authorization_is_rejected_before_provider(self):
+        from localbench.qualification_v2.__main__ import main
+        from localbench.qualification_v2.worker import authorize_run
+        run = self.prepare()
+        path, _ = self.grant(run)
+        exposed = run / "workspace/authorization.json"
+        exposed.write_bytes(path.read_bytes())
+        control = verify_worker(run, REPO)
+        with self.assertRaisesRegex(ValueError, "candidate workspace"):
+            authorize_run(run, control, exposed, digest(exposed))
+        with patch("localbench.assistant001.runtime.OllamaSessions", side_effect=AssertionError("provider contacted")):
+            self.assertEqual(main(["worker", "run", "--project", "assistant-001", "--model", "fake",
+                "--run-dir", str(run), "--authorization-file", str(exposed),
+                "--trusted-authorization-sha256", digest(exposed),
+                "--allow-model-inference", "--allow-host-execution"]), 2)
+
     def test_shared_writer_preserves_modes_provenance_and_unknown_failures(self):
         import csv
         from localbench.assistant001.cli import review_package

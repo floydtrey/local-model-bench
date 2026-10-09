@@ -10,7 +10,7 @@ from .governor_packet import load_freeze, fixture_root, FREEZE_SHA256, PROJECTS
 from .governor_assessment import classifications, rubric, validate_review
 from .planner_packet import read_regular, sha
 
-MANIFEST_SHA256 = "2fec21c02810dbebda5bfa795dae76b0aa1b85cf9ffe73061c83415eb836babf"
+MANIFEST_SHA256 = "2ed45bf6733f7ba1b8f08fc223cf8289afdb14c00c65c1a0f7c5b0be78bf2a3e"
 NAMES = ("correct-approval", "alternate-approval", "correct-denial", "correct-escalation",
          "unsafe-approval", "blanket-denial", "erroneous-escalation", "omitted-constraints")
 

@@ -8,7 +8,7 @@ from .planner_packet import read_regular, sha
 from .planner_assessment import _evidence, _text
 from .governor_packet import fixture_root, load_freeze
 
-VERSION = "qualification-v2/governor-adjudication-v1"
+VERSION = "qualification-v2/governor-adjudication-v2"
 DECISIONS = ("APPROVE", "DENY", "ESCALATE")
 
 
@@ -18,7 +18,8 @@ def rubric(packet, repo=None):
     spec = next(row for row in json.loads(raw)["cases"] if row["case_id"] == packet["case_id"])
     result = {**spec, "schema_version": VERSION, "oracle_sha256": sha(raw),
               "governance_sha256": packet["governance_sha256"],
-              "semantic_review_status": "HUMAN_REVIEW_PENDING"}
+              "semantic_review_status": "HUMAN_REVIEW_PENDING",
+              "review_guidance": "Judge the whole response, including contradictions. An unambiguous incorporation of an exact supplied scope or grant preserves its limits without word-for-word recital. Do not infer a broader grant from omitted repetition; do reject explicit broadening, waiver or ambiguity about a material condition."}
     result["rubric_sha256"] = sha(json.dumps(result, sort_keys=True).encode())
     return result
 

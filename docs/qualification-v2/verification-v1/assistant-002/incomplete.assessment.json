@@ -10,7 +10,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 264, in test_advance_validates_time_without_sink_calls\n    sink = SpySink(); replay = API.Replay(scenario(),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 264, in test_advance_validates_time_without_sink_calls\n    sink = SpySink(); replay = API.Replay(scenario(),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_append_error_stops_without_skipping_or_query",
@@ -18,7 +18,7 @@
       "task": "T03",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 273, in test_append_error_stops_without_skipping_or_query\n    replay = API.Replay(scenario(events=[entry('a'),entry('b',1),entry('c',2)]),sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 273, in test_append_error_stops_without_skipping_or_query\n    replay = API.Replay(scenario(events=[entry('a'),entry('b',1),entry('c',2)]),sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_candidate_and_public_tests_run",
@@ -26,7 +26,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... ERROR\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ERROR\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ERROR\\r\\n\\r\\n======================================================================\\r\\nERROR: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_second_boundary (test_candidate.ContractTests.test_second_boundary)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 18, in test_second_boundary\\r\\n    with self.assertRaises(ValueError): normalize_scenario(value)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_valid (test_candidate.ContractTests.test_valid)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\tests\\\\test_candidate.py\", line 10, in test_valid\\r\\n    self.assertEqual(normalize_scenario(self.sample())[\"duration_ms\"], 1)\\r\\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-jasww_hg\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (errors=3)\\r\\n'\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 522, in test_candidate_and_public_tests_run\n    self.assertEqual(result.returncode,0,result.stderr[-3000:])\nAssertionError: 1 != 0 : b'AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\tests\\\\test_candidate.py\", line 10, in test_valid\\r\\n    self.assertEqual(normalize_scenario(self.sample())[\"duration_ms\"], 1)\\r\\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_boolean_duration_is_invalid (test_public_contract.PublicContractTests.test_boolean_duration_is_invalid)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\tests\\\\test_public_contract.py\", line 22, in test_boolean_duration_is_invalid\\r\\n    with self.assertRaises(ValueError): normalize_scenario(raw)\\r\\n                                        ^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_explicit_defaults (test_public_contract.PublicContractTests.test_explicit_defaults)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\tests\\\\test_public_contract.py\", line 12, in test_explicit_defaults\\r\\n    normalized = normalize_scenario(self.raw())\\r\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 3, in normalize_scenario\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n======================================================================\\r\\nERROR: test_identity_does_not_depend_on_object_key_order (test_public_contract.PublicContractTests.test_identity_does_not_depend_on_object_key_order)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\tests\\\\test_public_contract.py\", line 18, in test_identity_does_not_depend_on_object_key_order\\r\\n    self.assertEqual(scenario_digest(raw), scenario_digest(dict(reversed(list(raw.items())))))\\r\\n                     ^^^^^^^^^^^^^^^^^^^^\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-aasseo68\\\\workspace\\\\assistant_simulator\\\\scenario.py\", line 6, in scenario_digest\\r\\n    raise NotImplementedError(\"T01\")\\r\\nNotImplementedError: T01\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 6 tests in 0.003s\\r\\n\\r\\nFAILED (errors=6)\\r\\n'\n"
     },
     {
       "case_id": "test_checkpoint_boundary_delivers_before_query",
@@ -34,7 +34,7 @@
       "task": "T03",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 244, in test_checkpoint_boundary_delivers_before_query\n    replay = API.Replay(scenario(events=[entry('a',1000),entry('b',1001)]), sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 244, in test_checkpoint_boundary_delivers_before_query\n    replay = API.Replay(scenario(events=[entry('a',1000),entry('b',1001)]), sink)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_checkpoint_changed_scenario_or_expectations_rejected",
@@ -42,7 +42,7 @@
       "task": "T04",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 364, in test_checkpoint_changed_scenario_or_expectations_rejected\n    raw=scenario(); saved=API.Replay(raw,SpySink()).checkpoint()\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 364, in test_checkpoint_changed_scenario_or_expectations_rejected\n    raw=scenario(); saved=API.Replay(raw,SpySink()).checkpoint()\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_checkpoint_exact_format_and_json_roundtrip",
@@ -50,7 +50,7 @@
       "task": "T04",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 329, in test_checkpoint_exact_format_and_json_roundtrip\n    sink=SpySink(); replay=API.Replay(raw,sink); replay.advance(1)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 329, in test_checkpoint_exact_format_and_json_roundtrip\n    sink=SpySink(); replay=API.Replay(raw,sink); replay.advance(1)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
@@ -58,7 +58,7 @@
       "task": "T04",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 371, in test_checkpoint_invalid_fields_counts_bounds_and_clock\n    good=API.Replay(raw,SpySink()).checkpoint()\n         ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 371, in test_checkpoint_invalid_fields_counts_bounds_and_clock\n    good=API.Replay(raw,SpySink()).checkpoint()\n         ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_cli_error_does_not_emit_partial_schedule_or_payload",
@@ -66,7 +66,7 @@
       "task": "T06",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 484, in test_cli_error_does_not_emit_partial_schedule_or_payload\n    result=self.cli(raw,'jsonl',expected=2)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 2 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 484, in test_cli_error_does_not_emit_partial_schedule_or_payload\n    result=self.cli(raw,'jsonl',expected=2)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 2 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_cli_jsonl_is_canonical_and_retains_duplicates",
@@ -74,7 +74,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 476, in test_cli_jsonl_is_canonical_and_retains_duplicates\n    text=self.cli(raw,'jsonl').stdout\n         ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 476, in test_cli_jsonl_is_canonical_and_retains_duplicates\n    text=self.cli(raw,'jsonl').stdout\n         ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_cli_never_resets_preexisting_journal",
@@ -82,7 +82,7 @@
       "task": "T06",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 505, in test_cli_never_resets_preexisting_journal\n    result=self.cli(scenario(),'run',dependency=True,expected=1,extra=('--db',str(db)))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 123, in cli\n    self.assertEqual(result.stderr, '')\nAssertionError: 'Traceback (most recent call last):\\n  Fil[514 chars]06\\n' != ''\n- Traceback (most recent call last):\n-   File \"<frozen runpy>\", line 198, in _run_module_as_main\n-   File \"<frozen runpy>\", line 88, in _run_code\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n-     raise SystemExit(main())\n-                      ^^^^^^\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n-     raise NotImplementedError(\"T06\")\n- NotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 505, in test_cli_never_resets_preexisting_journal\n    result=self.cli(scenario(),'run',dependency=True,expected=1,extra=('--db',str(db)))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 123, in cli\n    self.assertEqual(result.stderr, '')\nAssertionError: 'Traceback (most recent call last):\\n  Fil[514 chars]06\\n' != ''\n- Traceback (most recent call last):\n-   File \"<frozen runpy>\", line 198, in _run_module_as_main\n-   File \"<frozen runpy>\", line 88, in _run_code\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n-     raise SystemExit(main())\n-                      ^^^^^^\n-   File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n-     raise NotImplementedError(\"T06\")\n- NotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
@@ -90,7 +90,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 493, in test_cli_run_pass_and_mismatch_are_distinct_exit_codes\n    report=json.loads(self.cli(raw,'run',dependency=True,extra=('--db',str(db))).stdout)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 493, in test_cli_run_pass_and_mismatch_are_distinct_exit_codes\n    report=json.loads(self.cli(raw,'run',dependency=True,extra=('--db',str(db))).stdout)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_cli_unicode_payload_and_database_path",
@@ -98,7 +98,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 512, in test_cli_unicode_payload_and_database_path\n    schedule=json.loads(self.cli(raw,'schedule').stdout)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 512, in test_cli_unicode_payload_and_database_path\n    schedule=json.loads(self.cli(raw,'schedule').stdout)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_cli_validate_and_schedule_without_journal",
@@ -106,7 +106,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 469, in test_cli_validate_and_schedule_without_journal\n    result=json.loads(self.cli(raw).stdout)\n                      ^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 469, in test_cli_validate_and_schedule_without_journal\n    result=json.loads(self.cli(raw).stdout)\n                      ^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 115, in cli\n    self.assertEqual(result.returncode, expected, result.stderr[-2000:])\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\__main__.py\", line 4, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\cli.py\", line 3, in main\n    raise NotImplementedError(\"T06\")\nNotImplementedError: T06\n\n"
     },
     {
       "case_id": "test_conflicting_event_ids_are_preserved_as_deliveries",
@@ -114,7 +114,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 176, in test_conflicting_event_ids_are_preserved_as_deliveries\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 176, in test_conflicting_event_ids_are_preserved_as_deliveries\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_delivery_order_is_not_event_time_or_key_order",
@@ -122,7 +122,7 @@
       "task": "T02",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 204, in test_delivery_order_is_not_event_time_or_key_order\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 204, in test_delivery_order_is_not_event_time_or_key_order\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_digest_canonical_known_input",
@@ -130,7 +130,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 149, in test_digest_canonical_known_input\n    self.assertEqual(API.scenario_digest(raw), expected)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 149, in test_digest_canonical_known_input\n    self.assertEqual(API.scenario_digest(raw), expected)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_drop_removes_all_copies",
@@ -138,7 +138,7 @@
       "task": "T02",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 217, in test_drop_removes_all_copies\n    records = API.compile_schedule(scenario(events=[entry('lost',drop=True,duplicate_after_ms=[1,2]),entry('kept')]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 217, in test_drop_removes_all_copies\n    records = API.compile_schedule(scenario(events=[entry('lost',drop=True,duplicate_after_ms=[1,2]),entry('kept')]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_duplicate_observed_ids_not_silently_hidden",
@@ -146,7 +146,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 424, in test_duplicate_observed_ids_not_silently_hidden\n    API.evaluate_scenario(scenario(),SpySink(state=[event('a'),event('a')]))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 424, in test_duplicate_observed_ids_not_silently_hidden\n    API.evaluate_scenario(scenario(),SpySink(state=[event('a'),event('a')]))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_duplicate_records_and_input_are_independent",
@@ -154,7 +154,7 @@
       "task": "T02",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 223, in test_duplicate_records_and_input_are_independent\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 223, in test_duplicate_records_and_input_are_independent\n    records = API.compile_schedule(raw)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_duplicates_preserve_event_identity",
@@ -162,7 +162,7 @@
       "task": "T02",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 210, in test_duplicates_preserve_event_identity\n    records = API.compile_schedule(scenario(events=[entry('a', 10, delay_ms=20, duplicate_after_ms=[5,10])]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 210, in test_duplicates_preserve_event_identity\n    records = API.compile_schedule(scenario(events=[entry('a', 10, delay_ms=20, duplicate_after_ms=[5,10])]))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_empty_schedule_and_repeatability",
@@ -170,7 +170,7 @@
       "task": "T02",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 236, in test_empty_schedule_and_repeatability\n    self.assertEqual(API.compile_schedule(scenario(events=[])), [])\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 236, in test_empty_schedule_and_repeatability\n    self.assertEqual(API.compile_schedule(scenario(events=[])), [])\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_equal_time_partial_checkpoint_is_valid",
@@ -178,7 +178,7 @@
       "task": "T04",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 386, in test_equal_time_partial_checkpoint_is_valid\n    replay=API.Replay(raw,sink)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 386, in test_equal_time_partial_checkpoint_is_valid\n    replay=API.Replay(raw,sink)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_equivalent_defaults_and_offsets_have_same_identity",
@@ -186,7 +186,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 158, in test_equivalent_defaults_and_offsets_have_same_identity\n    self.assertEqual(API.scenario_digest(raw), API.scenario_digest(other))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 158, in test_equivalent_defaults_and_offsets_have_same_identity\n    self.assertEqual(API.scenario_digest(raw), API.scenario_digest(other))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_expectations_transforms_and_order_are_hashed",
@@ -194,7 +194,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 163, in test_expectations_transforms_and_order_are_hashed\n    original = API.scenario_digest(raw)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 163, in test_expectations_transforms_and_order_are_hashed\n    original = API.scenario_digest(raw)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 6, in scenario_digest\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_expected_id_sort_and_precise_milliseconds",
@@ -202,7 +202,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 185, in test_expected_id_sort_and_precise_milliseconds\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 185, in test_expected_id_sort_and_precise_milliseconds\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_final_checkpoint_not_queried_twice",
@@ -210,7 +210,7 @@
       "task": "T05",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 441, in test_final_checkpoint_not_queried_twice\n    sink=SpySink(); API.evaluate_scenario(scenario(events=[],cps=[cp(60000)]),sink)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 441, in test_final_checkpoint_not_queried_twice\n    sink=SpySink(); API.evaluate_scenario(scenario(events=[],cps=[cp(60000)]),sink)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_invalid_observed_id_or_append_failure_propagates",
@@ -218,7 +218,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 428, in test_invalid_observed_id_or_append_failure_propagates\n    with self.assertRaises(ValueError): API.evaluate_scenario(scenario(),SpySink(state=[event('bad id')]))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 428, in test_invalid_observed_id_or_append_failure_propagates\n    with self.assertRaises(ValueError): API.evaluate_scenario(scenario(),SpySink(state=[event('bad id')]))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_clock_skew",
@@ -226,7 +226,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_delayed_delivery",
@@ -234,7 +234,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_door_reconnect",
@@ -242,7 +242,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_dropped_presence",
@@ -250,7 +250,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_expired_latest",
@@ -258,7 +258,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_late_observation",
@@ -266,7 +266,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_quiet_room",
@@ -274,7 +274,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_joint_sensor_disagreement",
@@ -282,7 +282,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 566, in golden_test\n    result=API.evaluate_scenario(raw,self.journal())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_lost_acknowledgement_retries_identical_event",
@@ -290,7 +290,7 @@
       "task": "T04",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 354, in test_lost_acknowledgement_retries_identical_event\n    raw=scenario(); replay=API.Replay(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 354, in test_lost_acknowledgement_retries_identical_event\n    raw=scenario(); replay=API.Replay(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_lost_checkpoint_replays_committed_event_as_duplicate",
@@ -298,7 +298,7 @@
       "task": "T04",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 342, in test_lost_checkpoint_replays_committed_event_as_duplicate\n    raw=scenario(); sink=SpySink(); replay=API.Replay(raw,sink); saved=replay.checkpoint()\n                                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 342, in test_lost_checkpoint_replays_committed_event_as_duplicate\n    raw=scenario(); sink=SpySink(); replay=API.Replay(raw,sink); saved=replay.checkpoint()\n                                           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_no_duplicate_suppression_or_repeat_advance_delivery",
@@ -306,7 +306,7 @@
       "task": "T03",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 253, in test_no_duplicate_suppression_or_repeat_advance_delivery\n    sink = SpySink(); replay = API.Replay(scenario(events=[entry('a',duplicate_after_ms=[1])]),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 253, in test_no_duplicate_suppression_or_repeat_advance_delivery\n    sink = SpySink(); replay = API.Replay(scenario(events=[entry('a',duplicate_after_ms=[1])]),sink)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_nonboolean_append_is_not_acknowledgement",
@@ -314,7 +314,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 292, in test_nonboolean_append_is_not_acknowledgement\n    sink=SpySink(); sink.return_value=1; replay=API.Replay(scenario(),sink)\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 292, in test_nonboolean_append_is_not_acknowledgement\n    sink=SpySink(); sink.return_value=1; replay=API.Replay(scenario(),sink)\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_normalized_defaults_and_deep_detachment",
@@ -322,7 +322,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 136, in test_normalized_defaults_and_deep_detachment\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 136, in test_normalized_defaults_and_deep_detachment\n    actual = API.normalize_scenario(raw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_observations_compared_as_sets_with_sorted_diagnostics",
@@ -330,7 +330,7 @@
       "task": "T05",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 416, in test_observations_compared_as_sets_with_sorted_diagnostics\n    report=API.evaluate_scenario(raw,SpySink(state=[event('b'),event('a')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 416, in test_observations_compared_as_sets_with_sorted_diagnostics\n    report=API.evaluate_scenario(raw,SpySink(state=[event('b'),event('a')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_query_error_does_not_redeliver_committed_events",
@@ -338,7 +338,7 @@
       "task": "T03",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 284, in test_query_error_does_not_redeliver_committed_events\n    sink=SpySink(); sink.fail_query=True; replay=API.Replay(scenario(),sink)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 284, in test_query_error_does_not_redeliver_committed_events\n    sink=SpySink(); sink.fail_query=True; replay=API.Replay(scenario(),sink)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_real_journal_conflict_leaves_prior_event_and_stops",
@@ -346,7 +346,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 460, in test_real_journal_conflict_leaves_prior_event_and_stops\n    replay=API.Replay(raw,journal)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 460, in test_real_journal_conflict_leaves_prior_event_and_stops\n    replay=API.Replay(raw,journal)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_real_journal_restart_with_old_checkpoint",
@@ -354,7 +354,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 447, in test_real_journal_restart_with_old_checkpoint\n    first=API.Replay(raw,journal); saved=first.checkpoint(); first.advance(0); journal.close()\n          ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 447, in test_real_journal_restart_with_old_checkpoint\n    first=API.Replay(raw,journal); saved=first.checkpoint(); first.advance(0); journal.close()\n          ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_reject_backward_checkpoints",
@@ -362,7 +362,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bad_expected_id",
@@ -370,7 +370,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bad_start_offset",
@@ -378,7 +378,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_at",
@@ -386,7 +386,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_checkpoint_time",
@@ -394,7 +394,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_delay",
@@ -402,7 +402,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_drop",
@@ -410,7 +410,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_duplicate_offset",
@@ -418,7 +418,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_duration",
@@ -426,7 +426,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_bool_version",
@@ -434,7 +434,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_checkpoint_after_end",
@@ -442,7 +442,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_clock_overflow",
@@ -450,7 +450,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_dropped_but_invalid_event",
@@ -458,7 +458,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_dropped_but_invalid_time",
@@ -466,7 +466,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_duplicate_checkpoint_times",
@@ -474,7 +474,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_duplicate_expected_ids",
@@ -482,7 +482,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_duplicate_keys",
@@ -490,7 +490,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_duplicate_offsets",
@@ -498,7 +498,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_empty_id",
@@ -506,7 +506,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_float_delay",
@@ -514,7 +514,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_float_duration",
@@ -522,7 +522,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_invalid_id",
@@ -530,7 +530,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_large_duration",
@@ -538,7 +538,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_long_id",
@@ -546,7 +546,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_missing_checkpoints",
@@ -554,7 +554,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_missing_field",
@@ -562,7 +562,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_naive_start",
@@ -570,7 +570,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_negative_at",
@@ -578,7 +578,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_negative_delay",
@@ -586,7 +586,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_negative_duration",
@@ -594,7 +594,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_nonlist_events",
@@ -602,7 +602,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_not_object",
@@ -610,7 +610,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_outside_duration",
@@ -618,7 +618,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_string_expected_ids",
@@ -626,7 +626,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_too_many_checkpoints",
@@ -634,7 +634,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_too_many_events",
@@ -642,7 +642,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_too_many_offsets",
@@ -650,7 +650,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_tuple_duplicates",
@@ -658,7 +658,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_unknown_checkpoint_field",
@@ -666,7 +666,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_unknown_entry",
@@ -674,7 +674,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_unknown_field",
@@ -682,7 +682,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_unsorted_offsets",
@@ -690,7 +690,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_wrong_version",
@@ -698,7 +698,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_reject_zero_offset",
@@ -706,7 +706,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 558, in invalid_test\n    with self.assertRaises(ValueError): API.normalize_scenario(copy.deepcopy(value))\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_report_does_not_rewrite_expected_ids",
@@ -714,7 +714,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 395, in test_report_does_not_rewrite_expected_ids\n    report=API.evaluate_scenario(raw,SpySink(state=[event('observed')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 395, in test_report_does_not_rewrite_expected_ids\n    report=API.evaluate_scenario(raw,SpySink(state=[event('observed')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_reports_all_mismatches_then_drains_later_events",
@@ -722,7 +722,7 @@
       "task": "T05",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 405, in test_reports_all_mismatches_then_drains_later_events\n    sink=SpySink(); report=API.evaluate_scenario(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 405, in test_reports_all_mismatches_then_drains_later_events\n    sink=SpySink(); report=API.evaluate_scenario(raw,sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_sink_mutation_cannot_poison_scheduled_duplicates",
@@ -730,7 +730,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 301, in test_sink_mutation_cannot_poison_scheduled_duplicates\n    raw=scenario(events=[entry(duplicate_after_ms=[1])]); replay=API.Replay(raw,sink)\n                                                                 ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 301, in test_sink_mutation_cannot_poison_scheduled_duplicates\n    raw=scenario(events=[entry(duplicate_after_ms=[1])]); replay=API.Replay(raw,sink)\n                                                                 ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_state_result_detached_and_virtual_clock_never_sleeps",
@@ -738,7 +738,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 309, in test_state_result_detached_and_virtual_clock_never_sleeps\n    sink=SpySink(state=[event()]); replay=API.Replay(scenario(events=[]),sink)\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 309, in test_state_result_detached_and_virtual_clock_never_sleeps\n    sink=SpySink(state=[event()]); replay=API.Replay(scenario(events=[]),sink)\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     },
     {
       "case_id": "test_tied_duplicate_obeys_original_entry_order",
@@ -746,7 +746,7 @@
       "task": "T02",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 232, in test_tied_duplicate_obeys_original_entry_order\n    self.assertEqual([r['delivery_id'] for r in API.compile_schedule(raw)], ['z/0','z/1','a/0'])\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 232, in test_tied_duplicate_obeys_original_entry_order\n    self.assertEqual([r['delivery_id'] for r in API.compile_schedule(raw)], ['z/0','z/1','a/0'])\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\schedule.py\", line 3, in compile_schedule\n    raise NotImplementedError(\"T02\")\nNotImplementedError: T02\n"
     },
     {
       "case_id": "test_unexpected_only_is_failure",
@@ -754,7 +754,7 @@
       "task": "T05",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 435, in test_unexpected_only_is_failure\n    result=API.evaluate_scenario(scenario(events=[],cps=[cp()]),SpySink(state=[event('extra')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 435, in test_unexpected_only_is_failure\n    result=API.evaluate_scenario(scenario(events=[],cps=[cp()]),SpySink(state=[event('extra')]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\evaluate.py\", line 3, in evaluate_scenario\n    raise NotImplementedError(\"T05\")\nNotImplementedError: T05\n"
     },
     {
       "case_id": "test_valid_bounds_and_empty_scenario",
@@ -762,7 +762,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 191, in test_valid_bounds_and_empty_scenario\n    API.normalize_scenario(scenario(events=[], cps=[cp()], duration_ms=0, scenario_id='x'*64))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 191, in test_valid_bounds_and_empty_scenario\n    API.normalize_scenario(scenario(events=[], cps=[cp()], duration_ms=0, scenario_id='x'*64))\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\scenario.py\", line 3, in normalize_scenario\n    raise NotImplementedError(\"T01\")\nNotImplementedError: T01\n"
     },
     {
       "case_id": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
@@ -770,7 +770,7 @@
       "task": "T03",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 318, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    sink=SpySink(); replay=API.Replay(scenario(duration_ms=0),sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-jasww_hg\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-002\\v1\\assessor\\checks.py\", line 318, in test_zero_time_deliveries_and_invalid_scenario_no_sink_calls\n    sink=SpySink(); replay=API.Replay(scenario(duration_ms=0),sink)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\floyd_dev\\AppData\\Local\\Temp\\verification-authored-aasseo68\\workspace\\assistant_simulator\\replay.py\", line 4, in __init__\n    raise NotImplementedError(\"T03\")\nNotImplementedError: T03\n"
     }
   ],
   "os_sandbox": false,

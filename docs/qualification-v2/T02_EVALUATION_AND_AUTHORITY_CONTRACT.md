@@ -114,3 +114,14 @@ T05 will enforce real file/prompt disclosure; T07–T09 will add reviewed author
 ## 9. Review/approval status
 
 **Prepared and tested as design:** This document specifies the authority boundary; it does not grant approval to release model-generated code or mark a reference plan approved. Both T03/T04 reference-plan documents will explicitly carry `OWNER_REVIEW_PENDING`; final authorized Worker handoffs and per-case Governor oracles are later milestones (T07–T09). No model qualifications or production integration are established by completing batch 1.
+
+## 2026-10-09 delegated technical review clarification
+
+The Owner delegated technical benchmark evaluation of T05–T12 to ChatGPT. The
+[versioned audit](technical-audit-20261009/AUDIT_REPORT.md) records AI technical
+APPROVED_FOR_BENCHMARK judgments separately from independent human certification
+and Owner-only execution authority. Its explicit hashes/statuses supersede earlier
+case-suitability review-pending checkpoints; they do not authenticate an operator
+release or a future model response. Original human/Owner declaration fields are
+not forged by relabeling authored controls. All existing consent, provenance,
+scope and no-automatic-qualification boundaries remain in force.

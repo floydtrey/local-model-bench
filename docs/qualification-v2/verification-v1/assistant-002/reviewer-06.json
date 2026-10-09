@@ -5,6 +5,7 @@
   "prior_captures": [],
   "changed_paths": [],
   "allowed_changed_paths": [
+    "README.md",
     "assistant_simulator/__init__.py",
     "assistant_simulator/__main__.py",
     "assistant_simulator/cli.py",
@@ -21,7 +22,8 @@
     "scenarios/late-observation.json",
     "scenarios/quiet-room.json",
     "scenarios/sensor-disagreement.json",
-    "tests/test_candidate.py"
+    "tests/test_candidate.py",
+    "tests/test_public_contract.py"
   ],
   "expected_check_ids": [
     "test_advance_validates_time_without_sink_calls",

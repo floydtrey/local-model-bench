@@ -256,7 +256,7 @@
       "task": "T02",
       "severity": "critical",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 203, in test_invalid_append_changes_nothing\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 203, in test_invalid_append_changes_nothing\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_late_arrival_never_overwrites_newer_observation",
@@ -288,7 +288,7 @@
       "task": "T06",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-lo1m4o4e\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 3 tests in 0.001s\\r\\n\\r\\nFAILED (failures=1)\\r\\n'\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 456, in test_public_and_candidate_tests_execute\n    self.assertEqual(result.returncode, 0, result.stderr[-3000:])\nAssertionError: 1 != 0 : b'test_boolean_number (test_candidate.ContractTests.test_boolean_number) ... FAIL\\r\\ntest_second_boundary (test_candidate.ContractTests.test_second_boundary) ... ok\\r\\ntest_valid (test_candidate.ContractTests.test_valid) ... ok\\r\\ntest_boolean_confidence_is_not_a_probability (test_public_contract.PublicContractTests.test_boolean_confidence_is_not_a_probability) ... FAIL\\r\\ntest_normalizes_without_changing_input (test_public_contract.PublicContractTests.test_normalizes_without_changing_input) ... ok\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_number (test_candidate.ContractTests.test_boolean_number)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-03b2t0u8\\\\workspace\\\\tests\\\\test_candidate.py\", line 14, in test_boolean_number\\r\\n    with self.assertRaises(ValueError): normalize_event(value)\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n======================================================================\\r\\nFAIL: test_boolean_confidence_is_not_a_probability (test_public_contract.PublicContractTests.test_boolean_confidence_is_not_a_probability)\\r\\n----------------------------------------------------------------------\\r\\nTraceback (most recent call last):\\r\\n  File \"C:\\\\Users\\\\floyd_dev\\\\AppData\\\\Local\\\\Temp\\\\verification-authored-03b2t0u8\\\\workspace\\\\tests\\\\test_public_contract.py\", line 21, in test_boolean_confidence_is_not_a_probability\\r\\n    with self.assertRaises(ValueError):\\r\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError: ValueError not raised\\r\\n\\r\\n----------------------------------------------------------------------\\r\\nRan 5 tests in 0.001s\\r\\n\\r\\nFAILED (failures=2)\\r\\n'\n"
     },
     {
       "case_id": "test_reject_bad_offset",
@@ -320,7 +320,7 @@
       "task": "T01",
       "severity": "major",
       "passed": false,
-      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 500, in method\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+      "diagnostics": "Traceback (most recent call last):\n  File \"C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py\", line 500, in method\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
     },
     {
       "case_id": "test_reject_empty_id",
@@ -640,5 +640,5 @@
   "os_sandbox": false,
   "planned": 79,
   "executed": 79,
-  "wall_seconds": 2.0469999999913853
+  "wall_seconds": 1.9529999999940628
 }

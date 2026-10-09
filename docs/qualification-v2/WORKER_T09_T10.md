@@ -1,5 +1,7 @@
 # Canonical Worker qualification — T09–T10
 
+> **2026-10-09 technical audit supersedes the earlier review-pending checkpoint below.** Both bundles/all 12 task slots have now received delegated AI technical review. Real isolated seeds remain BLOCKED; fake-assessor unit fixtures are not validated prerequisites. Cumulative preparation starts at T01, and authorization placement is checked before provider construction. This is AI technical approval, not independent human certification, model qualification or Owner execution authorization. See the [audit report](technical-audit-20261009/AUDIT_REPORT.md) and [complete decisions](technical-audit-20261009/CASE_CONTROL_DECISIONS.md).
+
 Batch 4 extends the existing `localbench.qualification_v2` CLI, original project
 materializers, `assistant001.campaign.run_worker_chain`, independent acceptance
 assessor, `OllamaSessions`/fresh `RoleConversation`, and `flashnext_review` writer.

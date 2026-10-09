@@ -11,8 +11,8 @@ from localbench.v2.contracts import sha256_json
 from .planner_packet import read_regular, sha
 from .worker import APIS
 
-VERSION = "qualification-v2/verification-cases-v1"
-FREEZE_SHA256 = "cb858e6db0f6ccdea5b1f254f3c8d8ec1955e03c009f93f1ec716862cf79a517"
+VERSION = "qualification-v2/verification-cases-v2"
+FREEZE_SHA256 = "e70683bab99a24ff436337d53d1297c5922dea1d75461963967927448a0a3185"
 WRITABLE = ["tests/test_candidate.py"]
 
 
@@ -39,7 +39,7 @@ def case_spec(case_id, repo=None):
     return next(c for c in load_cases(repo) if c["case_id"] == case_id)
 
 
-def implementation(project, variant, repo=None):
+def implementation(project, variant, repo=None, *, complete_delivery=False):
     """Explicit authored fixtures; never installed into a Worker continuation.
 
     Reuse immutable reference bytes and mutation recipes. Remove only module
@@ -81,17 +81,22 @@ def implementation(project, variant, repo=None):
             if files[path].count(before) != 1:
                 raise ValueError("Second mutation anchor changed")
             files[path] = files[path].replace(before, after)
+    if complete_delivery:
+        files["tests/test_public_contract.py"] = read_regular(
+            root / "starter/tests/test_public_contract.py").decode()
+        files["README.md"] = read_regular(fixture_root(repo) / project / "delivery-readme.md").decode()
     return files
 
 
 def build_packet(case_id, repo=None):
     spec = case_spec(case_id, repo)
     root = fixture_root(repo)
-    files = implementation(spec["project"], spec["variant"], repo)
+    files = implementation(spec["project"], spec["variant"], repo,
+                           complete_delivery=spec["role"] == "reviewer")
     for name, source in spec["test_files"].items():
         files[name] = read_regular(root / source).decode()
     if spec.get("scope_extra"):
-        files["unrequested.txt"] = "Unrequested scope expansion.\n"
+        files["notes.txt"] = "Local development notes.\n"
     hashes = {k: sha(v.encode()) for k, v in sorted(files.items())}
     if hashes != spec["artifact_sha256"]:
         raise ValueError("Frozen implementation view changed")

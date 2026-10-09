@@ -1,9 +1,9 @@
 {
-  "schema_version": "qualification-v2/governor-adjudication-v1",
+  "schema_version": "qualification-v2/governor-adjudication-v2",
   "case_id": "assistant-001-governor-v2-03",
-  "input_sha256": "93eb6bb2b856b46987cfeb015c8cc348421795a8991767cacab71f7cc53cd60e",
+  "input_sha256": "0ba63e86800d7f643520e4ba04ec0491a4b0fb42dd83bc972e933e96de088e39",
   "candidate_sha256": "8d026a52cac20c181ba4ec09baed4a6d4c7da43b40182d4bf6c3e99de948838f",
-  "rubric_sha256": "d02c4873ad4264fa1be2b773f835381eb23f708b346f4cc1b347d55b6be8bfbb",
+  "rubric_sha256": "a024ff989729e0c8714b91f917c36b8dd3725d95a22833b6b2511f19f33eeda8",
   "review_origin": "calibration_fixture",
   "reviewer": "AUTHORED_CONTROL_NOT_HUMAN",
   "reviewed_at": "2026-10-09T18:00:00Z",

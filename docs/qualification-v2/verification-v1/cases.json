@@ -1,5 +1,5 @@
 {
-  "schema_version": "qualification-v2/verification-cases-v1",
+  "schema_version": "qualification-v2/verification-cases-v2",
   "cases": [
     {
       "case_id": "assistant-001-tester-01",
@@ -372,12 +372,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-01.json",
       "source_case_ids": [
@@ -419,12 +421,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-02.json",
       "source_case_ids": [
@@ -464,12 +468,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-03.json",
       "source_case_ids": [
@@ -509,12 +515,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-04.json",
       "source_case_ids": [
@@ -554,13 +562,15 @@
       },
       "scope_extra": true,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
+        "notes.txt": "d6a84c6083a5a1756392b930233eb09949de3c047ec2ecbd1a7ee8434927fea2",
         "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
-        "unrequested.txt": "8763465a91e079ae5af53b5f2b0bc0a3a46ade72e3d5468b5006dde79a70201f"
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-05.json",
       "source_case_ids": [
@@ -600,12 +610,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-06.json",
       "source_case_ids": [
@@ -647,12 +659,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "9962df312d2782506499db349d8792e497e4dd1e7349be60191df6145d9a5e40",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-07.json",
       "source_case_ids": [
@@ -692,12 +706,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-08.json",
       "source_case_ids": [
@@ -737,12 +753,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-09.json",
       "source_case_ids": [
@@ -782,12 +800,14 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
         "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
         "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_journal/cli.py": "ac5c5a410537a5fa1be80307c1ce573d3b8e244745e8c5e880d343a64bf5824c",
         "assistant_journal/journal.py": "4dd354e8199511e8aff9d415d41949f530ccb3314bf5a65b39e7eebce14b1206",
         "assistant_journal/validation.py": "22a4745a4de5098576674568bcc5d9e79c1fc97e86717dda70f456a08e882e33",
-        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+        "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+        "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
       },
       "evidence_file": "assistant-001/reviewer-10.json",
       "source_case_ids": [
@@ -1262,6 +1282,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1278,7 +1299,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-01.json",
       "source_case_ids": [
@@ -1320,6 +1342,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1336,7 +1359,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-02.json",
       "source_case_ids": [
@@ -1376,6 +1400,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1392,7 +1417,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-03.json",
       "source_case_ids": [
@@ -1432,6 +1458,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1448,7 +1475,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-04.json",
       "source_case_ids": [
@@ -1488,6 +1516,7 @@
       },
       "scope_extra": true,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1496,6 +1525,7 @@
         "assistant_simulator/replay.py": "0ca37ad2fe85fb185de00b6b88ec6465c66af66b61083c27e730be340463fe55",
         "assistant_simulator/scenario.py": "9974e59efde540170753e41d95dd6dc638fb242bdc5740c92a871f8cd3ee9182",
         "assistant_simulator/schedule.py": "4b9922455edb667b25ce9e05f9b87030ccf1c117e76bf4ccfd0b1cc08c60738a",
+        "notes.txt": "d6a84c6083a5a1756392b930233eb09949de3c047ec2ecbd1a7ee8434927fea2",
         "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
         "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
         "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
@@ -1505,7 +1535,7 @@
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
         "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
-        "unrequested.txt": "8763465a91e079ae5af53b5f2b0bc0a3a46ade72e3d5468b5006dde79a70201f"
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-05.json",
       "source_case_ids": [
@@ -1545,6 +1575,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1561,7 +1592,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-06.json",
       "source_case_ids": [
@@ -1603,6 +1635,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1619,7 +1652,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-07.json",
       "source_case_ids": [
@@ -1659,6 +1693,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1675,7 +1710,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-08.json",
       "source_case_ids": [
@@ -1715,6 +1751,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1731,7 +1768,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-09.json",
       "source_case_ids": [
@@ -1771,6 +1809,7 @@
       },
       "scope_extra": false,
       "artifact_sha256": {
+        "README.md": "6dec18c354419d5bf29f40b9a2491ec0a2c2671638ae87d2e088d95179182ae1",
         "assistant_simulator/__init__.py": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af",
         "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
         "assistant_simulator/cli.py": "28b00c5ad5dae7b20f451ccea333b3985cafb53592e7a878490d70b2255d2891",
@@ -1787,7 +1826,8 @@
         "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
         "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
         "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
-        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890"
+        "tests/test_candidate.py": "be317e513ec9f5a740fa78b1629ba9d92840445ca3f56c34bf348114b2c74890",
+        "tests/test_public_contract.py": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
       },
       "evidence_file": "assistant-002/reviewer-10.json",
       "source_case_ids": [

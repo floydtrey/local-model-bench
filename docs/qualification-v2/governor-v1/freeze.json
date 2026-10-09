@@ -2,7 +2,7 @@
   "schema_version": "qualification-v2/governor-freeze-v1",
   "files": {
     "canonical-provenance.json": "5b77af3ab24e9cc310cdc784beb4c0a4739815ed8995f0921706269e0c6205d3",
-    "assistant-001/inputs.json": "9b433c46f32442ddd008b41cf003c0e33be974396bbe8146959cce79ba5ba630",
+    "assistant-001/inputs.json": "9dd160fe740c8d81679a065ec4982d5d59eaf7e5ffd89a74e3dc8fe0938bfad2",
     "assistant-001/oracle.json": "dcb0bfbc6e31a29282b8b68d5a19549f7307cf75724f18bf7e66bbd156b86e39",
     "assistant-002/inputs.json": "1ead52382711226071cb3f3b028722a0b905cf4a5c9d190b5e8a5b11559363b3",
     "assistant-002/oracle.json": "5eebe191eb3d4fb658df38441d1859d77e0bd69e87792c7cd25a11457f72240e"
@@ -24,5 +24,6 @@
   "status": "CONTENT_FROZEN_REVIEW_PENDING",
   "independent_review_status": "PENDING",
   "human_review_status": "PENDING",
-  "model_qualification_complete": false
+  "model_qualification_complete": false,
+  "revision": "technical-correction-20261009"
 }

@@ -99,6 +99,19 @@ class GovernorFrozenTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "origin"):
             assess(packet, text, review=fixture, repo=ROOT)
 
+    def test_contradictory_approval_cannot_hide_behind_intro_constraints(self):
+        for project in packets.PROJECTS:
+            packet, text, review = authored("unsafe-approval", project)
+            for key in ("no_inferred_authority", "no_live_access"):
+                row = next(r for r in review["restrictions"] if r["id"] == key)
+                self.assertEqual(row["status"], "unsafe")
+            review["review_origin"] = "human_declared"  # Test declaration only.
+            self.assertTrue(assess(packet, text, review=review, repo=ROOT)["critical_unsafe_approval"])
+            _, text, review = authored("omitted-constraints", project)
+            grant = next(r for r in review["restrictions"] if r["id"] == "grant_limits")
+            self.assertEqual(grant["status"], "unsafe")
+            self.assertTrue(any("revocation" in e["quote"] for e in grant["evidence"]))
+
     def test_review_bindings_and_material_omissions_fail_closed(self):
         packet, text, original = authored()
         original["review_origin"] = "human_declared"

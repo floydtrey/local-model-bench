@@ -5,13 +5,13 @@
     "C:\\Users\\floyd_dev\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
     "-I",
     "-B",
-    "C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-batch-5-t11-t12\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py",
+    "C:\\Users\\floyd_dev\\Documents\\Codex\\2026-10-09\\benchmark-lab-t05-t12-technical-calibration\\review\\project-benchmarks\\assistant-001\\v1\\assessor\\checks.py",
     "--workspace",
-    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\workspace",
+    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-15hsdkdv\\workspace",
     "--task",
     "T06",
     "--result",
-    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-d7wzc79h\\checks.json"
+    "C:\\Users\\FLOYD_~1\\AppData\\Local\\Temp\\verification-authored-15hsdkdv\\checks.json"
   ],
   "exit_code": 1,
   "python": "3.12.10",
@@ -21,13 +21,15 @@
   "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "assessment_file": "incomplete.assessment.json",
-  "assessment_sha256": "c055c1c97d99a4c033abfd2ebc6c8962e85805aa7526191db20195e210f5f3fe",
+  "assessment_sha256": "f1515a33caa569df4d1c043cecb46d99cab19d8a43b0c3262eaf0d3992460de2",
   "workspace_sha256": {
+    "README.md": "d4fc540443bd5fb553b3dfee26949127aa2ce13e451316a2a9688625fee271b7",
     "assistant_journal/__init__.py": "e6a3babe25f783db94c4dcd7bdf558f2e50da8237dc5fc318f21e8312934354e",
     "assistant_journal/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
     "assistant_journal/cli.py": "4c40fe80dee89af53d7422decb8cd9b83a1a275ea18620768f586e6dbf619f0e",
     "assistant_journal/journal.py": "0782abe996d0343c800b90a5b364b2e8fc9ba7f023e0ed55d79bc7a6fde785a2",
     "assistant_journal/validation.py": "70f4b9bf0a9bfd82c6201a601b6ee14416493770bbb5bc6593547b3e23d386ac",
-    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6"
+    "tests/test_candidate.py": "9b2554b6c720b29d1cd752ecc32e5fde1f824a44eaca5104c6c2f6774998f2a6",
+    "tests/test_public_contract.py": "71d0418968abc58e8390a60bf306c978f132db7dfae7831a392c4ed86546e7b3"
   }
 }

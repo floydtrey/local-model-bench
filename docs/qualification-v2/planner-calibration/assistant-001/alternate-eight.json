@@ -2,14 +2,14 @@
   "schema_version": "qualification-v2/planner-equivalence-v1",
   "case_id": "assistant-001-planner-v2-complete",
   "input_sha256": "699d2590d28fa18c299e7ccb92b1a0eaa281536dcbd849a47801bc503c84580b",
-  "candidate_sha256": "9a129fba7dc170cbb24a16ba1512243531d33837b44ceeaaf352678a105a6ae5",
+  "candidate_sha256": "7bc0e1c7af7e0f224c85456a71c64b7467a4d348d7a4a323f48b670ccf96f319",
   "rubric_sha256": "d0d60e1a3b1371354f5676d34de3ebcddde6654c69756f6e475df8bd71cc41a0",
   "reviewer": "Authored calibration fixture; not a human signoff",
   "reviewed_at": "2026-10-08T00:00:00Z",
   "review_origin": "calibration_fixture",
   "verdict": "PASS",
   "disposition": "plan",
-  "rationale": "Expected substantive judgment for this authored control; pending independent human calibration.",
+  "rationale": "AI technical calibration correction: specific source scopes, dependency gates and whole-response evidence; expected role judgment only, not human certification.",
   "requirements": [
     {
       "id": "R01",
@@ -17,12 +17,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 825,
-          "end": 1112,
+          "start": 966,
+          "end": 1253,
           "quote": "Normalize a detached event under the complete R01 schema: exact identifiers, aware UTC timestamps, finite confidence, bounded TTL and canonical JSON size/depth. Reject coercions, unknown fields, cycles, overflow and invalid nested values without mutating input; payload text stays inert."
+        },
+        {
+          "start": 1254,
+          "end": 1486,
+          "quote": "Scope: assistant_journal/validation.py and tests/test_candidate.py. Gate: valid event defaults and timezone equivalence pass; bool fields, cycles, bad identifiers, overflow and oversized data raise ValueError without input mutation."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R01 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "R02",
@@ -30,12 +35,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 1175,
-          "end": 1520,
+          "start": 1545,
+          "end": 1890,
           "quote": "Use the explicit SQLite path and commit every accepted append before return. Global event IDs distinguish new events, canonical identical duplicates and immutable conflicting content. Implement detached get/count and idempotent close; retain committed evidence across reopening and immediate process exit, propagate corruption rather than reset."
+        },
+        {
+          "start": 1891,
+          "end": 2122,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: append a new event, retry an equivalent duplicate, reject a conflicting ID, reopen the same SQLite file and confirm committed data; a corrupt file is preserved."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R02 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "R03",
@@ -43,12 +53,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 1583,
-          "end": 1858,
+          "start": 2181,
+          "end": 2456,
           "quote": "Implement bounded history by validating every parameter even on an empty database, applying exact filters and half-open time bounds before pagination, and sorting by timestamp then event ID. Return detached observations including expired and future evidence without deletion."
+        },
+        {
+          "start": 2457,
+          "end": 2650,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: combine source/time filters before pagination, test equal timestamps by ID and reject invalid limits on an empty database."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R03 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "R04",
@@ -56,12 +71,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 1921,
-          "end": 2273,
+          "start": 2709,
+          "end": 3061,
           "quote": "Implement current_state with mandatory as_of and separate source/entity/type keys. Pick the latest eligible timestamp/event-ID winner, then exclude it at exact TTL expiry without resurrecting an older event. Future events cannot suppress eligible ones; confidence never controls precedence, and unknown presence is not absence. No wall clock or fusion."
+        },
+        {
+          "start": 3062,
+          "end": 3290,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: replay before a future event, at exact expiry, and after the newest event expires while an older event is still within TTL; never resurrect that older event."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R04 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "R05",
@@ -69,12 +89,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 2336,
-          "end": 2628,
+          "start": 3349,
+          "end": 3641,
           "quote": "Implement append_many over zero to 1000 events with ordered insertion flags in one transaction. Any late invalid event or conflicting ID rolls back the entire batch without losing prior commits or breaking the connection. Cover within-batch duplicates, rollback, subsequent reuse and restart."
+        },
+        {
+          "start": 3642,
+          "end": 3844,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: a conflict in the last batch row leaves count and state unchanged, duplicate flags retain input order, and a later append succeeds."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R05 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     },
     {
       "id": "R06",
@@ -82,12 +107,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 2691,
-          "end": 3183,
+          "start": 3903,
+          "end": 4395,
           "quote": "Deliver the standalone python -m assistant_journal CLI for append, ingest, get, count, history and state, with atomic bounded UTF-8 JSONL ingestion. Follow the complete contract output rules: one JSON stdout value and empty stderr on success; exit 2 and a nonempty JSON error on stderr with empty stdout on failure, never raw payloads or tracebacks. Include runnable README examples, duplicate/conflict and source-separated TTL behavior, restart guidance, tests and the no-sandbox limitation."
+        },
+        {
+          "start": 4396,
+          "end": 4614,
+          "quote": "Scope: assistant_journal/cli.py, tests/test_candidate.py and README.md. Gate: run all six commands as subprocesses; check status/JSON/stdout/stderr and atomic invalid JSONL ingestion, then exercise documented examples."
         }
       ],
-      "rationale": "This unit commits to the material outcome and its failure invariants; assess against the full contract."
+      "rationale": "R06 outcome is assigned to concrete source files with the quoted positive/negative acceptance gate."
     }
   ],
   "dimensions": [
@@ -97,12 +127,47 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 917,
+          "end": 1486,
+          "quote": "Work unit 1: No unfinished project prerequisite. Normalize a detached event under the complete R01 schema: exact identifiers, aware UTC timestamps, finite confidence, bounded TTL and canonical JSON size/depth. Reject coercions, unknown fields, cycles, overflow and invalid nested values without mutating input; payload text stays inert.\nScope: assistant_journal/validation.py and tests/test_candidate.py. Gate: valid event defaults and timezone equivalence pass; bool fields, cycles, bad identifiers, overflow and oversized data raise ValueError without input mutation."
+        },
+        {
+          "start": 1488,
+          "end": 2122,
+          "quote": "Work unit 2: Requires accepted results from work unit 1. Use the explicit SQLite path and commit every accepted append before return. Global event IDs distinguish new events, canonical identical duplicates and immutable conflicting content. Implement detached get/count and idempotent close; retain committed evidence across reopening and immediate process exit, propagate corruption rather than reset.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: append a new event, retry an equivalent duplicate, reject a conflicting ID, reopen the same SQLite file and confirm committed data; a corrupt file is preserved."
+        },
+        {
+          "start": 2124,
+          "end": 2650,
+          "quote": "Work unit 3: Requires accepted results from work unit 2. Implement bounded history by validating every parameter even on an empty database, applying exact filters and half-open time bounds before pagination, and sorting by timestamp then event ID. Return detached observations including expired and future evidence without deletion.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: combine source/time filters before pagination, test equal timestamps by ID and reject invalid limits on an empty database."
+        },
+        {
+          "start": 2652,
+          "end": 3290,
+          "quote": "Work unit 4: Requires accepted results from work unit 3. Implement current_state with mandatory as_of and separate source/entity/type keys. Pick the latest eligible timestamp/event-ID winner, then exclude it at exact TTL expiry without resurrecting an older event. Future events cannot suppress eligible ones; confidence never controls precedence, and unknown presence is not absence. No wall clock or fusion.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: replay before a future event, at exact expiry, and after the newest event expires while an older event is still within TTL; never resurrect that older event."
+        },
+        {
+          "start": 3292,
+          "end": 3844,
+          "quote": "Work unit 5: Requires accepted results from work unit 4. Implement append_many over zero to 1000 events with ordered insertion flags in one transaction. Any late invalid event or conflicting ID rolls back the entire batch without losing prior commits or breaking the connection. Cover within-batch duplicates, rollback, subsequent reuse and restart.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: a conflict in the last batch row leaves count and state unchanged, duplicate flags retain input order, and a later append succeeds."
+        },
+        {
+          "start": 3846,
+          "end": 4614,
+          "quote": "Work unit 6: Requires accepted results from work unit 5. Deliver the standalone python -m assistant_journal CLI for append, ingest, get, count, history and state, with atomic bounded UTF-8 JSONL ingestion. Follow the complete contract output rules: one JSON stdout value and empty stderr on success; exit 2 and a nonempty JSON error on stderr with empty stdout on failure, never raw payloads or tracebacks. Include runnable README examples, duplicate/conflict and source-separated TTL behavior, restart guidance, tests and the no-sandbox limitation.\nScope: assistant_journal/cli.py, tests/test_candidate.py and README.md. Gate: run all six commands as subprocesses; check status/JSON/stdout/stderr and atomic invalid JSONL ingestion, then exercise documented examples."
+        },
+        {
+          "start": 4616,
+          "end": 4831,
+          "quote": "Work unit 7: Requires accepted results from work unit 6. Scope: tests/test_candidate.py only. Gate: run completed-interface and restart regressions; report failures to the responsible earlier unit before proceeding."
+        },
+        {
+          "start": 4833,
+          "end": 5032,
+          "quote": "Work unit 8: Requires accepted results from work unit 7. Scope: README.md only. Gate: verify commands and documented limitations against captured results; retain truthful free-prose handoff evidence."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "The quoted units explicitly order accepted prerequisites and internal gates."
     },
     {
       "id": "bounded_tasks",
@@ -110,12 +175,47 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 917,
+          "end": 1486,
+          "quote": "Work unit 1: No unfinished project prerequisite. Normalize a detached event under the complete R01 schema: exact identifiers, aware UTC timestamps, finite confidence, bounded TTL and canonical JSON size/depth. Reject coercions, unknown fields, cycles, overflow and invalid nested values without mutating input; payload text stays inert.\nScope: assistant_journal/validation.py and tests/test_candidate.py. Gate: valid event defaults and timezone equivalence pass; bool fields, cycles, bad identifiers, overflow and oversized data raise ValueError without input mutation."
+        },
+        {
+          "start": 1488,
+          "end": 2122,
+          "quote": "Work unit 2: Requires accepted results from work unit 1. Use the explicit SQLite path and commit every accepted append before return. Global event IDs distinguish new events, canonical identical duplicates and immutable conflicting content. Implement detached get/count and idempotent close; retain committed evidence across reopening and immediate process exit, propagate corruption rather than reset.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: append a new event, retry an equivalent duplicate, reject a conflicting ID, reopen the same SQLite file and confirm committed data; a corrupt file is preserved."
+        },
+        {
+          "start": 2124,
+          "end": 2650,
+          "quote": "Work unit 3: Requires accepted results from work unit 2. Implement bounded history by validating every parameter even on an empty database, applying exact filters and half-open time bounds before pagination, and sorting by timestamp then event ID. Return detached observations including expired and future evidence without deletion.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: combine source/time filters before pagination, test equal timestamps by ID and reject invalid limits on an empty database."
+        },
+        {
+          "start": 2652,
+          "end": 3290,
+          "quote": "Work unit 4: Requires accepted results from work unit 3. Implement current_state with mandatory as_of and separate source/entity/type keys. Pick the latest eligible timestamp/event-ID winner, then exclude it at exact TTL expiry without resurrecting an older event. Future events cannot suppress eligible ones; confidence never controls precedence, and unknown presence is not absence. No wall clock or fusion.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: replay before a future event, at exact expiry, and after the newest event expires while an older event is still within TTL; never resurrect that older event."
+        },
+        {
+          "start": 3292,
+          "end": 3844,
+          "quote": "Work unit 5: Requires accepted results from work unit 4. Implement append_many over zero to 1000 events with ordered insertion flags in one transaction. Any late invalid event or conflicting ID rolls back the entire batch without losing prior commits or breaking the connection. Cover within-batch duplicates, rollback, subsequent reuse and restart.\nScope: assistant_journal/journal.py and tests/test_candidate.py. Gate: a conflict in the last batch row leaves count and state unchanged, duplicate flags retain input order, and a later append succeeds."
+        },
+        {
+          "start": 3846,
+          "end": 4614,
+          "quote": "Work unit 6: Requires accepted results from work unit 5. Deliver the standalone python -m assistant_journal CLI for append, ingest, get, count, history and state, with atomic bounded UTF-8 JSONL ingestion. Follow the complete contract output rules: one JSON stdout value and empty stderr on success; exit 2 and a nonempty JSON error on stderr with empty stdout on failure, never raw payloads or tracebacks. Include runnable README examples, duplicate/conflict and source-separated TTL behavior, restart guidance, tests and the no-sandbox limitation.\nScope: assistant_journal/cli.py, tests/test_candidate.py and README.md. Gate: run all six commands as subprocesses; check status/JSON/stdout/stderr and atomic invalid JSONL ingestion, then exercise documented examples."
+        },
+        {
+          "start": 4616,
+          "end": 4831,
+          "quote": "Work unit 7: Requires accepted results from work unit 6. Scope: tests/test_candidate.py only. Gate: run completed-interface and restart regressions; report failures to the responsible earlier unit before proceeding."
+        },
+        {
+          "start": 4833,
+          "end": 5032,
+          "quote": "Work unit 8: Requires accepted results from work unit 7. Scope: README.md only. Gate: verify commands and documented limitations against captured results; retain truthful free-prose handoff evidence."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Named files and independently reviewable internal steps bound each unit; task count alone is not a quality rule."
     },
     {
       "id": "acceptance",
@@ -123,12 +223,37 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 1254,
+          "end": 1486,
+          "quote": "Scope: assistant_journal/validation.py and tests/test_candidate.py. Gate: valid event defaults and timezone equivalence pass; bool fields, cycles, bad identifiers, overflow and oversized data raise ValueError without input mutation."
+        },
+        {
+          "start": 1891,
+          "end": 2122,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: append a new event, retry an equivalent duplicate, reject a conflicting ID, reopen the same SQLite file and confirm committed data; a corrupt file is preserved."
+        },
+        {
+          "start": 2457,
+          "end": 2650,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: combine source/time filters before pagination, test equal timestamps by ID and reject invalid limits on an empty database."
+        },
+        {
+          "start": 3062,
+          "end": 3290,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: replay before a future event, at exact expiry, and after the newest event expires while an older event is still within TTL; never resurrect that older event."
+        },
+        {
+          "start": 3642,
+          "end": 3844,
+          "quote": "Scope: assistant_journal/journal.py and tests/test_candidate.py. Gate: a conflict in the last batch row leaves count and state unchanged, duplicate flags retain input order, and a later append succeeds."
+        },
+        {
+          "start": 4396,
+          "end": 4614,
+          "quote": "Scope: assistant_journal/cli.py, tests/test_candidate.py and README.md. Gate: run all six commands as subprocesses; check status/JSON/stdout/stderr and atomic invalid JSONL ingestion, then exercise documented examples."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Task-specific observable checks include positive and negative behavior."
     },
     {
       "id": "scope",
@@ -137,11 +262,11 @@
       "evidence": [
         {
           "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "end": 915,
+          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests. Do not add services, network calls, live device access, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations. File scopes below are proposed Planner units, not a request to change any already assigned Worker scope. Tests are planned acceptance, not claims of execution."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "The stated local scope preserves supplied interfaces and excludes external authority."
     },
     {
       "id": "risks",
@@ -149,12 +274,22 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 1545,
+          "end": 1890,
+          "quote": "Use the explicit SQLite path and commit every accepted append before return. Global event IDs distinguish new events, canonical identical duplicates and immutable conflicting content. Implement detached get/count and idempotent close; retain committed evidence across reopening and immediate process exit, propagate corruption rather than reset."
+        },
+        {
+          "start": 2709,
+          "end": 3061,
+          "quote": "Implement current_state with mandatory as_of and separate source/entity/type keys. Pick the latest eligible timestamp/event-ID winner, then exclude it at exact TTL expiry without resurrecting an older event. Future events cannot suppress eligible ones; confidence never controls precedence, and unknown presence is not absence. No wall clock or fusion."
+        },
+        {
+          "start": 3349,
+          "end": 3641,
+          "quote": "Implement append_many over zero to 1000 events with ordered insertion flags in one transaction. Any late invalid event or conflicting ID rolls back the entire batch without losing prior commits or breaking the connection. Cover within-batch duplicates, rollback, subsequent reuse and restart."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Concrete persistence, time, partial-failure or restart invariants are addressed in the cited work."
     },
     {
       "id": "uncertainty",
@@ -162,12 +297,12 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 576,
+          "end": 683,
+          "quote": "Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "Only existing facts may be discovered; missing policy is not invented."
     },
     {
       "id": "delivery",
@@ -175,12 +310,17 @@
       "severity": "none",
       "evidence": [
         {
-          "start": 0,
-          "end": 810,
-          "quote": "Planning only. Preserve all detailed limits and externally observable behavior in the supplied contract. No implementation or tests have been executed. Scope is the supplied package stubs, tests/test_candidate.py and README; preserve public tests and the supplied read-only helper. Do not add services, network calls, live device access, journal replacement, deployment or role authorization. Each work unit ends with focused positive and negative tests for its listed outcomes, plus regression of completed interfaces. Verify boundary values, detached copies, invalid inputs, duplicates, failure paths and restart where relevant. Discover only existing facts in supplied files; stop for an owner decision if a required policy is missing. Final handoff records actual changes, commands/results and limitations."
+          "start": 3903,
+          "end": 4395,
+          "quote": "Deliver the standalone python -m assistant_journal CLI for append, ingest, get, count, history and state, with atomic bounded UTF-8 JSONL ingestion. Follow the complete contract output rules: one JSON stdout value and empty stderr on success; exit 2 and a nonempty JSON error on stderr with empty stdout on failure, never raw payloads or tracebacks. Include runnable README examples, duplicate/conflict and source-separated TTL behavior, restart guidance, tests and the no-sandbox limitation."
+        },
+        {
+          "start": 4396,
+          "end": 4614,
+          "quote": "Scope: assistant_journal/cli.py, tests/test_candidate.py and README.md. Gate: run all six commands as subprocesses; check status/JSON/stdout/stderr and atomic invalid JSONL ingestion, then exercise documented examples."
         }
       ],
-      "rationale": "Bounded unit dependencies, scope, acceptance, risk and handoff rules are explicit in the plan; human must verify feasibility."
+      "rationale": "The CLI, documentation and tests are assigned and have observable acceptance."
     }
   ],
   "blocker": {
