@@ -561,7 +561,9 @@ class LlamaCppChatDriver:
 
         timer = threading.Timer(float(static["timeout_seconds"]), expire)
         timer.daemon = True
-        started = time.monotonic()
+        # perf_counter is monotonic and avoids GetTickCount64's coarse Windows
+        # resolution turning real short HTTP requests into zero elapsed time.
+        started = time.perf_counter()
         timer.start()
         error: Exception | None = None
         response_headers = None
@@ -598,7 +600,7 @@ class LlamaCppChatDriver:
         finally:
             timer.cancel()
             connection.close()
-            metadata["request_wall_seconds"] = time.monotonic() - started
+            metadata["request_wall_seconds"] = time.perf_counter() - started
             metadata["artifacts"]["response_body"] = self._artifact(folder / "response.body")
             if response_headers is not None:
                 metadata["artifacts"]["response_metadata"] = self._artifact(folder / "response.json")

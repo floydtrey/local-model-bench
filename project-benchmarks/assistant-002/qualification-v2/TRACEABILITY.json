@@ -1,0 +1,410 @@
+{
+  "schema_version": "qualification-v2/reference-trace-v1",
+  "source_packet_id": "assistant-002-v1",
+  "source_packet_version": 1,
+  "reference_version": "draft-1",
+  "distribution": "ASSESSOR_ONLY_HIDE_FROM_INDEPENDENT_PLANNER",
+  "approval_status": "OWNER_REVIEW_PENDING",
+  "qualified_role_assignment": false,
+  "baseline_repo_commit": "79d422ee4c037ac305fd2f15c06eadf5302d0972",
+  "source_git_blobs_sha1": {
+    "project-benchmarks/assistant-002/v1/PROJECT_INTENT.md": "aec74cca5c40863cf8ddb1420a30922dd8dc0946",
+    "project-benchmarks/assistant-002/v1/CONTRACT.md": "4095b874df9bd8584d4d7cfe31719c6ad6424ebb",
+    "project-benchmarks/assistant-002/v1/TASKS.md": "0df9194d04530fcbe6131b02610744d1c4680dd7",
+    "project-benchmarks/assistant-002/v1/packet.json": "08e480d8e9806e0889ec77e32b3d64832edff44a",
+    "project-benchmarks/assistant-002/v1/assessor/checks.py": "28f5b60dd40dad4bccfe1dd161ca5caa95224387",
+    "project-benchmarks/assistant-002/v1/REVIEW_RUBRICS.md": "f479fc21386242e55851f9932a49ca83e340a89b",
+    "project-benchmarks/assistant-002/v1/UPSTREAM.json": "8092f80ca7cf9dff1b19ec8c030d224c5b5ac012"
+  },
+  "supplied_dependency": {
+    "name": "Read-only event_contract helper (A001 event normalizer semantics)",
+    "provenance_file": "project-benchmarks/assistant-002/v1/UPSTREAM.json",
+    "model_generated_journal": false,
+    "journal_implementation_in_candidate_workspace": false,
+    "authorizes_production_interoperability": false
+  },
+  "requirement_groups": [
+    {
+      "id": "S01",
+      "name": "Scenario normalization and digest",
+      "task": "T01",
+      "positive": "Exact schema_version/scenario_id/start_at/duration/events/checkpoints validation; no mutation, materialized defaults; SHA256 of canonical normalized scenario including authored order/transforms/expectations.",
+      "negative": "Reject invalid IDs/events/checkpoint order, overflow, duplicate keys, excess deliveries/duplicates, unknown fields, unsorted checkpoint time and inconsistent fingerprint."
+    },
+    {
+      "id": "S02",
+      "name": "Deterministic delivery schedule",
+      "task": "T02",
+      "positive": "Validate entire scenario, expand non-dropped primary/duplicates with key/index delivery_id, preserve unchanged event, sort by delivery time then authored entry index then copy index.",
+      "negative": "Reject sorting by event time/key, suppressing conflicts, lost duplicate, dropped-primary-only bug, mutable copies or non-repeatable ordering."
+    },
+    {
+      "id": "S03",
+      "name": "Virtual-clock sink replay",
+      "task": "T03",
+      "positive": "Call append on a detached event for each due schedule entry, strict bool acknowledgement, update cursor/count/clock on each success, query sink state after all due events; persist partial progress across failures.",
+      "negative": "Reject silent bool coercion, skipping a failing delivery, querying state early, reappend after query error, inspecting/recreating sink, sleeping or using wall clock."
+    },
+    {
+      "id": "S04",
+      "name": "Scenario-bound checkpoint and restart",
+      "task": "T04",
+      "positive": "Exact checkpoint version/digest/cursor/current_ms/inserted/duplicates; validate counts/clock/order, support equal-time partial progress, restore saved checkpoint to same persistent sink with at-least-once ID retry.",
+      "negative": "Reject resume of changed scenario, corrupted counts, retimed/skipped deliveries, exactly-once claims, fresh empty sink promise, reset-or-merge of progress."
+    },
+    {
+      "id": "S05",
+      "name": "Expected observations against actual sink",
+      "task": "T05",
+      "positive": "Fresh replay at every authored checkpoint, validate observed IDs, sorted missing and unexpected sets, continue after expectation mismatch, drain after last checkpoint, report counts from replay.",
+      "negative": "Reject rewriting expectations, unexpected-only success, duplicate observed IDs hidden, premature EOF report or fabricated pass after sink errors."
+    },
+    {
+      "id": "S06",
+      "name": "Offline CLI and reusable package",
+      "task": "T06",
+      "positive": "validate/schedule/jsonl work without journal, run lazily opens explicit Journal dependency, exact JSON/JSONL output and exit 0/1/2 rules, no incomplete stdout after error, useful tests and README.",
+      "negative": "Reject journal import on offline commands, reset of existing DB, mixed stdout/errors, lost JSONL duplicates, untested claim, live service/model use."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Normalize scenarios and stable identity",
+      "introduced_requirement": "S01",
+      "cumulative_requirements": [
+        "S01"
+      ],
+      "predecessor_task_ids": [],
+      "writable_paths": [
+        "assistant_simulator/scenario.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_normalized_defaults_and_deep_detachment",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_digest_canonical_known_input",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_equivalent_defaults_and_offsets_have_same_identity",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_expectations_transforms_and_order_are_hashed",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_conflicting_event_ids_are_preserved_as_deliveries",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_expected_id_sort_and_precise_milliseconds",
+          "requirement_tag": "S01"
+        },
+        {
+          "name": "test_valid_bounds_and_empty_scenario",
+          "requirement_tag": "S01"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "Compile deterministic delayed/dropped/duplicate deliveries",
+      "introduced_requirement": "S02",
+      "cumulative_requirements": [
+        "S01",
+        "S02"
+      ],
+      "predecessor_task_ids": [
+        "T01"
+      ],
+      "writable_paths": [
+        "assistant_simulator/schedule.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_delivery_order_is_not_event_time_or_key_order",
+          "requirement_tag": "S02"
+        },
+        {
+          "name": "test_duplicates_preserve_event_identity",
+          "requirement_tag": "S02"
+        },
+        {
+          "name": "test_drop_removes_all_copies",
+          "requirement_tag": "S02"
+        },
+        {
+          "name": "test_duplicate_records_and_input_are_independent",
+          "requirement_tag": "S02"
+        },
+        {
+          "name": "test_tied_duplicate_obeys_original_entry_order",
+          "requirement_tag": "S02"
+        },
+        {
+          "name": "test_empty_schedule_and_repeatability",
+          "requirement_tag": "S02"
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "Drive the journal with a virtual clock",
+      "introduced_requirement": "S03",
+      "cumulative_requirements": [
+        "S01",
+        "S02",
+        "S03"
+      ],
+      "predecessor_task_ids": [
+        "T02"
+      ],
+      "writable_paths": [
+        "assistant_simulator/replay.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_checkpoint_boundary_delivers_before_query",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_no_duplicate_suppression_or_repeat_advance_delivery",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_advance_validates_time_without_sink_calls",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_append_error_stops_without_skipping_or_query",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_query_error_does_not_redeliver_committed_events",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_nonboolean_append_is_not_acknowledgement",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_sink_mutation_cannot_poison_scheduled_duplicates",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_state_result_detached_and_virtual_clock_never_sleeps",
+          "requirement_tag": "S03"
+        },
+        {
+          "name": "test_zero_time_deliveries_and_invalid_scenario_no_sink_calls",
+          "requirement_tag": "S03"
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "Validate checkpoints and recover at least once",
+      "introduced_requirement": "S04",
+      "cumulative_requirements": [
+        "S01",
+        "S02",
+        "S03",
+        "S04"
+      ],
+      "predecessor_task_ids": [
+        "T03"
+      ],
+      "writable_paths": [
+        "assistant_simulator/replay.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_checkpoint_exact_format_and_json_roundtrip",
+          "requirement_tag": "S04"
+        },
+        {
+          "name": "test_lost_checkpoint_replays_committed_event_as_duplicate",
+          "requirement_tag": "S04"
+        },
+        {
+          "name": "test_lost_acknowledgement_retries_identical_event",
+          "requirement_tag": "S04"
+        },
+        {
+          "name": "test_checkpoint_changed_scenario_or_expectations_rejected",
+          "requirement_tag": "S04"
+        },
+        {
+          "name": "test_checkpoint_invalid_fields_counts_bounds_and_clock",
+          "requirement_tag": "S04"
+        },
+        {
+          "name": "test_equal_time_partial_checkpoint_is_valid",
+          "requirement_tag": "S04"
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "Compare declared observations against actual journal state",
+      "introduced_requirement": "S05",
+      "cumulative_requirements": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "predecessor_task_ids": [
+        "T04"
+      ],
+      "writable_paths": [
+        "assistant_simulator/evaluate.py",
+        "tests/test_candidate.py"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_report_does_not_rewrite_expected_ids",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_reports_all_mismatches_then_drains_later_events",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_observations_compared_as_sets_with_sorted_diagnostics",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_duplicate_observed_ids_not_silently_hidden",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_invalid_observed_id_or_append_failure_propagates",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_unexpected_only_is_failure",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_final_checkpoint_not_queried_twice",
+          "requirement_tag": "S05"
+        },
+        {
+          "name": "test_real_journal_restart_with_old_checkpoint",
+          "requirement_tag": "S04/S05 + A001"
+        },
+        {
+          "name": "test_real_journal_conflict_leaves_prior_event_and_stops",
+          "requirement_tag": "S03 + A001"
+        }
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "Deliver the offline CLI, tests and usage examples",
+      "introduced_requirement": "S06",
+      "cumulative_requirements": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06"
+      ],
+      "predecessor_task_ids": [
+        "T05"
+      ],
+      "writable_paths": [
+        "assistant_simulator/cli.py",
+        "tests/test_candidate.py",
+        "README.md"
+      ],
+      "assessor_named_methods": [
+        {
+          "name": "test_cli_validate_and_schedule_without_journal",
+          "requirement_tag": "S06"
+        },
+        {
+          "name": "test_cli_jsonl_is_canonical_and_retains_duplicates",
+          "requirement_tag": "S06"
+        },
+        {
+          "name": "test_cli_error_does_not_emit_partial_schedule_or_payload",
+          "requirement_tag": "S06"
+        },
+        {
+          "name": "test_cli_run_pass_and_mismatch_are_distinct_exit_codes",
+          "requirement_tag": "S06 + A001"
+        },
+        {
+          "name": "test_cli_never_resets_preexisting_journal",
+          "requirement_tag": "S06 + A001"
+        },
+        {
+          "name": "test_cli_unicode_payload_and_database_path",
+          "requirement_tag": "S06"
+        },
+        {
+          "name": "test_candidate_and_public_tests_run",
+          "requirement_tag": "S06"
+        }
+      ]
+    }
+  ],
+  "named_assessor_methods_count": 44,
+  "frozen_cumulative_assessor_checks_count": 96,
+  "unenumerated_assessor_cases": "Assessor dynamically generates invalid-input and authored scenario cases; named methods alone do not equal frozen cumulative result count.",
+  "scenario_fixtures": [
+    {
+      "file": "clock-skew.json",
+      "reference_behavior": "Future event timestamps are not current before their time even when delivered; explicit virtual clock is the only state clock."
+    },
+    {
+      "file": "delayed-delivery.json",
+      "reference_behavior": "Arrival order/delivery time can differ from event timestamp; deterministic replays preserve event identity and expected observations."
+    },
+    {
+      "file": "door-reconnect.json",
+      "reference_behavior": "Reconnect repeats same immutable event ID as secondary deliveries; sink decides duplicates; exact TTL expiry eventually empties state."
+    },
+    {
+      "file": "dropped-presence.json",
+      "reference_behavior": "Dropped entries and all retries disappear from delivery schedule, but their validation remains mandatory."
+    },
+    {
+      "file": "expired-latest.json",
+      "reference_behavior": "A newer expired observation does not resurrect an older one even when the older TTL has not expired."
+    },
+    {
+      "file": "late-observation.json",
+      "reference_behavior": "Later delivery of an older event cannot displace the latest eligible observation by event time."
+    },
+    {
+      "file": "quiet-room.json",
+      "reference_behavior": "Empty or quiet event set reports the declared absence of current evidence without inferring actual absence."
+    },
+    {
+      "file": "sensor-disagreement.json",
+      "reference_behavior": "Events from distinct sources do not fuse into one invented device/person state; outputs stay source-separated."
+    }
+  ],
+  "owner_review_required": true,
+  "comparison_principle": "Outcome equivalence not fixed task count/headings; do not reimplement A001 Journal",
+  "withheld_from_planner": [
+    "REFERENCE_PLAN.md",
+    "TRACEABILITY.json",
+    "v1/TASKS.md",
+    "v1/assessor",
+    "any cached copy of fixed task solutions"
+  ]
+}

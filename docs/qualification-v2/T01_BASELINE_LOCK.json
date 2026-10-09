@@ -1,0 +1,72 @@
+{
+  "schema_version": "controlled-qualification-baseline-observation:v1",
+  "scope": "Public benchmark repo evidence only; observational, not enforced protected ref",
+  "as_of": "2026-10-08",
+  "repository": "floydtrey/local-model-bench",
+  "branch": "benchmark/flashnext-all-roles-v1",
+  "source_commit": "79d422ee4c037ac305fd2f15c06eadf5302d0972",
+  "historical": {
+    "distinct_cases": 23,
+    "screen_repetitions": 1,
+    "qualification_repetitions": 3
+  },
+  "projects": {
+    "assistant-001": {
+      "tasks": 6,
+      "acceptance_checks": 79,
+      "manifest": "project-benchmarks/assistant-001/v1/manifest.json"
+    },
+    "assistant-002": {
+      "tasks": 6,
+      "acceptance_checks": 96,
+      "manifest": "project-benchmarks/assistant-002/v1/manifest.json"
+    }
+  },
+  "git_blob_sha1": {
+    "campaigns/flashnext-all-roles-v1/role-suite.json": "6acefdee011da6d9dc571ea5d8a0bd9dee6d9a4a",
+    "campaigns/flashnext-all-roles-v1/accepted-battery-lock.json": "a2d13389c149f3a6a271d89175606c53812ad653",
+    "project-benchmarks/assistant-001/v1/manifest.json": "58a4ca15864ad84fc959473cdfec6476c2ce0e4c",
+    "project-benchmarks/assistant-001/v1/CONTRACT.md": "ed44da87d7da5ecb9739121e279d07d496dba924",
+    "project-benchmarks/assistant-001/v1/TASKS.md": "ab9a26ae5bba02e442e430bdc56c5976d944678b",
+    "project-benchmarks/assistant-002/v1/manifest.json": "22d28124067f558c6a35f4b43ee438a24e9f04fd",
+    "project-benchmarks/assistant-002/v1/CONTRACT.md": "4095b874df9bd8584d4d7cfe31719c6ad6424ebb",
+    "project-benchmarks/assistant-002/v1/TASKS.md": "0df9194d04530fcbe6131b02610744d1c4680dd7",
+    "src/localbench/assistant001/campaign.py": "378ad26104ffe073f6d7dd0e8cff6a8fb9a1401c",
+    "src/localbench/assistant001/packet.py": "c535b8aa7e5ac22984140191ac19929f863a9753",
+    "src/localbench/assistant001/assessment.py": "3a450e1512cd0a46c1d6fcc8054d4f3f66bd97dd",
+    "src/localbench/assistant001/runtime.py": "ad63bc29f255b0cd3ee779d4292c74a1635d397b",
+    "src/localbench/assistant002/packet.py": "2e0f2aa52fd6770c5a5c8ae9e33deea37947c41c",
+    "src/localbench/assistant002/cli.py": "06c27748a621bf68426042bf31aa8ca151bc2e79",
+    "src/localbench/v2/flashnext_roles.py": "ed795da62975a38da34d32ec247c3ef41775cc11",
+    "src/localbench/v2/flashnext_review.py": "e31b6aaa606bea1e8f3aa17ad8f625acd1987f5f",
+    "src/localbench/v2/ollama_role_campaign.py": "49e02034622166ce2a6a9f59657d0a5f90c50f1f",
+    "src/localbench/queue_gui/core.py": "66e27135a843eb35c3fa03c30f131a5cbb0231f4",
+    "src/localbench/queue_gui/app.py": "2d231273b91e670a84004437a588973185e9ebf6",
+    "tools/gui/run-queue-item.ps1": "b40aabea620933cb9e63f6b3ba758a7e0d2d152a"
+  },
+  "verified_prior_ci": [
+    {
+      "source_commit": "79d422ee4c037ac305fd2f15c06eadf5302d0972",
+      "run_id": 37862767459,
+      "name": "Benchmark Queue GUI Tests",
+      "result": "success",
+      "os": "Windows",
+      "test_note": "68 tests executed, 67 passed, one expected POSIX-only skip"
+    },
+    {
+      "source_commit": "6160ebf9c77b10ba61b71becd20e22a4b9e8110b",
+      "run_id": 37860975414,
+      "name": "Assistant 001 Benchmark Tests",
+      "result": "success",
+      "matrix": "Windows/Linux Python 3.10/3.12 (4 successes)"
+    },
+    {
+      "source_commit": "6160ebf9c77b10ba61b71becd20e22a4b9e8110b",
+      "run_id": 37860975452,
+      "name": "Assistant 002 and Shared Engine Regression",
+      "result": "success",
+      "matrix": "Windows/Linux Python 3.10/3.12 (4 successes)"
+    }
+  ],
+  "verification_limit": "CI evidence predates this documentation-only audit commit; neither real local Ollama models nor installed DSH process were run. No baseline enforcement hook or branch protection created."
+}

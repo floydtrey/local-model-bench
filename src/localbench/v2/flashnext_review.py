@@ -63,6 +63,23 @@ def _case_row(result: Mapping[str, Any], profile: Mapping[str, Any]) -> dict[str
         "test_tool_calls": metrics.get("test_tool_calls"),
         "final_output_words": metrics.get("final_output_words"),
         "evidence_directory": result.get("evidence_directory"),
+        # Additive qualification-v2 projections; missing historical values stay unknown.
+        "track": result.get("track"),
+        "planner_mode": result.get("planner_mode"),
+        "execution_status": result.get("execution_status"),
+        "assessed_outcome": result.get("assessed_outcome"),
+        "human_review_status": result.get("human_review_status"),
+        "input_sha256": result.get("input_sha256"),
+        "candidate_sha256": result.get("candidate_sha256"),
+        "rubric_version": result.get("rubric_version"),
+        "rubric_sha256": result.get("rubric_sha256"),
+        "assessment_file": result.get("assessment_file"),
+        "session_evidence_directory": result.get("session_evidence_directory"),
+        "configuration_evidence_directory": result.get("configuration_evidence_directory"),
+        "runtime_identity": json.dumps(result["runtime_identity"], sort_keys=True) if result.get("runtime_identity") else None,
+        "comparison_eligible": result.get("comparison_eligible"),
+        "comparison_note": result.get("comparison_note"),
+        "output_origin": result.get("output_origin"),
     }
 
 

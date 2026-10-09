@@ -304,7 +304,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
 
     def test_owned_lifecycle_preserves_config_and_stops_only_the_created_child(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            config = profile()
+            config = fake_artifacts(Path(temp) / "runtime-fixture")
             config["port"] = free_port()
             server = runtime.OwnedFlashNextServer(config, Path(temp), progress=lambda _: None)
             child = FakeChild()
@@ -329,7 +329,7 @@ class FlashNextRuntimeTests(unittest.TestCase):
 
     def test_props_mismatch_stops_owned_process_and_does_not_become_ready(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            config = profile()
+            config = fake_artifacts(Path(temp) / "runtime-fixture")
             config["port"] = free_port()
             server = runtime.OwnedFlashNextServer(config, Path(temp), progress=lambda _: None)
             child = FakeChild()

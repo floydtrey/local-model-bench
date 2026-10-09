@@ -414,3 +414,11 @@ Worker Lab or another product repository in place.
 - Native chat response fields: <https://docs.ollama.com/api/chat>
 - Installed-model metadata: <https://docs.ollama.com/api/tags>
 - OpenAI-compatible endpoints: <https://docs.ollama.com/api/openai-compatibility>
+
+## Independent Planner qualification (T05–T06)
+
+An additive text-only Planner interface now provides blind A001/A002 inputs and
+requirement-level human assessment through the existing role engine and review
+writer. The original scaffolded probes remain historical modes. See
+[setup, isolation, calibration limits and validation commands](docs/qualification-v2/PLANNER_T05_T06.md).
+No real model tests or project execution are implied.

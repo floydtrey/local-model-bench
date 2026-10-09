@@ -1,0 +1,111 @@
+{
+  "schema_version": "qualification-v2/blind-planner-input-v1",
+  "project": "assistant-002",
+  "source_manifest_sha256": "6de6aea144785440e78bc6e93b918869f108ee21bba0583332fde084cc5d694d",
+  "files": {
+    "CONTRACT.md": "a367d6103a41e1a7660b2adfd1ed81037e5596471a85bcecbab4503b528b20fe",
+    "PROJECT_INTENT.md": "8c05caea947fe498a6ecf759532ca2abd1b00d00c07c523c76bf242a6b68db31",
+    "README.md": "bd5df62abd4bbe369c715ae08636e5f70dd7b92ba6373c33ad577e395b2fae17",
+    "assistant_simulator/__init__.py": "3ca6ab034c6dd52688584457ea8e63f75d3b731a3abdb155a07703d071c278e4",
+    "assistant_simulator/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "assistant_simulator/cli.py": "2e9af1e62d5e6606b086bfa07637d9dbad432b86bd908aea9126f30aedc62028",
+    "assistant_simulator/evaluate.py": "7586ffc63008af50782208cc6c1f448ca1c65f8ea4e672762f0afe4bbffcf374",
+    "assistant_simulator/event_contract.py": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4",
+    "assistant_simulator/replay.py": "3a91c091e222431e38ee8774578d38ee4b97a1b1f04d897e5d6cb610845a90dd",
+    "assistant_simulator/scenario.py": "8d39811f0c14444a3ed8d4d3e747314b2a524576a5f97dd47675476839041630",
+    "assistant_simulator/schedule.py": "e583196f2d634680627d5e30afa5666f0196d1e9dee0345791d2de8fa6da929a",
+    "scenarios/clock-skew.json": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf",
+    "scenarios/delayed-delivery.json": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05",
+    "scenarios/door-reconnect.json": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9",
+    "scenarios/dropped-presence.json": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7",
+    "scenarios/expired-latest.json": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c",
+    "scenarios/late-observation.json": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b",
+    "scenarios/quiet-room.json": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c",
+    "scenarios/sensor-disagreement.json": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da",
+    "tests/test_candidate.py": "3b1763b450d775590b05686906f028885b65a84029a986667f28f3e41b043deb",
+    "tests/test_public_contract.py": "5d54231bebef9ab030a627b9a4380c86b4e3233619ab3cd14fdb4e6f4333bb04"
+  },
+  "lineage": {
+    "PROJECT_INTENT.md": {
+      "source": "project-benchmarks/assistant-002/v1/PROJECT_INTENT.md",
+      "source_sha256": "198b763c0061fe8da4aec621d7e11c4587c3d50bc17021fa45a4831e75f5cca8"
+    },
+    "CONTRACT.md": {
+      "source": "project-benchmarks/assistant-002/v1/CONTRACT.md",
+      "source_sha256": "b272e67a20d1c2ba5fb5254e457604578c6aac71f2f2ddc1b4217f48f30bc47a"
+    },
+    "assistant_simulator/__init__.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/__init__.py",
+      "source_sha256": "a5a6516776e277fb950452aa23bbb47b33d4934d2350a5f99eef12aea03a39af"
+    },
+    "assistant_simulator/__main__.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/__main__.py",
+      "source_sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    "assistant_simulator/cli.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/cli.py",
+      "source_sha256": "c956f43cbcd483ac5fdec033228efb4efb4a38e99d44e211588c3ab91e62eedb"
+    },
+    "assistant_simulator/evaluate.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/evaluate.py",
+      "source_sha256": "fab48115b9b1aeea65e805f8ff45d6734a11af4b7474762315f699a092c06166"
+    },
+    "assistant_simulator/event_contract.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/event_contract.py",
+      "source_sha256": "f95949bf21266ed1873645f361d6978eea86351e8b98e99bf48401d9f445b3b4"
+    },
+    "assistant_simulator/replay.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/replay.py",
+      "source_sha256": "79b470433d42ec3777d5f650ce32384b35f91ac67d65234ad05aeaf7983f78c3"
+    },
+    "assistant_simulator/scenario.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/scenario.py",
+      "source_sha256": "52ee1811bad8dc61153249da8fc4ae95fbbd54f7e6d799f5a3fa3317afec4d4b"
+    },
+    "assistant_simulator/schedule.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/assistant_simulator/schedule.py",
+      "source_sha256": "ca48e05ab9ac58a1782958ca862ff24f8b3a1cb795dbf87d26821351ce22495e"
+    },
+    "scenarios/clock-skew.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/clock-skew.json",
+      "source_sha256": "3937ff597ab7eee055e485328d06492f8d6c1e388271bb106c29015523d1ccaf"
+    },
+    "scenarios/delayed-delivery.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/delayed-delivery.json",
+      "source_sha256": "f14722eacd838eb69193b0f6675af29d7a31dc412895f3c0aabef1b398ed9c05"
+    },
+    "scenarios/door-reconnect.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/door-reconnect.json",
+      "source_sha256": "0bf4d04ef9a1de6014c1d39d213877a3a5d5a42adc6a0c1b14ed33a5ef1dbad9"
+    },
+    "scenarios/dropped-presence.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/dropped-presence.json",
+      "source_sha256": "8ced2080f45cfe23e3899fa69dcb031a543a6d6e06e277cc71b1eba7a2cc46e7"
+    },
+    "scenarios/expired-latest.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/expired-latest.json",
+      "source_sha256": "f81b09b7b3aa54cf543bec13de754851146b11503636db91f0c2c442459a536c"
+    },
+    "scenarios/late-observation.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/late-observation.json",
+      "source_sha256": "c6ad306c779fe9eea7b343bbac35108c04e0fc10156f3bd2cb3374264ad7b91b"
+    },
+    "scenarios/quiet-room.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/quiet-room.json",
+      "source_sha256": "1436a979a72303dab06e6961c883247b620a48914589142b484d76b3dbaa220c"
+    },
+    "scenarios/sensor-disagreement.json": {
+      "source": "project-benchmarks/assistant-002/v1/starter/scenarios/sensor-disagreement.json",
+      "source_sha256": "a166e22c4d7059f43461d38fa735f5c6a7613a12cb86b200fe573c55f75c16da"
+    },
+    "tests/test_candidate.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/tests/test_candidate.py",
+      "source_sha256": "4a071c8ed1caa702f77f5a139a7abed4dfafbc460c84589595e29f8b47a0d93d"
+    },
+    "tests/test_public_contract.py": {
+      "source": "project-benchmarks/assistant-002/v1/starter/tests/test_public_contract.py",
+      "source_sha256": "7f3642697668572c6f596b098c35c2bc3a9cd9fdf7c0343a2bf9b36fb3c8db2d"
+    }
+  },
+  "transformation": "Remove task numbering/scaffold instructions and assessor provenance pointers only; preserve public interfaces, problem outcomes and supplied helper. README is planning-specific. This metadata is controller-only."
+}
