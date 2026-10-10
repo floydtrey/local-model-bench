@@ -135,5 +135,10 @@ def task_prompt(run, task, previous_handoff, repo=None):
             "\nRead existing files before changing them. Use list_files, read_file, write_file and run_tests "
             "only as exposed. run_tests takes no arguments and executes the visible unittest suite. "
             "Only these files may change: " + ", ".join(info["writable_paths"]) +
-            ". Keep your final handoff in useful free prose, not an invented result form. "
+            ". Assistant-001 task-specific exception: tests/test_candidate.py is explicitly writable. "
+            "The earlier general Worker role setup prohibits editing tests, but for this assigned "
+            "Assistant-001 task the approved task-specific writable path controls. "
+            "You may create or edit only tests/test_candidate.py, never other test files or frozen "
+            "benchmark checks, assessor tests, requirements, or files outside the listed scope. "
+            "Keep your final handoff in useful free prose, not an invented result form. "
             "The supplied public tests are examples, not proof of complete acceptance.\n")
