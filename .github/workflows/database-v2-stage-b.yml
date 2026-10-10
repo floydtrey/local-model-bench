@@ -2,9 +2,9 @@ name: Benchmark Database Stage B Publication
 on:
   push:
     branches: ['development/benchmark-lab-v2-modernization-*']
-    paths: ['src/localbench/database_v2/**', 'src/localbench/v2/**', 'src/localbench/assistant001/**', 'src/localbench/qualification_v2/**', 'tests/test_case_publication*.py', 'tests/test_database_v2.py', '.github/workflows/database-v2-stage-b.yml']
+    paths: ['src/localbench/database_v2/**', 'src/localbench/v2/**', 'src/localbench/assistant001/**', 'src/localbench/qualification_v2/**', 'tests/test_case_publication*.py', 'tests/test_database_v2.py', '.github/workflows/database-v2-stage-b.yml', '.github/workflows/qualification-v2-foundation.yml']
   pull_request:
-    paths: ['src/localbench/database_v2/**', 'tests/test_case_publication*.py', '.github/workflows/database-v2-stage-b.yml']
+    paths: ['src/localbench/database_v2/**', 'tests/test_case_publication*.py', '.github/workflows/database-v2-stage-b.yml', '.github/workflows/qualification-v2-foundation.yml']
   workflow_dispatch:
 permissions:
   contents: read
