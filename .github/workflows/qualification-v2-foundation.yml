@@ -16,6 +16,7 @@ on:
       - 'src/localbench/v2/**'
       - 'src/localbench/database_v2/**'
       - 'tests/test_database_v2.py'
+      - 'tests/test_case_publication*.py'
       - 'src/localbench/queue_gui/**'
       - 'tests/test_queue_gui*.py'
       - 'tests/results_fixtures.py'
