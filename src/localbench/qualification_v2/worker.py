@@ -240,7 +240,7 @@ class WorkerPacket:
 
 
 def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=None,
-               allow_model_inference=False, allow_host_execution=False, through="T06", assessor=None):
+               allow_model_inference=False, allow_host_execution=False, through="T06", assessor=None, case_publisher=None):
     if not allow_model_inference or not allow_host_execution:
         raise ValueError("Separate model inference and host execution consent required")
     control = verify_worker(run, repo)
@@ -262,14 +262,7 @@ def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=N
             return result, path
         return underlying(run, task, **kwargs)
 
-    # Existing cumulative engine also handles the one-task view; no new controller.
-    summary = run_worker_chain(run, sessions, repo=repo, allow_host_execution=True,
-        through=control["task"] if control["worker_mode"] == "ISOLATED_TASK" else through,
-        assessor=scoped_assessor, packet_api=WorkerPacket(api, control))
-    summary.update(track="CONTROLLED_ROLE_QUALIFICATION", worker_mode=control["worker_mode"],
-        canonical_input_sha256=control["input_sha256"], reference_bundle_sha256=control["bundle_sha256"],
-        authorization=control["release"], seed_validation_sha256=sha256_json(control["seed"]) if control["seed"] else None)
-    for row in summary["results"]:
+    def finalize_row(row):
         status = row.get("assessment_status")
         row["failure_attribution"] = ("predecessor" if row["status"] == "blocked" else
             "infrastructure" if row["status"] == "error" or status in (
@@ -280,10 +273,10 @@ def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=N
                                      else "pass" if row.get("deterministic_passed") else "fail")
         row["worker_mode"] = control["worker_mode"]
         row["input_sha256"] = control["input_sha256"]
-        row["track"] = summary["track"]
+        row["track"] = "CONTROLLED_ROLE_QUALIFICATION"
         row["reference_bundle_sha256"] = control["bundle_sha256"]
         row["authorization_sha256"] = control["release"]["authorization_sha256"]
-        row["seed_validation_sha256"] = summary["seed_validation_sha256"]
+        row["seed_validation_sha256"] = sha256_json(control["seed"]) if control["seed"] else None
         row["execution_status"] = "blocked" if row["status"] == "blocked" else "failed" if row["status"] == "error" else "completed"
         row["assessed_outcome"] = row["assessment_outcome"]
         row["human_review_status"] = "pending"
@@ -304,6 +297,15 @@ def run_worker(run, sessions, *, repo, authorization_file=None, trusted_sha256=N
         row["reference_review_status"] = "operator-reviewed-for-this-release"
         if row["failure_attribution"] == "infrastructure":
             row["deterministic_passed"] = row["first_pass_passed"] = None
+
+    # Existing cumulative engine also handles the one-task view; no new controller.
+    summary = run_worker_chain(run, sessions, repo=repo, allow_host_execution=True,
+        through=control["task"] if control["worker_mode"] == "ISOLATED_TASK" else through,
+        assessor=scoped_assessor, packet_api=WorkerPacket(api, control),
+        case_publisher=case_publisher, row_finalize=finalize_row)
+    summary.update(track="CONTROLLED_ROLE_QUALIFICATION", worker_mode=control["worker_mode"],
+        canonical_input_sha256=control["input_sha256"], reference_bundle_sha256=control["bundle_sha256"],
+        authorization=control["release"], seed_validation_sha256=sha256_json(control["seed"]) if control["seed"] else None)
     verify_worker(run, repo)
     write_json(run / "summary.json", summary)
     return summary

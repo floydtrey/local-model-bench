@@ -113,7 +113,9 @@ class BenchmarkRunner:
         resume_dir: Path | None = None,
         rerun_errors: bool = False,
         progress: Callable[[str], None] | None = None,
+        case_publisher=None,
     ):
+        self.case_publisher = case_publisher
         self.config = config
         self.config_path = config_path.resolve()
         self.config_hash = config_hash
@@ -288,11 +290,16 @@ class BenchmarkRunner:
                             _restore_conversation(existing, case, suite.id, conversations)
                             continue
                     self._checkpoint(sequence, model, suite, case, "running")
+                    publication_key = ("v1", str(self.run_dir), model["id"], suite.id, case.id)
+                    if self.case_publisher is not None:
+                        self.case_publisher.started(key=publication_key)
                     messages = _case_messages(case, conversations, suite.id)
                     result = self._execute_case(
                         provider, model, suite, case, global_sequence, messages
                     )
                     atomic_write_json(case_path, result)
+                    if self.case_publisher is not None:
+                        self.case_publisher.completed(key=publication_key, row=result, native_root=self.run_dir, artifact_paths=[case_path])
                     _restore_conversation(result, case, suite.id, conversations)
                     self._checkpoint(sequence, model, suite, case, result["status"])
                     self.progress(f"  {suite.id}/{case.id}: {result['status']}")

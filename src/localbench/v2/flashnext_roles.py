@@ -351,6 +351,7 @@ def run_role_case(
     prerequisite_handoff: str | None = None, dependency_blocked: bool = False,
     case_context_factory: Callable | None = None,
     driver_binding: Mapping[str, Any] | None = None,
+    case_publisher=None,
 ) -> dict[str, Any]:
     """Seal a single two-turn case before its first model call, then preserve all evidence."""
     folder = Path(output_dir)
@@ -426,6 +427,8 @@ def run_role_case(
     (folder / "dispatch.txt").write_bytes(prompt.encode("utf-8"))
     write_json(folder / "manifest.json", manifest.to_dict())
     write_json(folder / "workspace-before.json", before)
+    publication_key = ("native-role", str(folder.resolve()), spec["case_id"], ordinal)
+    if case_publisher is not None: case_publisher.started(key=publication_key)
     session = RoleConversation(
         case_id=spec["case_id"], setup_driver=drivers["setup"], driver=drivers["dispatch"],
         evidence_dir=folder, workspace=workspace, timeout_seconds=timeout,
@@ -532,6 +535,8 @@ def run_role_case(
     }
     write_json(folder / "result.json", result)
     (folder / "response.md").write_text(session.final, encoding="utf-8")
+    if case_publisher is not None:
+        case_publisher.completed(key=publication_key, row=result, native_root=folder, artifact_paths=[folder])
     return result
 
 
@@ -542,6 +547,7 @@ def run_role_campaign(
     governor_root: Path | None = None, case_context_factory: Callable | None = None,
     progress: Callable[[Mapping[str, Any]], None] | None = None,
     driver_binding: Mapping[str, Any] | None = None,
+    case_publisher=None,
 ) -> dict[str, Any]:
     """Run a one-pass screen or three-repeat qualification evidence collection.
 
@@ -577,7 +583,7 @@ def run_role_campaign(
                 evidence_store=evidence_store, output_dir=output / f"repetition-{ordinal}" / spec["case_id"], ordinal=ordinal,
                 workspace_root=workspace, reuse_workspace=scenario and scenario_started,
                 prerequisite_handoff=previous_handoff if scenario else None, dependency_blocked=dependency_blocked,
-                case_context_factory=case_context_factory, driver_binding=driver_binding,
+                case_context_factory=case_context_factory, driver_binding=driver_binding, case_publisher=case_publisher,
             )
             if scenario:
                 scenario_started = True

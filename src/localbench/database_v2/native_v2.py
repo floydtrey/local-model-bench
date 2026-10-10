@@ -24,6 +24,8 @@ class NativeV2Publisher:
         self.pub, self.store, self.origin = publisher, evidence_store, origin
         self.report_path, self.catalog, self.metadata = report_path, catalog, metadata
         self.post_commit_errors = []
+        self.active = None
+        self.transport_unavailable = {}
 
     def _load(self, reference):
         ref = reference.reference if isinstance(reference,SealedEvidence) else EvidenceRef.from_dict(reference)
@@ -42,12 +44,14 @@ class NativeV2Publisher:
             metadata_json=_json({'reference':record.reference.to_dict()})))
         return sid
 
-    def plan(self, *, manifest, case_definitions):
+    def plan(self, *, manifest, case_definitions, pack_source):
         manifest = self._load(manifest)
         payload = manifest.to_dict()['payload']
         model = self._load(payload['model'])
         host = self._load(payload['host'])
         benchmarks = {r['sha256']:self._load(r) for r in payload['benchmarks']}
+        if any(b.payload['source_sha256'] != sha256(pack_source).hexdigest() for b in benchmarks.values()):
+            raise DatabaseError('Native pack bytes differ from presealed source')
         configs = {r['sha256']:self._load(r) for r in payload['effective_configs']}
         evaluators = [self._load(r) for r in payload['evaluators']]
         trials = [self._load(r) for r in payload['trials']]
@@ -117,6 +121,9 @@ class NativeV2Publisher:
                     self._load(r).payload['evaluator_id']==e.get('evaluator_id') for e in definitions[trial.payload['case_id']].get('evaluators',[]))])
             self.pub.schedule(attempt_id=self.attempt(manifest,trial),trial_id=stable_id('trial',manifest.sha256,trial.sha256),
                 source_id=source,observations=observation)
+            attempt=self.attempt(manifest,trial)
+            artifact=self.pub.artifact(attempt,'input',pack_source)
+            with transaction(self.pub.con): self.pub._record_artifact(attempt,source,artifact)
 
     @staticmethod
     def attempt(manifest, trial):
@@ -124,6 +131,18 @@ class NativeV2Publisher:
 
     def started(self, *, manifest, trial):
         self.pub.started(self.attempt(manifest,trial))
+        self.active=(manifest,trial)
+
+    def capture_transport(self, *, context, kind, data):
+        """Optional native driver callback for exact HTTP bytes, before parsing."""
+        if self.active is None: raise DatabaseError('Transport capture has no active native case')
+        manifest,trial=self.active
+        if context['case_id'] != trial.payload['case_id'] or context['effective_config'] != trial.payload['effective_config']:
+            raise DatabaseError('Transport capture exact case/configuration mismatch')
+        attempt=self.attempt(manifest,trial)
+        artifact=self.pub.artifact(attempt,'transport_'+kind,data,media_type='application/octet-stream')
+        with transaction(self.pub.con): self.pub._record_artifact(attempt,self.pub._attempt(attempt)[1],artifact)
+        self.pub._boundary('during_'+kind+'_capture')
 
     def _capture(self, manifest, trial, records):
         attempt = self.attempt(manifest,trial)
@@ -150,9 +169,42 @@ class NativeV2Publisher:
                     pending.append(('native_record',self._load(reference)))
         return artifacts
 
-    def executed(self, *, manifest, trial, case_record, execution_records):
+    def executed(self, *, manifest, trial, case_record, execution_records, driver=None):
         self._case_binding(manifest,trial,case_record)
         artifacts=self._capture(manifest,trial,[('case',case_record),*[('execution',r) for r in execution_records]])
+        attempt=self.attempt(manifest,trial)
+        def metadata(value):
+            if isinstance(value,dict):
+                if 'artifacts' in value and 'effective_config_sha256' in value: yield value
+                for item in value.values(): yield from metadata(item)
+            elif isinstance(value,list):
+                for item in value: yield from metadata(item)
+        from .backup import _safe_path
+        native_driver=getattr(driver,'driver',driver)
+        native_root=getattr(native_driver,'evidence_directory',None)
+        errors=[]
+        for record in execution_records:
+            def raw_digests(value):
+                if isinstance(value,dict):
+                    if 'raw_response_sha256' in value: yield value['raw_response_sha256']
+                    for item in value.values(): yield from raw_digests(item)
+                elif isinstance(value,list):
+                    for item in value: yield from raw_digests(item)
+            if list(raw_digests(record.to_dict()['payload'])) and not self.pub.con.execute("SELECT 1 FROM attempt_artifacts WHERE attempt_id=? AND purpose='transport_model_output'",(attempt,)).fetchone():
+                errors.append('Native raw response bytes unavailable; only a digest was retained')
+            for observation in metadata(record.to_dict()['payload']):
+                if observation.get('case_id') != trial.payload['case_id'] or observation['effective_config_sha256'] != trial.payload['effective_config']['sha256']:
+                    raise DatabaseError('Native transport metadata exact binding mismatch')
+                for name,ref in observation['artifacts'].items():
+                    try:
+                        if native_root is None: raise DatabaseError('Native transport artifact root unavailable')
+                        data=_safe_path(native_root,ref['path']).read_bytes()
+                        if sha256(data).hexdigest()!=ref['sha256'] or len(data)!=ref['size_bytes']:
+                            raise DatabaseError('Native transport bytes/hash mismatch')
+                        artifacts.append(self.pub.artifact(attempt,'transport_'+name,data,media_type='application/octet-stream'))
+                    except (OSError,ValueError,DatabaseError) as exc: errors.append(str(exc))
+        if errors: self.transport_unavailable[attempt]=';'.join(errors)
+        artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
         self.pub.executed(self.attempt(manifest,trial),artifacts,
             detail={'native_case':case_record.reference.to_dict(),'native_status':case_record.payload['status']})
 
@@ -164,6 +216,7 @@ class NativeV2Publisher:
     def completed(self, *, manifest, trial, case_record, evaluations, unavailable=None):
         self._case_binding(manifest,trial,case_record)
         attempt=self.attempt(manifest,trial)
+        unavailable=unavailable or self.transport_unavailable.get(attempt)
         observations=json.loads(self.pub.con.execute('SELECT observations_json FROM attempts WHERE id=?',(attempt,)).fetchone()[0])
         for evaluation in evaluations:
             if evaluation.payload['case'] != case_record.reference.to_dict():
@@ -200,7 +253,8 @@ class NativeV2Publisher:
         for row in rows:
             for ref in row.get('evidence_refs',[]):
                 if ref.get('sha256') in paths:
-                    ref['path']=str(self.pub.root/paths[ref['sha256']]['relative_path'])
+                    ref['path']=paths[ref['sha256']]['relative_path']
+            row.pop('source_evidence_root',None)
             row['publication_attempt_id']=attempt
         self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,assessments=native_assessments,projection_row=rows,
                          detail={'unavailable':unavailable})

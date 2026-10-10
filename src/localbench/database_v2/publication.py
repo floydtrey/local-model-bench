@@ -160,10 +160,11 @@ class CasePublisher:
         elif row != relation:
             raise DatabaseError('Artifact binding replay differs')
 
-    def _all_artifacts(self, attempt, supplied):
+    def _all_artifacts(self, attempt, supplied, *, include_snapshot=True):
         items = {(a['id'],a['purpose']):a for a in supplied}
         for row in self.con.execute('SELECT ar.id,ar.relative_path,ar.sha256,ar.byte_count,ar.media_type,aa.purpose,aa.required FROM attempt_artifacts aa JOIN artifacts ar ON ar.id=aa.artifact_id WHERE aa.attempt_id=?', (attempt,)):
             artifact = dict(zip(('id','relative_path','sha256','byte_count','media_type','purpose','required'),row))
+            if not include_snapshot and artifact['purpose']=='result_snapshot': continue
             key = (artifact['id'],artifact['purpose'])
             if key in items and items[key] != artifact:
                 raise DatabaseError('Previously captured artifact binding differs')
@@ -186,7 +187,7 @@ class CasePublisher:
                 raise DatabaseError('Assessment exact identity mismatch')
             if assessment['outcome'] != outcome and not (outcome == 'UNKNOWN' and assessment['outcome'] == 'NOT_ASSESSED'):
                 raise DatabaseError('Assessment/result contradiction')
-        artifacts = self._all_artifacts(attempt_id, artifacts)
+        artifacts = self._all_artifacts(attempt_id, artifacts, include_snapshot=False)
         envelope = dict(version=VERSION, attempt_id=attempt_id, trial_id=binding[0],
             run_id=binding[3], case_id=binding[4], config_id=binding[5], source_id=binding[1],
             outcome=outcome, assessment=assessment, assessments=list(assessments), artifacts=list(artifacts),
@@ -348,6 +349,23 @@ class CasePublisher:
             observation = dict(attempt_id=attempt, disposition=disposition, reason=reason,
                                committed_result_id=committed[0] if committed else None,
                                execution_permission=False)
+            prefix='publication/'+stable_id('attempt',attempt)
+            directory=self.root/prefix
+            indexed={r[0] for r in self.con.execute('SELECT ar.relative_path FROM attempt_artifacts aa JOIN artifacts ar ON ar.id=aa.artifact_id WHERE aa.attempt_id=?',(attempt,))}
+            orphans=[]
+            if directory.exists():
+                for path in sorted(directory.glob('*.bin')):
+                    relative=path.relative_to(self.root).as_posix()
+                    if relative in indexed: continue
+                    try:
+                        digest,_=_hash(_safe_path(self.root,relative))
+                        if path.stem!=digest: raise DatabaseError('Partial/corrupt unindexed evidence')
+                        orphans.append({'relative_path':relative,'integrity':'verified_unindexed'})
+                    except (OSError,ValueError,DatabaseError):
+                        orphans.append({'relative_path':relative,'integrity':'corrupt_or_unavailable'})
+                        observation['disposition']='evidence_unavailable'
+                        observation['reason']='partial_or_corrupt_unindexed_evidence'
+            observation['unindexed_artifacts']=orphans
             encoded = _json(observation)
             with transaction(self.con):
                 _insert(self.con, 'case_recovery_observations', dict(id=stable_id('recovery', observation),

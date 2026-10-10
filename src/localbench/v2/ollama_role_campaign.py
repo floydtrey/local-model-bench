@@ -263,7 +263,7 @@ def build_foundation(*, repo_root: Path, store: EvidenceStore, base_url: str,
 def run_campaign(*, repo_root: Path, output_dir: Path, model_name: str, base_url: str,
                  phase: str, governor_root: Path, context_tokens: int,
                  max_output_tokens: int, timeout_seconds: float,
-                 keep_alive_seconds: float, progress) -> dict[str, Any]:
+                 keep_alive_seconds: float, progress, case_publisher=None) -> dict[str, Any]:
     campaign_root = repo_root / "campaigns" / SOURCE_CAMPAIGN
     if not campaign_root.is_dir():
         raise CampaignBlocked(f"role packet campaign not found: {campaign_root}")
@@ -360,7 +360,7 @@ def run_campaign(*, repo_root: Path, output_dir: Path, model_name: str, base_url
             governor_root=governor_root,
             case_context_factory=case_context,
             progress=role_progress,
-            driver_binding=driver_binding,
+            driver_binding=driver_binding, case_publisher=case_publisher,
         )
         role_summaries[role] = summary
         aggregate_results.extend(summary["results"])

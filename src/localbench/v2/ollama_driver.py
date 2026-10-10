@@ -241,6 +241,7 @@ def _message(message: Mapping[str, Any]) -> dict[str, Any]:
 @dataclass(frozen=True)
 class OllamaChatDriver:
     effective_config: SealedEvidence
+    capture_sink: Any = None
 
     def __post_init__(self) -> None:
         if self.effective_config.record_type != "effective_runtime_config":
@@ -327,8 +328,11 @@ class OllamaChatDriver:
         if request.tools:
             payload["tools"] = [_tool_definition(tool) for tool in request.tools]
 
+        capture = {} if self.capture_sink is None else {'capture_context': {
+            'case_id': request.case_id, 'turn': request.turn,
+            'effective_config': self.effective_config.reference.to_dict()}}
         raw = self._post_json(
-            static["path"], payload, timeout_seconds=static.get("timeout_seconds")
+            static["path"], payload, timeout_seconds=static.get("timeout_seconds"), **capture
         )
         message = raw.get("message")
         if not isinstance(message, Mapping):
@@ -376,7 +380,7 @@ class OllamaChatDriver:
         )
 
     def _post_json(
-        self, path: str, payload: Mapping[str, Any], *, timeout_seconds: Any
+        self, path: str, payload: Mapping[str, Any], *, timeout_seconds: Any, capture_context=None
     ) -> dict[str, Any]:
         if not isinstance(timeout_seconds, (int, float)) or isinstance(timeout_seconds, bool):
             raise OllamaDriverError("sealed request timeout is not numeric")
@@ -388,11 +392,16 @@ class OllamaChatDriver:
             headers={"Content-Type": "application/json", "Accept": "application/json"},
             method="POST",
         )
+        if self.capture_sink is not None:
+            self.capture_sink(context=capture_context, kind='request', data=request.data)
         try:
             with urllib.request.urlopen(request, timeout=float(timeout_seconds)) as response:
                 body = response.read()
         except urllib.error.HTTPError as exc:
-            detail = exc.read(2048).decode("utf-8", errors="replace")
+            error_prefix = exc.read(2048)
+            if self.capture_sink is not None:
+                self.capture_sink(context=capture_context, kind='http_error_prefix', data=error_prefix)
+            detail = error_prefix.decode("utf-8", errors="replace")
             category = "tool_transport_incompatible" if "does not support tools" in detail.casefold() else "http_error"
             raise OllamaDriverError(f"Ollama HTTP {exc.code}: {detail}", category=category) from exc
         except urllib.error.URLError as exc:
@@ -400,6 +409,8 @@ class OllamaChatDriver:
             raise OllamaDriverError(f"Ollama request failed: {exc.reason}", category=category) from exc
         except TimeoutError as exc:
             raise OllamaDriverError("Ollama request timed out", category="timeout") from exc
+        if self.capture_sink is not None:
+            self.capture_sink(context=capture_context, kind='model_output', data=body)
         try:
             value = json.loads(body)
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:

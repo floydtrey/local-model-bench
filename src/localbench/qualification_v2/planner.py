@@ -12,7 +12,7 @@ from .planner_assessment import assess, draft_review
 from localbench.v2.report_adapter import bind_current_assessment
 
 
-def run_planner(run, sessions, *, repo=None):
+def run_planner(run, sessions, *, repo=None, case_publisher=None):
     """Trusted session injection supports deterministic tests; public CLI owns consent.
 
     A fresh RoleConversation is created by OllamaSessions for every invocation.
@@ -24,6 +24,8 @@ def run_planner(run, sessions, *, repo=None):
     if (run / "session.json").exists() or (run / "roles").exists():
         raise ValueError("Refusing to resume/reuse a Planner session")
     evidence = run / "roles/planner"
+    if case_publisher is not None:
+        case_publisher.started(key=("controlled-role", str(run.resolve()), 'planner', packet["case_id"], 1))
     try:
         result = sessions(role="planner", case_id=packet["case_id"], prompt=packet["prompt"],
                           workspace=None, writable=[], evidence=evidence)
@@ -38,7 +40,7 @@ def run_planner(run, sessions, *, repo=None):
     return result
 
 
-def assess_run(run, *, plan_file=None, review_file=None, repo=None, model="unknown", context_tokens=None):
+def assess_run(run, *, plan_file=None, review_file=None, repo=None, model="unknown", context_tokens=None, case_publisher=None):
     run = Path(run).resolve()
     packet = verify_run(run, repo)
     if plan_file is not None:
@@ -77,6 +79,8 @@ def assess_run(run, *, plan_file=None, review_file=None, repo=None, model="unkno
            "comparison_note": "Require matching case/input/rubric, runtime, model identity and configuration; imports are ineligible.",
            "output_origin": origin}
     bind_current_assessment(row, run, "qualification-v2-planner")
+    if case_publisher is not None:
+        case_publisher.completed(key=("controlled-role", str(run.resolve()), 'planner', packet["case_id"], 1), row=row, native_root=run)
     summary = {"campaign": "qualification-v2-planner", "roles": ["planner"],
                "track": "controlled_role_qualification", "results": [row], "planned_cases": 1,
                "completed_cases": int(session["status"] == "success"), "qualification_status": row["qualification_status"],

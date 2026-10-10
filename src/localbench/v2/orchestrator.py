@@ -831,7 +831,7 @@ def run_v2_pack(
     )
 
     if case_publisher is not None:
-        case_publisher.plan(manifest=manifest, case_definitions=list(pack.cases))
+        case_publisher.plan(manifest=manifest, case_definitions=list(pack.cases), pack_source=pack_source)
 
     if driver_binding.execution_kind == "subprocess":
         raise OrchestrationBlocked(
@@ -922,7 +922,7 @@ def run_v2_pack(
         evidence_store.persist(case_record)
         case_records.append(case_record)
         if case_publisher is not None:
-            case_publisher.executed(manifest=manifest, trial=trial, case_record=case_record, execution_records=[trace])
+            case_publisher.executed(manifest=manifest, trial=trial, case_record=case_record, execution_records=[trace], driver=driver_binding.driver)
 
         # A model-driver exception is an operational qualification failure,
         # not evidence of candidate capability. Preserve the execution trace
