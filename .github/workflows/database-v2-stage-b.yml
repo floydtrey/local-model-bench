@@ -26,10 +26,10 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Record linked runtime; affected versions validate isolated fixtures only
         run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print(sys.version,sqlite3.sqlite_version,wal_runtime_safe())"
-      - name: Foundation and publication regressions
-        run: |
-          python -m unittest discover -s tests -p 'test_database_v2.py' -v
-          python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+      - name: Foundation regressions
+        run: python -m unittest discover -s tests -p 'test_database_v2.py' -v
+      - name: Publication regressions
+        run: python -m unittest discover -s tests -p 'test_case_publication*.py' -v
   patched-windows:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -54,9 +54,9 @@ jobs:
       - name: Record actual runtime and fail closed on affected SQLite
         run: python -c "import sys,sqlite3,_sqlite3,tkinter,_tkinter; from localbench.database_v2.store import wal_runtime_safe; print(sys.executable,sys.version,sqlite3.sqlite_version,sqlite3.connect(':memory:').execute('select sqlite_source_id()').fetchone()); print(sqlite3.__file__,_sqlite3.__file__,tkinter.__file__,_tkinter.__file__); assert wal_runtime_safe()"
       - name: Publication uses default operational connections
-        run: |
-          python -m unittest discover -s tests -p 'test_case_publication*.py' -v
-          python -m unittest discover -s tests -p 'test_database_v2.py' -v
+        run: python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+      - name: Foundation on patched runtime
+        run: python -m unittest discover -s tests -p 'test_database_v2.py' -v
       - name: Full retained native engine, assessors, reporting and required Tk compatibility
         shell: pwsh
         run: |

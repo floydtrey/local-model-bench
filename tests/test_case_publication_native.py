@@ -8,7 +8,7 @@ from localbench.database_v2 import connect
 from localbench.database_v2.publication import CasePublisher
 from localbench.database_v2.native_v2 import NativeV2Publisher
 from localbench.database_v2.store import wal_runtime_safe
-from localbench.v2 import DriverBinding, EvidenceStore, ModelTurnResponse, OrchestrationBlocked, run_v2_pack
+from localbench.v2 import DriverBinding, EvidenceStore, ModelTurnResponse, OrchestrationBlocked, run_v2_pack, ToolCall, WorkspaceBinding
 from localbench.v2.repetition import run_v2_repetitions
 import test_v2_orchestrator as fixture
 import test_v2_repetition_reporting as repetition_fixture
@@ -105,6 +105,37 @@ class NativePublicationTests(unittest.TestCase):
             driver_binding=DriverBinding('fixture',fixture.DRIVER_DIGEST,lambda request:ModelTurnResponse(content='raw')),
             evidence_store=self.store,harness_source={'kind':'fixture'},clock=lambda:'2026-10-09T00:00:00Z')
         self.assertEqual(self.count('attempts'),0); self.assertEqual(self.count('committed_results'),0)
+
+    def test_l1_context_bytes_are_preserved_inside_exact_native_trace(self):
+        host,runtime,model=self.helper.foundation()
+        data=b'authored context bytes'
+        asset={'asset_id':'context','sha256':fixture.sha(data),'media_type':'text/plain','delivery':'inline_context','source_locator':'fixture.txt'}
+        run_v2_pack(run_id='l1-fixture',pack_source=fixture.pack_bytes(level='L1',asset=asset),pack_source_locator=None,
+            host=host,runtime=runtime,model=model,configuration_bindings={'profile-a':self.helper.config(tools=False)},
+            evaluator_registry=self.helper.registry('intrinsic_execution_trace'),
+            driver_binding=DriverBinding('fixture',fixture.DRIVER_DIGEST,lambda request:ModelTurnResponse(content='raw')),
+            evidence_store=self.store,harness_source={'kind':'fixture'},clock=lambda:'2026-10-09T00:00:00Z',asset_loader=lambda descriptor:data,
+            case_publisher=self.adapter)
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('PASS',))
+        captures=[(self.pub.root/path[0]).read_bytes() for path in self.db.execute("SELECT ar.relative_path FROM attempt_artifacts aa JOIN artifacts ar ON ar.id=aa.artifact_id WHERE purpose='execution'")]
+        self.assertTrue(any(data in raw for raw in captures))
+
+    def test_l2_author_controlled_tool_bytes_and_final_files_are_published(self):
+        host,runtime,model=self.helper.foundation(); interface=self.helper.execution_interface(runtime,model)
+        workspace=self.root/'workspace'; workspace.mkdir(); (workspace/'input.txt').write_bytes(b'authored input')
+        def driver(request):
+            if request.turn==1: return ModelTurnResponse(tool_calls=(ToolCall('read','read_file',{'path':'input.txt'}),))
+            if request.turn==2: return ModelTurnResponse(tool_calls=(ToolCall('write','write_file',{'path':'out.txt','content':'authored output','expected_sha256':None}),))
+            return ModelTurnResponse(content='finished')
+        run_v2_pack(run_id='l2-fixture',pack_source=fixture.pack_bytes(level='L2'),pack_source_locator=None,
+            host=host,runtime=runtime,model=model,configuration_bindings={'profile-a':self.helper.config(tools=True)},
+            evaluator_registry=self.helper.registry('tool_execution_trace'),
+            driver_binding=DriverBinding('fixture',fixture.DRIVER_DIGEST,driver,execution_interface=interface),
+            evidence_store=self.store,harness_source={'kind':'fixture'},clock=lambda:'2026-10-09T00:00:00Z',
+            workspaces={'case-a':WorkspaceBinding(root=workspace,readable_paths=('input.txt',),writable_paths=('out.txt',))},case_publisher=self.adapter)
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('PASS',))
+        paths=self.db.execute("SELECT ar.relative_path FROM attempt_artifacts aa JOIN artifacts ar ON ar.id=aa.artifact_id WHERE purpose='tool_file:out.txt'").fetchall()
+        self.assertEqual(len(paths),1); self.assertEqual((self.pub.root/paths[0][0]).read_bytes(),b'authored output')
 
 
 if __name__=='__main__': unittest.main()

@@ -227,5 +227,25 @@ class PublicationTests(unittest.TestCase):
             self.assertEqual(pub.recover()[0]['disposition'],'preserved')
         finally: restored.close()
 
+    def test_completed_review_is_audited_and_never_grants_execution_permission(self):
+        self.prepared(); self.pub.commit('attempt')
+        assessment=self.db.execute('SELECT id FROM assessments').fetchone()[0]
+        pending=self.db.execute('SELECT id FROM reviews').fetchone()[0]
+        review=self.pub.record_review(assessment,review_bytes=b'{"technical_review":"completed"}',reviewer='authored fixture',supersedes_id=pending)
+        self.assertEqual(self.pub.record_review(assessment,review_bytes=b'{"technical_review":"completed"}',reviewer='authored fixture',supersedes_id=pending),review)
+        self.assertEqual(self.db.execute('SELECT status,identity_verified FROM reviews WHERE id=?',(review,)).fetchone(),('completed',0))
+        binding=json.loads(self.db.execute('SELECT binding_json FROM reviews WHERE id=?',(review,)).fetchone()[0])
+        self.assertFalse(binding['execution_permission'])
+        self.assertEqual(self.count('controller_identity'),0); self.assertEqual(self.count('queue_snapshots'),0)
+        with self.assertRaises(DatabaseError): self.pub.record_review(assessment,review_bytes=b'{}',reviewer='fixture',supersedes_id='unknown-review')
+
+    def test_export_refuses_authoritative_database_or_evidence_replacement(self):
+        capture=self.prepared(); self.pub.commit('attempt')
+        original=(self.root/'artifacts'/capture['relative_path']).read_bytes()
+        for destination in (self.root/'cases.sqlite3',self.root/'cases.sqlite3-wal',self.root/'artifacts'/capture['relative_path']):
+            with self.assertRaises(DatabaseError): self.pub.export(destination)
+        self.assertEqual((self.root/'artifacts'/capture['relative_path']).read_bytes(),original)
+        self.assertEqual(self.db.execute('pragma integrity_check').fetchone(),('ok',))
+
 
 if __name__ == '__main__': unittest.main()

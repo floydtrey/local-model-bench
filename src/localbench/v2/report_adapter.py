@@ -273,7 +273,7 @@ def _aggregate_rows(payload, evidence_root, source_path):
     return normalize_rows(results)
 
 
-def normalize_sealed_case(case_record, manifest, trial, evaluations, *, evidence_root, unavailable=None):
+def normalize_sealed_case(case_record, manifest, trial, evaluations, *, evidence_root, unavailable=None, planned_trials=None, suite_version=None):
     """Use the existing T13 exact-reference adapter at a native per-case boundary.
 
     This envelope supplies reference lists, never a fabricated aggregate score.
@@ -283,11 +283,13 @@ def normalize_sealed_case(case_record, manifest, trial, evaluations, *, evidence
         'manifest': manifest.reference.to_dict(),
         'repetition_phase': manifest.payload['harness_source'].get('repetition_phase', 'single'),
         'cases': [{'case_id': case_record.payload['case_id'],
-            'repeat_group': trial.payload['repeat_group'], 'planned_trials': None,
+            'repeat_group': trial.payload['repeat_group'], 'planned_trials': planned_trials,
             'observed_trials': 1, 'evidence': {
                 'case_results': [case_record.reference.to_dict()],
                 'evaluation_results': [e.reference.to_dict() for e in evaluations]}}]}
     rows = _aggregate_rows(payload, evidence_root, 'native-per-case-publication')
+    if suite_version is not None:
+        for row in rows: row['suite_version']=suite_version
     if unavailable is not None:
         for row in rows:
             row['adapter_exclusion_reason'] = 'native_assessment_unavailable:' + str(unavailable)

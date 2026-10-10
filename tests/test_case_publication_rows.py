@@ -16,19 +16,19 @@ class NativeRowTests(unittest.TestCase):
         self.adapter=NativeRowPublisher(self.pub,report_path=self.root/'projection.json')
         self.native=self.root/'native'; self.native.mkdir()
 
-    def register(self,key,case='C01',binding=None):
-        self.adapter.register(key,trial_id='trial',source_id='source',case_id=case,assessment_binding=binding)
+    def register(self,key,case='C01',binding=None,configuration=None,trial='trial'):
+        self.adapter.register(key,trial_id=trial,source_id='source',case_id=case,assessment_binding=binding,configuration_binding=configuration)
 
     def test_exact_native_row_preserves_assessment_and_raw_capture(self):
         key=('fixture',str(self.native),'C01',1)
-        self.register(key,binding={'case_id':'C01','_assessor_id':'assessor'})
+        self.register(key,binding={'case_id':'C01','_assessor_id':'assessor'},configuration={'config_id':'config','row_fields':{'effective_settings':{'context':4096}}})
         self.adapter.started(key=key)
         session=self.native/'execution'; session.mkdir(); (session/'raw.bin').write_bytes(b'raw\x00tool')
         assessment=self.native/'assessment.json'; assessment.write_text(json.dumps({'case_id':'C01','assessed_outcome':'PASS'}))
         row={'case_id':'C01','execution_status':'success','assessed_outcome':'PASS',
             'assessment_file':str(assessment),'evidence_directory':str(session),
             'evidence_refs':[file_reference(assessment,'assessment')], 'human_review_required':True,
-            'first_pass_passed':True,'repair_attempted':False,'repair_passed':None}
+            'first_pass_passed':True,'repair_attempted':False,'repair_passed':None,'effective_settings':{'context':4096}}
         self.adapter.completed(key=key,row=row,native_root=self.native)
         self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('PASS',))
         self.assertEqual(self.db.execute('SELECT outcome FROM assessments').fetchone(),('PASS',))
@@ -65,7 +65,10 @@ class NativeRowTests(unittest.TestCase):
             {'tasks':[{'id':'T01','title':'one','writable_paths':[]},{'id':'T02','title':'two','writable_paths':[]}]}),
             task_prompt=lambda *args:'fixture input')
         key=('assistant-chain',str(run.resolve()),'assistant001-t01',1)
-        self.register(key,case='assistant001-t01')
+        self.db.execute("INSERT INTO cases VALUES('chain-case','assistant001-t01','1','source',?,'{}')",('b'*64,))
+        self.db.execute("INSERT INTO suite_cases VALUES('suite','chain-case',2)")
+        self.db.execute("INSERT INTO trials VALUES('chain-trial','run','suite','chain-case',1,1,'chain','source')")
+        self.register(key,case='assistant001-t01',trial='chain-trial')
         calls=[]
         def sessions(**kwargs):
             calls.append(kwargs['case_id']); return {'status':'error','final_response':'raw'}
@@ -78,6 +81,56 @@ class NativeRowTests(unittest.TestCase):
                 assessor=assessor,packet_api=api,case_publisher=self.adapter)
         self.assertEqual(calls,['assistant001-t01'])
         self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
+
+    def test_committed_native_rows_reuse_T13_first_pass_repair_and_coverage_semantics(self):
+        import test_qualification_v2_metrics as metric_fixture
+        helper=metric_fixture.MetricProjectionTests(); helper.setUp(); self.addCleanup(helper.doCleanups)
+        # The native case is an authored T13 fixture; the database only stores it.
+        row=helper.case('C01',first_pass_passed=False,repair_attempted=True,repair_passed=True)
+        native=helper.root
+        (native/'session.json').write_text(json.dumps({'case_id':'C01','status':'completed','origin':'authored_storage_fixture'}))
+        first=native/'first-pass.json'; first.write_text('{"case_id":"C01","outcome":"FAIL","attempt":1}')
+        repair=native/'repair.json'; repair.write_text('{"case_id":"C01","outcome":"PASS","attempt":2,"parent":1}')
+        row['evidence_refs'] += [file_reference(first,'first_pass'),file_reference(repair,'repair')]
+        key=('t13-fixture',str(native),'C01',1)
+        self.register(key,binding={'case_id':'C01','_assessor_id':'assessor'},configuration={'config_id':'config','row_fields':{'effective_settings':row['effective_settings'],'context_tokens':row['context_tokens']}}); self.adapter.started(key=key)
+        self.adapter.completed(key=key,row=row,native_root=native)
+        catalog={**helper.catalog,'metrics':[{**helper.catalog['metrics'][0],'cases':['C01','missing']} ]}
+        report=self.pub.projection(catalog=catalog)
+        metric=report['metrics']['metrics'][0]
+        self.assertEqual((metric['numerator'],metric['denominator']),(1,1))
+        self.assertEqual(metric['first_pass'],{'numerator':0,'denominator':1})
+        self.assertEqual(metric['after_repair'],{'numerator':1,'denominator':1})
+        self.assertEqual(metric['missing_coverage'],['missing'])
+
+    def test_native_configuration_mismatch_cannot_commit_pass_or_merge_settings(self):
+        key=('configuration-mismatch',str(self.native),'C01',1)
+        self.register(key,binding={'case_id':'C01','_assessor_id':'assessor'},configuration={'config_id':'config','row_fields':{'effective_settings':{'context':4096}}})
+        self.adapter.started(key=key)
+        assessment=self.native/'assessment.json'; assessment.write_text('{"case_id":"C01","assessed_outcome":"PASS"}')
+        capture=self.native/'capture.bin'; capture.write_bytes(b'authored capture')
+        row={'case_id':'C01','execution_status':'completed','assessed_outcome':'PASS','effective_settings':{'context':8192},
+             'assessment_file':str(assessment),'evidence_directory':str(self.native),'evidence_refs':[file_reference(assessment,'assessment')]}
+        self.adapter.completed(key=key,row=row,native_root=self.native)
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('UNKNOWN',))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM runtime_configs').fetchone(),(1,))
+        self.assertIn('configuration_binding_mismatch',self.pub.projection()['rows'][0]['adapter_exclusion_reason'])
+
+    def test_restore_rebuilds_native_projection_from_copied_relative_evidence(self):
+        from localbench.database_v2 import backup,restore,connect
+        from localbench.database_v2.publication import CasePublisher
+        from localbench.database_v2.store import wal_runtime_safe
+        key=('restore-fixture',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        capture=self.native/'case.json'; capture.write_text('{"case_id":"C01","status":"error"}')
+        self.adapter.completed(key=key,row=json.loads(capture.read_bytes()),native_root=self.native,artifact_paths=[capture])
+        backup(self.db,self.pub.root,self.root/'backup'); restore(self.root/'backup',self.root/'restored')
+        restored=connect(self.root/'restored/database.sqlite3',validation_only=not wal_runtime_safe())
+        try:
+            publisher=CasePublisher(restored,self.root/'restored/artifacts',clock=lambda:'now',validation_only=not wal_runtime_safe())
+            self.assertEqual(publisher.recover()[0]['disposition'],'preserved')
+            self.assertEqual(publisher.projection()['committed_results'],1)
+            self.assertEqual(publisher.projection()['rows'][0]['case_id'],'C01')
+        finally: restored.close()
 
 
 if __name__=='__main__': unittest.main()

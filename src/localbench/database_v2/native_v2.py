@@ -38,14 +38,16 @@ class NativeV2Publisher:
     def _source(self, record):
         data = canonical_json_bytes(record.to_dict())
         sid = 'source-'+record.sha256
+        prior=self.pub.con.execute('SELECT captured_at FROM sources WHERE id=?',(sid,)).fetchone()
         _insert(self.pub.con,'sources',dict(id=sid,kind='native_v2',format_version=record.schema_version,
             location='records/'+record.record_type+'/'+record.sha256+'.json',sha256=sha256(data).hexdigest(),
-            captured_at='native-sealed-identity',producer_version='native-v2-publication:v1',
+            captured_at=prior[0] if prior else self.pub.clock(),producer_version='native-v2-publication:v1',
             metadata_json=_json({'reference':record.reference.to_dict()})))
         return sid
 
     def plan(self, *, manifest, case_definitions, pack_source):
         manifest = self._load(manifest)
+        pack_version=json.loads(pack_source)['pack_version']
         payload = manifest.to_dict()['payload']
         model = self._load(payload['model'])
         host = self._load(payload['host'])
@@ -90,14 +92,14 @@ class NativeV2Publisher:
             for benchmark in benchmarks.values():
                 bp = benchmark.to_dict()['payload']
                 bs = self._source(benchmark)
-                _insert(self.pub.con,'suites',dict(id=benchmark.sha256,name=bp['suite_id'],version=benchmark.schema_version,
+                _insert(self.pub.con,'suites',dict(id=benchmark.sha256,name=bp['suite_id'],version=pack_version,
                     source_id=bs,definition_json=_json(benchmark.to_dict())))
                 for position,case_id in enumerate(bp['case_ids'],1):
                     if case_id not in definitions:
                         raise DatabaseError('Native manifest lacks exact case definition')
                     definition = definitions[case_id]
                     cid = stable_id('case',benchmark.sha256,case_id)
-                    _insert(self.pub.con,'cases',dict(id=cid,logical_id=case_id,version='native-case:v1',source_id=bs,
+                    _insert(self.pub.con,'cases',dict(id=cid,logical_id=case_id,version=pack_version,source_id=bs,
                         input_sha256=sha256(canonical_json_bytes(definition)).hexdigest(),definition_json=_json(definition)))
                     if not self.pub.con.execute('SELECT 1 FROM suite_cases WHERE suite_id=? AND case_id=? AND position=?',(benchmark.sha256,cid,position)).fetchone():
                         self.pub.con.execute('INSERT INTO suite_cases VALUES(?,?,?)',(benchmark.sha256,cid,position))
@@ -107,9 +109,10 @@ class NativeV2Publisher:
                 if tp['benchmark'] != benchmark.reference.to_dict() or tp['effective_config'] != configs[tp['effective_config']['sha256']].reference.to_dict():
                     raise DatabaseError('Native trial/config/benchmark reference mismatch')
                 run = stable_id('run',manifest.sha256,benchmark.sha256,tp['effective_config']['sha256'])
+                prior=self.pub.con.execute('SELECT created_at FROM runs WHERE id=?',(run,)).fetchone()
                 _insert(self.pub.con,'runs',dict(id=run,source_id=source,suite_id=benchmark.sha256,
                     protocol_id=protocol,config_id=tp['effective_config']['sha256'],environment_id=host.sha256,
-                    created_at='native-manifest-sealed',origin=self.origin,manifest_json=_json(manifest.to_dict())))
+                    created_at=prior[0] if prior else self.pub.clock(),origin=self.origin,manifest_json=_json(manifest.to_dict())))
                 count = max(t.payload['ordinal'] for t in trials if t.payload['case_id']==tp['case_id'] and t.payload['benchmark']['sha256']==benchmark.sha256)
                 tid = stable_id('trial',manifest.sha256,trial.sha256)
                 _insert(self.pub.con,'trials',dict(id=tid,run_id=run,suite_id=benchmark.sha256,
@@ -169,7 +172,7 @@ class NativeV2Publisher:
                     pending.append(('native_record',self._load(reference)))
         return artifacts
 
-    def executed(self, *, manifest, trial, case_record, execution_records, driver=None):
+    def executed(self, *, manifest, trial, case_record, execution_records, driver=None, workspace=None):
         self._case_binding(manifest,trial,case_record)
         artifacts=self._capture(manifest,trial,[('case',case_record),*[('execution',r) for r in execution_records]])
         attempt=self.attempt(manifest,trial)
@@ -184,6 +187,18 @@ class NativeV2Publisher:
         native_root=getattr(native_driver,'evidence_directory',None)
         errors=[]
         for record in execution_records:
+            final_workspace=record.to_dict()['payload'].get('final_workspace')
+            if final_workspace is not None:
+                for reference in final_workspace['files']:
+                    if reference['state']!='file': continue
+                    try:
+                        if workspace is None: raise DatabaseError('Native tool workspace unavailable')
+                        data=_safe_path(workspace.root,reference['path']).read_bytes()
+                        if sha256(data).hexdigest()!=reference['sha256'] or len(data)!=reference['size_bytes']:
+                            raise DatabaseError('Native final workspace bytes/hash mismatch')
+                        artifacts.append(self.pub.artifact(attempt,'tool_file:'+reference['path'],data,media_type='application/octet-stream'))
+                        self.pub._boundary('during_tool_capture')
+                    except (OSError,ValueError,DatabaseError) as exc: errors.append(str(exc))
             def raw_digests(value):
                 if isinstance(value,dict):
                     if 'raw_response_sha256' in value: yield value['raw_response_sha256']
@@ -247,7 +262,8 @@ class NativeV2Publisher:
         assessment=next((a for a in native_assessments if a['outcome']==outcome or outcome=='UNKNOWN' and a['outcome']=='NOT_ASSESSED'),None)
         from localbench.v2.report_adapter import normalize_sealed_case
         rows=normalize_sealed_case(case_record,manifest,trial,evaluations,evidence_root=self.store.root,
-                                  unavailable=unavailable)
+            unavailable=unavailable,planned_trials=self.pub.con.execute('SELECT planned_trials FROM trials WHERE id=?',(self.pub._attempt(attempt)[0],)).fetchone()[0],
+            suite_version=self.pub.con.execute('SELECT s.version FROM trials t JOIN suites s ON s.id=t.suite_id WHERE t.id=?',(self.pub._attempt(attempt)[0],)).fetchone()[0])
         all_artifacts=self.pub._all_artifacts(attempt,artifacts)
         paths={sha256((self.pub.root/a['relative_path']).read_bytes()).hexdigest():a for a in all_artifacts}
         for row in rows:

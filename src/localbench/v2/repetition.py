@@ -521,7 +521,7 @@ def run_v2_repetitions(
         evidence_store.persist(case_record)
         case_records.append(case_record)
         if case_publisher is not None:
-            case_publisher.executed(manifest=manifest, trial=item.trial, case_record=case_record, execution_records=[trace, *(() if telemetry_record is None else (telemetry_record,))], driver=driver_binding.driver)
+            case_publisher.executed(manifest=manifest, trial=item.trial, case_record=case_record, execution_records=[trace, *(() if telemetry_record is None else (telemetry_record,))], driver=driver_binding.driver, workspace=item.workspace)
 
         if status == "error" and stop_reason == "model_driver_error":
             if case_publisher is not None:

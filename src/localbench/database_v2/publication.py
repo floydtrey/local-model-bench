@@ -300,9 +300,40 @@ class CasePublisher:
             result['metrics'] = project_metrics([r for r in rows if r is not None], metadata or {}, catalog, evidence_root=self.root)
         return result
 
+    def record_review(self, assessment_id, *, review_bytes, reviewer, kind='technical',
+                      supersedes_id=None, identity_verified=False):
+        """Append already completed native review evidence, never execution consent."""
+        if kind not in ('technical','human','reference') or not reviewer:
+            raise ValueError('Completed review needs an explicit kind and reviewer')
+        row=self.con.execute('SELECT attempt_id,source_id FROM assessments WHERE id=?',(assessment_id,)).fetchone()
+        if row is None: raise DatabaseError('Review has no exact committed assessment')
+        attempt,source=row
+        if not self.con.execute('SELECT 1 FROM case_result_assessments WHERE assessment_id=?',(assessment_id,)).fetchone():
+            raise DatabaseError('Review assessment has not been committed')
+        if supersedes_id is not None and self.con.execute('SELECT assessment_id FROM reviews WHERE id=?',(supersedes_id,)).fetchone() != (assessment_id,):
+            raise DatabaseError('Review supersession crosses assessments')
+        artifact=self.artifact(attempt,'review',review_bytes)
+        review_id=stable_id('completed-review',assessment_id,artifact['sha256'],reviewer,kind,supersedes_id)
+        prior=self.con.execute('SELECT recorded_at FROM reviews WHERE id=?',(review_id,)).fetchone()
+        with transaction(self.con):
+            self._record_artifact(attempt,source,artifact)
+            _insert(self.con,'reviews',dict(id=review_id,assessment_id=assessment_id,source_id=source,
+                artifact_id=artifact['id'],supersedes_id=supersedes_id,kind=kind,status='completed',
+                reviewer=reviewer,identity_verified=int(identity_verified),recorded_at=prior[0] if prior else self.clock(),
+                binding_json=_json({'assessment_id':assessment_id,'review_sha256':artifact['sha256'],
+                    'execution_permission':False})))
+            if not prior: self._event(attempt,'review_completed',source,{'review_id':review_id,'execution_permission':False})
+        return review_id
+
     def export(self, destination, *, catalog=None, metadata=None):
         """Replace a derived snapshot atomically; committed DB survives failures."""
         destination = Path(destination)
+        resolved=destination.resolve()
+        for _,_,dbpath in self.con.execute('PRAGMA database_list'):
+            if dbpath and resolved in {Path(dbpath).resolve(),Path(dbpath+'-wal').resolve(),Path(dbpath+'-shm').resolve()}:
+                raise DatabaseError('Projection export cannot replace authoritative database files')
+        if resolved.is_relative_to(self.root/'publication'):
+            raise DatabaseError('Projection export cannot replace immutable evidence')
         destination.parent.mkdir(parents=True, exist_ok=True)
         data = canonical_json_bytes(self.projection(catalog=catalog, metadata=metadata))
         fd, temporary = tempfile.mkstemp(prefix=destination.name+'.pending-', dir=destination.parent)
