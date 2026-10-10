@@ -1,0 +1,55 @@
+# Benchmark Lab v2 modernization — implementation plan v1
+
+## Scope and checkpoint
+
+Stage A only: inactive versioned SQLite storage inside `localbench`, schema/migrations, constraints, dictionary, ownership/provenance, verified backup/restore, deterministic tests and compatibility planning. Existing runners, assessors, T13 projection, Tkinter and queue/process ownership remain operational and unchanged. No API/UI, scheduler, inference, candidate execution, bulk history import, remote integration, public export or cutover is implemented. B–F require later controller authorization. This checkpoint remains subject to independent critical-defect review; passing tests does not constitute architectural acceptance.
+
+## Verified baseline and native options
+
+Base: `development/t16-standalone-results-20261009` at `4f55b18dd7a0a82447edef4a6c4281899f295c8c`. GitHub compare verifies it is 272 commits ahead of main, 92 ahead of the old architecture plan, 16 ahead of T05–T12 integration and 8 ahead of T13, with zero commits behind each. Choosing the earlier architecture branch would discard newer qualification/reporting infrastructure.
+
+Inspected source: `queue_gui/core.py`, `process.py`, `app.py`, `results.py`; v2 `contracts.py`, `records.py`, `orchestrator.py`, `configuration.py`, `reporting.py`, `report_adapter.py`, `metric_projection.py`, `validation_adapter.py`, role trace and telemetry; qualification Planner/Governor/Worker/verification contracts and assessors; Assistant campaign/CLI; v1 evaluation; evidence schemas; T13/T16 implementation records, technical integration record, metric catalog and current backlog; CI and package configuration.
+
+Existing capabilities: hash-sealed versioned model/runtime/config/host/suite/trial/manifest/case/evaluation records, exclusive evidence-file writes with fsync and read verification, event logs, repetition reporting, L0/L1/L2 pack/execution/evaluator contracts, bounded tools and containment, observed telemetry, T05–T12 role protocols and review/authorization boundaries, ASSISTANT-001/002 versioned project packets and acceptance, T13 metric catalog revision 1.1.0 (16 definitions), conservative read-only historical adapters, T15 deterministic regressions and T16 read-only Results. Queue JSON v1/v2 has per-item settings, atomic replacement, crash recovery to paused/interrupted, single active item and native instance/process custody. Ollama discovery observes installed tags independently of results.
+
+Verified gap: these stores do not provide cross-entity transactional relational storage, schema migrations or consistent DB+artifact backup. SQLite extends storage in the existing Python package. Existing sealed artifacts and T13 definitions remain authoritative; SQLite does not replace an evaluator or own execution. No separate service or independent state owner is introduced. Native file configuration remains authoritative until a later explicit cutover.
+
+Live checkout read-only audit: clean at `7e8c958df6ef290987c687d5c89f3581bace39c4`, one commit beyond the chosen base. It adds `report_tree.see(keys[0])` and a real-widget scroll regression. Stage A does not change those files. The GUI fix must be carried forward and retested before any later installation update; do not reset the live branch to this Stage A branch. Its backup bundle currently verifies and contains that exact commit.
+
+Backup verification on 2026-10-09: 7,421 ZIP entries / 55,795,857 manifest bytes; ZIP CRC and every archived size/SHA-256 match; all three bundles verify against available Git prerequisites. Archived queue v1 is Paused with 14 items. The baseline bundle protects `6624945...`; separate before/fix bundles protect `4f55b18...` and `7e8c958...`. Private audit records stay outside GitHub. Current live data and original backup evidence were not modified.
+
+Read-only genuine observations include v1 manifest/case/evaluation output, older five-role summaries/packages and a located Qwen 9B five-role archive with 22 result rows and a T13 projection. Archive presence is an observation, not controlled model qualification. No private report contents, prompts, candidates or evidence files are committed.
+
+## Database design before implementation
+
+Use SQLite WAL, synchronous FULL, foreign_keys ON, busy timeout and explicit BEGIN IMMEDIATE transaction boundaries. WAL is not a power-loss guarantee; filesystem/controller cache and Windows flush/rename behavior impose limits. Migration SQL and checksums are immutable; application_id/user_version and a ledger identify the schema. Unknown newer or altered histories fail closed. A migration batch rolls back entirely.
+
+Identity/version entities: source snapshots/mappings/import exceptions; immutable model identities; independent installed-model discovery observations; runtime configurations keyed by full canonical content with no name-based merging; versioned suite/case membership/protocol/assessor/metric/role criteria; environments/runs; planned case trials and explicitly linked repair attempts; separate execution, assessment and review history; resource observations; external artifact references and hashes; versioned metric populations/comparison decisions/public approvals; singleton existing-controller identity, queue snapshots and recovery records. Foreign keys and cross-binding triggers preserve run/config/suite/case/trial/assessment lineage. Append-only records preserve supersession and audit history. Queue records are storage only, with no claim/start/dispatch loop.
+
+## Acceptance gates
+
+1. Implement schema + checksum migration runner in `src/localbench/database_v2/`; no live callers.
+2. Document every entity/relationship, writer/read ownership, identity/provenance/integrity rules and historical adapter mapping.
+3. Implement portable consistent DB+external-artifact backup/restore to new destinations; verify before promotion; retain originals.
+4. Deterministic tests cover migration replay/tamper/newer rejection, transactional rollback, durability pragmas, keys/lineage, outcomes, config separation, integrity and backup/restore failures.
+5. GitHub CI on Windows/Linux Python 3.10/3.12 runs Stage A tests and the unchanged supported deterministic/frozen-source/Tk regressions. No models or inference.
+6. Commit bounded payloads through GitHub API; draft PR targets T16 development. Do not merge or pull into live. Report exact head/CI and remaining limits.
+
+## Future publishing/authority contract (not active in A)
+
+Scheduled → started → execution completed/interrupted → evidence finalized → assessment completed/unavailable → result committed → review pending/completed. A per-case publication transaction links exact finalized artifact hashes, attempt and assessment; successful results require evidence and a PASS assessment. Required evidence must be finalized and verified before DB commit. Recovery checks unpublished snapshots and committed references; preserves completed cases and honestly marks incomplete cases. It never invents assessment, reruns automatically or advances dependent Worker steps. Resume/rerun requires Owner authorization.
+
+Stages B–F must reuse existing controller/process owners. Local admin/authenticated remote Owner control is separate from private viewer/public visitor reads; authorization is server-side. Technical review cannot confer execution permission. Public data requires a separately versioned sanitized dataset and explicit approval; public visibility cannot grant execution authority.
+
+## Sequence and status
+
+| Stage | Dependency / deliverable | Status |
+|---|---|---|
+| A | Storage foundation and verified recovery primitives | Plan verified; implementation next |
+| B | Per-case durable publication/recovery using A and existing owners | Not started |
+| C | Local API and events with one controller | Not started |
+| D | Responsive web Results/control UI | Not started |
+| E | Historical import verification and sanitized publication | Not started |
+| F | Windows acceptance and explicit cutover; preserve GUI fix | Not started |
+
+Do not interpret this future sequence as approval to start B–F. Tkinter stays operational through F acceptance.
