@@ -48,7 +48,7 @@ Read-only audits covered native formats/owners and genuine v1, historical role a
 
 The original installation backup was currently verified: 7,421 archived files / 55,795,857 manifest bytes, every archived size/SHA-256, ZIP CRC and all three Git bundles pass. Its archived 14-item paused queue is a historical snapshot. Current live queue/process status observations belong to the Owner and do not establish assessed outcomes; no queue action was taken.
 
-Live Git checkout remains clean at protected GUI-fix commit `7e8c958df6ef290987c687d5c89f3581bace39c4`. Its Results scroll fix/regression are protected by the verified dedicated bundle and must be carried/retested before later cutover. Stage A's integration base remains T16 `4f55b18dd7a0a82447edef4a6c4281899f295c8c`; live checkout was not reset or altered.
+The last read-only Git audit observed a clean checkout at protected GUI-fix commit `7e8c958df6ef290987c687d5c89f3581bace39c4`. Its Results scroll fix/regression are protected by the verified dedicated bundle and must be carried/retested before later cutover. Stage A's integration base remains T16 `4f55b18dd7a0a82447edef4a6c4281899f295c8c`; live checkout was not reset or altered.
 
 ## Web System dependency and next stage
 
@@ -57,3 +57,7 @@ Live Git checkout remains clean at protected GUI-fix commit `7e8c958df6ef290987c
 Benchmark Lab retains DB, engine, queue, results, scoring, reviews, internal API and native app. Web System retains shared service directory/Control Center/Cloudflare/authentication/navigation architecture. No Web System repository edits or remote implementation occurred. Issue comments confer no execution/deployment authority.
 
 After root checkpoint acceptance and explicit later-stage authorization, B can implement per-case publication/recovery through existing owners, with patched-runtime verification first. Preserve completed cases, mark incomplete evidence honestly, never auto-rerun/invent assessment/advance dependent Worker steps, and require Owner authorization for resume/rerun. Complete collection import and remote integration remain deferred. Stop after A.
+
+## Owner activity protection
+
+The Owner subsequently reported actively running benchmark tests. No further live/shared-Git operations are performed. Live processes, queue, settings, results and installation stay untouched. Any later root-owned source pull must be an independent clone beneath the controller chat's work directory, never the live checkout or its shared Git metadata. Current queue changes are Owner activity and process status is not assessed outcome.
