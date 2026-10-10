@@ -84,13 +84,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_durability_pragmas_and_schema_are_deterministic(self):
-        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('busy_timeout',5000),('user_version',3)]:
+        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('busy_timeout',5000),('user_version',4)]:
             self.assertEqual(self.db.execute('PRAGMA '+name).fetchone()[0],value)
         other=connect(self.root/'other.sqlite3',validation_only=True)
         try:
             query="SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
             self.assertEqual(self.db.execute(query).fetchall(),other.execute(query).fetchall())
-            self.assertEqual(validate_schema(other),3)
+            self.assertEqual(validate_schema(other),4)
         finally: other.close()
 
     def test_migration_replay_does_not_change_ledger(self):
@@ -110,15 +110,15 @@ class DatabaseTests(unittest.TestCase):
             self.assertIsNone(con.execute("SELECT name FROM sqlite_master WHERE name='partial'").fetchone())
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
             migrate(con)
-            self.assertEqual(validate_schema(con),3)
+            self.assertEqual(validate_schema(con),4)
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
 
     def test_newer_tampered_foreign_and_noncontiguous_schemas_rejected(self):
         with self.assertRaises(DatabaseError): migrate(self.db,[replace(migrations()[0],sql=migrations()[0].sql+'\n-- tampered\n'),*migrations()[1:]])
-        self.db.execute('PRAGMA user_version=4')
+        self.db.execute('PRAGMA user_version=5')
         with self.assertRaises(DatabaseError): migrate(self.db)
-        self.db.execute('PRAGMA user_version=3')
+        self.db.execute('PRAGMA user_version=4')
         with self.assertRaises(DatabaseError): migrate(self.db,[migrations()[1]])
         foreign=sqlite3.connect(':memory:',isolation_level=None)
         try:
@@ -361,7 +361,7 @@ class DatabaseTests(unittest.TestCase):
             migrate(con,migrations()[:2])
             con.execute("INSERT INTO sources VALUES('s','test',NULL,'p',?,'now',NULL,'{}')",('d'*64,))
             migrate(con)
-            self.assertEqual(validate_schema(con),3)
+            self.assertEqual(validate_schema(con),4)
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
         self.foundation()
@@ -377,6 +377,33 @@ class DatabaseTests(unittest.TestCase):
         self.result()
         self.artifact('missing',integrity='missing')
         with self.assertRaises(sqlite3.IntegrityError): self.insert('reviews',id='bad',assessment_id='assessment',source_id='source',artifact_id='missing',kind='human',status='completed',identity_verified=0,recorded_at='now',binding_json='{}')
+
+    def test_numeric_affinity_cannot_manufacture_counts_or_scores(self):
+        self.foundation(); self.attempt(); self.artifact()
+        for index,values in enumerate([{'score':'unknown','maximum_score':'unknown'}, {'score':float('inf'),'maximum_score':float('inf')}, {'acceptance_checks':'unknown','check_unit':'checks'}]):
+            with self.assertRaises(sqlite3.IntegrityError): self.assessment('bad'+str(index),**values)
+        self.insert('cases',id='typed-case',logical_id='typed-case',version='1',source_id='source',input_sha256='b'*64,definition_json='{}')
+        with self.assertRaises(sqlite3.IntegrityError): self.insert('suite_cases',suite_id='suite',case_id='typed-case',position=1.5)
+        self.insert('metric_definitions',id='metric',name='coding',version='1',source_id='source',kind='capability',definition_json='{}')
+        with self.assertRaises(sqlite3.IntegrityError): self.metric(numerator='unknown',denominator='unknown')
+        self.metric(numerator=0,denominator=1,percentage=0)
+        self.assertEqual(self.db.execute('SELECT numerator,percentage FROM metric_results').fetchone(),(0,0.0))
+
+    def test_type_migration_rejects_existing_invalid_rows_atomically(self):
+        con=sqlite3.connect(self.root/'untyped.sqlite3',isolation_level=None)
+        try:
+            migrate(con,migrations()[:3])
+            # A real SQLite-affinity loophole, retained to prove upgrade rejection.
+            con.execute("INSERT INTO sources VALUES('s','test',NULL,'p',?,'now',NULL,'{}')",('d'*64,))
+            con.execute("INSERT INTO models VALUES('m','s','1','{}',?)",('b'*64,))
+            con.execute("INSERT INTO discovery_observations VALUES('d','s','m','now','fixture','tag','present','{}')")
+            con.execute("INSERT INTO artifacts VALUES('a','s','a.txt',NULL,'unknown','text/plain','missing',NULL)")
+            with self.assertRaises(sqlite3.IntegrityError): migrate(con)
+            self.assertEqual(con.execute('PRAGMA user_version').fetchone()[0],3)
+            self.assertEqual(con.execute("SELECT byte_count FROM artifacts WHERE id='a'").fetchone()[0],'unknown')
+            self.assertEqual(con.execute("SELECT count(*) FROM sqlite_master WHERE name LIKE 'typed_%'").fetchone()[0],0)
+            self.assertEqual(con.execute('SELECT count(*) FROM schema_migrations').fetchone()[0],3)
+        finally: con.close()
 
 
 if __name__=='__main__':

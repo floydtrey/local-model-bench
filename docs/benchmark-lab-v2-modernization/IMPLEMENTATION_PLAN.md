@@ -6,7 +6,7 @@ Stage A only: inactive versioned SQLite storage inside `localbench`, schema/migr
 
 ## Verified baseline and native options
 
-Base: `development/t16-standalone-results-20261009` at `4f55b18dd7a0a82447edef4a6c4281899f295c8c`. GitHub compare verifies it is 272 commits ahead of main, 92 ahead of the old architecture plan, 16 ahead of T05–T12 integration and 8 ahead of T13, with zero commits behind each. Choosing the earlier architecture branch would discard newer qualification/reporting infrastructure.
+Base: `development/t16-standalone-results-20261009` at `4f55b18dd7a0a82447edef4a6c4281899f295c8c`. GitHub compare verifies it is 272 commits ahead of main, 92 ahead of the old architecture plan, 16 ahead of T05–T12 integration and 8 ahead of T13, with zero commits behind each. Choosing the earlier architecture branch would discard newer qualification/reporting infrastructure. Additional GitHub comparisons verify native Ollama, telemetry, effective-config binding, multi-runtime interface, batch4 Worker and batch5 Tester/Reviewer branches are ancestors. Older role/worker qualification branches diverge from main; their source inventory was inspected separately. The current campaign source manifest pins Worker branch fce91a7... and 62 imported source fixtures; each copied Git blob matches both the manifest and original tree. Historical DSH launchers were intentionally not imported, and are not introduced by Stage A.
 
 Inspected source: `queue_gui/core.py`, `process.py`, `app.py`, `results.py`; v2 `contracts.py`, `records.py`, `orchestrator.py`, `configuration.py`, `reporting.py`, `report_adapter.py`, `metric_projection.py`, `validation_adapter.py`, role trace and telemetry; qualification Planner/Governor/Worker/verification contracts and assessors; Assistant campaign/CLI; v1 evaluation; evidence schemas; T13/T16 implementation records, technical integration record, metric catalog and current backlog; CI and package configuration.
 
@@ -30,7 +30,7 @@ Identity/version entities: source snapshots/mappings/import exceptions; immutabl
 
 Native installed Python 3.12.10 links affected SQLite 3.49.1. First Stage A CI inventory also found affected SQLite 3.40.1 (Windows 3.10), 3.49.1 (Windows 3.12) and 3.45.1 (Linux 3.10/3.12). Operational connection defaults to fail closed; isolated schema validation explicitly opts into test-only mode. Reuse and verify a patched native Python/SQLite runtime before B operational wiring. WAL+FULL and one scheduler do not establish safe multi-connection operation. See the compatibility/recovery record for version boundaries, primary documentation and limitations.
 
-The separate FloydsLab Web System owns shared service registration, health reporting, remote authentication, private navigation and eventual publication integration contracts. Benchmark Lab retains its database, engine, queue, results, review workflow and internal API. No Cloudflare routing, authentication platform or general Control Center is built here. The Owner will supply that contract later; review compatibility and propose necessary changes before agreement. Remote integration is not authorized until contract agreement and the relevant stages are ready.
+The separate FloydsLab Web System owns shared service registration, health reporting, remote authentication, private navigation and eventual publication integration contracts. Coordination is tracked at [Web System issue #1](https://github.com/floydtrey/floydslab-web-system/issues/1). Root reviewed contract 0.1.0 at exact commit 2cdd0855b2145b7022a45251d69fc7fa213a8928 and recorded limited technical acceptance of REG-01/HEALTH-01/AUTH-01/NAV-01/CTRL-01/PUB-01 ownership/security/directory principles. A versioned accepted-decision recording revision with both acknowledgment links is still pending root review. Formal fields, endpoints, authentication profile, actions, publication payloads and deployment are not agreed. No issue comment grants production or deployment authority. Benchmark Lab retains its database, engine, queue, results, review workflow and internal API. No Cloudflare routing, authentication platform or general Control Center is built here. The root controller owns detailed interface negotiations; review compatibility and propose necessary changes before detailed agreement. Remote integration is not authorized until contract agreement and the relevant stages are ready.
 
 ## Acceptance gates
 
@@ -51,7 +51,7 @@ Stages B–F must reuse existing controller/process owners. Local admin/authenti
 
 | Stage | Dependency / deliverable | Status |
 |---|---|---|
-| A | Storage foundation and verified recovery primitives | Implemented; final regression and independent review pending |
+| A | Storage foundation and verified recovery primitives | Implemented; GitHub verification recorded below, independent review pending |
 | B | Per-case durable publication/recovery using A and existing owners | Not started |
 | C | Local API and events with one controller | Not started |
 | D | Responsive web Results/control UI | Not started |
@@ -59,3 +59,7 @@ Stages B–F must reuse existing controller/process owners. Local admin/authenti
 | F | Windows acceptance and explicit cutover; preserve GUI fix | Not started |
 
 Do not interpret this future sequence as approval to start B–F. Tkinter stays operational through F acceptance.
+
+## Verification and final correctness check
+
+Implementation checkpoint `29cc6b6852bd73788af055858cd6de3428b496f0` passed four [Stage A jobs](https://github.com/floydtrey/local-model-bench/actions/runs/38022451495) (30 tests, runtime inventory and installed-package checks) and four [full qualification jobs](https://github.com/floydtrey/local-model-bench/actions/runs/38022451565) (582 discovered tests; inherited platform skips 1 Windows / 3 Linux, with required real Tk retained). A final native SQLite audit demonstrated that nonnumeric text can satisfy ordinary numeric CHECK comparisons. Additive migration 4 closes that storage-type gap with integer count guards, finite numeric score guards and an atomic existing-row audit. The current head has 32 Stage A tests; its exact check results are linked from [draft PR #10](https://github.com/floydtrey/local-model-bench/pull/10). This is a Stage A correctness change, with no runner, API or architectural expansion. Current CI is the source of final-head verification; independent architecture acceptance remains pending.
