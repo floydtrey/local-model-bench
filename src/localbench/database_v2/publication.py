@@ -11,7 +11,7 @@ import tempfile
 
 from localbench.v2.contracts import canonical_json_bytes
 from .backup import _safe_path, _hash
-from .store import DatabaseError, transaction, validate_schema, wal_runtime_safe
+from .store import DatabaseError, transaction, validate_schema, wal_runtime_safe, migrations
 
 VERSION = 'benchmark-case-publication:v1'
 
@@ -54,7 +54,8 @@ class CasePublisher:
                  validation_only=False):
         if not validation_only and not wal_runtime_safe():
             raise DatabaseError('Publication requires a patched operational SQLite runtime')
-        validate_schema(con)
+        if validate_schema(con)!=len(migrations()):
+            raise DatabaseError('Publication requires the fully migrated authoritative schema')
         for pragma, expected in [('foreign_keys', 1), ('recursive_triggers', 1),
                                   ('journal_mode', 'wal'), ('synchronous', 2)]:
             if con.execute('PRAGMA '+pragma).fetchone()[0] != expected:

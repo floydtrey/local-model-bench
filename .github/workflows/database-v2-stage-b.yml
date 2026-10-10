@@ -67,7 +67,7 @@ jobs:
       - name: Installed package retains every immutable migration
         run: |
           & $env:B_BASE_PYTHON -m pip install . --target installed-package
-          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==8; print([(m.version,m.name,m.digest) for m in chain])"
+          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==9; print([(m.version,m.name,m.digest) for m in chain])"
       - name: Retain patched operational/full-stack transcript
         if: always()
         uses: actions/upload-artifact@v4

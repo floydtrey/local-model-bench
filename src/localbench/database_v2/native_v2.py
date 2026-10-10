@@ -45,9 +45,9 @@ class NativeV2Publisher:
             metadata_json=_json({'reference':record.reference.to_dict()})))
         return sid
 
-    def plan(self, *, manifest, case_definitions, pack_source):
+    def plan(self, *, manifest, case_definitions, pack_source, input_version=None, native_row_key=None):
         manifest = self._load(manifest)
-        pack_version=json.loads(pack_source)['pack_version']
+        pack_version=input_version or json.loads(pack_source)['pack_version']
         payload = manifest.to_dict()['payload']
         model = self._load(payload['model'])
         host = self._load(payload['host'])
@@ -57,6 +57,8 @@ class NativeV2Publisher:
         configs = {r['sha256']:self._load(r) for r in payload['effective_configs']}
         evaluators = [self._load(r) for r in payload['evaluators']]
         trials = [self._load(r) for r in payload['trials']]
+        if native_row_key is not None and len(trials)!=1:
+            raise DatabaseError('One native row key must bind exactly one sealed trial')
         # Defining all trials before any start permits honest incomplete recovery.
         definitions = {str(c['case_id']):c for c in case_definitions}
         if len(definitions) != len(case_definitions):
@@ -122,9 +124,15 @@ class NativeV2Publisher:
             observation = dict(native_manifest=manifest.reference.to_dict(),native_trial=trial.reference.to_dict(),
                 native_case_id=trial.payload['case_id'],expected_evaluators=[r for r in payload['evaluators'] if any(
                     self._load(r).payload['evaluator_id']==e.get('evaluator_id') for e in definitions[trial.payload['case_id']].get('evaluators',[]))])
-            self.pub.schedule(attempt_id=self.attempt(manifest,trial),trial_id=stable_id('trial',manifest.sha256,trial.sha256),
-                source_id=source,observations=observation)
             attempt=self.attempt(manifest,trial)
+            if native_row_key is not None:
+                attempt=stable_id('native-row-attempt',native_row_key)
+                observation.update(native_key=list(native_row_key),native_case_id=trial.payload['case_id'],assessment_binding={},
+                    configuration_binding={'config_id':trial.payload['effective_config']['sha256'],'row_fields':{
+                        'publication_native_binding':{'manifest':manifest.reference.to_dict(),'trial':trial.reference.to_dict(),
+                            'effective_config':dict(trial.payload['effective_config'])}}})
+            self.pub.schedule(attempt_id=attempt,trial_id=stable_id('trial',manifest.sha256,trial.sha256),
+                source_id=source,observations=observation)
             artifact=self.pub.artifact(attempt,'input',pack_source)
             with transaction(self.pub.con): self.pub._record_artifact(attempt,source,artifact)
 

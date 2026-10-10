@@ -28,9 +28,18 @@ def _native_path(root, path):
 
 
 class NativeRowPublisher:
-    def __init__(self, publisher, *, report_path=None, catalog=None):
+    def __init__(self, publisher, *, report_path=None, catalog=None, origin='controlled'):
         self.pub, self.report_path, self.catalog = publisher, report_path, catalog
         self.post_commit_errors=[]
+        self.origin=origin
+
+    def plan_sealed_case(self, *, key, manifest, trial, case_definition, input_bytes, input_version, evidence_store):
+        """Record the existing native sealed plan, before its first session call."""
+        from .native_v2 import NativeV2Publisher
+        if trial.reference.to_dict() not in manifest.to_dict()['payload']['trials']:
+            raise DatabaseError('Native sealed plan/trial mismatch')
+        NativeV2Publisher(self.pub,evidence_store,origin=self.origin).plan(manifest=manifest,
+            case_definitions=[case_definition],pack_source=input_bytes,input_version=input_version,native_row_key=key)
 
     def register(self, key, *, trial_id, source_id, case_id, assessment_binding=None, configuration_binding=None):
         """Bind a native key to an existing exact trial; never merge by case name."""
@@ -70,7 +79,7 @@ class NativeRowPublisher:
             if safe.is_dir(): files.update(safe.rglob('*'))
             else: files.add(safe)
         artifacts=[self.pub.artifact(attempt,'case',canonical_json_bytes(row))]
-        pending=list(sealed_records); seen=set()
+        pending=list(sealed_records); seen=set(); sealed_evaluations=[]
         def references(value):
             if isinstance(value,dict):
                 if set(value)=={'record_type','logical_id','sha256'}: yield EvidenceRef.from_dict(value)
@@ -89,10 +98,16 @@ class NativeRowPublisher:
             if record.record_type=='case_result' and record.payload['case_id']!=binding['native_case_id']:
                 raise DatabaseError('Native sealed case differs from registered identity')
             seen.add(record.sha256)
-            artifacts.append(self.pub.artifact(attempt,'sealed_record',data))
+            purpose='execution' if record.record_type in ('role_execution_trace','tool_execution_trace','intrinsic_execution_trace') else 'case' if record.record_type=='case_result' else 'assessment' if record.record_type=='evaluation_result' else 'sealed_record'
+            artifact=self.pub.artifact(attempt,purpose,data); artifacts.append(artifact)
+            if record.record_type=='evaluation_result':
+                if dict(record.payload['case'])!=row.get('records',{}).get('case_result'):
+                    raise DatabaseError('Native sealed evaluation references another case')
+                sealed_evaluations.append((record,artifact))
             pending.extend(evidence_store.load(ref) for ref in references(record.to_dict()['payload']) if ref.sha256 not in seen)
         copied={}
         missing=[]
+        capture_manifest=[]
         for path in sorted(files):
             safe=_native_path(root,path)
             relative=safe.relative_to(root).as_posix()
@@ -100,9 +115,14 @@ class NativeRowPublisher:
             try: data=safe.read_bytes()
             except FileNotFoundError:
                 missing.append(relative); continue
-            purpose='assessment' if row.get('assessment_file') and safe==Path(row['assessment_file']).resolve() else 'capture'
+            purpose='assessment' if row.get('assessment_file') and safe==Path(row['assessment_file']).resolve() else 'native_file:'+relative
             artifact=self.pub.artifact(attempt,purpose,data)
             artifacts.append(artifact); copied[str(safe)]=artifact
+            capture_manifest.append({'native_relative_path':relative,'artifact_id':artifact['id'],
+                'sha256':artifact['sha256'],'byte_count':artifact['byte_count'],'purpose':purpose})
+        if any(item['purpose'].startswith('native_file:') for item in capture_manifest):
+            artifacts.append(self.pub.artifact(attempt,'capture',canonical_json_bytes(capture_manifest)))
+        artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
         self.pub.executed(attempt,artifacts,detail={'native_execution_status':row.get('execution_status',row.get('status'))})
         normalized=normalize_rows([row])[0]
         _,reasons=inspect_evidence(normalized,root)
@@ -110,7 +130,7 @@ class NativeRowPublisher:
         configuration=binding['configuration_binding']
         if not configuration or not configuration.get('row_fields'):
             reasons.append('native_configuration_binding_unavailable')
-        elif any(row.get(k)!=v for k,v in configuration['row_fields'].items()):
+        elif any(canonical_json_bytes(normalized.get(k))!=canonical_json_bytes(v) for k,v in configuration['row_fields'].items()):
             reasons.append('native_configuration_binding_mismatch')
         assessment_path=Path(row['assessment_file']).resolve() if row.get('assessment_file') else None
         assessment_data=json.loads((self.pub.root/copied[str(assessment_path)]['relative_path']).read_bytes()) if assessment_path and str(assessment_path) in copied else None
@@ -123,7 +143,8 @@ class NativeRowPublisher:
         exact=binding['assessment_binding']
         if assessment_data is not None:
             if exact:
-                if any(assessment_data.get(k)!=v for k,v in exact.items() if not k.startswith('_')): reasons.append('exact_native_assessment_binding_mismatch')
+                if any(canonical_json_bytes(assessment_data.get(k))!=canonical_json_bytes(v) for k,v in exact.items() if not k.startswith('_')):
+                    reasons.append('exact_native_assessment_binding_mismatch')
             elif assessment_data.get('case_id') != row['case_id']:
                 reasons.append('missing_exact_native_assessment_binding')
         outcome={'passed':'PASS','failed':'FAIL','blocked':'BLOCKED'}.get(assessed_outcome(normalized),'UNKNOWN')
@@ -151,6 +172,19 @@ class NativeRowPublisher:
             original=str(Path(ref['path']).resolve())
             if original in copied: ref['path']=copied[original]['relative_path']
         normalized.pop('source_evidence_root',None)
+        supplementary=[]
+        for record,artifact in sealed_evaluations:
+            evaluator=evidence_store.load(EvidenceRef.from_dict(record.payload['evaluator'])).payload
+            assessor=stable_id('assessor',evaluator['evaluator_id'],evaluator['version'],evaluator['implementation_sha256'])
+            if not self.pub.con.execute('SELECT 1 FROM assessors WHERE id=?',(assessor,)).fetchone():
+                raise DatabaseError('Native sealed evaluator has no registered exact assessor')
+            supplementary.append(dict(id=stable_id('assessment',attempt,record.sha256),attempt_id=attempt,assessor_id=assessor,
+                protocol_id=self.pub._attempt(attempt)[6],source_id=self.pub._attempt(attempt)[1],artifact_id=artifact['id'],
+                outcome={'pass':'PASS','fail':'FAIL','review':'NOT_ASSESSED','not_scored':'NOT_ASSESSED'}[record.payload['verdict']],
+                score=record.payload['score'],maximum_score=record.payload['maximum_score'],acceptance_checks=len(record.payload['checks']),
+                check_unit='native_evaluator_checks',detail_json=json.dumps(record.to_dict(),sort_keys=True)))
+        if assessment is None and outcome=='UNKNOWN':
+            assessment=next((a for a in supplementary if a['outcome']=='NOT_ASSESSED'),None)
         observations=[]
         supplied=list(native_attempts)
         if not supplied and isinstance(row.get('attempts'),list):
@@ -159,7 +193,8 @@ class NativeRowPublisher:
             data=canonical_json_bytes(item['observations'])
             if item.get('evidence_path'):
                 path=_native_path(root,item['evidence_path']); data=path.read_bytes()
-                if json.loads(data)!=item['observations']: raise DatabaseError('Native attempt evidence differs from owner observation')
+                if canonical_json_bytes(json.loads(data))!=canonical_json_bytes(item['observations']):
+                    raise DatabaseError('Native attempt evidence differs from owner observation')
             artifact=self.pub.artifact(attempt,'native_attempt',data)
             artifacts.append(artifact)
             identity=stable_id('native-phase',attempt,index)
@@ -172,7 +207,7 @@ class NativeRowPublisher:
         artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
         normalized['native_attempt_observation_ids']=[item['id'] for item in observations]
         normalized['native_attempt_observation_count']=len(observations)
-        self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,native_attempts=observations,projection_row=normalized)
+        self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,assessments=supplementary,native_attempts=observations,projection_row=normalized)
         result=self.pub.commit(attempt)
         if assessment is not None and human_review_state(normalized)=='recorded':
             review=normalized['human_adjudication']

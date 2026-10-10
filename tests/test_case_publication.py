@@ -255,5 +255,14 @@ class PublicationTests(unittest.TestCase):
         for table in ('assessments','committed_results','case_projection_inputs','case_commit_events'):
             self.assertEqual(self.count(table),0)
 
+    def test_publication_refuses_a_valid_but_unmigrated_old_connection(self):
+        from localbench.database_v2.store import migrations,migrate
+        con=sqlite3.connect(self.root/'old.sqlite3',isolation_level=None)
+        try:
+            migrate(con,migrations()[:-1])
+            with self.assertRaises(DatabaseError): CasePublisher(con,self.root/'not-created',clock=lambda:'now',validation_only=self.validation)
+            self.assertFalse((self.root/'not-created').exists())
+        finally: con.close()
+
 
 if __name__ == '__main__': unittest.main()

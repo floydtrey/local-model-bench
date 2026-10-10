@@ -428,7 +428,12 @@ def run_role_case(
     write_json(folder / "manifest.json", manifest.to_dict())
     write_json(folder / "workspace-before.json", before)
     publication_key = ("native-role", str(folder.resolve()), spec["case_id"], ordinal)
-    if case_publisher is not None: case_publisher.started(key=publication_key)
+    if case_publisher is not None:
+        case_publisher.plan_sealed_case(key=publication_key,manifest=manifest,trial=trial,
+            case_definition={'case_id':spec['case_id'],'source_definition':portable_role_input(bound_spec),
+                'evaluators':[{'evaluator_id':evaluator.payload['evaluator_id'],'contract_version':evaluator.payload['version']}]},
+            input_bytes=canonical_json_bytes(portable_role_input(bound_spec)),input_version=ROLE_CAMPAIGN_VERSION,evidence_store=evidence_store)
+        case_publisher.started(key=publication_key)
     session = RoleConversation(
         case_id=spec["case_id"], setup_driver=drivers["setup"], driver=drivers["dispatch"],
         evidence_dir=folder, workspace=workspace, timeout_seconds=timeout,
@@ -533,6 +538,9 @@ def run_role_case(
         "metrics": metrics, "evidence_directory": str(folder), "workspace": str(workspace.root) if workspace else None,
         "records": {"case_result": record.reference.to_dict(), "evaluation": review.reference.to_dict(), "manifest": manifest.reference.to_dict(), "trial": trial.reference.to_dict(), "trace": trace.reference.to_dict(), "compatibility": compatibility.reference.to_dict()},
     }
+    if case_publisher is not None:
+        result['publication_native_binding']={'manifest':manifest.reference.to_dict(),'trial':trial.reference.to_dict(),
+            'effective_config':dict(trial.payload['effective_config'])}
     write_json(folder / "result.json", result)
     (folder / "response.md").write_text(session.final, encoding="utf-8")
     if case_publisher is not None:

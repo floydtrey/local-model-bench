@@ -157,5 +157,80 @@ class NativeRowTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(0,))
         self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
 
+    def test_numeric_zero_cannot_replace_an_explicit_failed_boolean_parent(self):
+        key=('numeric-parent',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        import sqlite3
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.adapter.completed(key=key,row={'case_id':'C01','status':'success'},native_root=self.native,
+                native_attempts=[{'kind':'first_pass','observations':{'deterministic_passed':0}},
+                    {'kind':'repair','observations':{'deterministic_passed':True}}])
+        self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(0,))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
+
+    def test_phase_bytes_are_type_exact_even_for_boolean_zero_equality(self):
+        key=('phase-type',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        path=self.native/'phase.json'; path.write_text('{"deterministic_passed":false}')
+        with self.assertRaises(RuntimeError): self.adapter.completed(key=key,row={'case_id':'C01','status':'success'},native_root=self.native,
+            native_attempts=[{'kind':'first_pass','observations':{'deterministic_passed':0},'evidence_path':path}])
+        self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
+
+    def test_real_native_role_boundary_plans_actual_sealed_identities_and_publishes(self):
+        import test_v2_flashnext_roles as role_fixture
+        from localbench.v2.flashnext_roles import run_role_case
+        from localbench.v2.orchestrator import EvidenceStore
+        from localbench.v2.tool_harness import ModelTurnResponse
+        from localbench.v2.contracts import EvidenceRef
+        foundation_records=role_fixture.foundation()
+        store=EvidenceStore(self.root/'role-evidence')
+        factory=role_fixture.Factory(foundation_records,lambda request:ModelTurnResponse(content='Ready' if request.turn==1 else 'Authored advisory observation'),store)
+        adapter=NativeRowPublisher(self.pub,origin='synthetic_test')
+        spec=role_fixture.build_role_cases(role_fixture.CAMPAIGN,'planner')[1]
+        result=run_role_case(spec,foundation=foundation_records,base_config_spec=role_fixture.spec(),
+            driver_factory=factory,evidence_store=store,output_dir=self.root/'role-case',ordinal=1,case_publisher=adapter)
+        self.assertEqual(result['status'],'success'); self.assertTrue(result['human_review_required'])
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('UNKNOWN',))
+        actual_model=self.db.execute('SELECT m.identity_json FROM committed_results cr JOIN attempts a ON a.id=cr.attempt_id JOIN trials t ON t.id=a.trial_id JOIN runs r ON r.id=t.run_id JOIN runtime_configs c ON c.id=r.config_id JOIN models m ON m.id=c.model_id').fetchone()[0]
+        self.assertEqual(json.loads(actual_model),foundation_records['model'].to_dict())
+        self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(1,))
+        trace_bytes=store.path_for(EvidenceRef.from_dict(result['records']['trace'])).read_bytes()
+        self.assertTrue(any((self.pub.root/path[0]).read_bytes()==trace_bytes for path in self.db.execute(
+            "SELECT ar.relative_path FROM artifacts ar JOIN attempt_artifacts aa ON aa.artifact_id=ar.id WHERE aa.purpose='execution'")))
+
+    def test_real_v1_runner_publishes_before_next_case_without_claiming_qualification(self):
+        import test_localbench as v1_fixture
+        from localbench.runner import BenchmarkRunner
+        from localbench.models import ProviderResponse
+        from localbench.database_v2.store import record_identity
+        from localbench.config import load_config
+        from localbench.v2.contracts import canonical_json_bytes
+        from hashlib import sha256
+        from types import SimpleNamespace
+        helper=v1_fixture.RunnerTests()
+        config_path,config,config_hash,suites=helper._write_inputs(self.native,'http://example.invalid')
+        raw_config=json.loads(config_path.read_bytes()); raw_config['models']=raw_config['models'][:1]
+        config_path.write_text(json.dumps(raw_config)); config,config_hash=load_config(config_path)
+        model=config['models'][0]
+        record_identity(self.db,'models',id='v1-model',source_id='source',version='native-v1-declared',payload=model)
+        record_identity(self.db,'runtime_configs',id='v1-config',source_id='source',version='native-v1-declared',model_id='v1-model',payload=config)
+        self.db.execute("INSERT INTO suites VALUES('v1-suite',?,'native-v1','source',?)",(suites[0].id,json.dumps(json.loads(suites[0].source_path.read_bytes()))))
+        self.db.execute("INSERT INTO runs VALUES('v1-run','source','v1-suite','protocol','v1-config','env','now','synthetic_test','{}')")
+        runner=BenchmarkRunner(config,config_path,config_hash,suites,run_id='native-v1-fixture',case_publisher=self.adapter)
+        for index,case in enumerate(suites[0].cases,1):
+            self.db.execute("INSERT INTO cases VALUES(?,?,'1','source',?,?)",('v1-case'+str(index),case.id,sha256(canonical_json_bytes(case.messages)).hexdigest(),json.dumps(case.messages)))
+            self.db.execute('INSERT INTO suite_cases VALUES(?,?,?)',('v1-suite','v1-case'+str(index),index))
+            self.db.execute("INSERT INTO trials VALUES(?,'v1-run','v1-suite',?,1,1,'v1','source')",('v1-trial'+str(index),'v1-case'+str(index)))
+            self.adapter.register(('v1',str(runner.run_dir),model['id'],suites[0].id,case.id),trial_id='v1-trial'+str(index),source_id='source',case_id=case.id)
+        calls=[]
+        def chat(*args,**kwargs):
+            self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone()[0],len(calls))
+            calls.append(args)
+            return ProviderResponse(content='authored native output',raw={'fixture':True})
+        provider=SimpleNamespace(runtime_metadata=lambda timeout:{'version':'authored'},model_metadata=lambda name,timeout:None,
+            chat=chat,unload=lambda name,timeout:{'status':'authored'})
+        with patch('localbench.runner.make_provider',return_value=provider): runner.run()
+        self.assertEqual(len(calls),2)
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchall(),[('UNKNOWN',),('UNKNOWN',)])
+        self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(2,))
+
 
 if __name__=='__main__': unittest.main()
