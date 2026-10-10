@@ -536,7 +536,11 @@ def run_role_case(
     write_json(folder / "result.json", result)
     (folder / "response.md").write_text(session.final, encoding="utf-8")
     if case_publisher is not None:
-        case_publisher.completed(key=publication_key, row=result, native_root=folder, artifact_paths=[folder])
+        case_publisher.completed(key=publication_key, row=result, native_root=folder, artifact_paths=[folder],
+            native_attempts=[{'kind': 'first_pass' if index==0 else 'repair', 'observations':item,
+                'evidence_path':(folder / 'assessment' / ('first-pass-assessment.json' if index==0 else 'repair-assessment.json'))
+                    if (folder / 'assessment' / ('first-pass-assessment.json' if index==0 else 'repair-assessment.json')).is_file() else None}
+                for index,item in enumerate(assessments)], sealed_records=[record,review,trace,compatibility], evidence_store=evidence_store)
     return result
 
 

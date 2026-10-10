@@ -8,7 +8,7 @@ import json
 from hashlib import sha256
 import stat
 
-from localbench.v2.contracts import canonical_json_bytes
+from localbench.v2.contracts import canonical_json_bytes, EvidenceRef
 from localbench.v2.metric_projection import assessed_outcome, contradictions, inspect_evidence, human_review_state
 from localbench.v2.report_adapter import normalize_rows
 from .backup import _safe_path
@@ -53,7 +53,7 @@ class NativeRowPublisher:
     def started(self, *, key):
         attempt,_=self._binding(key); self.pub.started(attempt)
 
-    def completed(self, *, key, row, native_root, artifact_paths=()):
+    def completed(self, *, key, row, native_root, artifact_paths=(), native_attempts=(), sealed_records=(), evidence_store=None):
         attempt,binding=self._binding(key)
         if row.get('case_id') != binding['native_case_id']:
             raise DatabaseError('Native row differs from registered exact case')
@@ -70,6 +70,27 @@ class NativeRowPublisher:
             if safe.is_dir(): files.update(safe.rglob('*'))
             else: files.add(safe)
         artifacts=[self.pub.artifact(attempt,'case',canonical_json_bytes(row))]
+        pending=list(sealed_records); seen=set()
+        def references(value):
+            if isinstance(value,dict):
+                if set(value)=={'record_type','logical_id','sha256'}: yield EvidenceRef.from_dict(value)
+                else:
+                    for item in value.values(): yield from references(item)
+            elif isinstance(value,list):
+                for item in value: yield from references(item)
+        while pending:
+            record=pending.pop(0)
+            if evidence_store is None: raise DatabaseError('Native sealed evidence store unavailable')
+            loaded=evidence_store.load(record.reference)
+            data=evidence_store.path_for(record).read_bytes()
+            if loaded.reference!=record.reference or data!=canonical_json_bytes(record.to_dict()):
+                raise DatabaseError('Native sealed record bytes/identity mismatch')
+            if record.sha256 in seen: continue
+            if record.record_type=='case_result' and record.payload['case_id']!=binding['native_case_id']:
+                raise DatabaseError('Native sealed case differs from registered identity')
+            seen.add(record.sha256)
+            artifacts.append(self.pub.artifact(attempt,'sealed_record',data))
+            pending.extend(evidence_store.load(ref) for ref in references(record.to_dict()['payload']) if ref.sha256 not in seen)
         copied={}
         missing=[]
         for path in sorted(files):
@@ -130,7 +151,28 @@ class NativeRowPublisher:
             original=str(Path(ref['path']).resolve())
             if original in copied: ref['path']=copied[original]['relative_path']
         normalized.pop('source_evidence_root',None)
-        self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,projection_row=normalized)
+        observations=[]
+        supplied=list(native_attempts)
+        if not supplied and isinstance(row.get('attempts'),list):
+            supplied=[{'kind':'transport_attempt','observations':item} for item in row['attempts']]
+        for index,item in enumerate(supplied,1):
+            data=canonical_json_bytes(item['observations'])
+            if item.get('evidence_path'):
+                path=_native_path(root,item['evidence_path']); data=path.read_bytes()
+                if json.loads(data)!=item['observations']: raise DatabaseError('Native attempt evidence differs from owner observation')
+            artifact=self.pub.artifact(attempt,'native_attempt',data)
+            artifacts.append(artifact)
+            identity=stable_id('native-phase',attempt,index)
+            parent=stable_id('native-phase',attempt,index-1) if item['kind']=='repair' else None
+            observations.append(dict(id=identity,attempt_id=attempt,ordinal=index,kind=item['kind'],
+                parent_id=parent,parent_ordinal=index-1 if parent else None,source_id=self.pub._attempt(attempt)[1],
+                artifact_id=artifact['id'],observations_json=json.dumps(item['observations'],sort_keys=True)))
+            if item['kind'] in ('first_pass','repair'):
+                normalized.setdefault('evidence_refs',[]).append({'kind':item['kind'],'path':artifact['relative_path'],'sha256':artifact['sha256']})
+        artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
+        normalized['native_attempt_observation_ids']=[item['id'] for item in observations]
+        normalized['native_attempt_observation_count']=len(observations)
+        self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,native_attempts=observations,projection_row=normalized)
         result=self.pub.commit(attempt)
         if assessment is not None and human_review_state(normalized)=='recorded':
             review=normalized['human_adjudication']

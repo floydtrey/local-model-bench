@@ -172,7 +172,7 @@ class CasePublisher:
         return list(items.values())
 
     def prepare(self, attempt_id, *, outcome, artifacts, assessment=None,
-                assessments=(), projection_row=None, detail=None):
+                assessments=(), native_attempts=(), projection_row=None, detail=None):
         """Prepare recoverable immutable bytes before the result transaction.
 
         assessment is an exact native assessment mapping, not a scoring request.
@@ -190,7 +190,7 @@ class CasePublisher:
         artifacts = self._all_artifacts(attempt_id, artifacts, include_snapshot=False)
         envelope = dict(version=VERSION, attempt_id=attempt_id, trial_id=binding[0],
             run_id=binding[3], case_id=binding[4], config_id=binding[5], source_id=binding[1],
-            outcome=outcome, assessment=assessment, assessments=list(assessments), artifacts=list(artifacts),
+            outcome=outcome, assessment=assessment, assessments=list(assessments), native_attempts=list(native_attempts), artifacts=list(artifacts),
             projection_row=projection_row, detail=detail or {})
         snapshot = self.artifact(attempt_id, 'result_snapshot', canonical_json_bytes(envelope))
         self._verify([*artifacts, snapshot], attempt_id)
@@ -239,6 +239,10 @@ class CasePublisher:
                 if native_assessment['artifact_id'] not in {a['id'] for a in envelope['artifacts'] if a['purpose']=='assessment'}:
                     raise DatabaseError('Assessment evidence not bound to publication')
                 _insert(self.con, 'assessments', native_assessment)
+            for observation in envelope.get('native_attempts',[]):
+                if observation['attempt_id']!=attempt_id or observation['source_id']!=binding[1]:
+                    raise DatabaseError('Native attempt observation identity mismatch')
+                _insert(self.con,'native_attempt_observations',observation)
             self._event(attempt_id, 'assessment_completed' if assessment and assessment['outcome']!='NOT_ASSESSED' else 'assessment_unavailable', binding[1])
             _insert(self.con, 'committed_results', dict(id=result, attempt_id=attempt_id,
                 assessment_id=assessment['id'] if assessment else None, outcome=envelope['outcome'],
@@ -257,6 +261,9 @@ class CasePublisher:
             _insert(self.con, 'case_commit_events', dict(sequence=sequence, id=stable_id('case-committed', result), result_id=result))
             self._boundary('during_transaction')
             self._boundary('before_db_commit')
+            # Verify again at the actual success boundary. A file disappearing
+            # during a transaction must not leave a committed success behind.
+            self._verify(artifacts, attempt_id)
         self._boundary('after_db_commit')
         # Optional notification delivery is deliberately separate from COMMIT.
         return result

@@ -132,5 +132,30 @@ class NativeRowTests(unittest.TestCase):
             self.assertEqual(publisher.projection()['rows'][0]['case_id'],'C01')
         finally: restored.close()
 
+    def test_native_first_pass_and_repair_observations_have_exact_failed_parent(self):
+        key=('native-phases',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        first={'deterministic_passed':False,'checks':[{'id':'authored','passed':False}]}
+        repair={'deterministic_passed':True,'checks':[{'id':'authored','passed':True}]}
+        first_path=self.native/'first.json'; first_path.write_text(json.dumps(first))
+        repair_path=self.native/'repair.json'; repair_path.write_text(json.dumps(repair))
+        self.adapter.completed(key=key,row={'case_id':'C01','status':'success','first_pass_passed':False,'repair_attempted':True,'repair_passed':True},
+            native_root=self.native,native_attempts=[{'kind':'first_pass','observations':first,'evidence_path':first_path},
+                {'kind':'repair','observations':repair,'evidence_path':repair_path}])
+        observations=self.db.execute('SELECT id,kind,parent_id,observations_json FROM native_attempt_observations ORDER BY ordinal').fetchall()
+        self.assertEqual(len(observations),2); self.assertEqual(observations[1][2],observations[0][0])
+        self.assertEqual(json.loads(observations[0][3]),first); self.assertEqual(json.loads(observations[1][3]),repair)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM attempts').fetchone(),(1,))
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('UNKNOWN',))
+
+    def test_native_repair_after_a_pass_is_rejected_without_partial_result(self):
+        key=('bad-repair',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        import sqlite3
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.adapter.completed(key=key,row={'case_id':'C01','status':'success'},native_root=self.native,
+                native_attempts=[{'kind':'first_pass','observations':{'deterministic_passed':True}},
+                    {'kind':'repair','observations':{'deterministic_passed':True}}])
+        self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(0,))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
+
 
 if __name__=='__main__': unittest.main()

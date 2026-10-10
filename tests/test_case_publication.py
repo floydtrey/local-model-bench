@@ -247,5 +247,13 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual((self.root/'artifacts'/capture['relative_path']).read_bytes(),original)
         self.assertEqual(self.db.execute('pragma integrity_check').fetchone(),('ok',))
 
+    def test_evidence_disappearing_during_transaction_rolls_back_success(self):
+        capture=self.prepared()
+        def fault(boundary):
+            if boundary=='before_db_commit': (self.pub.root/capture['relative_path']).unlink()
+        with self.assertRaises(FileNotFoundError): self.publisher(fault=fault).commit('attempt')
+        for table in ('assessments','committed_results','case_projection_inputs','case_commit_events'):
+            self.assertEqual(self.count(table),0)
+
 
 if __name__ == '__main__': unittest.main()
