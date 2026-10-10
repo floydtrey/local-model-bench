@@ -13,6 +13,8 @@ on:
       - 'src/localbench/assistant001/**'
       - 'src/localbench/assistant002/**'
       - 'src/localbench/v2/**'
+      - 'src/localbench/database_v2/**'
+      - 'tests/test_database_v2.py'
       - 'src/localbench/queue_gui/**'
       - 'tests/test_queue_gui*.py'
       - 'tests/results_fixtures.py'

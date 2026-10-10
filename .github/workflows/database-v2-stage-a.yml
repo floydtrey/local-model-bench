@@ -1,0 +1,33 @@
+name: Benchmark Database Stage A
+on:
+  push:
+    branches: ['development/benchmark-lab-v2-stage-a-*']
+  pull_request:
+    paths: ['src/localbench/database_v2/**', 'tests/test_database_v2.py', '.github/workflows/database-v2-stage-a.yml', 'pyproject.toml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  schema:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Record actual native SQLite and operational gate
+        run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print('Python',sys.version,'SQLite',sqlite3.sqlite_version,'operational_WAL_allowed',wal_runtime_safe())"
+      - name: Isolated deterministic schema and backup tests
+        run: python -m unittest discover -s tests -p 'test_database_v2.py' -v
+      - name: Verify installed package includes migration SQL
+        run: |
+          python -m pip install . --target installed-package
+          python -I -c "import sys,pathlib; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==2; print('Packaged migrations',[(m.version,m.name,m.digest) for m in chain])"
