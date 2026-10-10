@@ -13,12 +13,14 @@ from .governor_packet import PROJECTS, CASES, prepare, verify_run, external_dire
 from .governor_assessment import assess, draft_review
 
 
-def run_governor(run, sessions, *, repo=None):
+def run_governor(run, sessions, *, repo=None, case_publisher=None):
     run = external_directory(run, repo)
     packet = verify_run(run, repo)
     if (run / "session.json").exists() or (run / "roles").exists():
         raise ValueError("Use a fresh Governor session")
     evidence = external_directory(run / "roles/governor", repo)
+    if case_publisher is not None:
+        case_publisher.started(key=("controlled-role", str(run.resolve()), 'governor', packet["case_id"], 1))
     try:
         result = sessions(role="governor", case_id=packet["case_id"], prompt=packet["prompt"],
                           workspace=None, writable=[], evidence=evidence)
@@ -29,10 +31,13 @@ def run_governor(run, sessions, *, repo=None):
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "final.txt").write_bytes(result.get("final_response", "").encode())
     write_json(run / "session.json", result)
+    if case_publisher is not None:
+        case_publisher.capture_completed(key=("controlled-role",str(run.resolve()),'governor',packet['case_id'],1),
+            case_id=packet['case_id'],capture=result,native_root=run,artifact_paths=[run/'session.json',evidence])
     return result
 
 
-def assess_run(run, *, candidate_file=None, review_file=None, repo=None):
+def assess_run(run, *, candidate_file=None, review_file=None, repo=None, case_publisher=None):
     run = external_directory(run, repo)
     packet = verify_run(run, repo)
     if candidate_file is not None:
@@ -93,6 +98,8 @@ def assess_run(run, *, candidate_file=None, review_file=None, repo=None):
            "comparison_note": "Require matching frozen inputs/rubric and verified effective runtime/configuration. Host facts must match. Imports and missing evidence are ineligible; human reference review remains pending."}
     from localbench.v2.report_adapter import bind_current_assessment
     bind_current_assessment(row, run, "qualification-v2-governor")
+    if case_publisher is not None:
+        case_publisher.completed(key=("controlled-role", str(run.resolve()), 'governor', packet["case_id"], 1), row=row, native_root=run)
     summary = {"campaign": "qualification-v2-governor", "roles": ["governor"],
                "track": "controlled_role_qualification", "results": [row], "planned_cases": 1,
                "completed_cases": int(session["status"] == "success"),

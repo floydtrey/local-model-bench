@@ -351,6 +351,7 @@ def run_role_case(
     prerequisite_handoff: str | None = None, dependency_blocked: bool = False,
     case_context_factory: Callable | None = None,
     driver_binding: Mapping[str, Any] | None = None,
+    case_publisher=None,
 ) -> dict[str, Any]:
     """Seal a single two-turn case before its first model call, then preserve all evidence."""
     folder = Path(output_dir)
@@ -426,6 +427,13 @@ def run_role_case(
     (folder / "dispatch.txt").write_bytes(prompt.encode("utf-8"))
     write_json(folder / "manifest.json", manifest.to_dict())
     write_json(folder / "workspace-before.json", before)
+    publication_key = ("native-role", str(folder.resolve()), spec["case_id"], ordinal)
+    if case_publisher is not None:
+        case_publisher.plan_sealed_case(key=publication_key,manifest=manifest,trial=trial,
+            case_definition={'case_id':spec['case_id'],'source_definition':portable_role_input(bound_spec),
+                'evaluators':[{'evaluator_id':evaluator.payload['evaluator_id'],'contract_version':evaluator.payload['version']}]},
+            input_bytes=canonical_json_bytes(portable_role_input(bound_spec)),input_version=ROLE_CAMPAIGN_VERSION,evidence_store=evidence_store)
+        case_publisher.started(key=publication_key)
     session = RoleConversation(
         case_id=spec["case_id"], setup_driver=drivers["setup"], driver=drivers["dispatch"],
         evidence_dir=folder, workspace=workspace, timeout_seconds=timeout,
@@ -530,8 +538,17 @@ def run_role_case(
         "metrics": metrics, "evidence_directory": str(folder), "workspace": str(workspace.root) if workspace else None,
         "records": {"case_result": record.reference.to_dict(), "evaluation": review.reference.to_dict(), "manifest": manifest.reference.to_dict(), "trial": trial.reference.to_dict(), "trace": trace.reference.to_dict(), "compatibility": compatibility.reference.to_dict()},
     }
+    if case_publisher is not None:
+        result['publication_native_binding']={'manifest':manifest.reference.to_dict(),'trial':trial.reference.to_dict(),
+            'effective_config':dict(trial.payload['effective_config'])}
     write_json(folder / "result.json", result)
     (folder / "response.md").write_text(session.final, encoding="utf-8")
+    if case_publisher is not None:
+        case_publisher.completed(key=publication_key, row=result, native_root=folder, artifact_paths=[folder],
+            native_attempts=[{'kind': 'first_pass' if index==0 else 'repair', 'observations':item,
+                'evidence_path':(folder / 'assessment' / ('first-pass-assessment.json' if index==0 else 'repair-assessment.json'))
+                    if (folder / 'assessment' / ('first-pass-assessment.json' if index==0 else 'repair-assessment.json')).is_file() else None}
+                for index,item in enumerate(assessments)], sealed_records=[record,review,trace,compatibility], evidence_store=evidence_store)
     return result
 
 
@@ -542,6 +559,7 @@ def run_role_campaign(
     governor_root: Path | None = None, case_context_factory: Callable | None = None,
     progress: Callable[[Mapping[str, Any]], None] | None = None,
     driver_binding: Mapping[str, Any] | None = None,
+    case_publisher=None,
 ) -> dict[str, Any]:
     """Run a one-pass screen or three-repeat qualification evidence collection.
 
@@ -577,7 +595,7 @@ def run_role_campaign(
                 evidence_store=evidence_store, output_dir=output / f"repetition-{ordinal}" / spec["case_id"], ordinal=ordinal,
                 workspace_root=workspace, reuse_workspace=scenario and scenario_started,
                 prerequisite_handoff=previous_handoff if scenario else None, dependency_blocked=dependency_blocked,
-                case_context_factory=case_context_factory, driver_binding=driver_binding,
+                case_context_factory=case_context_factory, driver_binding=driver_binding, case_publisher=case_publisher,
             )
             if scenario:
                 scenario_started = True

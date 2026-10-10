@@ -8,7 +8,7 @@ from .packet import DOCS, digest, packet_root, read_run, snapshot, task_prompt, 
 
 
 def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
-                     allow_host_execution=False, assessor=assess, packet_api=None):
+                     allow_host_execution=False, assessor=assess, packet_api=None, case_publisher=None, row_finalize=None):
     from . import packet as default_packet
     api = packet_api or default_packet
     if not allow_host_execution:
@@ -32,9 +32,15 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                "repair_attempted": False, "repair_passed": None,
                "deterministic_passed": None, "first_pass_passed": None,
                "evidence_directory": str(evidence), "metrics": {}}
+        publication_key = ("assistant-chain", str(run.resolve()), case_id, ordinal)
+        if case_publisher is not None:
+            case_publisher.started(key=publication_key)
         if not predecessor_accepted:
             row.update(status="blocked", stop_reason="predecessor_not_accepted",
                        correctness="not-assessed-predecessor-blocked")
+            if row_finalize is not None: row_finalize(row)
+            if case_publisher is not None:
+                case_publisher.completed(key=publication_key, row=row, native_root=run)
             results.append(row); continue
         before = snapshot(run / "workspace")
         prompt = api.task_prompt(run, task["id"], handoff, repo)
@@ -76,6 +82,9 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                        error=f"{type(exc).__name__}: {exc}")
             predecessor_accepted = False
         row["metrics"] = {**row.get("metrics", {}), "wall_seconds": time.monotonic() - started}
+        if row_finalize is not None: row_finalize(row)
+        if case_publisher is not None:
+            case_publisher.completed(key=publication_key, row=row, native_root=run)
         results.append(row); summary["completed_cases"] += 1
         if not predecessor_accepted:
             summary["stopped"] = {"task": task["id"], "reason": row.get("stop_reason"),
@@ -127,7 +136,7 @@ def role_prompt(role, source_run, *, repo=None, governor_root=None, packet_api=N
 
 
 def run_probe(target_run, source_run, sessions, *, role, repo=None,
-              governor_root=None, plan_file=None, allow_host_execution=False, packet_api=None):
+              governor_root=None, plan_file=None, allow_host_execution=False, packet_api=None, case_publisher=None):
     """One advisory role, never auto-authorize a subsequent role from its prose."""
     import shutil
     from .packet import scope_diff
@@ -168,6 +177,8 @@ def run_probe(target_run, source_run, sessions, *, role, repo=None,
     (target_run / "probe-source.json").write_text(json.dumps({"source_run": str(source_run.resolve()), "files": source_before}, indent=2), encoding="utf-8")
     evidence = target_run / "roles" / role
     writable = ["tests/test_candidate.py"] if role == "tester" else []
+    publication_key = ("assistant-probe", str(target_run.resolve()), prefix + role, 1)
+    if case_publisher is not None: case_publisher.started(key=publication_key)
     result = sessions(role=role, case_id=prefix + role, prompt=prompt,
                       workspace=target_run / "workspace" if role == "tester" else None,
                       writable=writable, evidence=evidence)
@@ -177,6 +188,8 @@ def run_probe(target_run, source_run, sessions, *, role, repo=None,
                   correctness="human-review-pending", deterministic_passed=None,
                   evidence_directory=str(evidence), scope=scope,
                   source_unchanged=snapshot(source_run / "workspace") == source_before)
+    if case_publisher is not None:
+        case_publisher.completed(key=publication_key, row=result, native_root=target_run, artifact_paths=[target_run / "probe-source.json"])
     summary = {"campaign": record["packet_id"], "track": "advisory-role-probe", "results": [result],
                "planned_cases": 1, "completed_cases": 1, "qualification_status": "human-review-pending"}
     write_json(target_run / "summary.json", summary)

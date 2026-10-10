@@ -1,0 +1,77 @@
+name: Benchmark Database Stage B Publication
+on:
+  push:
+    branches: ['development/benchmark-lab-v2-modernization-*']
+    paths: ['src/localbench/database_v2/**', 'src/localbench/v2/**', 'src/localbench/assistant001/**', 'src/localbench/qualification_v2/**', 'tests/test_case_publication*.py', 'tests/test_database_v2.py', '.github/workflows/database-v2-stage-b.yml', '.github/workflows/qualification-v2-foundation.yml']
+  pull_request:
+    paths: ['src/localbench/database_v2/**', 'tests/test_case_publication*.py', '.github/workflows/database-v2-stage-b.yml', '.github/workflows/qualification-v2-foundation.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publication:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Record linked runtime; affected versions validate isolated fixtures only
+        run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print(sys.version,sqlite3.sqlite_version,wal_runtime_safe())"
+      - name: Foundation regressions
+        run: python -m unittest discover -s tests -p 'test_database_v2.py' -v
+      - name: Publication regressions
+        run: python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+  patched-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: src
+      LOCALBENCH_REQUIRE_OPERATIONAL_DB: '1'
+      LOCALBENCH_REQUIRE_TK: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pin official full private runtime archive (no registration or global installation)
+        shell: pwsh
+        run: |
+          "B_BASE_PYTHON=$((Get-Command python).Source)" | Out-File -Append $env:GITHUB_ENV
+          Invoke-WebRequest https://www.python.org/ftp/python/3.15.0/python-3.15.0-amd64.zip -OutFile python315.zip
+          if ((Get-FileHash python315.zip).Hash.ToLower() -ne '6b1a3f885ce416cf3a68af203e62203664eb5224d8d0c1d2a1945fddec5c500b') { throw 'Runtime archive digest mismatch' }
+          Expand-Archive -LiteralPath python315.zip -DestinationPath runtime315
+          if ((Get-FileHash runtime315/DLLs/sqlite3.dll).Hash.ToLower() -ne '8a65064bad951ce2ed19104f125b6258fb6d770b01e9868637b89f808a6fbeff') { throw 'SQLite DLL digest mismatch' }
+          (Resolve-Path runtime315).Path | Out-File -Append $env:GITHUB_PATH
+      - name: Record actual runtime and fail closed on affected SQLite
+        run: python -c "import sys,sqlite3,_sqlite3,tkinter,_tkinter; from localbench.database_v2.store import wal_runtime_safe; print(sys.executable,sys.version,sqlite3.sqlite_version,sqlite3.connect(':memory:').execute('select sqlite_source_id()').fetchone()); print(sqlite3.__file__,_sqlite3.__file__,tkinter.__file__,_tkinter.__file__); assert wal_runtime_safe()"
+      - name: Publication uses default operational connections
+        run: python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+      - name: Foundation on patched runtime
+        run: python -m unittest discover -s tests -p 'test_database_v2.py' -v
+      - name: Full retained native engine, assessors, reporting and required Tk compatibility
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tests -v *> patched-windows-tests.txt
+          $testExit = $LASTEXITCODE
+          Get-Content patched-windows-tests.txt
+          exit $testExit
+      - name: Installed package retains every immutable migration
+        run: |
+          & $env:B_BASE_PYTHON -m pip install . --target installed-package
+          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==10; print([(m.version,m.name,m.digest) for m in chain])"
+      - name: Retain patched operational/full-stack transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-b-patched-windows
+          path: patched-windows-tests.txt
+          retention-days: 14

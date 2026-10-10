@@ -474,6 +474,21 @@ def save_state(path: Path, state: QueueState) -> None:
             Path(temporary).unlink(missing_ok=True)
 
 
+def read_state_snapshot(path: Path, *, maximum_bytes=1_048_576) -> dict:
+    """Passive bounded observation; never applies owner crash recovery or writes."""
+    if type(maximum_bytes) is not int or maximum_bytes < 1:
+        raise ValueError('Snapshot bound must be positive')
+    with Path(path).open('rb') as stream:
+        data = stream.read(maximum_bytes + 1)
+    if len(data) > maximum_bytes:
+        raise ValueError('Queue snapshot exceeds read bound')
+    payload = json.loads(data)
+    state = _state_from_payload(payload, recover=False)
+    from hashlib import sha256
+    return {'native_schema_version': payload['version'], 'content_sha256': sha256(data).hexdigest(),
+            'native': {'version': STATE_VERSION, **asdict(state)}}
+
+
 def load_state(path: Path) -> QueueState:
     """Load local state without starting work; crash-interrupted runs are not retried."""
     path = Path(path)

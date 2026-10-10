@@ -12,8 +12,14 @@ license = {text = "MIT"}
 authors = [{name = "Local Model Bench contributors"}]
 dependencies = []
 
+[project.optional-dependencies]
+api = ["fastapi==0.143.0", "pydantic==2.14.0", "uvicorn==0.54.0"]
+
 [project.scripts]
 local-model-bench = "localbench.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"localbench.database_v2" = ["migrations/*.sql"]

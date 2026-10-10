@@ -4,6 +4,7 @@ on:
     branches: [benchmark/flashnext-all-roles-v1, 'development/**']
     paths:
       - 'docs/qualification-v2/**'
+      - 'docs/benchmark-lab-v2-modernization/**'
       - 'project-benchmarks/assistant-001/qualification-v2/**'
       - 'project-benchmarks/assistant-002/qualification-v2/**'
       - 'project-benchmarks/assistant-001/v1/**'
@@ -13,12 +14,19 @@ on:
       - 'src/localbench/assistant001/**'
       - 'src/localbench/assistant002/**'
       - 'src/localbench/v2/**'
+      - 'src/localbench/database_v2/**'
+      - 'src/localbench/api/**'
+      - 'tests/test_api_v1.py'
+      - 'tests/test_native_passive_reads.py'
+      - 'tests/test_database_v2.py'
+      - 'tests/test_case_publication*.py'
       - 'src/localbench/queue_gui/**'
       - 'tests/test_queue_gui*.py'
       - 'tests/results_fixtures.py'
       - 'tests/test_qualification_v2*.py'
       - 'schemas/v2/metric-report.schema.json'
       - '.github/workflows/qualification-v2-foundation.yml'
+      - '.github/workflows/database-v2-stage-b.yml'
   workflow_dispatch:
 permissions:
   contents: read

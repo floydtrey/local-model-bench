@@ -306,7 +306,7 @@ def _csv_view(rows):
 
 
 def run_shared(*, repo_root: Path, output_dir: Path, foundation, profile, server, stage: str, progress=print,
-               driver_class=LlamaCppChatDriver) -> dict[str, Any]:
+               driver_class=LlamaCppChatDriver, case_publisher=None) -> dict[str, Any]:
     smoke = stage == "smoke"
     phase = "qualification" if stage == "shared-qualification" else "screen"
     completed, references, all_rows, compatibility = [], [], [], []
@@ -353,7 +353,7 @@ def run_shared(*, repo_root: Path, output_dir: Path, foundation, profile, server
                     "runtime_fallback": "forbidden", "role_qualification_claim": False},
                 workspace_factory=workspace_factory if level == "L2" else None,
                 asset_loader=lambda asset: (repo_root / asset["source_locator"]).read_bytes(),
-                resource_telemetry=system_resource_telemetry_binding(sampling_interval_ms=profile["limits"]["telemetry_interval_ms"]) if level == "L2" else None)
+                resource_telemetry=system_resource_telemetry_binding(sampling_interval_ms=profile["limits"]["telemetry_interval_ms"]) if level == "L2" else None, case_publisher=case_publisher)
         finally:
             router.close()
             rows = measurement_rows(router, run)
@@ -416,7 +416,7 @@ def create_gate(*, output_dir: Path, stage: str, foundation, result, parent_gate
     return gate
 
 
-def role_runner(*, foundation, profile, output_dir, campaign_root, server, roles, phase, governor_root, progress):
+def role_runner(*, foundation, profile, output_dir, campaign_root, server, roles, phase, governor_root, progress, case_publisher=None):
     from .flashnext_roles import run_role_campaign
     store = foundation["store"]
     counter = 0
@@ -461,7 +461,7 @@ def role_runner(*, foundation, profile, output_dir, campaign_root, server, roles
                foundation={key: foundation[key] for key in ("host", "runtime", "model", "interface")},
                base_config_spec=generation_spec(profile), driver_factory=driver_factory,
                evidence_store=store, output_dir=output_dir / "roles", governor_root=governor_root,
-               case_context_factory=case_context, progress=role_progress)
+               case_context_factory=case_context, progress=role_progress, case_publisher=case_publisher)
 
 
 def parser() -> argparse.ArgumentParser:

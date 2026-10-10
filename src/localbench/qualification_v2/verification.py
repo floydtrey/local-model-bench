@@ -12,7 +12,7 @@ from .verification_packet import WRITABLE, safe_snapshot, verify_run
 from .verification_assessment import assess, draft_review
 
 
-def run_trial(run, sessions, *, identity, repo=None, allow_model_inference=False, allow_host_execution=False):
+def run_trial(run, sessions, *, identity, repo=None, allow_model_inference=False, allow_host_execution=False, case_publisher=None):
     """Trusted session injection is the existing testing seam, not a new runner.
 
     Identity comes from the operator's provider records, never candidate output.
@@ -29,6 +29,8 @@ def run_trial(run, sessions, *, identity, repo=None, allow_model_inference=False
     if (run / "capture.json").exists() or (run / "roles").exists():
         raise ValueError("Fresh verification trial required")
     evidence = run / "roles" / packet["role"]
+    if case_publisher is not None:
+        case_publisher.started(key=("controlled-role", str(run.resolve()), packet["role"], packet["case_id"], 1))
     try:
         result = sessions(role=packet["role"], case_id=packet["case_id"], prompt=packet["prompt"],
                           workspace=run / "workspace" if packet["role"] == "tester" else None,
@@ -45,6 +47,9 @@ def run_trial(run, sessions, *, identity, repo=None, allow_model_inference=False
                 "evidence_file_sha256": safe_snapshot(evidence),
                 "authority_violations": result.get("authority_violations", 0)}
     write_json(run / "capture.json", captured)
+    if case_publisher is not None:
+        case_publisher.capture_completed(key=("controlled-role",str(run.resolve()),packet['role'],packet['case_id'],1),
+            case_id=packet['case_id'],capture=captured,native_root=run,artifact_paths=[run/'capture.json',evidence])
     return captured
 
 
@@ -67,7 +72,7 @@ def read_trial(run, repo=None):
     return packet, capture, artifacts
 
 
-def assess_run(run, *, review_file=None, repo=None):
+def assess_run(run, *, review_file=None, repo=None, case_publisher=None):
     run = Path(run)
     packet, capture, artifacts = read_trial(run, repo)
     review = json.loads(read_regular(Path(review_file))) if review_file else None
@@ -87,6 +92,8 @@ def assess_run(run, *, review_file=None, repo=None):
            "evidence_directory": str(target), "session_evidence_directory": str(run / "roles" / packet["role"])}
     from localbench.v2.report_adapter import bind_current_assessment
     bind_current_assessment(row, run, "qualification-v2-verification")
+    if case_publisher is not None:
+        case_publisher.completed(key=("controlled-role", str(run.resolve()), packet["role"], packet["case_id"], 1), row=row, native_root=run)
     summary = {"campaign": "qualification-v2-verification", "roles": [packet["role"]], "results": [row],
                "planned_cases": 1, "completed_cases": int(capture["status"] == "success"),
                "qualification_status": "human-review-pending", "project_execution_authorized": False}
