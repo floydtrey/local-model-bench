@@ -132,7 +132,7 @@ class PublicationTests(unittest.TestCase):
             def fault(name):
                 if name==boundary: raise RuntimeError(boundary)
             with self.assertRaises(RuntimeError): self.publisher(fault=fault).commit('attempt')
-            for table in ('assessments','committed_results','reviews','case_projection_inputs','case_commit_events'):
+            for table in ('assessments','committed_results','reviews','case_projection_inputs','case_commit_events','case_publication_revisions','case_publication_events'):
                 self.assertEqual(self.count(table),0,table)
         self.pub.commit('attempt'); self.assertEqual(self.count('committed_results'),1)
 

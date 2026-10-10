@@ -14,6 +14,7 @@ from .backup import _safe_path, _hash
 from .store import DatabaseError, transaction, validate_schema, wal_runtime_safe, migrations
 
 VERSION = 'benchmark-case-publication:v1'
+PROJECTION_VERSION = 'benchmark-case-publication:v2'
 
 
 def _json(value):
@@ -124,16 +125,48 @@ class CasePublisher:
                     sha256=digest, byte_count=len(data), media_type=media_type,
                     purpose=purpose, required=int(required))
 
-    def executed(self, attempt_id, artifacts, *, interrupted=False, detail=None):
+    def executed(self, attempt_id, artifacts, *, interrupted=False, detail=None, publication_row=None):
         """Called after native output/tool capture; never infer from exit code."""
         binding = self._attempt(attempt_id)
+        snapshot=None
+        if publication_row is not None:
+            if any(publication_row.get(k) is not None for k in ('assessed_outcome','score','maximum_score')):
+                raise DatabaseError('Capture cannot fabricate native assessment/score')
+            envelope=dict(attempt_id=attempt_id,trial_id=binding[0],run_id=binding[3],
+                case_id=binding[4],config_id=binding[5],source_id=binding[1],
+                row=publication_row,artifacts=list(artifacts))
+            snapshot=self.artifact(attempt_id,'capture_publication_snapshot',canonical_json_bytes(envelope))
+            publication_id=stable_id('case-capture',attempt_id,snapshot['sha256'])
+            prior=self.con.execute("SELECT id FROM case_publication_revisions WHERE attempt_id=? AND stage='capture'",(attempt_id,)).fetchone()
+            if prior:
+                if prior[0]!=publication_id: raise DatabaseError('Immutable native capture replay differs')
+                self._verify([*artifacts,snapshot],attempt_id)
+                return publication_id
+            artifacts=[*artifacts,snapshot]
         self._verify(artifacts, attempt_id)
         with transaction(self.con):
             for artifact in artifacts:
                 self._record_artifact(attempt_id, binding[1], artifact)
             self._event(attempt_id, 'execution_interrupted' if interrupted else 'execution_completed',
                         binding[1], detail)
+            if snapshot is not None:
+                self._append_revision(publication_id,attempt_id,'capture',None,snapshot['id'],publication_row,artifacts)
+                self._boundary('during_capture_transaction')
+                self._boundary('before_capture_commit')
+                self._verify(artifacts,attempt_id)
         self._boundary('execution_recorded')
+        if snapshot is not None:
+            self._boundary('after_capture_commit')
+            return publication_id
+
+    def _append_revision(self, identity, attempt, stage, result, snapshot, row, artifacts):
+        revision=self.con.execute('SELECT coalesce(max(revision),0)+1 FROM case_publication_revisions WHERE attempt_id=?',(attempt,)).fetchone()[0]
+        encoded=_json(row)
+        _insert(self.con,'case_publication_revisions',dict(id=identity,attempt_id=attempt,revision=revision,
+            stage=stage,result_id=result,snapshot_artifact_id=snapshot,row_json=encoded,
+            row_sha256=sha256(encoded.encode()).hexdigest(),artifacts_json=_json(artifacts)))
+        sequence=self.con.execute('SELECT coalesce(max(sequence),0)+1 FROM case_publication_events').fetchone()[0]
+        _insert(self.con,'case_publication_events',dict(sequence=sequence,id=identity))
 
     def _verify(self, artifacts, attempt):
         seen = set()
@@ -260,6 +293,8 @@ class CasePublisher:
                 row_json=_json(envelope['projection_row']), row_sha256=sha256(canonical_json_bytes(envelope['projection_row'])).hexdigest()))
             sequence = self.con.execute('SELECT coalesce(max(sequence),0)+1 FROM case_commit_events').fetchone()[0]
             _insert(self.con, 'case_commit_events', dict(sequence=sequence, id=stable_id('case-committed', result), result_id=result))
+            self._append_revision(stable_id('case-committed',result),attempt_id,'assessed',result,
+                                  snapshot['id'],envelope['projection_row'],artifacts)
             self._boundary('during_transaction')
             self._boundary('before_db_commit')
             # Verify again at the actual success boundary. A file disappearing
@@ -270,7 +305,8 @@ class CasePublisher:
         return result
 
     def events(self, *, after=0):
-        return [dict(sequence=r[0], id=r[1], result_id=r[2]) for r in self.con.execute('SELECT sequence,id,result_id FROM case_commit_events WHERE sequence>? ORDER BY sequence', (after,))]
+        return [dict(sequence=r[0],id=r[1],result_id=r[2],attempt_id=r[3],revision=r[4],stage=r[5])
+            for r in self.con.execute('SELECT e.sequence,e.id,p.result_id,p.attempt_id,p.revision,p.stage FROM case_publication_events e JOIN case_publication_revisions p ON p.id=e.id WHERE e.sequence>? ORDER BY e.sequence',(after,))]
 
     def deliver(self, consumer='native-callback'):
         """At-least-once after commit; callback deduplicates stable event IDs."""
@@ -278,30 +314,42 @@ class CasePublisher:
             return []
         delivered = []
         for event in self.events():
-            if self.con.execute('SELECT 1 FROM case_event_receipts WHERE event_id=? AND consumer=?', (event['id'],consumer)).fetchone():
+            if self.con.execute('SELECT 1 FROM case_publication_receipts WHERE event_id=? AND consumer=?', (event['id'],consumer)).fetchone():
                 continue
             self._boundary('before_notify')
             self.notify(event)
             self._boundary('after_notify')
             with transaction(self.con):
-                self.con.execute('INSERT INTO case_event_receipts(event_id,consumer) VALUES(?,?)', (event['id'], consumer))
+                self.con.execute('INSERT INTO case_publication_receipts(event_id,consumer) VALUES(?,?)', (event['id'], consumer))
+                # Retain compatibility receipts for the original final-only seam.
+                if self.con.execute('SELECT 1 FROM case_commit_events WHERE id=?',(event['id'],)).fetchone():
+                    self.con.execute('INSERT INTO case_event_receipts(event_id,consumer) VALUES(?,?)',(event['id'],consumer))
             delivered.append(event['id'])
         return delivered
 
     def projection(self, *, catalog=None, metadata=None):
-        """Rebuild from committed rows only; T13 retains metric/coverage policy."""
+        """Latest append-only publication per attempt; T13 remains the scorer."""
         rows = []
-        for encoded,digest,attempt in self.con.execute('SELECT p.row_json,p.row_sha256,r.attempt_id FROM case_projection_inputs p JOIN case_commit_events e ON e.result_id=p.result_id JOIN committed_results r ON r.id=p.result_id ORDER BY e.sequence'):
+        latest=self.con.execute('SELECT p.row_json,p.row_sha256,p.attempt_id,p.stage,p.artifacts_json,p.snapshot_artifact_id,p.result_id FROM case_publication_revisions p JOIN case_publication_events e ON e.id=p.id WHERE p.revision=(SELECT max(q.revision) FROM case_publication_revisions q WHERE q.attempt_id=p.attempt_id) ORDER BY e.sequence').fetchall()
+        for encoded,digest,attempt,stage,artifact_json,snapshot,result_id in latest:
             if sha256(encoded.encode()).hexdigest() != digest:
                 raise DatabaseError('Projection input hash mismatch')
             row = json.loads(encoded)
             publication_rows = row if isinstance(row,list) else [row]
             try:
-                self._prepared(attempt)
+                if stage=='assessed': self._prepared(attempt)
+                else:
+                    artifacts=json.loads(artifact_json)
+                    self._verify(artifacts,attempt)
+                    snap=next(a for a in artifacts if a['id']==snapshot)
+                    envelope=json.loads(_safe_path(self.root,snap['relative_path']).read_bytes())
+                    if envelope['attempt_id']!=attempt or _json(envelope['row'])!=encoded:
+                        raise DatabaseError('Capture publication snapshot/identity mismatch')
             except (OSError,ValueError,DatabaseError) as exc:
                 publication_rows = [dict(r,publication_integrity='evidence_unavailable',adapter_exclusion_reason=str(exc)) if r is not None else None for r in publication_rows]
             rows.extend(publication_rows)
-        result = dict(schema_version=VERSION, committed_results=len(self.events()), rows=rows,
+        result = dict(schema_version=PROJECTION_VERSION, committed_results=sum(r[6] is not None for r in latest),
+                      published_attempts=len(latest),rows=rows,
                       cursor=max((e['sequence'] for e in self.events()), default=0))
         if catalog is not None:
             from localbench.v2.metric_projection import project_metrics
@@ -369,7 +417,8 @@ class CasePublisher:
         for attempt, state in self.con.execute('SELECT id,execution_status FROM attempt_execution_state ORDER BY id').fetchall():
             committed = self.con.execute('SELECT id FROM committed_results WHERE attempt_id=?', (attempt,)).fetchone()
             intent = self.con.execute('SELECT 1 FROM case_publication_intents WHERE attempt_id=?', (attempt,)).fetchone()
-            disposition, reason = ('preserved', None) if committed else ('incomplete', 'no_prepared_publication')
+            capture = self.con.execute("SELECT 1 FROM case_publication_revisions WHERE attempt_id=? AND stage='capture'",(attempt,)).fetchone()
+            disposition, reason = ('preserved', None) if committed else ('preserved','capture_published_assessment_pending') if capture else ('incomplete', 'no_prepared_publication')
             try:
                 for relative,digest,size in self.con.execute('SELECT ar.relative_path,ar.sha256,ar.byte_count FROM attempt_artifacts aa JOIN artifacts ar ON ar.id=aa.artifact_id WHERE aa.attempt_id=?', (attempt,)):
                     if _hash(_safe_path(self.root,relative)) != (digest,size):

@@ -65,8 +65,7 @@ class NativeRowPublisher:
     def capture_completed(self, *, key, case_id, capture, native_root, artifact_paths):
         """Record native execution capture before a separately invoked assessor.
 
-        This does not claim assessment or a terminal committed benchmark result.
-        Interrupted run/assessment workflows retain explicit completed execution.
+        Publish pending assessment immediately; no score/final result is invented.
         """
         attempt,binding=self._binding(key)
         if case_id!=binding['native_case_id']: raise DatabaseError('Native capture case identity mismatch')
@@ -84,7 +83,21 @@ class NativeRowPublisher:
         artifacts.append(self.pub.artifact(attempt,'capture',canonical_json_bytes(manifest)))
         artifacts.append(self.pub.artifact(attempt,'case',canonical_json_bytes({'case_id':case_id,'capture':capture})))
         artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
-        self.pub.executed(attempt,artifacts,detail={'native_execution_status':capture.get('status'),'assessment':'not_yet_invoked'})
+        identity=self.pub._attempt(attempt)
+        pending_row={'case_id':case_id,'run_id':identity[3],'trial_id':identity[0],
+            'attempt_id':attempt,'config_id':identity[5],'execution_status':capture.get('status','unknown'),
+            'assessment_state':'pending','assessed_outcome':None,'score':None,'maximum_score':None,
+            'publication_state':'capture','native_capture':capture,
+            'adapter_exclusion_reason':'native_assessment_pending'}
+        publication=self.pub.executed(attempt,artifacts,
+            detail={'native_execution_status':capture.get('status'),'assessment':'not_yet_invoked'},publication_row=pending_row)
+        self._after_publication(publication)
+        return publication
+
+    def _after_publication(self, publication_id):
+        for operation in (self.pub.deliver,lambda:self.pub.export(self.report_path,catalog=self.catalog) if self.report_path else None):
+            try: operation()
+            except Exception as exc: self.post_commit_errors.append({'publication_id':publication_id,'error':str(exc)})
 
     def completed(self, *, key, row, native_root, artifact_paths=(), native_attempts=(), sealed_records=(), evidence_store=None):
         attempt,binding=self._binding(key)
@@ -238,13 +251,12 @@ class NativeRowPublisher:
         artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
         normalized['native_attempt_observation_ids']=[item['id'] for item in observations]
         normalized['native_attempt_observation_count']=len(observations)
+        normalized['assessment_state']='completed' if assessment_data is not None or sealed_evaluations else 'unavailable'
         self.pub.prepare(attempt,outcome=outcome,artifacts=artifacts,assessment=assessment,assessments=supplementary,native_attempts=observations,projection_row=normalized)
         result=self.pub.commit(attempt)
         if assessment is not None and human_review_state(normalized)=='recorded':
             review=normalized['human_adjudication']
             self.pub.record_review(assessment['id'],review_bytes=canonical_json_bytes(review),
                 reviewer=review['reviewer'],kind='human',identity_verified=False)
-        for operation in (self.pub.deliver,lambda:self.pub.export(self.report_path,catalog=self.catalog) if self.report_path else None):
-            try: operation()
-            except Exception as exc: self.post_commit_errors.append({'result_id':result,'error':str(exc)})
+        self._after_publication(result)
         return result

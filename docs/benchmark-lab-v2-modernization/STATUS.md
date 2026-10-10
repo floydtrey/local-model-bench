@@ -61,3 +61,9 @@ After root checkpoint acceptance and explicit later-stage authorization, B can i
 ## Owner activity protection
 
 The Owner subsequently reported actively running benchmark tests. No further live/shared-Git operations are performed. Live processes, queue, settings, results and installation stay untouched. Any later root-owned source pull must be an independent clone beneath the controller chat's work directory, never the live checkout or its shared Git metadata. Current queue changes are Owner activity and process status is not assessed outcome.
+
+
+## Stage B corrective gate in progress
+Canonical B source at d6a7caf899bdea5623323158774c1f88274c640a had green48 B/38 A/638 full tests, but root identified a required behavior gap: capture_completed was absent from published partial projection/global events until separate assessment. That checkpoint is NOT accepted as complete; C implementation remains gated. A final documentation acknowledgment was not committed when approval review hit the usage limit.
+
+The authorized minimal correction adds immutable same-DB publication revisions/events via migration10, immediate verified capture visibility and notification with pending/unavailable assessment and null score/outcome, and later native assessed revision under the same identities. Defaults/native owners/live runtime remain unchanged. No new controller/service/broker/assessor or execution is introduced. Positive native two-case-before-second-start, pending restart, late assessment without rerun/inflation, corruption, rollback, dedup and old-event/receipt upgrade tests pass locally in the isolated full patched Windows runtime (54 tests before the full-tree crash matrix). Fresh exact-head CI and root acceptance remain mandatory. Native producer contract and dictionary describe corrected semantics; no merge/cutover/live change is authorized by this record.

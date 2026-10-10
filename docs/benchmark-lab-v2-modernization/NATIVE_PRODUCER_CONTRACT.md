@@ -43,3 +43,15 @@ Current CLI parsers and campaign scripts have NO publication-path switches; a Py
 - Define restoration/resync behavior when a client cursor exceeds a deliberately restored DB snapshot; stable event IDs support dedup but do not grant resume authority.
 - Keep health scoped to actually qualified runtime/storage/engine/controller components; patched DB success alone is not model/service readiness.
 - Web issue #1 remains root-owned. Formal endpoints/hosts/ports, health aggregation, trust/session/token/provider profiles and public payload/grants remain unagreed. No remote integration or public raw evidence export is enabled here.
+
+
+## Corrected completed-capture publication (schema10)
+The d6a7caf checkpoint's capture_completed stored execution/artifacts but did NOT expose a published row or global event; green tests did not establish B acceptance. Its previous zero-result capture test is replaced/expanded with positive visibility semantics.
+
+capture_completed now commits verified evidence, completed execution, an append-only capture revision and a global publication event in the SAME existing DB transaction, before the native run_* returns or starts the next case. Its projection row states assessment_state=pending, assessed_outcome=null, score=null and maximum_score=null; native capture status/prose never becomes PASS. Projection/export and notification happen after commit. Failure to notify/export cannot erase the publication.
+
+Later completed/assess_run preserves its native assessment and original final committed_result/intent, then appends an assessed revision under the SAME attempt/trial/case/config identity. Latest-revision projection has one population entry per canonical attempt, while history retains both snapshots. Event count is not case/trial/attempt count: published_attempts counts latest attempts; committed_results counts final assessed publications. Original result/intent/history and migrations1-9 remain immutable. No rerun, new scorer/controller/broker, or queue advancement is introduced.
+
+events(after) now uses the ordered case_publication_events stream for BOTH capture and assessed revisions, including stable ID, sequence, attempt_id, revision, stage and optional result_id. Old final cursor/event IDs and receipts are migrated without replacement; original case_commit_events remain compatibility history. Delivery is at-least-once, with append-only receipts and stable ID dedup. Snapshot version is benchmark-case-publication:v2. CLI activation remains deferred to C via the existing launch path above.
+
+Recovery preserves a published capture with assessment pending and verifies its indexed artifacts. It never runs an assessor/model/tests or resumes work. Sixteen authored abrupt-process boundaries include rollback before capture commit and visible pending capture after commit; they are simulations, not physical power-cut proof. B acceptance remains blocked until the corrected source's fresh patched-Windows/full supported gates and root review pass.
