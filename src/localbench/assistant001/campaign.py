@@ -6,6 +6,30 @@ import time
 from .assessment import assess
 from .packet import DOCS, digest, packet_root, read_run, snapshot, task_prompt, write_json
 
+def classify_worker_failure(session_result, acceptance):
+    """Additive diagnosis only; the frozen assessor and verdict remain authoritative."""
+    status, reason = session_result.get("status"), session_result.get("stop_reason")
+    if reason == "tool_transport_incompatible":
+        return "tool_transport_incompatible"
+    if status == "protocol_failure":
+        return "tool_protocol_or_transport_failure"
+    if reason == "unauthorized_role_setup_tool_call":
+        return "setup_tool_boundary_violation"
+    if status == "resource_limit":
+        return "output_limit" if reason == "output_token_limit" else "resource_limit"
+    if status == "blocked":
+        return "execution_blocked"
+    if status != "success":
+        return "session_incomplete_or_failed"
+    if not acceptance.get("passed"):
+        return "implementation_acceptance_failure"
+    if not session_result.get("final_response", "").strip():
+        return "missing_handoff"
+    if session_result.get("authority_violations"):
+        return "authority_scope_violation"
+    return None
+
+
 
 def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                      allow_host_execution=False, assessor=assess, packet_api=None):
@@ -51,6 +75,7 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
                 allow_host_execution=True, before=before, writable=task["writable_paths"])
             accepted = (acceptance["passed"] and result["status"] == "success"
                         and bool(handoff.strip()) and not result.get("authority_violations", 0))
+            row["failure_attribution"] = classify_worker_failure(result, acceptance)
             row.update(deterministic_passed=accepted, first_pass_passed=accepted,
                        assessment_file=str(path / "assessment.json"),
                        correctness="deterministic-pass-review-pending" if accepted else "not-accepted-review-pending",
@@ -73,6 +98,7 @@ def run_worker_chain(run, sessions, *, through="T06", repo=None, ordinal=1,
         except Exception as exc:
             row.update(status="error", stop_reason="project_runner_or_infrastructure_failure",
                        correctness="not-assessed", deterministic_passed=False, first_pass_passed=False,
+                       failure_attribution="project_runner_or_assessor_exception",
                        error=f"{type(exc).__name__}: {exc}")
             predecessor_accepted = False
         row["metrics"] = {**row.get("metrics", {}), "wall_seconds": time.monotonic() - started}
