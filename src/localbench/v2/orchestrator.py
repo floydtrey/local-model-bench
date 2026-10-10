@@ -658,6 +658,7 @@ def run_v2_pack(
     asset_loader: AssetLoader | None = None,
     supplemental_evidence: Mapping[str, Sequence[SealedEvidence]] | None = None,
     clock: Clock = _utc_now,
+    case_publisher=None,
 ) -> OrchestratedRun:
     """Plan, seal, persist, execute and evaluate one Benchmark Pack.
 
@@ -829,6 +830,9 @@ def run_v2_pack(
         )
     )
 
+    if case_publisher is not None:
+        case_publisher.plan(manifest=manifest, case_definitions=list(pack.cases))
+
     if driver_binding.execution_kind == "subprocess":
         raise OrchestrationBlocked(
             "subprocess driver binding was preflighted and sealed, but BL-8A has no "
@@ -846,6 +850,8 @@ def run_v2_pack(
         effective = effective_by_profile[str(case["requirements"]["configuration_profile"])]
         trial = trial_by_case[case_id]
         binding = binding_by_case[case_id]
+        if case_publisher is not None:
+            case_publisher.started(manifest=manifest, trial=trial)
         started_at = clock()
         if not isinstance(started_at, str) or not started_at:
             raise ValueError("clock must return non-empty timestamp strings")
@@ -915,51 +921,64 @@ def run_v2_pack(
         )
         evidence_store.persist(case_record)
         case_records.append(case_record)
+        if case_publisher is not None:
+            case_publisher.executed(manifest=manifest, trial=trial, case_record=case_record, execution_records=[trace])
 
         # A model-driver exception is an operational qualification failure,
         # not evidence of candidate capability. Preserve the execution trace
         # and case result, then stop before deterministic scoring can turn the
         # infrastructure failure into a model score.
         if status == "error" and stop_reason == "model_driver_error":
+            if case_publisher is not None:
+                case_publisher.completed(manifest=manifest, trial=trial, case_record=case_record, evaluations=[], unavailable="model_driver_error")
             raise OrchestrationBlocked(
                 f"model driver failed for case {case_id}; "
                 "qualification evidence was preserved and scoring was stopped"
             )
 
-        extras = supplemental_evidence.get(case_id, ())
-        if isinstance(extras, (str, bytes, bytearray)):
-            raise ValueError("supplemental_evidence values must be sequences")
-        for item in extras:
-            if not isinstance(item, SealedEvidence):
-                raise ValueError("supplemental_evidence must contain SealedEvidence values")
-        interface_evidence = () if execution_interface is None else (execution_interface,)
-        available = (
-            host,
-            runtime,
-            model,
-            benchmark,
-            effective,
-            trial,
-            *interface_evidence,
-            binding,
-            manifest,
-            trace,
-            *tuple(extras),
-        )
-        for evaluator_ref in case["evaluators"]:
-            evaluator_id = str(evaluator_ref["evaluator_id"])
-            contract_version = str(evaluator_ref["contract_version"])
-            definition = evaluator_registry.resolve(evaluator_id, contract_version)
-            evaluation = evaluator_registry.evaluate(
-                _derived_id("evaluation", case_record.sha256, evaluator_id, contract_version),
-                evaluator_id=evaluator_id,
-                contract_version=contract_version,
-                case_definition=case,
-                case_result_record=case_record,
-                supplemental_evidence=_supplemental_for_definition(definition, available),
+        case_evaluations = []
+        try:
+            extras = supplemental_evidence.get(case_id, ())
+            if isinstance(extras, (str, bytes, bytearray)):
+                raise ValueError("supplemental_evidence values must be sequences")
+            for item in extras:
+                if not isinstance(item, SealedEvidence):
+                    raise ValueError("supplemental_evidence must contain SealedEvidence values")
+            interface_evidence = () if execution_interface is None else (execution_interface,)
+            available = (
+                host,
+                runtime,
+                model,
+                benchmark,
+                effective,
+                trial,
+                *interface_evidence,
+                binding,
+                manifest,
+                trace,
+                *tuple(extras),
             )
-            evidence_store.persist(evaluation)
-            evaluation_records.append(evaluation)
+            for evaluator_ref in case["evaluators"]:
+                evaluator_id = str(evaluator_ref["evaluator_id"])
+                contract_version = str(evaluator_ref["contract_version"])
+                definition = evaluator_registry.resolve(evaluator_id, contract_version)
+                evaluation = evaluator_registry.evaluate(
+                    _derived_id("evaluation", case_record.sha256, evaluator_id, contract_version),
+                    evaluator_id=evaluator_id,
+                    contract_version=contract_version,
+                    case_definition=case,
+                    case_result_record=case_record,
+                    supplemental_evidence=_supplemental_for_definition(definition, available),
+                )
+                evidence_store.persist(evaluation)
+                evaluation_records.append(evaluation)
+                case_evaluations.append(evaluation)
+        except (Exception, KeyboardInterrupt) as exc:
+            if case_publisher is not None:
+                case_publisher.completed(manifest=manifest, trial=trial, case_record=case_record, evaluations=case_evaluations, unavailable=type(exc).__name__)
+            raise
+        if case_publisher is not None:
+            case_publisher.completed(manifest=manifest, trial=trial, case_record=case_record, evaluations=case_evaluations)
 
     return OrchestratedRun(
         benchmark=benchmark,

@@ -26,9 +26,10 @@ def stable_id(kind, *parts):
 
 def _insert(con, table, values):
     columns = tuple(values)
+    identity = 'id' if 'id' in values else {'case_publication_intents':'attempt_id',
+                                          'case_projection_inputs':'result_id'}[table]
     row = con.execute('SELECT ' + ','.join(columns) + ' FROM ' + table +
-                      ' WHERE ' + ' AND '.join(k+'=?' for k in columns[:1]),
-                      (values[columns[0]],)).fetchone()
+                      ' WHERE ' + identity+'=?', (values[identity],)).fetchone()
     expected = tuple(values.values())
     if row is not None:
         if row != expected:
@@ -170,7 +171,7 @@ class CasePublisher:
         return list(items.values())
 
     def prepare(self, attempt_id, *, outcome, artifacts, assessment=None,
-                projection_row=None, detail=None):
+                assessments=(), projection_row=None, detail=None):
         """Prepare recoverable immutable bytes before the result transaction.
 
         assessment is an exact native assessment mapping, not a scoring request.
@@ -188,7 +189,7 @@ class CasePublisher:
         artifacts = self._all_artifacts(attempt_id, artifacts)
         envelope = dict(version=VERSION, attempt_id=attempt_id, trial_id=binding[0],
             run_id=binding[3], case_id=binding[4], config_id=binding[5], source_id=binding[1],
-            outcome=outcome, assessment=assessment, artifacts=list(artifacts),
+            outcome=outcome, assessment=assessment, assessments=list(assessments), artifacts=list(artifacts),
             projection_row=projection_row, detail=detail or {})
         snapshot = self.artifact(attempt_id, 'result_snapshot', canonical_json_bytes(envelope))
         self._verify([*artifacts, snapshot], attempt_id)
@@ -229,18 +230,23 @@ class CasePublisher:
                 self._record_artifact(attempt_id, binding[1], artifact)
             self._event(attempt_id, 'evidence_finalized', binding[1])
             assessment = envelope['assessment']
-            if assessment:
-                if assessment['artifact_id'] not in {a['id'] for a in envelope['artifacts'] if a['purpose']=='assessment'}:
+            all_assessments={a['id']:a for a in envelope.get('assessments',[])}
+            if assessment: all_assessments[assessment['id']]=assessment
+            for native_assessment in all_assessments.values():
+                if native_assessment['attempt_id'] != attempt_id or native_assessment['protocol_id'] != binding[6] or native_assessment['source_id'] != binding[1]:
+                    raise DatabaseError('Native assessment exact binding mismatch')
+                if native_assessment['artifact_id'] not in {a['id'] for a in envelope['artifacts'] if a['purpose']=='assessment'}:
                     raise DatabaseError('Assessment evidence not bound to publication')
-                _insert(self.con, 'assessments', assessment)
+                _insert(self.con, 'assessments', native_assessment)
             self._event(attempt_id, 'assessment_completed' if assessment and assessment['outcome']!='NOT_ASSESSED' else 'assessment_unavailable', binding[1])
             _insert(self.con, 'committed_results', dict(id=result, attempt_id=attempt_id,
                 assessment_id=assessment['id'] if assessment else None, outcome=envelope['outcome'],
                 source_id=binding[1], committed_at=self.clock(), snapshot_artifact_id=snapshot['id']))
             self._event(attempt_id, 'result_committed', binding[1], {'result_id': result})
-            if assessment:
-                _insert(self.con, 'reviews', dict(id=stable_id('review', result),
-                    assessment_id=assessment['id'], source_id=binding[1], kind='technical',
+            for native_assessment in all_assessments.values():
+                self.con.execute('INSERT INTO case_result_assessments VALUES(?,?)',(result,native_assessment['id']))
+                _insert(self.con, 'reviews', dict(id=stable_id('review', result, native_assessment['id']),
+                    assessment_id=native_assessment['id'], source_id=binding[1], kind='technical',
                     status='pending', identity_verified=0, recorded_at=self.clock(),
                     binding_json=_json({'result_id':result,'execution_permission':False})))
             self._event(attempt_id, 'review_pending', binding[1], {'execution_permission':False})
@@ -280,13 +286,13 @@ class CasePublisher:
             if sha256(encoded.encode()).hexdigest() != digest:
                 raise DatabaseError('Projection input hash mismatch')
             row = json.loads(encoded)
+            publication_rows = row if isinstance(row,list) else [row]
             try:
                 self._prepared(attempt)
             except (OSError,ValueError,DatabaseError) as exc:
-                if row is not None:
-                    row = dict(row,publication_integrity='evidence_unavailable',adapter_exclusion_reason=str(exc))
-            rows.append(row)
-        result = dict(schema_version=VERSION, committed_results=len(rows), rows=rows,
+                publication_rows = [dict(r,publication_integrity='evidence_unavailable',adapter_exclusion_reason=str(exc)) if r is not None else None for r in publication_rows]
+            rows.extend(publication_rows)
+        result = dict(schema_version=VERSION, committed_results=len(self.events()), rows=rows,
                       cursor=max((e['sequence'] for e in self.events()), default=0))
         if catalog is not None:
             from localbench.v2.metric_projection import project_metrics

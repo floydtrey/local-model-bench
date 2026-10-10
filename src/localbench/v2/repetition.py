@@ -177,6 +177,7 @@ def run_v2_repetitions(
     supplemental_evidence: Mapping[str, Sequence[SealedEvidence]] | None = None,
     resource_telemetry: ResourceTelemetryBinding | None = None,
     clock: Clock = _utc_now,
+    case_publisher=None,
 ) -> RepeatedRun:
     """Execute the Benchmark Pack's predeclared repetition policy.
 
@@ -401,6 +402,9 @@ def run_v2_repetitions(
         )
     )
 
+    if case_publisher is not None:
+        case_publisher.plan(manifest=manifest, case_definitions=list(pack.cases))
+
     if driver_binding.execution_kind == "subprocess":
         raise OrchestrationBlocked(
             "subprocess repetition binding was preflighted and sealed, but no BL-7-routed model-driver adapter exists; direct-call fallback is forbidden"
@@ -413,6 +417,8 @@ def run_v2_repetitions(
 
     for item in planned:
         case_id = str(item.case["case_id"])
+        if case_publisher is not None:
+            case_publisher.started(manifest=manifest, trial=item.trial)
         started_at = clock()
         if not isinstance(started_at, str) or not started_at:
             raise ValueError("clock must return non-empty timestamp strings")
@@ -514,54 +520,67 @@ def run_v2_repetitions(
         )
         evidence_store.persist(case_record)
         case_records.append(case_record)
+        if case_publisher is not None:
+            case_publisher.executed(manifest=manifest, trial=item.trial, case_record=case_record, execution_records=[trace, *(() if telemetry_record is None else (telemetry_record,))])
 
         if status == "error" and stop_reason == "model_driver_error":
+            if case_publisher is not None:
+                case_publisher.completed(manifest=manifest, trial=item.trial, case_record=case_record, evaluations=[], unavailable="model_driver_error")
             raise OrchestrationBlocked(
                 f"model driver failed for case {case_id}; "
                 "qualification evidence was preserved and scoring was stopped"
             )
 
-        extras = supplemental_evidence.get(case_id, ())
-        if isinstance(extras, (str, bytes, bytearray)):
-            raise ValueError("supplemental_evidence values must be sequences")
-        for extra in extras:
-            if not isinstance(extra, SealedEvidence):
-                raise ValueError("supplemental_evidence must contain SealedEvidence values")
-        observed_telemetry = () if telemetry_record is None else (telemetry_record,)
-        interface_evidence = () if execution_interface is None else (execution_interface,)
-        available = (
-            host,
-            runtime,
-            model,
-            benchmark,
-            item.effective,
-            item.trial,
-            *interface_evidence,
-            item.binding,
-            manifest,
-            trace,
-            *observed_telemetry,
-            *tuple(extras),
-        )
-        for evaluator_ref in item.case["evaluators"]:
-            evaluator_id = str(evaluator_ref["evaluator_id"])
-            contract_version = str(evaluator_ref["contract_version"])
-            definition = evaluator_registry.resolve(evaluator_id, contract_version)
-            evaluation = evaluator_registry.evaluate(
-                _derived_id(
-                    "evaluation",
-                    case_record.sha256,
-                    evaluator_id,
-                    contract_version,
-                ),
-                evaluator_id=evaluator_id,
-                contract_version=contract_version,
-                case_definition=item.case,
-                case_result_record=case_record,
-                supplemental_evidence=_supplemental_for_definition(definition, available),
+        case_evaluations = []
+        try:
+            extras = supplemental_evidence.get(case_id, ())
+            if isinstance(extras, (str, bytes, bytearray)):
+                raise ValueError("supplemental_evidence values must be sequences")
+            for extra in extras:
+                if not isinstance(extra, SealedEvidence):
+                    raise ValueError("supplemental_evidence must contain SealedEvidence values")
+            observed_telemetry = () if telemetry_record is None else (telemetry_record,)
+            interface_evidence = () if execution_interface is None else (execution_interface,)
+            available = (
+                host,
+                runtime,
+                model,
+                benchmark,
+                item.effective,
+                item.trial,
+                *interface_evidence,
+                item.binding,
+                manifest,
+                trace,
+                *observed_telemetry,
+                *tuple(extras),
             )
-            evidence_store.persist(evaluation)
-            evaluation_records.append(evaluation)
+            for evaluator_ref in item.case["evaluators"]:
+                evaluator_id = str(evaluator_ref["evaluator_id"])
+                contract_version = str(evaluator_ref["contract_version"])
+                definition = evaluator_registry.resolve(evaluator_id, contract_version)
+                evaluation = evaluator_registry.evaluate(
+                    _derived_id(
+                        "evaluation",
+                        case_record.sha256,
+                        evaluator_id,
+                        contract_version,
+                    ),
+                    evaluator_id=evaluator_id,
+                    contract_version=contract_version,
+                    case_definition=item.case,
+                    case_result_record=case_record,
+                    supplemental_evidence=_supplemental_for_definition(definition, available),
+                )
+                evidence_store.persist(evaluation)
+                evaluation_records.append(evaluation)
+                case_evaluations.append(evaluation)
+        except (Exception, KeyboardInterrupt) as exc:
+            if case_publisher is not None:
+                case_publisher.completed(manifest=manifest, trial=item.trial, case_record=case_record, evaluations=case_evaluations, unavailable=type(exc).__name__)
+            raise
+        if case_publisher is not None:
+            case_publisher.completed(manifest=manifest, trial=item.trial, case_record=case_record, evaluations=case_evaluations)
 
     return RepeatedRun(
         repetition_phase=repetition_phase,

@@ -40,7 +40,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.15.0'
+          python-version: '3.12'
+      - name: Pin official isolated embeddable runtime (setup-python has no 3.15 package yet)
+        shell: pwsh
+        run: |
+          "B_BASE_PYTHON=$((Get-Command python).Source)" | Out-File -Append $env:GITHUB_ENV
+          Invoke-WebRequest https://www.python.org/ftp/python/3.15.0/python-3.15.0-embed-amd64.zip -OutFile python315.zip
+          if ((Get-FileHash python315.zip).Hash.ToLower() -ne 'a6999bcbcbe56f937159ef79c2630260eca99f65f7860bc5cd20430324079a44') { throw 'Runtime archive digest mismatch' }
+          Expand-Archive -LiteralPath python315.zip -DestinationPath runtime315
+          if ((Get-FileHash runtime315/sqlite3.dll).Hash.ToLower() -ne '8a65064bad951ce2ed19104f125b6258fb6d770b01e9868637b89f808a6fbeff') { throw 'SQLite DLL digest mismatch' }
+          Add-Content runtime315/python315._pth "$env:GITHUB_WORKSPACE\src"
+          Add-Content runtime315/python315._pth "$env:GITHUB_WORKSPACE\tests"
+          (Resolve-Path runtime315).Path | Out-File -Append $env:GITHUB_PATH
       - name: Record actual runtime and fail closed on affected SQLite
         run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print(sys.version,sqlite3.sqlite_version,sqlite3.connect(':memory:').execute('select sqlite_source_id()').fetchone()); assert wal_runtime_safe()"
       - name: Publication uses default operational connections
@@ -54,5 +65,5 @@ jobs:
           python -m unittest discover -s tests -p 'test_assistant*.py' -v
       - name: Installed package retains every immutable migration
         run: |
-          python -m pip install . --target installed-package
-          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==6; print([(m.version,m.name,m.digest) for m in chain])"
+          & $env:B_BASE_PYTHON -m pip install . --target installed-package
+          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==7; print([(m.version,m.name,m.digest) for m in chain])"
