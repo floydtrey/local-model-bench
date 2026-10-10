@@ -48,7 +48,7 @@ class PublicationRevisionTests(unittest.TestCase):
         self.db.execute("INSERT INTO trials VALUES('trial2','run','suite','case2',1,1,'second','source')")
         key1=self.register(first); self.register(second,'C02','trial2')
         calls=[]
-        def verify(run,repo=None): return {'case_id':'C01' if Path(run)==first else 'C02','prompt':'authored fixture'}
+        def verify(run,repo=None): return {'case_id':'C01' if Path(run).resolve()==first.resolve() else 'C02','prompt':'authored fixture'}
         def session(**kwargs):
             if calls:
                 report=self.pub.projection()
