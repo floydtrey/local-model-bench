@@ -51,7 +51,7 @@ Stages B–F must reuse existing controller/process owners. Local admin/authenti
 
 | Stage | Dependency / deliverable | Status |
 |---|---|---|
-| A | Storage foundation and verified recovery primitives | Implemented; GitHub verification recorded below, independent review pending |
+| A | Storage foundation and verified recovery primitives | Implemented/verified at 339afc2; focused review passed; root final documentation acknowledgment |
 | B | Per-case durable publication/recovery using A and existing owners | Not started |
 | C | Local API and events with one controller | Not started |
 | D | Responsive web Results/control UI | Not started |
@@ -67,3 +67,11 @@ Implementation checkpoint `29cc6b6852bd73788af055858cd6de3428b496f0` passed four
 ## Independent review corrections
 
 The schema-3 checkpoint was blocked for (1) INSERT OR REPLACE bypass of append-only delete triggers, (2) nullable parent-index bypass of same-trial immediate repair lineage, and (3) restore destinations beneath the source backup invalidating the retained original. Additive migration 5 provides insert-conflict guards for primary/alternate unique identities, exact nonnull repair binding and atomic prior-row audits. Supported connections verify recursive_triggers ON. Backup/restore rejects resolved source/destination overlap before directory creation, with byte-hash/tree preservation tests. Windows SQLite 3.40.1 also exposed a finite decimal-boundary difference in migration 4; migration 5 uses portable arithmetic finite checks. No earlier migration checksum changes. All changes stay within Stage A. Fresh exact-head targeted/full CI and focused independent re-review gate checkpoint acceptance. Root handles any isolated source pull only after review and blocking fixes pass.
+
+## Final verified checkpoint
+
+Code head: `339afc237ae832aa439fb023dce7a5c9fdfbbe5d`. All four [Stage A push jobs](https://github.com/floydtrey/local-model-bench/actions/runs/38023495885) and four [Stage A PR jobs](https://github.com/floydtrey/local-model-bench/actions/runs/38023498334) passed 38 tests and five packaged migrations. The [full qualification matrix](https://github.com/floydtrey/local-model-bench/actions/runs/38023495815/attempts/2) is green with 590 discovered tests per supported job, unchanged platform skips (1 Windows / 3 Linux), real Tk and authored annotation/frozen-source checks retained. The [existing deterministic PR workflow](https://github.com/floydtrey/local-model-bench/actions/runs/38023498324) passed both jobs; its merge tree equals the reviewed code tree.
+
+Full qualification Windows 3.12 initially hit the unchanged 15-second Node packet-byte fixture timeout (job 114129319912), while the same-tree PR Windows run passed it. One bounded failed-job retry at unchanged head passed all 590 tests plus remaining checks (job 114130472445); no test/assertion/timeout/frozen bytes changed. This failure/retry is preserved in STATUS.md. Root-reported focused Astra Extra High re-review passes all three former blockers with no new blocking findings. Original four migration blobs remain unchanged.
+
+This final update changes only status/plan documentation. It reuses the exact verified code head rather than rerunning passed tests for prose. Root verifies the documentation-only diff and owns final checkpoint acknowledgment/isolated pull. PR remains draft/unmerged; no live change or B–F work occurred. Patched operational SQLite, publishing/recovery content checks and detailed remote integration remain later-stage gates.
