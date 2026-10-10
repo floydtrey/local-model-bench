@@ -23,6 +23,7 @@ on:
       - 'tests/test_qualification_v2*.py'
       - 'schemas/v2/metric-report.schema.json'
       - '.github/workflows/qualification-v2-foundation.yml'
+      - '.github/workflows/database-v2-stage-b.yml'
   workflow_dispatch:
 permissions:
   contents: read
