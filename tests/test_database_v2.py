@@ -84,13 +84,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_durability_pragmas_and_schema_are_deterministic(self):
-        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('busy_timeout',5000),('user_version',4)]:
+        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('recursive_triggers',1),('busy_timeout',5000),('user_version',5)]:
             self.assertEqual(self.db.execute('PRAGMA '+name).fetchone()[0],value)
         other=connect(self.root/'other.sqlite3',validation_only=True)
         try:
             query="SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
             self.assertEqual(self.db.execute(query).fetchall(),other.execute(query).fetchall())
-            self.assertEqual(validate_schema(other),4)
+            self.assertEqual(validate_schema(other),5)
         finally: other.close()
 
     def test_migration_replay_does_not_change_ledger(self):
@@ -110,15 +110,15 @@ class DatabaseTests(unittest.TestCase):
             self.assertIsNone(con.execute("SELECT name FROM sqlite_master WHERE name='partial'").fetchone())
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
             migrate(con)
-            self.assertEqual(validate_schema(con),4)
+            self.assertEqual(validate_schema(con),5)
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
 
     def test_newer_tampered_foreign_and_noncontiguous_schemas_rejected(self):
         with self.assertRaises(DatabaseError): migrate(self.db,[replace(migrations()[0],sql=migrations()[0].sql+'\n-- tampered\n'),*migrations()[1:]])
-        self.db.execute('PRAGMA user_version=5')
+        self.db.execute('PRAGMA user_version=6')
         with self.assertRaises(DatabaseError): migrate(self.db)
-        self.db.execute('PRAGMA user_version=4')
+        self.db.execute('PRAGMA user_version=5')
         with self.assertRaises(DatabaseError): migrate(self.db,[migrations()[1]])
         foreign=sqlite3.connect(':memory:',isolation_level=None)
         try:
@@ -361,7 +361,7 @@ class DatabaseTests(unittest.TestCase):
             migrate(con,migrations()[:2])
             con.execute("INSERT INTO sources VALUES('s','test',NULL,'p',?,'now',NULL,'{}')",('d'*64,))
             migrate(con)
-            self.assertEqual(validate_schema(con),4)
+            self.assertEqual(validate_schema(con),5)
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
         self.foundation()
@@ -381,7 +381,8 @@ class DatabaseTests(unittest.TestCase):
     def test_numeric_affinity_cannot_manufacture_counts_or_scores(self):
         self.foundation(); self.attempt(); self.artifact()
         for index,values in enumerate([{'score':'unknown','maximum_score':'unknown'}, {'score':float('inf'),'maximum_score':float('inf')}, {'acceptance_checks':'unknown','check_unit':'checks'}]):
-            with self.assertRaises(sqlite3.IntegrityError): self.assessment('bad'+str(index),**values)
+            with self.subTest(values=values):
+                with self.assertRaises(sqlite3.IntegrityError): self.assessment('bad'+str(index),**values)
         self.insert('cases',id='typed-case',logical_id='typed-case',version='1',source_id='source',input_sha256='b'*64,definition_json='{}')
         with self.assertRaises(sqlite3.IntegrityError): self.insert('suite_cases',suite_id='suite',case_id='typed-case',position=1.5)
         self.insert('metric_definitions',id='metric',name='coding',version='1',source_id='source',kind='capability',definition_json='{}')
@@ -404,6 +405,102 @@ class DatabaseTests(unittest.TestCase):
             self.assertEqual(con.execute("SELECT count(*) FROM sqlite_master WHERE name LIKE 'typed_%'").fetchone()[0],0)
             self.assertEqual(con.execute('SELECT count(*) FROM schema_migrations').fetchone()[0],3)
         finally: con.close()
+
+    def test_replacement_insert_cannot_rewrite_committed_evidence_config_or_result(self):
+        self.foundation(); self.attempt(); self.artifact(); self.assessment()
+        self.insert('attempt_artifacts',attempt_id='attempt',artifact_id='artifact',purpose='candidate',required=1)
+        self.result()
+        tables=['artifacts','runtime_configs','committed_results','runs']
+        before={table:self.db.execute('SELECT * FROM '+table).fetchall() for table in tables}
+        for recursive in (0,1):
+            self.db.execute('PRAGMA recursive_triggers='+str(recursive))
+            statements=[
+                "INSERT OR REPLACE INTO artifacts SELECT id,source_id,relative_path,NULL,NULL,media_type,'missing',NULL FROM artifacts WHERE id='artifact'",
+                "INSERT OR REPLACE INTO runtime_configs SELECT id,source_id,model_id,version,'{\"context\":8192}',? FROM runtime_configs WHERE id='config'",
+                "INSERT OR REPLACE INTO committed_results SELECT 'replacement-result',attempt_id,assessment_id,outcome,source_id,committed_at,snapshot_artifact_id FROM committed_results",
+            ]
+            for sql in statements:
+                with self.subTest(recursive=recursive,sql=sql):
+                    with self.assertRaises(sqlite3.IntegrityError): self.db.execute(sql,('f'*64,) if '?' in sql else ())
+            self.assertEqual({table:self.db.execute('SELECT * FROM '+table).fetchall() for table in tables},before)
+            self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(),[])
+            self.assertEqual(validate_schema(self.db),5)
+        self.db.execute('PRAGMA recursive_triggers=ON')
+        manifest=backup(self.db,self.root/'evidence',self.root/'retained-evidence')
+        self.assertEqual(manifest['unavailable_artifacts'],[])
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone()[0],'PASS')
+
+    def test_replacement_alternate_unique_conflicts_preserve_unreferenced_history(self):
+        self.foundation(); self.artifact('unused')
+        record_identity(self.db,'runtime_configs',id='unused-config',source_id='source',version='v3',model_id='model',payload={'context':8192})
+        record_identity(self.db,'models',id='unused-model',source_id='source',version='v2',payload={'name':'unused-model'})
+        self.insert('sources',id='unused-source',kind='test',location='unreferenced',sha256='d'*64,captured_at='now',metadata_json='{}')
+        tables=['artifacts','runtime_configs','models','sources']
+        before={table:self.db.execute('SELECT * FROM '+table+' ORDER BY id').fetchall() for table in tables}
+        self.db.execute('PRAGMA recursive_triggers=OFF')
+        statements=[
+            "INSERT OR REPLACE INTO artifacts SELECT 'new-artifact',source_id,relative_path,sha256,byte_count,media_type,integrity,verified_at FROM artifacts WHERE id='unused'",
+            "INSERT OR REPLACE INTO runtime_configs SELECT 'new-config',source_id,model_id,version,config_json,config_sha256 FROM runtime_configs WHERE id='unused-config'",
+            "INSERT OR REPLACE INTO models SELECT 'new-model',source_id,version,identity_json,identity_sha256 FROM models WHERE id='unused-model'",
+            "INSERT OR REPLACE INTO sources SELECT 'new-source',kind,format_version,location,sha256,captured_at,producer_version,metadata_json FROM sources WHERE id='unused-source'",
+        ]
+        for sql in statements:
+            with self.subTest(sql=sql):
+                with self.assertRaises(sqlite3.IntegrityError): self.db.execute(sql)
+        self.assertEqual({table:self.db.execute('SELECT * FROM '+table+' ORDER BY id').fetchall() for table in tables},before)
+        self.db.execute('PRAGMA recursive_triggers=ON')
+
+    def test_null_parent_cannot_bypass_same_trial_immediate_predecessor(self):
+        self.foundation(); self.attempt(); self.artifact(); self.assessment(outcome='FAIL')
+        self.make_run('other-run'); self.trial('other-trial','other-run')
+        for trial,index,parent_index in [('other-trial',2,None),('trial',2,None),('other-trial',2,1),('trial',3,1)]:
+            with self.subTest(trial=trial,index=index,parent_index=parent_index):
+                with self.assertRaises(sqlite3.IntegrityError): self.attempt('bad-repair',trial=trial,index=index,parent='attempt',parent_index=parent_index)
+        self.attempt('valid-repair',trial='trial',index=2,parent='attempt',parent_index=1)
+        self.assertEqual(self.db.execute("SELECT trial_id,parent_id,parent_index FROM attempts WHERE id='valid-repair'").fetchone(),('trial','attempt',1))
+        self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(),[])
+        self.assertEqual(self.db.execute("SELECT count(*) FROM attempts WHERE trial_id='other-trial'").fetchone()[0],0)
+
+    def test_review_migration_rejects_old_null_parent_rows_without_rewriting_them(self):
+        con=sqlite3.connect(self.root/'old-lineage.sqlite3',isolation_level=None)
+        original=self.db
+        try:
+            con.execute('PRAGMA foreign_keys=ON'); migrate(con,migrations()[:4])
+            self.db=con
+            self.insert('sources',id='source',kind='test',location='legacy',sha256='a'*64,captured_at='now',metadata_json='{}')
+            self.foundation(); self.attempt(); self.artifact(); self.assessment(outcome='FAIL')
+            self.make_run('other-run'); self.trial('other-trial','other-run')
+            self.attempt('bad-repair',trial='other-trial',index=2,parent='attempt',parent_index=None)
+            before=con.execute('SELECT * FROM attempts').fetchall()
+            with self.assertRaises(sqlite3.IntegrityError): migrate(con)
+            self.assertEqual(con.execute('PRAGMA user_version').fetchone()[0],4)
+            self.assertEqual(con.execute('SELECT * FROM attempts').fetchall(),before)
+            self.assertEqual(con.execute('SELECT count(*) FROM schema_migrations').fetchone()[0],4)
+        finally:
+            self.db=original; con.close()
+
+    def test_overlap_rejection_keeps_retained_backup_bytes_and_tree_unchanged(self):
+        self.artifact(); backup(self.db,self.root/'evidence',self.root/'backup')
+        source=self.root/'backup'
+        def snapshot():
+            return {p.relative_to(source).as_posix():sha256(p.read_bytes()).hexdigest() for p in source.rglob('*') if p.is_file()}
+        before=snapshot(); entries=sorted(p.relative_to(source).as_posix() for p in source.rglob('*'))
+        for destination in [source,source/'restored',source/'new-parent'/'restored',source/'..'/'backup'/'alias-child',self.root]:
+            with self.subTest(destination=destination):
+                with self.assertRaises(DatabaseError): restore(source,destination)
+            self.assertEqual(snapshot(),before)
+            self.assertEqual(sorted(p.relative_to(source).as_posix() for p in source.rglob('*')),entries)
+            verify_backup(source)
+        restore(source,self.root/'safe-restored')
+        verify_backup(source); verify_backup(self.root/'safe-restored')
+        self.assertEqual(snapshot(),before)
+
+    def test_backup_overlap_does_not_write_original_artifact_root(self):
+        self.artifact(); source=self.root/'evidence'
+        before={p.relative_to(source).as_posix():p.read_bytes() for p in source.rglob('*') if p.is_file()}
+        with self.assertRaises(DatabaseError): backup(self.db,source,source/'nested'/'backup')
+        self.assertFalse((source/'nested').exists())
+        self.assertEqual({p.relative_to(source).as_posix():p.read_bytes() for p in source.rglob('*') if p.is_file()},before)
 
 
 if __name__=='__main__':

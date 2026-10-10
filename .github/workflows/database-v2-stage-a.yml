@@ -30,4 +30,4 @@ jobs:
       - name: Verify installed package includes migration SQL
         run: |
           python -m pip install . --target installed-package
-          python -I -c "import sys,pathlib; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==4; print('Packaged migrations',[(m.version,m.name,m.digest) for m in chain])"
+          python -I -c "import sys,pathlib; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==5; print('Packaged migrations',[(m.version,m.name,m.digest) for m in chain])"

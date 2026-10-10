@@ -77,11 +77,18 @@ def _inspect_db(path):
 
 
 def _stage(destination):
-    destination = Path(destination).absolute()
+    destination = Path(destination).resolve()
     if destination.exists():
         raise FileExistsError(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
     return destination, Path(tempfile.mkdtemp(prefix=destination.name+'.pending-', dir=destination.parent))
+
+
+def _reject_overlap(source, destination):
+    """Reject both directions and resolved aliases before staging/mkdir."""
+    source, destination = Path(source).resolve(), Path(destination).resolve()
+    if source == destination or source.is_relative_to(destination) or destination.is_relative_to(source):
+        raise DatabaseError('Source and destination roots overlap')
 
 
 def _promote(stage, destination):
@@ -100,6 +107,7 @@ def backup(con, artifact_root, destination):
     """
     if con.in_transaction:
         raise DatabaseError('Backup requires committed transaction boundary')
+    _reject_overlap(artifact_root, destination)
     destination, stage = _stage(destination)
     try:
         dbpath = stage / 'database.sqlite3'
@@ -170,6 +178,7 @@ def verify_backup(directory):
 
 def restore(directory, destination):
     """Restore into a NEW root: database.sqlite3 plus artifacts/. Never live."""
+    _reject_overlap(directory, destination)
     manifest = verify_backup(directory)
     destination, stage = _stage(destination)
     try:

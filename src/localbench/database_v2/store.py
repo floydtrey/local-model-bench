@@ -54,10 +54,11 @@ def connect(path, *, validation_only=False):
     try:
         validate_schema(con)
         con.execute('PRAGMA foreign_keys=ON')
+        con.execute('PRAGMA recursive_triggers=ON')
         con.execute('PRAGMA busy_timeout=5000')
         mode = con.execute('PRAGMA journal_mode=WAL').fetchone()[0]
         con.execute('PRAGMA synchronous=FULL')
-        if mode != 'wal' or con.execute('PRAGMA synchronous').fetchone()[0] != 2 or con.execute('PRAGMA foreign_keys').fetchone()[0] != 1:
+        if mode != 'wal' or con.execute('PRAGMA synchronous').fetchone()[0] != 2 or con.execute('PRAGMA foreign_keys').fetchone()[0] != 1 or con.execute('PRAGMA recursive_triggers').fetchone()[0] != 1:
             raise DatabaseError('Durability/foreign key configuration unavailable')
         migrate(con)
         return con
@@ -112,6 +113,9 @@ def validate_schema(con, chain=None):
 def migrate(con, chain=None):
     """All pending DDL and ledger changes commit together; never executescript."""
     chain = tuple(chain if chain is not None else migrations())
+    con.execute('PRAGMA recursive_triggers=ON')
+    if con.execute('PRAGMA recursive_triggers').fetchone()[0] != 1:
+        raise DatabaseError('Replacement-safe recursive triggers unavailable')
     with transaction(con):
         version = validate_schema(con, chain)
         for migration in chain[version:]:
