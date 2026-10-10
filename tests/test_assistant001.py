@@ -79,6 +79,19 @@ class PacketTests(unittest.TestCase):
         self.assertNotIn("assessor/reference", prompt)
         self.assertNotIn("WORKER_READY", prompt)
 
+    def test_task_specific_test_edit_exception_does_not_change_frozen_scope(self):
+        run = prepare(self.root)
+        packet, original_digest = validate_packet()
+        for task in ("T01", "T02", "T03", "T04", "T05", "T06"):
+            prompt = task_prompt(run, task, "")
+            self.assertIn("tests/test_candidate.py is explicitly writable", prompt)
+            self.assertIn("general Worker role setup prohibits editing tests", prompt)
+            self.assertIn("never other test files or frozen", prompt)
+        self.assertEqual(packet["tasks"][0]["requirements"], "R01")
+        self.assertEqual(packet["tasks"][0]["writable_paths"],
+                         ["assistant_journal/validation.py", "tests/test_candidate.py"])
+        self.assertEqual(validate_packet()[1], original_digest)
+
     def test_validate_cli_is_safe_default_action(self):
         with contextlib.redirect_stdout(io.StringIO()) as out:
             code = main(["validate"])
@@ -147,6 +160,30 @@ class WorkflowTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             return run_worker_chain(self.run, sessions, through=through,
                                     allow_host_execution=True, assessor=assessor)
+
+    def test_diagnostics_separate_transport_output_limits_and_implementation(self):
+        from localbench.assistant001.campaign import classify_worker_failure
+        cases = [
+            ({"status": "protocol_failure", "stop_reason": "tool_transport_incompatible"},
+             "tool_transport_incompatible"),
+            ({"status": "protocol_failure", "stop_reason": "runtime_or_interface_failure"},
+             "tool_protocol_or_transport_failure"),
+            ({"status": "resource_limit", "stop_reason": "output_token_limit"}, "output_limit"),
+            ({"status": "blocked", "stop_reason": "unauthorized_role_setup_tool_call"},
+             "setup_tool_boundary_violation"),
+            ({"status": "success", "final_response": "Done"}, "implementation_acceptance_failure"),
+        ]
+        for source, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(classify_worker_failure(source, {"passed": False}), expected)
+        self.assertIsNone(classify_worker_failure(
+            {"status": "success", "final_response": "Done"}, {"passed": True}))
+
+    def test_failed_impl_remains_failed_with_independent_diagnostic(self):
+        sessions = FakeSessions(self.root, fail_task="T01")
+        row = self.execute(sessions, "T01")["results"][0]
+        self.assertEqual(row["failure_attribution"], "implementation_acceptance_failure")
+        self.assertFalse(row["deterministic_passed"])
 
     def test_six_stages_use_actual_workspace_and_predecessor_prose(self):
         sessions = FakeSessions(self.root)
