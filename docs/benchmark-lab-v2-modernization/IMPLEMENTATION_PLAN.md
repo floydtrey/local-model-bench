@@ -26,6 +26,12 @@ Use SQLite WAL, synchronous FULL, foreign_keys ON, busy timeout and explicit BEG
 
 Identity/version entities: source snapshots/mappings/import exceptions; immutable model identities; independent installed-model discovery observations; runtime configurations keyed by full canonical content with no name-based merging; versioned suite/case membership/protocol/assessor/metric/role criteria; environments/runs; planned case trials and explicitly linked repair attempts; separate execution, assessment and review history; resource observations; external artifact references and hashes; versioned metric populations/comparison decisions/public approvals; singleton existing-controller identity, queue snapshots and recovery records. Foreign keys and cross-binding triggers preserve run/config/suite/case/trial/assessment lineage. Append-only records preserve supersession and audit history. Queue records are storage only, with no claim/start/dispatch loop.
 
+## Runtime and Web System dependencies
+
+Native installed Python 3.12.10 links affected SQLite 3.49.1. First Stage A CI inventory also found affected SQLite 3.40.1 (Windows 3.10), 3.49.1 (Windows 3.12) and 3.45.1 (Linux 3.10/3.12). Operational connection defaults to fail closed; isolated schema validation explicitly opts into test-only mode. Reuse and verify a patched native Python/SQLite runtime before B operational wiring. WAL+FULL and one scheduler do not establish safe multi-connection operation. See the compatibility/recovery record for version boundaries, primary documentation and limitations.
+
+The separate FloydsLab Web System owns shared service registration, health reporting, remote authentication, private navigation and eventual publication integration contracts. Benchmark Lab retains its database, engine, queue, results, review workflow and internal API. No Cloudflare routing, authentication platform or general Control Center is built here. The Owner will supply that contract later; review compatibility and propose necessary changes before agreement. Remote integration is not authorized until contract agreement and the relevant stages are ready.
+
 ## Acceptance gates
 
 1. Implement schema + checksum migration runner in `src/localbench/database_v2/`; no live callers.
@@ -45,7 +51,7 @@ Stages B–F must reuse existing controller/process owners. Local admin/authenti
 
 | Stage | Dependency / deliverable | Status |
 |---|---|---|
-| A | Storage foundation and verified recovery primitives | Plan verified; implementation next |
+| A | Storage foundation and verified recovery primitives | Implemented; final regression and independent review pending |
 | B | Per-case durable publication/recovery using A and existing owners | Not started |
 | C | Local API and events with one controller | Not started |
 | D | Responsive web Results/control UI | Not started |

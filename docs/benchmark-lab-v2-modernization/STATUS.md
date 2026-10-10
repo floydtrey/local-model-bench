@@ -1,0 +1,29 @@
+# Stage A status — version 1
+
+Stage A implementation is present and inactive. Architecture checkpoint acceptance is **pending independent controller review**. No B–F stage has started. Source changes use GitHub API commits on `development/benchmark-lab-v2-stage-a-20261009`, based on the current T16 development integration branch. No implementation source checkout was cloned or pulled before completion. The live installation, current queue, original backups and private evidence were not changed.
+
+## Implemented deliverables
+
+- `src/localbench/database_v2/`: 35 relational tables, explicit versions, provenance and foreign/cross-binding constraints, append-only history, checksum migration ledger, current schema version 3, canonical identity helper and explicit transactions. Migration 3 is additive to the initially verified migrations; it derives final execution state from lifecycle observations without overwriting immutable attempt identity.
+- `migrations/001_entities.sql`, `002_constraints.sql`, `003_execution_observations.sql`: entities, indexes, immutability, case/trial/repair/assessment/evidence/publication/config/queue/recovery constraints and schema-only execution observation validation.
+- `backup.py`: SQLite backup API snapshot, external artifact hash copying, verified manifest, new-destination restore and no promotion on failure.
+- `tests/test_database_v2.py`: synthetic deterministic schema/migration/rollback/identity/unit/lineage/blocked/evidence/review/comparison/queue/backup/restore/runtime-gate tests. No model, runner or generated candidate program is executed by these tests.
+- `pyproject.toml`: packaged SQL migrations. Stage A CI verifies installed package data.
+- `.github/workflows/database-v2-stage-a.yml`: supported Windows/Linux Python 3.10/3.12 targeted tests, linked SQLite inventory and installed-package check. Existing qualification foundation CI is extended only to trigger for Stage A paths; all existing deterministic, Tk, calibration and frozen-source steps remain intact.
+- `IMPLEMENTATION_PLAN.md`, `DATABASE_DICTIONARY.md`, `COMPATIBILITY_AND_RECOVERY.md`: audited scope/capabilities, complete dictionary/relationships/owners, historical adapter plan, integrity/backup/restore policy, future durable publishing/authorization and integration boundaries.
+
+First code checkpoint `6f8be6310a6f0185e428eddfab8f719bd78ed585`: all four targeted jobs passed 27 tests and installed-package validation in [Stage A CI](https://github.com/floydtrey/local-model-bench/actions/runs/38022010354). The initial [full qualification matrix](https://github.com/floydtrey/local-model-bench/actions/runs/38022010334) also passed all four jobs with 579 discovered tests (27 new + 552 inherited); existing platform-specific skips remain 1 on Windows / 3 on Linux, with required real Tk coverage retained. Final-head validation and expanded schema test evidence will be recorded after the final gates finish. Passing deterministic fixtures does not certify model qualification, physical power-loss durability or an authenticated human review.
+
+## Compatibility and limits
+
+Existing T13/T16, role runners/assessors, L0/L1/L2, Assistant packets, native configuration/discovery and queue/process owners are reused unchanged. Genuine historical formats were observed read-only, including the Qwen 9B five-role archive; private evidence is excluded from GitHub. No historical collection import occurred. The local-only Results scroll fix remains on the protected live branch and its verified bundle; later cutover must carry and retest it.
+
+Installed Windows SQLite 3.49.1 and all first-checkpoint CI linked versions are affected by the WAL-reset advisory. Default operational database access is gated pending a verified patched native runtime. `validation_only=True` is strictly isolated schema/backup testing; it is not deployment permission. Runtime replacement, concurrency/checkpoint topology and actual installation verification are dependencies before B/C operations. Filesystem flush/rename and hardware limitations are documented honestly; there is no claimed power-cut test.
+
+No live persistence, lifecycle publisher, API, web interface, queue dispatcher, remote integration or public export is activated. The schema constraints provide a storage foundation; Stage B must implement per-case artifact finalization and assessment-content validation with existing owners. Later API stages must authenticate/control server-side, retaining private read/public sanitized scopes. Stage A metadata/SQL cannot authenticate identities or prevent an administrator with filesystem access from bypassing application policy.
+
+The FloydsLab Web System shared registration/health/authentication/navigation/publication contract is a later dependency. Benchmark Lab keeps its database, engine, queue, results, reviews and internal API. No Cloudflare routing, authentication platform or general Control Center is built. Review the forthcoming contract for compatibility before agreement or remote implementation.
+
+## Next dependency-ready stage
+
+After the controller's independent critical-defect review and explicit checkpoint acceptance, Stage B may integrate transactional per-case publishing/recovery through the existing runner, assessor and queue owners, with a verified patched SQLite runtime first. It must preserve completed cases, mark incomplete evidence honestly, avoid auto-rerun/invented assessment/dependent Worker advancement and require Owner execution authorization for resume/rerun. Future Web System integration remains separate pending its agreed contract. This record does not authorize starting Stage B.

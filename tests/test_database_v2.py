@@ -84,13 +84,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_durability_pragmas_and_schema_are_deterministic(self):
-        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('busy_timeout',5000),('user_version',2)]:
+        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('busy_timeout',5000),('user_version',3)]:
             self.assertEqual(self.db.execute('PRAGMA '+name).fetchone()[0],value)
         other=connect(self.root/'other.sqlite3',validation_only=True)
         try:
             query="SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
             self.assertEqual(self.db.execute(query).fetchall(),other.execute(query).fetchall())
-            self.assertEqual(validate_schema(other),2)
+            self.assertEqual(validate_schema(other),3)
         finally: other.close()
 
     def test_migration_replay_does_not_change_ledger(self):
@@ -110,15 +110,15 @@ class DatabaseTests(unittest.TestCase):
             self.assertIsNone(con.execute("SELECT name FROM sqlite_master WHERE name='partial'").fetchone())
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
             migrate(con)
-            self.assertEqual(validate_schema(con),2)
+            self.assertEqual(validate_schema(con),3)
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
 
     def test_newer_tampered_foreign_and_noncontiguous_schemas_rejected(self):
-        with self.assertRaises(DatabaseError): migrate(self.db,[replace(migrations()[0],sql=migrations()[0].sql+'\n-- tampered\n'),migrations()[1]])
-        self.db.execute('PRAGMA user_version=3')
+        with self.assertRaises(DatabaseError): migrate(self.db,[replace(migrations()[0],sql=migrations()[0].sql+'\n-- tampered\n'),*migrations()[1:]])
+        self.db.execute('PRAGMA user_version=4')
         with self.assertRaises(DatabaseError): migrate(self.db)
-        self.db.execute('PRAGMA user_version=2')
+        self.db.execute('PRAGMA user_version=3')
         with self.assertRaises(DatabaseError): migrate(self.db,[migrations()[1]])
         foreign=sqlite3.connect(':memory:',isolation_level=None)
         try:
@@ -336,6 +336,47 @@ class DatabaseTests(unittest.TestCase):
         with transaction(self.db):
             with self.assertRaises(DatabaseError): backup(self.db,self.root/'evidence',self.root/'failed')
         self.assertFalse((self.root/'failed').exists())
+
+    def test_scheduled_identity_finalizes_via_immutable_lifecycle_observations(self):
+        self.foundation(); self.attempt(status='scheduled'); self.artifact()
+        with self.assertRaises(sqlite3.IntegrityError): self.assessment()
+        def event(sequence,stage):
+            self.insert('lifecycle_events',id='event'+str(sequence),attempt_id='attempt',sequence=sequence,
+                        occurred_at='now',stage=stage,source_id='source',detail_json='{}')
+        with self.assertRaises(sqlite3.IntegrityError): event(1,'execution_completed')
+        event(1,'started')
+        with self.assertRaises(sqlite3.IntegrityError): self.assessment()
+        with self.assertRaises(sqlite3.IntegrityError): event(3,'execution_completed')
+        event(2,'execution_completed'); event(3,'evidence_finalized')
+        self.assessment(); self.insert('attempt_artifacts',attempt_id='attempt',artifact_id='artifact',purpose='candidate',required=1)
+        self.result()
+        self.assertEqual(self.db.execute('SELECT execution_status FROM attempts').fetchone()[0],'scheduled')
+        self.assertEqual(self.db.execute('SELECT execution_status FROM attempt_execution_state').fetchone()[0],'completed')
+        with self.assertRaises(sqlite3.IntegrityError): event(4,'started')
+        self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone()[0],1)
+
+    def test_additive_v2_upgrade_preserves_terminal_snapshot_and_hash_constraints(self):
+        con=sqlite3.connect(self.root/'v2.sqlite3',isolation_level=None)
+        try:
+            migrate(con,migrations()[:2])
+            con.execute("INSERT INTO sources VALUES('s','test',NULL,'p',?,'now',NULL,'{}')",('d'*64,))
+            migrate(con)
+            self.assertEqual(validate_schema(con),3)
+            self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
+        finally: con.close()
+        self.foundation()
+        with self.assertRaises(sqlite3.IntegrityError): self.insert('cases',id='bad',logical_id='bad',version='1',source_id='source',input_sha256='wrong',definition_json='{}')
+        with self.assertRaises(sqlite3.IntegrityError): self.insert('assessors',id='bad',name='bad',version='1',source_id='source',implementation_sha256='wrong',definition_json='{}')
+
+    def test_protocol_required_purposes_and_completed_review_integrity(self):
+        self.foundation(); self.attempt(); self.artifact(); self.assessment()
+        self.insert('attempt_artifacts',attempt_id='attempt',artifact_id='artifact',purpose='candidate',required=1)
+        self.insert('protocol_evidence_requirements',protocol_id='protocol',purpose='trace',minimum_count=1)
+        with self.assertRaises(sqlite3.IntegrityError): self.result()
+        self.insert('attempt_artifacts',attempt_id='attempt',artifact_id='artifact',purpose='trace',required=1)
+        self.result()
+        self.artifact('missing',integrity='missing')
+        with self.assertRaises(sqlite3.IntegrityError): self.insert('reviews',id='bad',assessment_id='assessment',source_id='source',artifact_id='missing',kind='human',status='completed',identity_verified=0,recorded_at='now',binding_json='{}')
 
 
 if __name__=='__main__':

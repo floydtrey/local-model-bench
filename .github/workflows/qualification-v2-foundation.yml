@@ -4,6 +4,7 @@ on:
     branches: [benchmark/flashnext-all-roles-v1, 'development/**']
     paths:
       - 'docs/qualification-v2/**'
+      - 'docs/benchmark-lab-v2-modernization/**'
       - 'project-benchmarks/assistant-001/qualification-v2/**'
       - 'project-benchmarks/assistant-002/qualification-v2/**'
       - 'project-benchmarks/assistant-001/v1/**'
