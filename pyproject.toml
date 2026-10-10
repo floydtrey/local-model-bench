@@ -17,3 +17,6 @@ local-model-bench = "localbench.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"localbench.database_v2" = ["migrations/*.sql"]

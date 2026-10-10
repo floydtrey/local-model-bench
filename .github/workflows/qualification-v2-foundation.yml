@@ -4,6 +4,7 @@ on:
     branches: [benchmark/flashnext-all-roles-v1, 'development/**']
     paths:
       - 'docs/qualification-v2/**'
+      - 'docs/benchmark-lab-v2-modernization/**'
       - 'project-benchmarks/assistant-001/qualification-v2/**'
       - 'project-benchmarks/assistant-002/qualification-v2/**'
       - 'project-benchmarks/assistant-001/v1/**'
@@ -13,6 +14,8 @@ on:
       - 'src/localbench/assistant001/**'
       - 'src/localbench/assistant002/**'
       - 'src/localbench/v2/**'
+      - 'src/localbench/database_v2/**'
+      - 'tests/test_database_v2.py'
       - 'src/localbench/queue_gui/**'
       - 'tests/test_queue_gui*.py'
       - 'tests/results_fixtures.py'
