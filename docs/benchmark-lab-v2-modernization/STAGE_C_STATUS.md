@@ -1,0 +1,17 @@
+# Stage C1 source checkpoint status
+
+Prepared 2026-10-10. C1 implementation and local qualification complete; fresh GitHub checks and root checkpoint review are pending. This is not operational or deployed acceptance.
+
+Based on accepted B documentation e1affdf610f3c7c040615b465af5eaf7cda47cee / tested B code3fb8d7b5a428a57cdb37b4d2d185c2f8c7ee8bdc. Same canonical development/benchmark-lab-v2-modernization-20261009 branch and draft PR11; no separate branch/controller/service or live checkout was created.
+
+Delivered C1: optional FastAPI factory and strict versioned envelopes, default denied private access, Python-only isolated fixture injection, transport-only liveness, conservative scoped health, shared B passive projection/event methods, nonrecovering bounded queue snapshot reader and exact native capture/assessment cursor/binding surfaces. No controls or auth endpoints. [C1_API_CONTRACT.md](C1_API_CONTRACT.md) is the detailed development interface and dependency/coverage/bounds/reset contract.
+
+Private full Python3.15.0/SQLite3.53.4 and the complete14-wheel API stack passed offline hash installation and pip check; [runtime record](C1_RUNTIME_QUALIFICATION.md) names exact versions, digests, primary sources and failures/limits. Seven independent runtime fixtures pass, including real Tk and ephemeral Uvicorn asyncio/h11/SSE. The final source API suite passes21 tests; passive native suite adds5 tests. Retained B publication suite passes55 tests with default operational gate. The local full snapshot passes670 discovered tests before the one added Uvicorn test; final API21 includes that added test. Two inherited local Windows skips are POSIX process group and symlink privilege; required real Tk passes. Fresh CI will run the complete671-test final tree with API dependencies installed.
+
+Initial wrong-working-directory/missing snapshot fixture failures were corrected in the local harness only. An authorized isolated run outside the ordinary Windows sandbox resolved strict native path-resolution denial without modifying any native containment guard. No passing assertion, SQLite gate, frozen source, original migration, model/case population or T13 scoring code was relaxed.
+
+All original migrations1–10 are unchanged. The shared read-method extraction preserves original B projection and integrity checks. Existing queue scheduling/process/launchers/recovery remain their native owners. C1 never constructs a CasePublisher writer for a GET and never opens/migrates/recovers a DB on GET.
+
+DefaultDenyAll remains for installed private data, streams, downloads and effects. Fixture grants are not actual Owner acceptance. Source generation must rotate/rebind after any restore, including same-prefix history; restore is not implemented here. Health TTL/skew/aggregation/trust remain unaccepted; consumer inability is unknown coverage. Source metadata does not establish installed version. Auth reuse proposal ae987c0 remains investigative only and contract0.1.1 principles-only remains unchanged.
+
+Next proposed increment is C2: extract existing Tk coordination into ONE native reusable controller with the legacy facade, preserving QueueState/ProcessRunner/instance lock, immutable per-item settings, recovery and close/stop behavior. C2 and C3 typed CLI publisher activation require root review and their own source gates. D/E/F, actual identity/grants, model/host-code execution, live installation/runtime changes, remote routing, publication and cutover remain deferred. Stop at C1 handoff.

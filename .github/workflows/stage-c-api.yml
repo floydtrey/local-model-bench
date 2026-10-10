@@ -1,0 +1,57 @@
+name: Benchmark Stage C1 API
+on:
+  push:
+    branches: ['development/benchmark-lab-v2-modernization-*']
+    paths: ['src/localbench/api/**', 'src/localbench/database_v2/**', 'src/localbench/queue_gui/core.py', 'tests/test_api_v1.py', 'tests/test_native_passive_reads.py', 'requirements/api-windows-cp315.lock', 'pyproject.toml', '.github/workflows/stage-c-api.yml']
+  pull_request:
+    paths: ['src/localbench/api/**', 'src/localbench/database_v2/**', 'src/localbench/queue_gui/core.py', 'tests/test_api_v1.py', 'tests/test_native_passive_reads.py', 'requirements/api-windows-cp315.lock', 'pyproject.toml', '.github/workflows/stage-c-api.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualified-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: src
+      LOCALBENCH_REQUIRE_API: '1'
+      LOCALBENCH_REQUIRE_OPERATIONAL_DB: '1'
+      LOCALBENCH_REQUIRE_TK: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify official full private runtime and create fresh private environment
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://www.python.org/ftp/python/3.15.0/python-3.15.0-amd64.zip -OutFile c1-python315.zip
+          if ((Get-FileHash c1-python315.zip).Hash.ToLower() -ne '6b1a3f885ce416cf3a68af203e62203664eb5224d8d0c1d2a1945fddec5c500b') { throw 'Runtime digest mismatch' }
+          Expand-Archive -LiteralPath c1-python315.zip -DestinationPath c1-runtime315
+          if ((Get-FileHash c1-runtime315/DLLs/sqlite3.dll).Hash.ToLower() -ne '8a65064bad951ce2ed19104f125b6258fb6d770b01e9868637b89f808a6fbeff') { throw 'SQLite digest mismatch' }
+          New-Item -ItemType Directory -Path c1-temp | Out-Null
+          $env:TEMP = (Resolve-Path c1-temp).Path
+          $env:TMP = $env:TEMP
+          & ./c1-runtime315/python.exe -I -m venv c1-venv
+          if ($LASTEXITCODE -ne 0) { throw 'Venv failed' }
+          & ./c1-venv/Scripts/python.exe -I -c "import sys,sqlite3; assert sys.version_info[:3]==(3,15,0); assert sqlite3.sqlite_version=='3.53.4'; print(sys.version,sqlite3.sqlite_version)"
+      - name: Resolve only locked wheels then install offline with full hash enforcement
+        shell: pwsh
+        run: |
+          $env:TEMP = (Resolve-Path c1-temp).Path
+          $env:TMP = $env:TEMP
+          & ./c1-venv/Scripts/python.exe -I -m pip --isolated --cache-dir c1-cache download --index-url https://pypi.org/simple --require-hashes --only-binary=:all: -r requirements/api-windows-cp315.lock -d c1-wheelhouse
+          if ($LASTEXITCODE -ne 0) { throw 'Locked wheel download failed' }
+          & ./c1-venv/Scripts/python.exe -I -m pip --isolated --cache-dir c1-cache install --no-index --find-links c1-wheelhouse --require-hashes --only-binary=:all: -r requirements/api-windows-cp315.lock
+          if ($LASTEXITCODE -ne 0) { throw 'Offline install failed' }
+          & ./c1-venv/Scripts/python.exe -I -m pip --isolated check
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency check failed' }
+      - name: Strict DTO admission, passive native publication and real SSE fixtures
+        shell: pwsh
+        run: |
+          & ./c1-venv/Scripts/python.exe -m unittest discover -s tests -p test_api_v1.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'API fixtures failed' }
+          & ./c1-venv/Scripts/python.exe -m unittest discover -s tests -p test_native_passive_reads.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Native reads failed' }
+      - name: Full retained engine, storage, assessor, T13 and required real Tk regressions
+        shell: pwsh
+        run: |
+          & ./c1-venv/Scripts/python.exe -m unittest discover -s tests -v
+          exit $LASTEXITCODE
