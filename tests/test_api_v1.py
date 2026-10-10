@@ -199,7 +199,9 @@ class NativeAPIFixtures(unittest.TestCase):
         status,body=request(self.app,'/api/v1/streams/cases')
         self.assertEqual(status,200); self.assertIn(b'event: case_publication',body)
         payload=json.loads(next(line[6:] for line in body.splitlines() if line.startswith(b'data: ')))
-        self.assertEqual(payload['id'],self.publication_id); self.assertIsNone(payload['result_id'])
+        self.assertEqual(payload['schema_version'],'benchmark-api:v1')
+        self.assertEqual(payload['source']['generation'],self.source.generation)
+        self.assertEqual(payload['event']['id'],self.publication_id); self.assertIsNone(payload['event']['result_id'])
         self.assertEqual(request(self.app,'/api/v1/streams/cases',headers={'Last-Event-ID':'invalid'})[0],409)
     def test_cursor_wrong_source_generation_and_future_reset(self):
         from localbench.api.app import _encode

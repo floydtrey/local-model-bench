@@ -38,6 +38,7 @@ DTOs forbid unknown envelope fields and type coercion, reject nonfinite numbers,
 | Latest binding | publication_id, sequence, revision, stage, attempt_id, trial_id, case_id, run_id, configuration_id, protocol_id | result_id is null for capture and a string for assessed; case_id here is the canonical DB case identity, distinct from a source row's display ID |
 | Event | sequence/revision: positive integers; id/attempt_id: strings; stage: capture or assessed | result_id: null for capture; producer_event_time is null because B's event table supplies no event timestamp |
 | EventPage | common envelope, high_water, cursor, has_more: bool, events: array of Event | No event-count-as-case-count conversion |
+| StreamEvent | common envelope, cursor, event: Event; SSE id equals cursor | producer_event_time: null; receipt is API emission receipt, not native event creation |
 | QueueSnapshot | common envelope, native_schema_version: original version integer, content_sha256: hash of exact saved bytes, native: validated normalized JSON, custody = unknown | owner_observed_at: null; a saved Running/PID is not current process custody |
 | Observation | scope/status/coverage/reason_code/method_revision/source/required_for; received_at; values: JSON map; producer_outcome | observed_at/expires_at/sample_started_at/sample_ended_at may be null; sample interval must be complete and ordered or absent |
 | Health | common envelope, observations array, freshness_policy = unaccepted | aggregate_status: null; no global status is synthesized |

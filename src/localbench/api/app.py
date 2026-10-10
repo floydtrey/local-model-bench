@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .dto import (Cursor, Event, EventPage, Health, Observation, PublicationSnapshot,
-                  QueueSnapshot, SourceIdentity)
+                  QueueSnapshot, SourceIdentity, StreamEvent)
 from .ports import ResetRequired
 from .testing import FixturePrincipal
 
@@ -150,7 +150,8 @@ def _build_app(*, read_port=None, validator=None, clock=None):
         for event in page.events:
             try: admit(request,'events.read'); admit(request,'results.read')
             except HTTPException: return
-            yield ServerSentEvent(event='case_publication',id=_encode(source,event.sequence,event.id),
-                                  data=event.model_dump(mode='json'))
+            event_cursor=_encode(source,event.sequence,event.id)
+            frame=StreamEvent(**envelope(),cursor=event_cursor,event=event)
+            yield ServerSentEvent(event='case_publication',id=event_cursor,data=frame.model_dump(mode='json'))
 
     return app

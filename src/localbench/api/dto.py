@@ -123,6 +123,11 @@ class EventPage(Envelope):
     events: list[Event]
     producer_event_time: None = None
 
+class StreamEvent(Envelope):
+    cursor: str
+    event: Event
+    producer_event_time: None = None
+
 class QueueSnapshot(Envelope):
     native_schema_version: int
     content_sha256: str = Field(pattern=r'^[0-9a-f]{64}$')
