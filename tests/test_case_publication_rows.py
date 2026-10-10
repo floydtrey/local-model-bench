@@ -232,5 +232,18 @@ class NativeRowTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchall(),[('UNKNOWN',),('UNKNOWN',)])
         self.assertEqual(self.db.execute('SELECT count(*) FROM native_attempt_observations').fetchone(),(2,))
 
+    def test_separate_native_capture_and_assessment_boundary_preserves_execution_on_restart(self):
+        key=('separate-capture',str(self.native),'C01',1); self.register(key); self.adapter.started(key=key)
+        evidence=self.native/'session'; evidence.mkdir(); (evidence/'final.txt').write_bytes(b'authored captured output')
+        session=self.native/'session.json'; session.write_text('{"status":"error","final_response":"authored captured output"}')
+        capture=json.loads(session.read_bytes())
+        self.adapter.capture_completed(key=key,case_id='C01',capture=capture,native_root=self.native,artifact_paths=[session,evidence])
+        self.assertEqual(self.db.execute('SELECT execution_status FROM attempt_execution_state').fetchone(),('completed',))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM committed_results').fetchone(),(0,))
+        self.assertEqual(self.pub.recover()[0]['disposition'],'incomplete')
+        self.adapter.completed(key=key,row={'case_id':'C01',**capture,'evidence_directory':str(evidence)},native_root=self.native)
+        self.assertEqual(self.db.execute('SELECT outcome FROM committed_results').fetchone(),('UNKNOWN',))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM lifecycle_events WHERE stage='execution_completed'").fetchone(),(1,))
+
 
 if __name__=='__main__': unittest.main()

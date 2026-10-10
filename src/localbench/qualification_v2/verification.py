@@ -47,6 +47,9 @@ def run_trial(run, sessions, *, identity, repo=None, allow_model_inference=False
                 "evidence_file_sha256": safe_snapshot(evidence),
                 "authority_violations": result.get("authority_violations", 0)}
     write_json(run / "capture.json", captured)
+    if case_publisher is not None:
+        case_publisher.capture_completed(key=("controlled-role",str(run.resolve()),packet['role'],packet['case_id'],1),
+            case_id=packet['case_id'],capture=captured,native_root=run,artifact_paths=[run/'capture.json',evidence])
     return captured
 
 

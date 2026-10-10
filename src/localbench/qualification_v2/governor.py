@@ -31,6 +31,9 @@ def run_governor(run, sessions, *, repo=None, case_publisher=None):
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "final.txt").write_bytes(result.get("final_response", "").encode())
     write_json(run / "session.json", result)
+    if case_publisher is not None:
+        case_publisher.capture_completed(key=("controlled-role",str(run.resolve()),'governor',packet['case_id'],1),
+            case_id=packet['case_id'],capture=result,native_root=run,artifact_paths=[run/'session.json',evidence])
     return result
 
 

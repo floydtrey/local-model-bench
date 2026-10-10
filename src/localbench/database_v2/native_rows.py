@@ -13,7 +13,7 @@ from localbench.v2.metric_projection import assessed_outcome, contradictions, in
 from localbench.v2.report_adapter import normalize_rows
 from .backup import _safe_path
 from .publication import stable_id
-from .store import DatabaseError
+from .store import DatabaseError, transaction
 
 
 def _native_path(root, path):
@@ -61,6 +61,30 @@ class NativeRowPublisher:
 
     def started(self, *, key):
         attempt,_=self._binding(key); self.pub.started(attempt)
+
+    def capture_completed(self, *, key, case_id, capture, native_root, artifact_paths):
+        """Record native execution capture before a separately invoked assessor.
+
+        This does not claim assessment or a terminal committed benchmark result.
+        Interrupted run/assessment workflows retain explicit completed execution.
+        """
+        attempt,binding=self._binding(key)
+        if case_id!=binding['native_case_id']: raise DatabaseError('Native capture case identity mismatch')
+        root=Path(native_root).resolve(); artifacts=[]; manifest=[]
+        for original in artifact_paths:
+            source=_native_path(root,original)
+            paths=sorted(source.rglob('*')) if source.is_dir() else [source]
+            for path in paths:
+                safe=_native_path(root,path)
+                if safe.is_dir(): continue
+                relative=safe.relative_to(root).as_posix()
+                artifact=self.pub.artifact(attempt,'native_file:'+relative,safe.read_bytes())
+                artifacts.append(artifact); manifest.append({'native_relative_path':relative,'artifact_id':artifact['id'],
+                    'sha256':artifact['sha256'],'byte_count':artifact['byte_count'],'purpose':artifact['purpose']})
+        artifacts.append(self.pub.artifact(attempt,'capture',canonical_json_bytes(manifest)))
+        artifacts.append(self.pub.artifact(attempt,'case',canonical_json_bytes({'case_id':case_id,'capture':capture})))
+        artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
+        self.pub.executed(attempt,artifacts,detail={'native_execution_status':capture.get('status'),'assessment':'not_yet_invoked'})
 
     def completed(self, *, key, row, native_root, artifact_paths=(), native_attempts=(), sealed_records=(), evidence_store=None):
         attempt,binding=self._binding(key)
@@ -123,7 +147,14 @@ class NativeRowPublisher:
         if any(item['purpose'].startswith('native_file:') for item in capture_manifest):
             artifacts.append(self.pub.artifact(attempt,'capture',canonical_json_bytes(capture_manifest)))
         artifacts=list({(a['id'],a['purpose']):a for a in artifacts}.values())
-        self.pub.executed(attempt,artifacts,detail={'native_execution_status':row.get('execution_status',row.get('status'))})
+        state=self.pub._attempt(attempt)[2]
+        if state=='started':
+            self.pub.executed(attempt,artifacts,detail={'native_execution_status':row.get('execution_status',row.get('status'))})
+        elif state=='completed':
+            self.pub._verify(artifacts,attempt)
+            with transaction(self.pub.con):
+                for artifact in artifacts: self.pub._record_artifact(attempt,self.pub._attempt(attempt)[1],artifact)
+        else: raise DatabaseError('Native result has no completed/started execution binding')
         normalized=normalize_rows([row])[0]
         _,reasons=inspect_evidence(normalized,root)
         reasons+=contradictions(normalized)
