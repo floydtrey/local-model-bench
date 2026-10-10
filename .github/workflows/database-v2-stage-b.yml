@@ -1,0 +1,58 @@
+name: Benchmark Database Stage B Publication
+on:
+  push:
+    branches: ['development/benchmark-lab-v2-modernization-*']
+    paths: ['src/localbench/database_v2/**', 'src/localbench/v2/**', 'src/localbench/assistant001/**', 'src/localbench/qualification_v2/**', 'tests/test_case_publication*.py', 'tests/test_database_v2.py', '.github/workflows/database-v2-stage-b.yml']
+  pull_request:
+    paths: ['src/localbench/database_v2/**', 'tests/test_case_publication*.py', '.github/workflows/database-v2-stage-b.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publication:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Record linked runtime; affected versions validate isolated fixtures only
+        run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print(sys.version,sqlite3.sqlite_version,wal_runtime_safe())"
+      - name: Foundation and publication regressions
+        run: |
+          python -m unittest discover -s tests -p 'test_database_v2.py' -v
+          python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+  patched-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: src
+      LOCALBENCH_REQUIRE_OPERATIONAL_DB: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.15.0'
+      - name: Record actual runtime and fail closed on affected SQLite
+        run: python -c "import sys,sqlite3; from localbench.database_v2.store import wal_runtime_safe; print(sys.version,sqlite3.sqlite_version,sqlite3.connect(':memory:').execute('select sqlite_source_id()').fetchone()); assert wal_runtime_safe()"
+      - name: Publication uses default operational connections
+        run: |
+          python -m unittest discover -s tests -p 'test_case_publication*.py' -v
+          python -m unittest discover -s tests -p 'test_database_v2.py' -v
+      - name: Retained native engine, assessors and reporting compatibility
+        run: |
+          python -m unittest discover -s tests -p 'test_v2*.py' -v
+          python -m unittest discover -s tests -p 'test_qualification_v2*.py' -v
+          python -m unittest discover -s tests -p 'test_assistant*.py' -v
+      - name: Installed package retains every immutable migration
+        run: |
+          python -m pip install . --target installed-package
+          python -I -c "import sys; sys.path.insert(0,'installed-package'); from localbench.database_v2.store import migrations; chain=migrations(); assert len(chain)==6; print([(m.version,m.name,m.digest) for m in chain])"

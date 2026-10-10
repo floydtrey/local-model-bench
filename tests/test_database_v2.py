@@ -84,13 +84,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_durability_pragmas_and_schema_are_deterministic(self):
-        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('recursive_triggers',1),('busy_timeout',5000),('user_version',5)]:
+        for name,value in [('journal_mode','wal'),('synchronous',2),('foreign_keys',1),('recursive_triggers',1),('busy_timeout',5000),('user_version',len(migrations()))]:
             self.assertEqual(self.db.execute('PRAGMA '+name).fetchone()[0],value)
         other=connect(self.root/'other.sqlite3',validation_only=True)
         try:
             query="SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
             self.assertEqual(self.db.execute(query).fetchall(),other.execute(query).fetchall())
-            self.assertEqual(validate_schema(other),5)
+            self.assertEqual(validate_schema(other),len(migrations()))
         finally: other.close()
 
     def test_migration_replay_does_not_change_ledger(self):
@@ -110,15 +110,15 @@ class DatabaseTests(unittest.TestCase):
             self.assertIsNone(con.execute("SELECT name FROM sqlite_master WHERE name='partial'").fetchone())
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
             migrate(con)
-            self.assertEqual(validate_schema(con),5)
+            self.assertEqual(validate_schema(con),len(migrations()))
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
 
     def test_newer_tampered_foreign_and_noncontiguous_schemas_rejected(self):
         with self.assertRaises(DatabaseError): migrate(self.db,[replace(migrations()[0],sql=migrations()[0].sql+'\n-- tampered\n'),*migrations()[1:]])
-        self.db.execute('PRAGMA user_version=6')
+        self.db.execute('PRAGMA user_version='+str(len(migrations())+1))
         with self.assertRaises(DatabaseError): migrate(self.db)
-        self.db.execute('PRAGMA user_version=5')
+        self.db.execute('PRAGMA user_version='+str(len(migrations())))
         with self.assertRaises(DatabaseError): migrate(self.db,[migrations()[1]])
         foreign=sqlite3.connect(':memory:',isolation_level=None)
         try:
@@ -361,7 +361,7 @@ class DatabaseTests(unittest.TestCase):
             migrate(con,migrations()[:2])
             con.execute("INSERT INTO sources VALUES('s','test',NULL,'p',?,'now',NULL,'{}')",('d'*64,))
             migrate(con)
-            self.assertEqual(validate_schema(con),5)
+            self.assertEqual(validate_schema(con),len(migrations()))
             self.assertEqual(con.execute('SELECT count(*) FROM sources').fetchone()[0],1)
         finally: con.close()
         self.foundation()
@@ -424,7 +424,7 @@ class DatabaseTests(unittest.TestCase):
                     with self.assertRaises(sqlite3.IntegrityError): self.db.execute(sql,('f'*64,) if '?' in sql else ())
             self.assertEqual({table:self.db.execute('SELECT * FROM '+table).fetchall() for table in tables},before)
             self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(),[])
-            self.assertEqual(validate_schema(self.db),5)
+            self.assertEqual(validate_schema(self.db),len(migrations()))
         self.db.execute('PRAGMA recursive_triggers=ON')
         manifest=backup(self.db,self.root/'evidence',self.root/'retained-evidence')
         self.assertEqual(manifest['unavailable_artifacts'],[])
