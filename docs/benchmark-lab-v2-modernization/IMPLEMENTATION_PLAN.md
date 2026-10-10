@@ -52,7 +52,7 @@ Stages B–F must reuse existing controller/process owners. Local admin/authenti
 | Stage | Dependency / deliverable | Status |
 |---|---|---|
 | A | Storage foundation and verified recovery primitives | Implemented/verified at 339afc2; focused review passed; root final documentation acknowledgment |
-| B | Per-case durable publication/recovery using A and existing owners | Not started |
+| B | Per-case durable publication/recovery using A and existing owners | Corrected/verified at3fb8d7b5; root acceptance/C authorization pending |
 | C | Local API and events with one controller | Not started |
 | D | Responsive web Results/control UI | Not started |
 | E | Historical import verification and sanitized publication | Not started |
@@ -75,3 +75,7 @@ Code head: `339afc237ae832aa439fb023dce7a5c9fdfbbe5d`. All four [Stage A push jo
 Full qualification Windows 3.12 initially hit the unchanged 15-second Node packet-byte fixture timeout (job 114129319912), while the same-tree PR Windows run passed it. One bounded failed-job retry at unchanged head passed all 590 tests plus remaining checks (job 114130472445); no test/assertion/timeout/frozen bytes changed. This failure/retry is preserved in STATUS.md. Root-reported focused Astra Extra High re-review passes all three former blockers with no new blocking findings. Original four migration blobs remain unchanged.
 
 This final update changes only status/plan documentation. It reuses the exact verified code head rather than rerunning passed tests for prose. Root verifies the documentation-only diff and owns final checkpoint acknowledgment/isolated pull. PR remains draft/unmerged; no live change or B–F work occurred. Patched operational SQLite, publishing/recovery content checks and detailed remote integration remain later-stage gates.
+
+
+## Corrected Stage B checkpoint
+B's completed native boundaries, schema10 append-only capture/assessed revisions and global events are regression-verified at3fb8d7b5a428a57cdb37b4d2d185c2f8c7ee8bdc. Earlier d6a7caf greenCI did not establish required capture publication; root reviewed that gap and the same-DB correction. Latest projection includes pending capture BEFORE next case with no fabricated score/PASS. Later native assessment preserves same case/trial/attempt and immutable history; no rerun/inflation/scorer/controller. See STATUS.md, STAGE_B_HANDOFF.md and the single final NATIVE_PRODUCER_CONTRACT.md for exact source/runtime/55 B/38 A/645 full checks and native CLI/custody/cursor/recovery limits. Root owns independent acceptance/isolated pull and C–E coordination; this worker stops after B. Final acknowledgment changes docs only, no live/merge/cutover action.

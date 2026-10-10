@@ -29,3 +29,7 @@ Evidence finalized before committed success. DB is authoritative; projection/not
 
 ## Status
 Prerequisite/native audit complete. Implementation and acceptance gates pending. Runtime gate passed on isolated Windows, not accepted for production. Coverage/failure results and CI will be recorded as implemented; this document is not a claim that B is complete.
+
+
+## Final corrected B checkpoint
+The original implementation status above is historical planning. Corrected B source3fb8d7b5a428a57cdb37b4d2d185c2f8c7ee8bdc passes fresh patched/default-operational and unchanged supported native regression gates (55 B/38 A/645 full). Schema10 publishes pending captures immediately and later appends same-identity assessed revisions; root review corrected the prior capture-only visibility gap. All earlier migration blobs/checksums are retained. The canonical final producer/event/projection/recovery/CLI account is NATIVE_PRODUCER_CONTRACT.md; exact gate/runtime/simulation/limit evidence is STAGE_B_HANDOFF.md. Root acceptance/C activation remain owner-controlled; this worker stops after B with no live/merge/deploy action.
